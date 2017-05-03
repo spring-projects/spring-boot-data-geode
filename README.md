@@ -1,2 +1,2 @@
 # spring-boot-data-gemfire
-Spring Boot Support for Gefmire
+_Spring Boot_ auto-configuration dupport for Pivotal GemFire.
