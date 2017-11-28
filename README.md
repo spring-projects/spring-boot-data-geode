@@ -1,4 +1,10 @@
-# Project Goals
+# Spring Boot for Apache Geode
+
+_Spring Boot for Apache Geode_ extends [_Spring Boot_](http://projects.spring.io/spring-boot/) with _auto-configuration_ support as well as other _convention or configuration_ features to simplify the development of _Spring_ applications using either [Pivotal GemFire](https://pivotal.io/pivotal-gemfire) or [Apache Geode](http://geode.apache.org/) in a _Spring_ context.
+
+This project builds on both [_Spring Data GemFire_](http://projects.spring.io/spring-data-gemfire/) and [Spring Data Geode](https://github.com/spring-projects/spring-data-geode).
+
+### Project Goals
 
 This project adds _Spring Boot_ **auto-configuration** support for both [Apache Geode](http://geode.apache.org/)
 and [Pivotal GemFire](https://pivotal.io/pivotal-gemfire).
