@@ -1,0 +1,26 @@
+= Contributing to Spring Session
+
+Spring Session is released under the Apache 2.0 license. If you would like to contribute
+something, or simply want to hack on the code this document should help you get started.
+
+== Code of Conduct
+This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code of conduct].
+By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
+
+== Using GitHub issues
+
+We use GitHub issues to track bugs and enhancements. If you have a general usage question
+please ask on http://stackoverflow.com[Stack Overflow]. The Spring Session team and the
+broader community monitor the http://stackoverflow.com/tags/spring-session[`spring-session`]
+tag.
+
+If you are reporting a bug, please help to speed up problem diagnosis by providing as much
+information as possible. Ideally, that would include a small sample project that
+reproduces the problem.
+
+
+
+== Sign the Contributor License Agreement
+If you have not previously done so, please fill out and
+submit the https://cla.pivotal.io/sign/spring[Contributor License Agreement].
+

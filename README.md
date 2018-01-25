@@ -22,3 +22,18 @@ Among other things, this project builds on [_Spring Boot_](http://projects.sprin
 5. As an added benefit, _Spring Boot Data GemFire_ will automatically authenticate your _Spring Boot_, _Pivotal GemFire_-based application when deployed to PCF and the application is granted access to and connects with a secure PCC instance for all of its caching concerns.
 
 This, along with many other things will be provided in and by this project.
+
+== Code of Conduct
+
+This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code of conduct].
+By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
+
+= Spring Boot Project Site
+
+You can find the documentation, issue management, support, samples, and guides for using _Spring Boot_
+at http://projects.spring.io/spring-boot/
+
+= License
+
+_Spring Boot_, _Spring Boot for Apache Geode_ and _Spring Boot for Pivotal GemFire_ is Open Source Software
+released under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
