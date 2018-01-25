@@ -1,10 +1,10 @@
-# Spring Boot for Apache Geode
+= Spring Boot for Apache Geode
 
 _Spring Boot for Apache Geode_ extends [_Spring Boot_](http://projects.spring.io/spring-boot/) with _auto-configuration_ support as well as other _convention or configuration_ features to simplify the development of _Spring_ applications using either [Pivotal GemFire](https://pivotal.io/pivotal-gemfire) or [Apache Geode](http://geode.apache.org/) in a _Spring_ context.
 
 This project builds on both [_Spring Data GemFire_](http://projects.spring.io/spring-data-gemfire/) and [Spring Data Geode](https://github.com/spring-projects/spring-data-geode).
 
-### Project Goals
+=== Project Goals
 
 This project adds _Spring Boot_ **auto-configuration** support for both [Apache Geode](http://geode.apache.org/)
 and [Pivotal GemFire](https://pivotal.io/pivotal-gemfire).
@@ -23,17 +23,17 @@ Among other things, this project builds on [_Spring Boot_](http://projects.sprin
 
 This, along with many other things will be provided in and by this project.
 
-== Code of Conduct
+===== Code of Conduct
 
 This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code of conduct].
 By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
 
-= Spring Boot Project Site
+== Spring Boot Project Site
 
 You can find the documentation, issue management, support, samples, and guides for using _Spring Boot_
 at http://projects.spring.io/spring-boot/
 
-= License
+== License
 
 _Spring Boot_, _Spring Boot for Apache Geode_ and _Spring Boot for Pivotal GemFire_ is Open Source Software
 released under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
