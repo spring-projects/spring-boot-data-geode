@@ -1,0 +1,22 @@
+buildscript {
+	dependencies {
+		classpath 'io.spring.gradle:spring-build-conventions:0.0.9.RELEASE'
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+	}
+	repositories {
+		maven { url 'https://repo.spring.io/libs-release' }
+		maven { url 'https://repo.spring.io/plugins-snapshot' }
+	}
+}
+
+apply plugin: 'io.spring.convention.root'
+
+group = 'org.springframework.boot'
+description = 'Spring Boot for Apache Geode'
+
+ext.releaseBuild = version.endsWith('RELEASE')
+ext.snapshotBuild = version.endsWith('SNAPSHOT')
+ext.milestoneBuild = !(releaseBuild || snapshotBuild)
+
+ext.IDE_GRADLE = "$rootDir/gradle/ide.gradle"
+

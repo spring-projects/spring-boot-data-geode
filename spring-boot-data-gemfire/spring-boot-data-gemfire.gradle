@@ -1,0 +1,16 @@
+apply plugin: 'io.spring.convention.spring-module'
+
+apply from: IDE_GRADLE
+
+description = "Spring Boot for Pivotal GemFire"
+
+dependencies {
+
+	compile(project(':spring-boot-data-geode')) {
+		exclude group: "org.springframework.data", module: "spring-data-geode"
+	}
+
+	compile "org.springframework.data:spring-data-gemfire"
+
+}
+

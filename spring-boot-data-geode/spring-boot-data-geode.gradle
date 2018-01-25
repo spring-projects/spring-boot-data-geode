@@ -1,0 +1,23 @@
+apply plugin: 'io.spring.convention.spring-module'
+
+apply from: IDE_GRADLE
+
+description = "Spring Boot for Apache Geode"
+
+dependencies {
+
+	compile "org.springframework:spring-context-support"
+	compile "org.springframework:spring-jcl"
+	compile "org.springframework.data:spring-data-geode:$springDataGeodeVersion"
+	compile "org.springframework.boot:spring-boot-starter"
+
+	testCompile "org.assertj:assertj-core"
+	testCompile "junit:junit"
+	testCompile "org.mockito:mockito-core"
+	testCompile "edu.umd.cs.mtc:multithreadedtc"
+	testCompile "org.springframework:spring-test"
+	testCompile slf4jDependencies
+
+//	integrationTestRuntime "org.springframework.shell:spring-shell"
+
+}
