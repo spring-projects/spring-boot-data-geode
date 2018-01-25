@@ -23,7 +23,7 @@ Among other things, this project builds on [_Spring Boot_](http://projects.sprin
 
 This, along with many other things will be provided in and by this project.
 
-===== Code of Conduct
+=== Code of Conduct
 
 This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code of conduct].
 By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
