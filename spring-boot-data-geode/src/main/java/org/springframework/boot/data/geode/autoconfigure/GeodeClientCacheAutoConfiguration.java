@@ -24,9 +24,14 @@ import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
 
 /**
- * The GeodeClientCacheAutoConfiguration class...
+ * Spring Boot {@link EnableAutoConfiguration auto-configuration} for bootstrapping an Apache Geode {@link ClientCache}
+ * instance constructed, configured and initialized with Spring Data for Apache Geode.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
+ * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
  * @since 1.0.0
  */
 @Configuration

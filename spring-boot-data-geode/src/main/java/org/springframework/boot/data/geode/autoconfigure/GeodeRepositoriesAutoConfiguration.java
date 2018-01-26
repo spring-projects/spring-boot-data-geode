@@ -41,11 +41,14 @@ import org.springframework.data.gemfire.repository.support.GemfireRepositoryFact
  *
  * @author John Blum
  * @since 1.0.0
- * @see GeodeRepositoriesAutoConfigurationRegistrar
- * @see org.springframework.context.annotation.Configuration
- * @see org.springframework.data.gemfire.repository.config.EnableGemfireRepositories
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.data.geode.autoconfigure.GeodeRepositoriesAutoConfigurationRegistrar
+ * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.data.gemfire.repository.GemfireRepository
+ * @see org.springframework.data.gemfire.repository.config.EnableGemfireRepositories
+ * @see org.springframework.data.gemfire.repository.config.GemfireRepositoryConfigurationExtension
+ * @see org.springframework.data.gemfire.repository.support.GemfireRepositoryFactoryBean
  */
 @Configuration
 @ConditionalOnBean({ Cache.class, ClientCache.class })

@@ -49,7 +49,6 @@ import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
  * @since 1.5.0
  */
 @Configuration
-//@Conditional(CacheCondition.class)
 @ConditionalOnBean({ CacheFactoryBean.class, Cache.class, ClientCacheFactoryBean.class, ClientCache.class })
 @ConditionalOnClass(GemfireCacheManager.class)
 @ConditionalOnMissingBean(CacheManager.class)
