@@ -9,13 +9,20 @@ dependencies {
 	compile "org.springframework:spring-context-support"
 	compile "org.springframework:spring-jcl"
 	compile "org.springframework.data:spring-data-geode:$springDataGeodeVersion"
-	compile "org.springframework.boot:spring-boot-starter"
+
+	compile("org.springframework.boot:spring-boot-starter") {
+		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
+	}
 
 	testCompile "org.assertj:assertj-core"
 	testCompile "junit:junit"
 	testCompile "org.mockito:mockito-core"
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
-	testCompile "org.springframework:spring-test"
+
+	testCompile("org.springframework.boot:spring-boot-starter-test") {
+		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
+	}
+
 	testCompile slf4jDependencies
 
 //	integrationTestRuntime "org.springframework.shell:spring-shell"

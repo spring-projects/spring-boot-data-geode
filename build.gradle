@@ -19,4 +19,3 @@ ext.snapshotBuild = version.endsWith('SNAPSHOT')
 ext.milestoneBuild = !(releaseBuild || snapshotBuild)
 
 ext.IDE_GRADLE = "$rootDir/gradle/ide.gradle"
-
