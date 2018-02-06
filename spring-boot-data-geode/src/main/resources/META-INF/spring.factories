@@ -3,4 +3,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.springframework.boot.data.geode.autoconfigure.GeodeClientCacheAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.GeodeCachingProviderAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.GeodeContinuousQueryAutoConfiguration,\
+org.springframework.boot.data.geode.autoconfigure.GeodeFunctionExecutionAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.GeodeRepositoriesAutoConfiguration
