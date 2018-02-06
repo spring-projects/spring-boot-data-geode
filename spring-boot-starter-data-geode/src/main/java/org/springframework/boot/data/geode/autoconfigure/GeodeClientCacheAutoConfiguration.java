@@ -17,6 +17,7 @@
 package org.springframework.boot.data.geode.autoconfigure;
 
 import org.apache.geode.cache.client.ClientCache;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
