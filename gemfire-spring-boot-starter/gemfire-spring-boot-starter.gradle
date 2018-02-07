@@ -6,7 +6,7 @@ description = "Spring Boot for Pivotal GemFire"
 
 dependencies {
 
-	compile(project(':spring-boot-starter-data-geode')) {
+	compile(project(':geode-spring-boot-starter')) {
 		exclude group: "org.springframework.data", module: "spring-data-geode"
 	}
 
