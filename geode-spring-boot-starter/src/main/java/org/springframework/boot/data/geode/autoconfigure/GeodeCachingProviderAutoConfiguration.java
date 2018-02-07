@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizers;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -52,6 +53,7 @@ import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 @ConditionalOnBean({ CacheFactoryBean.class, Cache.class, ClientCacheFactoryBean.class, ClientCache.class })
 @ConditionalOnClass(GemfireCacheManager.class)
 @ConditionalOnMissingBean(CacheManager.class)
+@AutoConfigureAfter(GeodeClientCacheAutoConfiguration.class)
 @EnableGemfireCaching
 @SuppressWarnings("all")
 class GeodeCachingProviderAutoConfiguration {

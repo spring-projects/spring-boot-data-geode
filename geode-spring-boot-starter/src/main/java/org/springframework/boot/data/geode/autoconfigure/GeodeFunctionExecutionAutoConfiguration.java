@@ -17,6 +17,7 @@
 package org.springframework.boot.data.geode.autoconfigure;
 
 import org.apache.geode.cache.client.ClientCache;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -38,6 +39,7 @@ import org.springframework.data.gemfire.function.config.EnableGemfireFunctionExe
 @Configuration
 @ConditionalOnBean(ClientCache.class)
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
+@AutoConfigureAfter(GeodeClientCacheAutoConfiguration.class)
 @EnableGemfireFunctionExecutions
 @SuppressWarnings("unused")
 public class GeodeFunctionExecutionAutoConfiguration {
