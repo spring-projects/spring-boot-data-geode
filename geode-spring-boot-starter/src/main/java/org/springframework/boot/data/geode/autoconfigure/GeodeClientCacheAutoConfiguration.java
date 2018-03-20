@@ -16,7 +16,7 @@
 
 package org.springframework.boot.data.geode.autoconfigure;
 
-import org.apache.geode.cache.Cache;
+import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -45,7 +45,7 @@ import org.springframework.data.gemfire.config.annotation.EnablePdx;
  */
 @Configuration
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
-@ConditionalOnMissingBean({ ClientCache.class, Cache.class })
+@ConditionalOnMissingBean(GemFireCache.class)
 @ClientCacheApplication
 @EnablePdx
 @SuppressWarnings("all")
