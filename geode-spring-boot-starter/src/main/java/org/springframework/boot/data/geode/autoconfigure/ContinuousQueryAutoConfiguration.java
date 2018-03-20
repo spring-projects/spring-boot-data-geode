@@ -16,39 +16,38 @@
 
 package org.springframework.boot.data.geode.autoconfigure;
 
+import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
-import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
-import org.springframework.data.gemfire.config.annotation.EnablePdx;
+import org.springframework.data.gemfire.config.annotation.EnableContinuousQueries;
 
 /**
- * Spring Boot {@link EnableAutoConfiguration auto-configuration} for bootstrapping an Apache Geode {@link ClientCache}
- * instance constructed, configured and initialized with Spring Data for Apache Geode.
- *
- * Additionally, this configuration automatically enables Apache Geode PDX serialization to serialize data sent
- * between the client and server(s) in the cluster.
+ * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Continuous Query (CQ)
+ * functionality in a {@link ClientCache} application.
  *
  * @author John Blum
  * @see org.apache.geode.cache.Cache
+ * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
- * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
- * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
- * @see org.springframework.data.gemfire.config.annotation.EnablePdx
+ * @see org.springframework.data.gemfire.config.annotation.EnableContinuousQueries
  * @since 1.0.0
  */
 @Configuration
+@ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
-@ConditionalOnMissingBean(GemFireCache.class)
-@ClientCacheApplication
-@EnablePdx
-@SuppressWarnings("all")
-public class GeodeClientCacheAutoConfiguration {
+@ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor", value = Cache.class)
+@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
+@EnableContinuousQueries
+public class ContinuousQueryAutoConfiguration {
 
 }

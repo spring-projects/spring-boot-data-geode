@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import org.apache.geode.cache.GemFireCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizers;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -36,24 +37,28 @@ import org.springframework.data.gemfire.cache.GemfireCacheManager;
 import org.springframework.data.gemfire.cache.config.EnableGemfireCaching;
 
 /**
- * Cache auto-configuration for Spring's Cache Abstraction, using Apache Geode as the caching provider.
+ * Spring Boot {@link EnableAutoConfiguration auto-configuration} for Spring's Cache Abstraction
+ * using Apache Geode or Pivotal GemFire as the caching provider.
  *
  * @author John Blum
- * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.GemFireCache
- * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.autoconfigure.cache.CacheManagerCustomizers
+ * @see org.springframework.boot.autoconfigure.cache.CacheProperties
+ * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.cache.CacheManager
  * @see org.springframework.data.gemfire.cache.GemfireCacheManager
- * @since 1.5.0
+ * @see org.springframework.data.gemfire.cache.config.EnableGemfireCaching
+ * @since 1.0.0
  */
 @Configuration
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemfireCacheManager.class, GemFireCache.class })
 @ConditionalOnMissingBean(CacheManager.class)
-@AutoConfigureAfter(GeodeClientCacheAutoConfiguration.class)
+@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @EnableGemfireCaching
 @SuppressWarnings("all")
-class GeodeCachingProviderAutoConfiguration {
+class CachingProviderAutoConfiguration {
 
 	private final CacheManagerCustomizers cacheManagerCustomizers;
 
@@ -62,7 +67,7 @@ class GeodeCachingProviderAutoConfiguration {
 	@Autowired
 	private GemfireCacheManager cacheManager;
 
-	GeodeCachingProviderAutoConfiguration(
+	CachingProviderAutoConfiguration(
 			@Autowired(required = false) CacheProperties cacheProperties,
 			@Autowired(required = false) CacheManagerCustomizers cacheManagerCustomizers) {
 

@@ -29,13 +29,13 @@ import org.springframework.data.repository.config.RepositoryConfigurationExtensi
  *
  * @author John Blum
  * @see org.springframework.boot.autoconfigure.data.AbstractRepositoryConfigurationSourceSupport
- * @see org.springframework.boot.data.geode.autoconfigure.GeodeRepositoriesAutoConfiguration
- * @see org.springframework.boot.data.geode.autoconfigure.GeodeRepositoriesAutoConfigurationRegistrar.EnableGeodeRepositoriesConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.RepositoriesAutoConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.RepositoriesAutoConfigurationRegistrar.EnableGeodeRepositoriesConfiguration
  * @see org.springframework.data.gemfire.repository.config.EnableGemfireRepositories
  * @see org.springframework.data.gemfire.repository.config.GemfireRepositoryConfigurationExtension
  * @since 1.0.0
  */
-public class GeodeRepositoriesAutoConfigurationRegistrar extends AbstractRepositoryConfigurationSourceSupport {
+public class RepositoriesAutoConfigurationRegistrar extends AbstractRepositoryConfigurationSourceSupport {
 
 	@Override
 	protected Class<? extends Annotation> getAnnotation() {

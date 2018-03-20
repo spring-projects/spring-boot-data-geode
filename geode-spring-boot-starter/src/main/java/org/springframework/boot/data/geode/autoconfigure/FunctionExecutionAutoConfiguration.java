@@ -17,7 +17,6 @@
 package org.springframework.boot.data.geode.autoconfigure;
 
 import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.client.ClientCache;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -28,21 +27,22 @@ import org.springframework.data.gemfire.function.execution.GemfireFunctionOperat
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Function Execution
- * functionality in a Spring Boot, Apache Geode {@link ClientCache} application.
+ * functionality in a {@link GemFireCache} application.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
- * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.data.gemfire.function.config.EnableGemfireFunctionExecutions
  * @see org.springframework.data.gemfire.function.execution.GemfireFunctionOperations
  * @since 1.0.0
  */
 @Configuration
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemfireFunctionOperations.class, GemFireCache.class })
-@AutoConfigureAfter(GeodeClientCacheAutoConfiguration.class)
+@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @EnableGemfireFunctionExecutions
 @SuppressWarnings("unused")
-public class GeodeFunctionExecutionAutoConfiguration {
+public class FunctionExecutionAutoConfiguration {
 
 }
