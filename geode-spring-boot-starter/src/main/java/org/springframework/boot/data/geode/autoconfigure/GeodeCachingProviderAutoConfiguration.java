@@ -62,8 +62,9 @@ class GeodeCachingProviderAutoConfiguration {
 	@Autowired
 	private GemfireCacheManager cacheManager;
 
-	GeodeCachingProviderAutoConfiguration(CacheProperties cacheProperties,
-			CacheManagerCustomizers cacheManagerCustomizers) {
+	GeodeCachingProviderAutoConfiguration(
+			@Autowired(required = false) CacheProperties cacheProperties,
+			@Autowired(required = false) CacheManagerCustomizers cacheManagerCustomizers) {
 
 		this.cacheProperties = cacheProperties;
 		this.cacheManagerCustomizers = cacheManagerCustomizers;
