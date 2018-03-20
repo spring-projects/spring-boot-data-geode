@@ -17,6 +17,7 @@
 package org.springframework.boot.data.geode.autoconfigure;
 
 import org.apache.geode.cache.Cache;
+import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -52,7 +53,7 @@ import org.springframework.data.gemfire.repository.support.GemfireRepositoryFact
  * @see org.springframework.data.gemfire.repository.support.GemfireRepositoryFactoryBean
  */
 @Configuration
-@ConditionalOnBean({ Cache.class, ClientCache.class })
+@ConditionalOnBean({ GemFireCache.class })
 @ConditionalOnClass(GemfireRepository.class)
 @ConditionalOnMissingBean({ GemfireRepositoryConfigurationExtension.class, GemfireRepositoryFactoryBean.class })
 @ConditionalOnProperty(prefix = "spring.data.gemfire.repositories",
