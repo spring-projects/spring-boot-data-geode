@@ -17,7 +17,7 @@ Among other things, this project builds on http://projects.spring.io/spring-boot
 as well as http://projects.spring.io/spring-data-gemfire/[_Spring Data GemFire/Geode_]
 and additionally offers...
 
-1. _Auto-configures_ a Pivotal GemFire_ or _Apache Geode_ http://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
+1. _Auto-configures_ a _Pivotal GemFire_ or _Apache Geode_ http://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
 instance automatically when either _Spring Data GemFire_ or _Spring Data Geode_ is on the application's CLASSPATH.
 
 2. _Auto-configures_ either _Pivotal GemFire_ or _Apache Geode_ as a _caching provider_ in http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
