@@ -22,8 +22,7 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.geode.cache.Cache;
-import org.apache.geode.cache.client.ClientCache;
+import org.apache.geode.cache.GemFireCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizers;
@@ -33,10 +32,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.data.gemfire.cache.GemfireCacheManager;
 import org.springframework.data.gemfire.cache.config.EnableGemfireCaching;
-import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 
 /**
  * Cache auto-configuration for Spring's Cache Abstraction, using Apache Geode as the caching provider.
@@ -50,8 +47,8 @@ import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
  * @since 1.5.0
  */
 @Configuration
-@ConditionalOnBean({ CacheFactoryBean.class, Cache.class, ClientCacheFactoryBean.class, ClientCache.class })
-@ConditionalOnClass(GemfireCacheManager.class)
+@ConditionalOnBean(GemFireCache.class)
+@ConditionalOnClass({ GemfireCacheManager.class, GemFireCache.class })
 @ConditionalOnMissingBean(CacheManager.class)
 @AutoConfigureAfter(GeodeClientCacheAutoConfiguration.class)
 @EnableGemfireCaching
@@ -65,7 +62,9 @@ class GeodeCachingProviderAutoConfiguration {
 	@Autowired
 	private GemfireCacheManager cacheManager;
 
-	GeodeCachingProviderAutoConfiguration(CacheProperties cacheProperties, CacheManagerCustomizers cacheManagerCustomizers) {
+	GeodeCachingProviderAutoConfiguration(CacheProperties cacheProperties,
+			CacheManagerCustomizers cacheManagerCustomizers) {
+
 		this.cacheProperties = cacheProperties;
 		this.cacheManagerCustomizers = cacheManagerCustomizers;
 	}

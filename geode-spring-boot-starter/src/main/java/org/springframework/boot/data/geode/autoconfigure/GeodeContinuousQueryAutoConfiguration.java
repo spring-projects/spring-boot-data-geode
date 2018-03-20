@@ -14,7 +14,10 @@
  * permissions and limitations under the License.
  */
 
-package org.springframework.boot.data.geode.autoconfigure;import org.apache.geode.cache.Cache;
+package org.springframework.boot.data.geode.autoconfigure;
+
+import org.apache.geode.cache.Cache;
+import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -38,7 +41,7 @@ import org.springframework.data.gemfire.config.annotation.EnableContinuousQuerie
  * @since 1.0.0
  */
 @Configuration
-@ConditionalOnBean(ClientCache.class)
+@ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
 @ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor", value = Cache.class)
 @AutoConfigureAfter(GeodeClientCacheAutoConfiguration.class)
