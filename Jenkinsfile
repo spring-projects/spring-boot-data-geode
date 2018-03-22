@@ -22,7 +22,7 @@ try {
 					throw cause
 				}
 				finally {
-					junit '**/build/*-results/*.xml'
+					junit '**/build/test-results/test/*.xml'
 				}
 			}
 		}
