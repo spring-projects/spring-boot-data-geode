@@ -1,3 +1,5 @@
+image:https://api.travis-ci.org/spring-projects/spring-boot-data-geode.svg?branch=master["Build Status", link="https://travis-ci.org/spring-projects/spring-boot-data-geode"]
+
 = Spring Boot for Apache Geode
 
 _Spring Boot for Apache Geode_ extends http://projects.spring.io/spring-boot/[_Spring Boot_] with _auto-configuration_ support
