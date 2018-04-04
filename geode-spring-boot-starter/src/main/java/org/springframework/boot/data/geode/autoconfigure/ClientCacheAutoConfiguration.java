@@ -47,7 +47,6 @@ import org.springframework.data.gemfire.config.annotation.EnablePdx;
 @ConditionalOnMissingBean(GemFireCache.class)
 @ClientCacheApplication
 @EnablePdx
-@SuppressWarnings("all")
 public class ClientCacheAutoConfiguration {
 
 }
