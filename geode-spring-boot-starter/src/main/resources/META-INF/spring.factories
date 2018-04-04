@@ -5,6 +5,5 @@ org.springframework.boot.data.geode.autoconfigure.CachingProviderAutoConfigurati
 org.springframework.boot.data.geode.autoconfigure.ContinuousQueryAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.FunctionExecutionAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.RepositoriesAutoConfiguration,\
-org.springframework.boot.data.geode.autoconfigure.SecurityAutoConfiguration,
+org.springframework.boot.data.geode.autoconfigure.SecurityAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration
-
