@@ -1,14 +1,14 @@
 image:https://api.travis-ci.org/spring-projects/spring-boot-data-geode.svg?branch=master["Build Status", link="https://travis-ci.org/spring-projects/spring-boot-data-geode"]
 
-= Spring Boot for Apache Geode
+= Spring Boot for Apache Geode & Pivotal GemFire
 
 _Spring Boot for Apache Geode_ extends http://projects.spring.io/spring-boot/[_Spring Boot_] with _auto-configuration_ support
 as well as other _convention or configuration_ features to simplify the development of _Spring_ applications
 using either https://pivotal.io/pivotal-gemfire[Pivotal GemFire] or http://geode.apache.org/[Apache Geode]
 in a _Spring_ context.
 
-This project builds on both http://projects.spring.io/spring-data-gemfire/[_Spring Data GemFire_]
-and https://github.com/spring-projects/spring-data-geode[_Spring Data Geode_].
+This project builds on both http://projects.spring.io/spring-data-gemfire/[_Spring Data for Pivotal GemFire_]
+and https://github.com/spring-projects/spring-data-geode[_Spring Data for Apache Geode_].
 
 === Project Goals
 
@@ -16,23 +16,25 @@ This project adds _Spring Boot_ **auto-configuration** support for both http://g
 and https://pivotal.io/pivotal-gemfire[Pivotal GemFire].
 
 Among other things, this project builds on http://projects.spring.io/spring-boot/[_Spring Boot_]
-as well as http://projects.spring.io/spring-data-gemfire/[_Spring Data GemFire/Geode_]
+as well as http://projects.spring.io/spring-data-gemfire/[_Spring Data for Pivotal GemFire/Apache Geode_]
 and additionally offers...
 
 1. _Auto-configures_ a _Pivotal GemFire_ or _Apache Geode_ http://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
-instance automatically when either _Spring Data GemFire_ or _Spring Data Geode_ is on the application's CLASSPATH.
+instance automatically when either _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_
+is on the application's CLASSPATH.
 
 2. _Auto-configures_ either _Pivotal GemFire_ or _Apache Geode_ as a _caching provider_ in http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
-when either _Spring Data GemFire_ or _Spring Data Geode_ are on the application's CLASSPATH.
+when either _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ are on the application's CLASSPATH.
 
-3. _Auto-configures_ _Spring Data GemFire_ or _Spring Data Geode_ http://docs.spring.io/spring-data-gemfire/docs/current/reference/html/#gemfire-repositories[Repositories]
-when _Spring Data GemFire_ or _Spring Data Geode_ is on the application's CLASSPATH and _Spring Boot_ detects SDG _Repositories_ in your _Spring Boot_ application.
+3. _Auto-configures_ _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ http://docs.spring.io/spring-data-gemfire/docs/current/reference/html/#gemfire-repositories[Repositories]
+when _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ is on the application's CLASSPATH and _Spring Boot_ detects SDG _Repositories_ in your _Spring Boot_ application.
 
-4. Provides additional support for _Spring Boot_/_Spring Data GemFire_/_Spring Data Geode_ applications deployed to PCF
-using either the PCC (_Pivotal Cloud Caching_) or SSC (_Session State Caching_) services.  Also, when using SSC, you can
-also take advantage of https://github.com/spring-projects/spring-session-data-geode[_Spring Session Data GemFire_].
+4. Provides additional support for _Spring Boot_/_Spring Data for Pivotal GemFire_/_Spring Data for Apache Geode_
+applications deployed to PCF using either the PCC (_Pivotal Cloud Caching_) or SSC (_Session State Caching_) services.
+Also, when using SSC, you can also take advantage of
+https://github.com/spring-projects/spring-session-data-geode[_Spring Session for Pivotal GemFire_].
 
-5. As an added benefit, _Spring Boot Data GemFire_ will automatically authenticate your _Spring Boot_, _Pivotal GemFire_-based application
+5. As an added benefit, _Spring Boot for Pivotal GemFire_ will automatically authenticate your _Spring Boot_, _Pivotal GemFire_-based application
 when deployed to PCF and the application is granted access to and connects with a secure PCC instance for all of its caching concerns.
 
 This, along with many other things will be provided in and by this project.
