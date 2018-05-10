@@ -24,7 +24,7 @@ instance automatically when either _Spring Data for Pivotal GemFire_ or _Spring 
 is on the application's CLASSPATH.
 
 2. _Auto-configures_ either _Pivotal GemFire_ or _Apache Geode_ as a _caching provider_ in http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
-when either _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ are on the application's CLASSPATH.
+when either _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ is on the application's CLASSPATH.
 
 3. _Auto-configures_ _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ http://docs.spring.io/spring-data-gemfire/docs/current/reference/html/#gemfire-repositories[Repositories]
 when _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ is on the application's CLASSPATH and _Spring Boot_ detects SDG _Repositories_ in your _Spring Boot_ application.
