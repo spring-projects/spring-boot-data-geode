@@ -10,7 +10,7 @@ buildscript {
 
 apply plugin: 'io.spring.convention.root'
 
-group = 'org.springframework.boot'
+group = 'org.springframework.data'
 description = 'Spring Boot for Apache Geode'
 
 ext.releaseBuild = version.endsWith('RELEASE')
