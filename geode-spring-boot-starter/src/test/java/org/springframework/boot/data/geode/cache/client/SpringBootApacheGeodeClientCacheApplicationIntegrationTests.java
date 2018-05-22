@@ -17,11 +17,15 @@
 package org.springframework.boot.data.geode.cache.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
+
+import java.util.Optional;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
+import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,17 +33,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
+import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration test testing the auto-configuration of an Apache Geode {@link ClientCache} instance.
+ * Integration test testing the auto-configuration of an Apache Geode {@link ClientCache} instance
+ * using Spring Boot auto-configuration.
  *
  * @author John Blum
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
@@ -47,7 +54,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @SuppressWarnings("unused")
-public class SpringBootApacheGeodeCacheClientApplicationTests {
+public class SpringBootApacheGeodeClientCacheApplicationIntegrationTests {
+
+	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Autowired
 	private ClientCache clientCache;
@@ -55,7 +64,11 @@ public class SpringBootApacheGeodeCacheClientApplicationTests {
 	@Test
 	public void clientCacheAndClientRegionAreAvailable() {
 
-		assertThat(this.clientCache).isNotNull();
+		Optional.ofNullable(this.clientCache)
+			.filter(it -> it instanceof GemFireCacheImpl)
+			.map(it -> (GemFireCacheImpl) it)
+			.map(it -> assertThat(it.isClient()).isTrue())
+			.orElseThrow(() -> newIllegalStateException("ClientCache was null"));
 
 		Region<Object, Object> example = this.clientCache.getRegion("Example");
 
@@ -69,6 +82,7 @@ public class SpringBootApacheGeodeCacheClientApplicationTests {
 	}
 
 	@SpringBootApplication
+	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class TestConfiguration {
 
 		@Bean("Example")
