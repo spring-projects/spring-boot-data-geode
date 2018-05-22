@@ -37,7 +37,6 @@ import org.springframework.data.gemfire.config.annotation.EnableSsl;
 @Conditional(SslAutoConfiguration.EnableSslCondition.class)
 @AutoConfigureBefore(ClientCacheAutoConfiguration.class)
 @EnableSsl
-@SuppressWarnings("unused")
 public class SslAutoConfiguration {
 
 	@SuppressWarnings("unused")
@@ -52,5 +51,6 @@ public class SslAutoConfiguration {
 
 		@ConditionalOnProperty({ "gemfire.ssl-keystore", "gemfire.ssl-truststore", "ssl-keystore", "ssl-truststore", })
 		static class StandaloneApacheGeodeSslContextCondition {}
+
 	}
 }
