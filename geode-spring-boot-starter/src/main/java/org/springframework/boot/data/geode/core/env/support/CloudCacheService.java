@@ -130,7 +130,7 @@ public class CloudCacheService extends Service {
 		return this;
 	}
 
-	static class Locator implements Comparable<Locator> {
+	public static class Locator implements Comparable<Locator> {
 
 		static final int DEFAULT_LOCATOR_PORT = GemfireUtils.DEFAULT_LOCATOR_PORT;
 
@@ -147,7 +147,7 @@ public class CloudCacheService extends Service {
 		 * @return a new, default {@link Locator}.
 		 * @see #newLocator(String, int)
 		 */
-		static Locator newLocator() {
+		public static Locator newLocator() {
 			return newLocator(DEFAULT_LOCATOR_HOST, DEFAULT_LOCATOR_PORT);
 		}
 
@@ -161,7 +161,7 @@ public class CloudCacheService extends Service {
 		 * @throws IllegalArgumentException if the {@link Integer port} is less than {@literal 0}.
 		 * @see #newLocator(String, int)
 		 */
-		static Locator newLocator(int port) {
+		public static Locator newLocator(int port) {
 			return newLocator(DEFAULT_LOCATOR_HOST, port);
 		}
 
@@ -175,7 +175,7 @@ public class CloudCacheService extends Service {
 		 * @throws IllegalArgumentException if {@link String host} is {@literal null} or empty.
 		 * @see #newLocator(String, int)
 		 */
-		static Locator newLocator(String host) {
+		public static Locator newLocator(String host) {
 			return newLocator(host, DEFAULT_LOCATOR_PORT);
 		}
 
@@ -189,7 +189,7 @@ public class CloudCacheService extends Service {
 		 * or the {@link Integer port} is less than {@literal 0}.
 		 * @return a new {@link Locator} on the configured {@link String host} and {@link Integer port}.
 		 */
-		static Locator newLocator(String host, int port) {
+		public static Locator newLocator(String host, int port) {
 
 			Assert.hasText(host, String.format("Host [%s] is required", host));
 			Assert.isTrue(port > -1, String.format("Port [%d] must be greater than equal to 0", port));
@@ -210,7 +210,7 @@ public class CloudCacheService extends Service {
 		 * @throws IllegalArgumentException if an individual Locator {@link String host[port]} is not valid.
 		 * @see #parse(String)
 		 */
-		static List<Locator> parseLocators(String locators) {
+		public static List<Locator> parseLocators(String locators) {
 
 			return Arrays.stream(String.valueOf(locators).split(","))
 				.filter(StringUtils::hasText)
@@ -228,7 +228,7 @@ public class CloudCacheService extends Service {
 		 * @see #parsePort(String)
 		 * @see #newLocator(String, int)
 		 */
-		static Locator parse(String hostPort) {
+		public static Locator parse(String hostPort) {
 
 			return Optional.ofNullable(hostPort)
 				.filter(StringUtils::hasText)
@@ -282,7 +282,7 @@ public class CloudCacheService extends Service {
 		 *
 		 * @return the {@link String name} of the host on which this {@link Locator} is running.
 		 */
-		String getHost() {
+		public String getHost() {
 			return Optional.ofNullable(this.host).filter(StringUtils::hasText).orElse(DEFAULT_LOCATOR_HOST);
 		}
 
@@ -293,7 +293,7 @@ public class CloudCacheService extends Service {
 		 *
 		 * @return the {@link Integer port} on which this {@link Locator} is listening.
 		 */
-		int getPort() {
+		public int getPort() {
 			return Optional.ofNullable(this.port).orElse(DEFAULT_LOCATOR_PORT);
 		}
 
