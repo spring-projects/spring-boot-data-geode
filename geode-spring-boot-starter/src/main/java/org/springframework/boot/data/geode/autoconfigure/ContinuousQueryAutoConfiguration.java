@@ -16,16 +16,12 @@
 
 package org.springframework.boot.data.geode.autoconfigure;
 
-import org.apache.geode.cache.Cache;
-import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableContinuousQueries;
 
 /**
@@ -43,9 +39,8 @@ import org.springframework.data.gemfire.config.annotation.EnableContinuousQuerie
  * @since 1.0.0
  */
 @Configuration
-@ConditionalOnBean(GemFireCache.class)
-@ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
-@ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor", value = Cache.class)
+@ConditionalOnBean(ClientCache.class)
+@ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor")
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @EnableContinuousQueries
 public class ContinuousQueryAutoConfiguration {
