@@ -85,7 +85,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	}
 
 	/**
-	 * Returns the given {@link Object value} or throws an {@lin IllegalArgumentException}
+	 * Returns the given {@link Object value} or throws an {@link IllegalArgumentException}
 	 * if {@link Object value} is {@literal null}.
 	 *
 	 * @param <T> {@link Class type} of the {@link Object value}.
@@ -99,7 +99,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	}
 
 	/**
-	 * Returns the given {@link Object value} or throws the given {@lin RunimeException}
+	 * Returns the given {@link Object value} or throws the given {@link RuntimeException}
 	 * if {@link Object value} is {@literal null}.
 	 *
 	 * @param <T> {@link Class type} of the {@link Object value}.

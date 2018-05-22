@@ -90,11 +90,11 @@ public class CloudCacheService extends Service {
 	}
 
 	/**
-	 * Returns a {@link List} of Pivotal GemFire {@link Locator Locator} network endpoints.
+	 * Returns a {@link List} of Pivotal GemFire Locator network endpoints.
 	 *
 	 * Returns an {@link Collections#emptyList() empty List} if no Locators were configured.
 	 *
-	 * @return a {@link List} of Pivotal GemFire {@link Locator Locator} network endpoints.
+	 * @return a {@link List} of Pivotal GemFire Locator network endpoints.
 	 * @see #getLocators()
 	 */
 	public List<Locator> getLocatorList() {
