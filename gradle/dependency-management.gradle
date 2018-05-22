@@ -11,6 +11,7 @@ dependencyManagement {
 		dependency "junit:junit:$junitVersion"
 		dependency "org.assertj:assertj-core:$assertjVersion"
 		dependency "org.hamcrest:hamcrest-core:$hamcrestVersion"
+		dependency "org.projectlombok:lombok:$lombokVersion"
 		dependency "org.hamcrest:hamcrest-library:$hamcrestVersion"
 		dependency "org.mockito:mockito-core:$mockitoVersion"
 		dependency "org.slf4j:jcl-over-slf4j:$slf4jVersion"

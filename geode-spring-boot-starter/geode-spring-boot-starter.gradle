@@ -17,6 +17,7 @@ dependencies {
 	testCompile "org.assertj:assertj-core"
 	testCompile "junit:junit"
 	testCompile "org.mockito:mockito-core"
+	testCompile "org.projectlombok:lombok"
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
