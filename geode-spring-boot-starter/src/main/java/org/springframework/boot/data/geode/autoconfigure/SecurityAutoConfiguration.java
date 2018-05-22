@@ -27,6 +27,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.cloud.CloudPlatform;
+import org.springframework.boot.data.geode.core.env.VcapPropertySource;
+import org.springframework.boot.data.geode.core.env.support.CloudCacheService;
+import org.springframework.boot.data.geode.core.env.support.Service;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +59,10 @@ import org.springframework.util.Assert;
 @SuppressWarnings("unused")
 public class SecurityAutoConfiguration {
 
+	private static final String MANAGEMENT_HTTP_HOST_PROPERTY = "spring.data.gemfire.management.http.host";
+	private static final String MANAGEMENT_HTTP_PORT_PROPERTY = "spring.data.gemfire.management.http.port";
+	private static final String MANAGEMENT_USE_HTTP_PROPERTY = "spring.data.gemfire.management.use-http";
+
 	private static final String POOL_LOCATORS_PROPERTY = "spring.data.gemfire.pool.locators";
 
 	private static final String SECURITY_USERNAME_PROPERTY =
@@ -67,32 +74,33 @@ public class SecurityAutoConfiguration {
 	private static final String VCAP_PROPERTY_SOURCE_NAME = "vcap";
 
 	@Bean
-	AutoConfiguredSecurityEnvironmentProcessor securityEnvironmentProcessor(Environment environment) {
-		return AutoConfiguredSecurityEnvironmentProcessor.with(environment);
+	@ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
+	AutoConfiguredCloudSecurityEnvironmentProcessor securityEnvironmentProcessor(Environment environment) {
+		return AutoConfiguredCloudSecurityEnvironmentProcessor.with(environment);
 	}
 
-	static class AutoConfiguredSecurityEnvironmentProcessor implements InitializingBean {
+	static class AutoConfiguredCloudSecurityEnvironmentProcessor implements InitializingBean {
 
 		private final Environment environment;
 
 		/**
-		 * Factory method used to construct a new instance of {@link AutoConfiguredSecurityEnvironmentProcessor}
+		 * Factory method used to construct a new instance of {@link AutoConfiguredCloudSecurityEnvironmentProcessor}
 		 * initialized with the given {@link Environment} from which to extract environment and contextual-based
 		 * meta-data used to configure Apache Geode/Pivotal GemFire client Security (specifically Authentication).
 		 *
 		 * @param environment {@link Environment} to evaluate.
-		 * @return a new {@link AutoConfiguredSecurityEnvironmentProcessor} initialized with
+		 * @return a new {@link AutoConfiguredCloudSecurityEnvironmentProcessor} initialized with
 		 * the given {@link Environment}.
 		 * @throws IllegalArgumentException if {@link Environment} is {@literal null}.
-		 * @see #AutoConfiguredSecurityEnvironmentProcessor(Environment)
+		 * @see #AutoConfiguredCloudSecurityEnvironmentProcessor(Environment)
 		 * @see org.springframework.core.env.Environment
 		 */
-		static AutoConfiguredSecurityEnvironmentProcessor with(Environment environment) {
-			return new AutoConfiguredSecurityEnvironmentProcessor(environment);
+		static AutoConfiguredCloudSecurityEnvironmentProcessor with(Environment environment) {
+			return new AutoConfiguredCloudSecurityEnvironmentProcessor(environment);
 		}
 
 		/**
-		 * Constructs a new instance of {@link AutoConfiguredSecurityEnvironmentProcessor} initialized with
+		 * Constructs a new instance of {@link AutoConfiguredCloudSecurityEnvironmentProcessor} initialized with
 		 * the given {@link Environment} from which to extract environment and contextual-based meta-data
 		 * used to configure Apache Geode/Pivotal GemFire client Security (specifically Authentication).
 		 *
@@ -100,9 +108,9 @@ public class SecurityAutoConfiguration {
 		 * @throws IllegalArgumentException if {@link Environment} is {@literal null}.
 		 * @see org.springframework.core.env.Environment
 		 */
-		AutoConfiguredSecurityEnvironmentProcessor(Environment environment) {
+		AutoConfiguredCloudSecurityEnvironmentProcessor(Environment environment) {
 
-			Assert.notNull(environment, "Environment is required");
+			Assert.notNull(environment, "Environment must not be null");
 
 			this.environment = environment;
 		}
@@ -121,29 +129,57 @@ public class SecurityAutoConfiguration {
 		public void afterPropertiesSet() throws Exception {
 
 			Optional.of(getEnvironment())
-				.filter(this::securityPropertiesAreNotSet)
+				.filter(this::isCloudFoundryEnvironment)
 				.ifPresent(environment -> {
-					System.setProperty(SECURITY_USERNAME_PROPERTY, resolveUsername(environment));
-					System.setProperty(SECURITY_PASSWORD_PROPERTY, resolvePassword(environment));
+
+					VcapPropertySource propertySource = VcapPropertySource.from(environment);
+
+					CloudCacheService cloudCache = propertySource.findFirstCloudCacheService();
+
+					configureAuthentication(environment, propertySource, cloudCache);
+					configureLocators(environment, propertySource, cloudCache);
+					configureManagementRestApiAccess(environment, propertySource, cloudCache);
 				});
 		}
 
-		private boolean securityPropertiesAreSet(Environment environment) {
+		private boolean isCloudFoundryEnvironment(Environment environment) {
+			return Optional.ofNullable(environment).filter(CloudPlatform.CLOUD_FOUNDRY::isActive).isPresent();
+		}
 
+		private boolean isSecurityPropertiesSet(Environment environment) {
 			return environment.containsProperty(SECURITY_USERNAME_PROPERTY)
 				&& environment.containsProperty(SECURITY_PASSWORD_PROPERTY);
 		}
 
-		private boolean securityPropertiesAreNotSet(Environment environment) {
-			return !securityPropertiesAreSet(environment);
+		private boolean isSecurityPropertiesNotSet(Environment environment) {
+			return !isSecurityPropertiesSet(environment);
 		}
 
-		private String resolveUsername(Environment environment) {
-			return "me";
+		private void configureAuthentication(Environment environment, VcapPropertySource propertySource,
+				Service cloudCache) {
+
+			propertySource.findFirstUserByRoleClusterOperator(cloudCache)
+				.filter(user -> isSecurityPropertiesNotSet(environment))
+				.ifPresent(user -> {
+					System.setProperty(SECURITY_USERNAME_PROPERTY, user.getName());
+					user.getPassword().ifPresent(password -> System.setProperty(SECURITY_PASSWORD_PROPERTY, password));
+				});
 		}
 
-		private String resolvePassword(Environment environment) {
-			return "password";
+		private void configureLocators(Environment environment, VcapPropertySource propertySource,
+				CloudCacheService cloudCache) {
+
+			cloudCache.getLocators().ifPresent(locators -> System.setProperty(POOL_LOCATORS_PROPERTY, locators));
+		}
+
+		private void configureManagementRestApiAccess(Environment environment, VcapPropertySource propertySource,
+				CloudCacheService cloudCache) {
+
+			cloudCache.getGfshUrl().ifPresent(url -> {
+				System.setProperty(MANAGEMENT_USE_HTTP_PROPERTY, Boolean.TRUE.toString());
+				System.setProperty(MANAGEMENT_HTTP_HOST_PROPERTY, url.getHost());
+				System.setProperty(MANAGEMENT_HTTP_PORT_PROPERTY, String.valueOf(url.getPort()));
+			});
 		}
 	}
 
