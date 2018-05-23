@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
  * @author John Blum
  * @see org.springframework.boot.data.geode.repository.model.Customer
  * @see org.springframework.boot.data.geode.repository.repo.CustomerRepository
+ * @see org.springframework.stereotype.Service
  * @since 1.0.0
  */
 @Service
@@ -39,13 +40,13 @@ public class CustomerService {
 
 	private final CustomerRepository customerRepository;
 
-	private AtomicLong IDENTIFIER_SEQUENCE = new AtomicLong(0L);
+	private final AtomicLong identifierSequence = new AtomicLong(0L);
 
 	public CustomerService(CustomerRepository customerRepository) {
 		this.customerRepository = customerRepository;
 	}
 
-	public final CustomerRepository getCustomerRepository() {
+	public CustomerRepository getCustomerRepository() {
 
 		return Optional.ofNullable(this.customerRepository)
 			.orElseThrow(() -> newIllegalStateException("CustomerRepository was not properly configured"));
@@ -55,13 +56,17 @@ public class CustomerService {
 		return Optional.ofNullable(getCustomerRepository().findByName(name));
 	}
 
+	protected Long nextId() {
+		return identifierSequence.incrementAndGet();
+	}
+
 	public Customer save(Customer customer) {
 
 		return Optional.ofNullable(customer)
 			.map(it -> {
 
 				if (customer.isNew()) {
-					customer.identifiedBy(IDENTIFIER_SEQUENCE.incrementAndGet());
+					customer.identifiedBy(nextId());
 				}
 
 				return getCustomerRepository().save(customer);
