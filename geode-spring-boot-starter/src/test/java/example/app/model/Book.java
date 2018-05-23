@@ -16,18 +16,22 @@
 
 package example.app.model;
 
+import java.time.LocalDate;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import sun.util.resources.LocaleData;
 
 /**
- * The Book class...
+ * The {@link Book} class is an Abstract Data Type (ADT) modeling a book.
  *
  * @author John Blum
+ * @see lombok
+ * @see org.springframework.data.annotation.Id
+ * @see org.springframework.data.gemfire.mapping.annotation.Region
  * @since 1.0.0
  */
 @Region("Books")
@@ -40,7 +44,7 @@ public class Book {
 	@Id
 	private ISBN isbn;
 
-	private LocaleData publishedDate;
+	private LocalDate publishedDate;
 
 	@NonNull
 	private String title;
