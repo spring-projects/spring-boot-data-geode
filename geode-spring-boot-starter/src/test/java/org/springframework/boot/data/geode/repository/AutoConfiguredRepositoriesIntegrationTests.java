@@ -50,7 +50,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class AutoConfiguredRepositoryIntegrationTests {
+public class AutoConfiguredRepositoriesIntegrationTests {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 
