@@ -47,7 +47,7 @@ import org.springframework.data.gemfire.repository.support.GemfireRepositoryFact
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
- * @see org.springframework.boot.data.geode.autoconfigure.RepositoriesAutoConfigurationRegistrar
+ * @see GemFireRepositoriesAutoConfigurationRegistrar
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.repository.GemfireRepository
  * @see org.springframework.data.gemfire.repository.config.EnableGemfireRepositories
@@ -62,7 +62,7 @@ import org.springframework.data.gemfire.repository.support.GemfireRepositoryFact
 @ConditionalOnProperty(prefix = "spring.data.gemfire.repositories",
 	name = "enabled", havingValue = "true", matchIfMissing = true)
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
-@Import(RepositoriesAutoConfigurationRegistrar.class)
+@Import(GemFireRepositoriesAutoConfigurationRegistrar.class)
 public class RepositoriesAutoConfiguration {
 
 }

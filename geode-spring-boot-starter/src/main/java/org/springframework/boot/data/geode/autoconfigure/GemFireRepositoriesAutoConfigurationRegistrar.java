@@ -35,7 +35,7 @@ import org.springframework.data.repository.config.RepositoryConfigurationExtensi
  * @see org.springframework.data.gemfire.repository.config.GemfireRepositoryConfigurationExtension
  * @since 1.0.0
  */
-public class RepositoriesAutoConfigurationRegistrar extends AbstractRepositoryConfigurationSourceSupport {
+public class GemFireRepositoriesAutoConfigurationRegistrar extends AbstractRepositoryConfigurationSourceSupport {
 
 	@Override
 	protected Class<? extends Annotation> getAnnotation() {
