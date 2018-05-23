@@ -26,6 +26,8 @@ dependencies {
 
 	testCompile slf4jDependencies
 
+	testRuntime "javax.cache:cache-api"
+
 //	integrationTestRuntime "org.springframework.shell:spring-shell"
 
 }
