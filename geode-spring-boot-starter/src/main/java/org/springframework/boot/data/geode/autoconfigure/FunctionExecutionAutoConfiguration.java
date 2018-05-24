@@ -22,7 +22,9 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.gemfire.function.config.EnableGemfireFunctionExecutions;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.gemfire.function.config.EnableGemfireFunctions;
+import org.springframework.data.gemfire.function.config.GemFireFunctionExecutionAutoConfigurationRegistrar;
 import org.springframework.data.gemfire.function.execution.GemfireFunctionOperations;
 
 /**
@@ -33,7 +35,9 @@ import org.springframework.data.gemfire.function.execution.GemfireFunctionOperat
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.data.gemfire.function.config.EnableGemfireFunctions
  * @see org.springframework.data.gemfire.function.config.EnableGemfireFunctionExecutions
+ * @see org.springframework.data.gemfire.function.config.GemFireFunctionExecutionAutoConfigurationRegistrar
  * @see org.springframework.data.gemfire.function.execution.GemfireFunctionOperations
  * @since 1.0.0
  */
@@ -41,7 +45,8 @@ import org.springframework.data.gemfire.function.execution.GemfireFunctionOperat
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemfireFunctionOperations.class, GemFireCache.class })
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
-@EnableGemfireFunctionExecutions
+@EnableGemfireFunctions
+@Import(GemFireFunctionExecutionAutoConfigurationRegistrar.class)
 @SuppressWarnings("unused")
 public class FunctionExecutionAutoConfiguration {
 
