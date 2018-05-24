@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-package org.springframework.data.gemfire.function.execution;
+package org.springframework.boot.data.geode.function.support;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
