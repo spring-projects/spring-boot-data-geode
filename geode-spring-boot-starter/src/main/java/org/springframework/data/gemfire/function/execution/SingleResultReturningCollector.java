@@ -20,14 +20,19 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
 
+import org.apache.geode.cache.execute.ResultCollector;
 import org.apache.geode.distributed.DistributedMember;
 
 /**
- * The SingleResultReturningCollector class...
+ * The {@link SingleResultReturningCollector} class is an implementation of the {@link ResultCollector} interface
+ * which returns a single {@link Object result}.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.execute.ResultCollector
+ * @see org.springframework.data.gemfire.function.execution.AbstractResultCollector
  * @since 1.0.0
  */
+@SuppressWarnings("unused")
 public class SingleResultReturningCollector<T> extends AbstractResultCollector<T, T> {
 
 	@Override

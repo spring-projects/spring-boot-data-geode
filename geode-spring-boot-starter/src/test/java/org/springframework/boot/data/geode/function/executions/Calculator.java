@@ -16,13 +16,13 @@
 
 package org.springframework.boot.data.geode.function.executions;
 
-import org.junit.experimental.theories.suppliers.TestedOn;
 import org.springframework.data.gemfire.function.annotation.OnRegion;
 
 /**
- * The Calculator class...
+ * The {@link Calculator} interface defines Apache Geode/Pivotal GemFire Functions.
  *
  * @author John Blum
+ * @see org.springframework.data.gemfire.function.annotation.OnRegion
  * @since 1.0.0
  */
 @SuppressWarnings("all")

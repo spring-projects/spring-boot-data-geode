@@ -23,9 +23,11 @@ import org.apache.geode.cache.execute.FunctionException;
 import org.apache.geode.cache.execute.ResultCollector;
 
 /**
- * The AbstractResultCollector class...
+ * The {@link AbstractResultCollector} class is an abstract base implementation of the {@link ResultCollector} interface
+ * encapsulating common functionality for collecting results from a Function execution.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.execute.ResultCollector
  * @since 1.0.0
  */
 @SuppressWarnings("unused")
