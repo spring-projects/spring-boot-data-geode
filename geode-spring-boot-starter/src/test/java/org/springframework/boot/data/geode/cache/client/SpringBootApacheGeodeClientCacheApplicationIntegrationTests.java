@@ -26,6 +26,7 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration test testing the auto-configuration of an Apache Geode {@link ClientCache} instance
- * using Spring Boot auto-configuration.
+ * Integration test testing the auto-configuration of an Apache Geode {@link ClientCache} instance.
  *
  * @author John Blum
  * @see org.junit.Test
@@ -52,14 +53,19 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class SpringBootApacheGeodeClientCacheApplicationIntegrationTests {
+public class SpringBootApacheGeodeClientCacheApplicationIntegrationTests extends IntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Autowired
 	private ClientCache clientCache;
+
+	@BeforeClass
+	public static void setup() {
+		closeGemFireCacheWaitOnCloseEvent();
+	}
 
 	@Test
 	public void clientCacheAndClientRegionAreAvailable() {

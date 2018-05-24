@@ -21,35 +21,53 @@ import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newI
 
 import java.util.Optional;
 
+import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
+import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.LocalRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.util.RegionUtils;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * The SpringBootApacheGeodePeerCacheApplicationIntegrationTests class...
+ * Integration tests testing the auto-configuration of an Apache Geode peer {@link Cache} instance, overriding
+ * the default, {@link ClientCache} instance.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.Cache
+ * @see org.apache.geode.cache.Region
+ * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class SpringBootApacheGeodePeerCacheApplicationIntegrationTests {
+public class SpringBootApacheGeodePeerCacheApplicationIntegrationTests extends IntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Autowired
 	private GemFireCache peerCache;
+
+	@BeforeClass
+	public static void setup() {
+		closeGemFireCacheWaitOnCloseEvent();
+	}
 
 	@Test
 	public void peerCacheWithPeerLocalRegionAreAvailable() {

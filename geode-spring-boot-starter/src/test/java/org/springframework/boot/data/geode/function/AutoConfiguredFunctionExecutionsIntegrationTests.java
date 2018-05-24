@@ -26,6 +26,7 @@ import java.util.Optional;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.execute.FunctionService;
 import org.apache.shiro.util.Assert;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,24 +39,50 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.config.annotation.EnableGemFireProperties;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.function.annotation.GemfireFunction;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * The AutoConfiguredFunctionExecutionsIntegrationTests class...
+ * Integration tests testing the auto-configuration for Spring Data Apache Geode/Pivotal GemFire
+ * Function implementations and executions support.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.execute.FunctionService
+ * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.data.geode.function.executions.Calculator
+ * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.data.gemfire.function.annotation.GemfireFunction
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class AutoConfiguredFunctionExecutionsIntegrationTests {
+public class AutoConfiguredFunctionExecutionsIntegrationTests extends IntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Autowired
+	private GemFireCache gemfireCache;
+
+	@Autowired
 	private Calculator calculator;
+
+	@BeforeClass
+	public static void setup() {
+		closeGemFireCacheWaitOnCloseEvent();
+	}
+
+	@Test
+	public void cacheClientIsInGroupTest() {
+
+		assertThat(this.gemfireCache).isNotNull();
+		assertThat(this.gemfireCache.getDistributedSystem().getGroupMembers("test"))
+			.contains(this.gemfireCache.getDistributedSystem().getDistributedMember());
+	}
 
 	@Test
 	public void firstFunctionsMustBeRegistered() {

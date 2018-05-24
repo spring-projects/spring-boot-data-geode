@@ -22,16 +22,17 @@ import javax.annotation.Resource;
 
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.data.geode.repository.model.Customer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -40,16 +41,23 @@ import example.app.model.Book;
 import example.app.service.support.CachingBookService;
 
 /**
- * The AutoConfiguredCachingIntegrationTests class...
+ * Integration tests testing the auto-configuration of Spring's Cache Abstraction with Apache Geode
+ * or Pivotal GemFire as the caching provider.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.Region
+ * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class AutoConfiguredCachingIntegrationTests {
+public class AutoConfiguredCachingIntegrationTests extends IntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 
@@ -57,7 +65,12 @@ public class AutoConfiguredCachingIntegrationTests {
 	private CachingBookService bookService;
 
 	@Resource(name = "CachedBooks")
-	private Region<String, Customer> cachedBooks;
+	private Region<String, Book> cachedBooks;
+
+	@BeforeClass
+	public static void setup() {
+		closeGemFireCacheWaitOnCloseEvent();
+	}
 
 	private void assertBook(Book book, String title) {
 

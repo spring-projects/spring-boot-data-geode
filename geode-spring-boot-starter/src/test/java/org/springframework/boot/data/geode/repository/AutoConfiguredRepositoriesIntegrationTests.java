@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +34,7 @@ import org.springframework.boot.data.geode.repository.service.CustomerService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -41,8 +43,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  * or Pivotal GemFire.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
@@ -50,7 +55,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class AutoConfiguredRepositoriesIntegrationTests {
+public class AutoConfiguredRepositoriesIntegrationTests extends IntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 
@@ -59,6 +64,11 @@ public class AutoConfiguredRepositoriesIntegrationTests {
 
 	@Resource(name = "Customers")
 	private Region<Long, Customer> customers;
+
+	@BeforeClass
+	public static void setup() {
+		closeGemFireCacheWaitOnCloseEvent();
+	}
 
 	@Test
 	public void customerServiceWasConfiguredCorrectly() {
