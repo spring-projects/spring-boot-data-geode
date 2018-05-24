@@ -17,11 +17,13 @@
 package org.springframework.boot.data.geode.autoconfigure;
 
 import org.apache.geode.cache.client.ClientCache;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
+import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
 import org.springframework.data.gemfire.config.annotation.EnableContinuousQueries;
 
 /**
@@ -29,20 +31,22 @@ import org.springframework.data.gemfire.config.annotation.EnableContinuousQuerie
  * functionality in a {@link ClientCache} application.
  *
  * @author John Blum
- * @see org.apache.geode.cache.Cache
- * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
- * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
+ * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.EnableContinuousQueries
  * @since 1.0.0
  */
 @Configuration
-@ConditionalOnBean(ClientCache.class)
+@ConditionalOnBean(ClientCacheFactoryBean.class)
 @ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor")
-@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @EnableContinuousQueries
+@SuppressWarnings("unused")
 public class ContinuousQueryAutoConfiguration {
 
+	@Bean
+	public ClientCacheConfigurer enableSubscriptionClientCacheConfigurer() {
+		return (beanName, clientCacheFactoryBean) -> clientCacheFactoryBean.setSubscriptionEnabled(true);
+	}
 }
