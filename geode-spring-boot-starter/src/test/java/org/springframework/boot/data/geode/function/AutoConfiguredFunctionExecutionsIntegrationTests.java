@@ -24,9 +24,6 @@ import java.util.Iterator;
 import java.util.Optional;
 
 import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.RegionAttributes;
-import org.apache.geode.cache.Scope;
-import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.cache.execute.FunctionService;
 import org.apache.shiro.util.Assert;
 import org.junit.FixMethodOrder;
@@ -38,8 +35,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.data.geode.function.executions.Calculator;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.gemfire.RegionAttributesFactoryBean;
-import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
+import org.springframework.data.gemfire.config.annotation.EnableGemFireProperties;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.function.annotation.GemfireFunction;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -97,35 +93,12 @@ public class AutoConfiguredFunctionExecutionsIntegrationTests {
 	}
 
 	@SpringBootApplication
+	@EnableGemFireProperties(groups = "test")
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class TestConfiguration {
 
-		@Bean("Calculations")
-		public ClientRegionFactoryBean<Object, Object> calculationsRegion(GemFireCache gemfireCache,
-				RegionAttributes<Object, Object> calculationsRegionAttributes) {
-
-			ClientRegionFactoryBean<Object, Object> calculations = new ClientRegionFactoryBean<>();
-
-			calculations.setAttributes(calculationsRegionAttributes);
-			calculations.setCache(gemfireCache);
-			calculations.setClose(false);
-			calculations.setShortcut(ClientRegionShortcut.LOCAL_PERSISTENT);
-
-			return calculations;
-		}
-
 		@Bean
-		public RegionAttributesFactoryBean calculationsRegionAttributes() {
-
-			RegionAttributesFactoryBean calculationsRegionAttributes = new RegionAttributesFactoryBean();
-
-			calculationsRegionAttributes.setScope(Scope.LOCAL);
-
-			return calculationsRegionAttributes;
-		}
-
-		@Bean
-		public CalculatorFunctions calculatorFunctions() {
+		public CalculatorFunctions calculatorFunctions(GemFireCache gemfireCache) {
 			return new CalculatorFunctions();
 		}
 	}

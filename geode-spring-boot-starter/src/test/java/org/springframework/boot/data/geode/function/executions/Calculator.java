@@ -16,7 +16,7 @@
 
 package org.springframework.boot.data.geode.function.executions;
 
-import org.springframework.data.gemfire.function.annotation.OnRegion;
+import org.springframework.data.gemfire.function.annotation.OnMember;
 
 /**
  * The {@link Calculator} interface defines Apache Geode/Pivotal GemFire Functions.
@@ -25,8 +25,8 @@ import org.springframework.data.gemfire.function.annotation.OnRegion;
  * @see org.springframework.data.gemfire.function.annotation.OnRegion
  * @since 1.0.0
  */
+@OnMember(groups = "test")
 @SuppressWarnings("all")
-@OnRegion(region = "Calculations")
 // TODO change Function returns type when SDG properly handles Function method return types/values
 public interface Calculator {
 
