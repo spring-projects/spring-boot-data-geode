@@ -37,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +47,7 @@ import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
+import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 import org.springframework.data.gemfire.support.ConnectionEndpoint;
 import org.springframework.data.gemfire.tests.integration.ClientServerIntegrationTestsSupport;
@@ -117,14 +119,15 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ClientServerI
 		assertThat(this.temperatureReadingsHandler.getFreezingTemperatures()).contains(16, -51);
 	}
 
-	@SpringBootApplication
+	@SpringBootApplication(exclude = SslAutoConfiguration.class)
+	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	public static class GemFireClientConfiguration {
 
 		@Bean
 		ClientCacheConfigurer clientCachePoolPortConfigurer(
 			@Value("${" + GEMFIRE_CACHE_SERVER_PORT_PROPERTY + ":40404}") int port) {
 
-			return (bean, clientCacheFactoryBean) -> clientCacheFactoryBean.setServers(
+			return (beanName, clientCacheFactoryBean) -> clientCacheFactoryBean.setServers(
 				Collections.singletonList(new ConnectionEndpoint("localhost", port)));
 		}
 
