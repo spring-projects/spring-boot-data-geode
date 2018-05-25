@@ -33,8 +33,10 @@ import org.springframework.data.gemfire.config.annotation.EnableContinuousQuerie
  * @author John Blum
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
+ * @see org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer
  * @see org.springframework.data.gemfire.config.annotation.EnableContinuousQueries
  * @since 1.0.0
  */

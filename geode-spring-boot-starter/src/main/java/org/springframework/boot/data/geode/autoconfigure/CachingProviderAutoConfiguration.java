@@ -38,15 +38,17 @@ import org.springframework.data.gemfire.cache.config.EnableGemfireCaching;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} for Spring's Cache Abstraction
- * using Apache Geode or Pivotal GemFire as the caching provider.
+ * using Apache Geode as the caching provider.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.autoconfigure.cache.CacheManagerCustomizers
  * @see org.springframework.boot.autoconfigure.cache.CacheProperties
  * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.cache.CacheManager
+ * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.cache.GemfireCacheManager
  * @see org.springframework.data.gemfire.cache.config.EnableGemfireCaching
  * @since 1.0.0

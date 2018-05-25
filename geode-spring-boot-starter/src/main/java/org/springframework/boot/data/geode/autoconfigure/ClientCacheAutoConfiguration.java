@@ -31,11 +31,12 @@ import org.springframework.data.gemfire.config.annotation.EnablePdx;
  * instance constructed, configured and initialized with Spring Data for Apache Geode.
  *
  * Additionally, this configuration automatically enables Apache Geode PDX serialization to serialize data sent
- * between the client and server(s) in the cluster in the client/server topology.
+ * between the client and server(s) in the cluster when using the client/server topology.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication

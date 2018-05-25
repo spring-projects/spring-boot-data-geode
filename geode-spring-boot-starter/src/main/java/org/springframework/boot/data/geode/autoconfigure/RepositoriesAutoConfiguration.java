@@ -47,8 +47,10 @@ import org.springframework.data.gemfire.repository.support.GemfireRepositoryFact
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
- * @see GemFireRepositoriesAutoConfigurationRegistrar
+ * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.GemFireRepositoriesAutoConfigurationRegistrar
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.repository.GemfireRepository
  * @see org.springframework.data.gemfire.repository.config.EnableGemfireRepositories
  * @see org.springframework.data.gemfire.repository.config.GemfireRepositoryConfigurationExtension
@@ -59,8 +61,8 @@ import org.springframework.data.gemfire.repository.support.GemfireRepositoryFact
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass(GemfireRepository.class)
 @ConditionalOnMissingBean({ GemfireRepositoryConfigurationExtension.class, GemfireRepositoryFactoryBean.class })
-@ConditionalOnProperty(prefix = "spring.data.gemfire.repositories",
-	name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "spring.data.gemfire.repositories", name = "enabled", havingValue = "true",
+	matchIfMissing = true)
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @Import(GemFireRepositoriesAutoConfigurationRegistrar.class)
 public class RepositoriesAutoConfiguration {

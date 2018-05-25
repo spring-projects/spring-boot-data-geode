@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -51,9 +52,21 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * The SslAutoConfiguration class...
+ * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's SSL transport
+ * between client and servers when using the client/server topology.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.env.EnvironmentPostProcessor
+ * @see org.springframework.context.annotation.Condition
+ * @see org.springframework.context.annotation.Conditional
+ * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.core.env.ConfigurableEnvironment
+ * @see org.springframework.core.env.Environment
+ * @see org.springframework.core.io.Resource
+ * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
+ * @see org.springframework.data.gemfire.config.annotation.EnableSsl
  * @since 1.0.0
  */
 @Configuration

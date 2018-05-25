@@ -33,8 +33,10 @@ import org.springframework.data.gemfire.function.execution.GemfireFunctionOperat
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.function.config.EnableGemfireFunctions
  * @see org.springframework.data.gemfire.function.config.EnableGemfireFunctionExecutions
  * @see org.springframework.data.gemfire.function.config.GemFireFunctionExecutionAutoConfigurationRegistrar
