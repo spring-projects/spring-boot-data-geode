@@ -7,3 +7,7 @@ org.springframework.boot.data.geode.autoconfigure.FunctionExecutionAutoConfigura
 org.springframework.boot.data.geode.autoconfigure.RepositoriesAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.SecurityAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration
+
+# Environment Post Processing
+org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration.SslEnvironmentPostProcessor
