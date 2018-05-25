@@ -26,7 +26,6 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,11 +62,6 @@ public class SpringBootApacheGeodePeerCacheApplicationIntegrationTests extends I
 
 	@Autowired
 	private GemFireCache peerCache;
-
-	@BeforeClass
-	public static void setup() {
-		closeGemFireCacheWaitOnCloseEvent();
-	}
 
 	@Test
 	public void peerCacheWithPeerLocalRegionAreAvailable() {

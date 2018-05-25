@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,11 +65,6 @@ public class AutoConfiguredCachingIntegrationTests extends IntegrationTestsSuppo
 
 	@Resource(name = "CachedBooks")
 	private Region<String, Book> cachedBooks;
-
-	@BeforeClass
-	public static void setup() {
-		closeGemFireCacheWaitOnCloseEvent();
-	}
 
 	private void assertBook(Book book, String title) {
 

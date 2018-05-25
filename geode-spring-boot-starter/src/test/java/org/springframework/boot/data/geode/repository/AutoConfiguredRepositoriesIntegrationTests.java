@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,11 +63,6 @@ public class AutoConfiguredRepositoriesIntegrationTests extends IntegrationTests
 
 	@Resource(name = "Customers")
 	private Region<Long, Customer> customers;
-
-	@BeforeClass
-	public static void setup() {
-		closeGemFireCacheWaitOnCloseEvent();
-	}
 
 	@Test
 	public void customerServiceWasConfiguredCorrectly() {

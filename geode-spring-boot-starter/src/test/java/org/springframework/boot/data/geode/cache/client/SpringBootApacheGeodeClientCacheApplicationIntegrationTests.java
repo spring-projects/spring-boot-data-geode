@@ -26,7 +26,6 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,11 +60,6 @@ public class SpringBootApacheGeodeClientCacheApplicationIntegrationTests extends
 
 	@Autowired
 	private ClientCache clientCache;
-
-	@BeforeClass
-	public static void setup() {
-		closeGemFireCacheWaitOnCloseEvent();
-	}
 
 	@Test
 	public void clientCacheAndClientRegionAreAvailable() {

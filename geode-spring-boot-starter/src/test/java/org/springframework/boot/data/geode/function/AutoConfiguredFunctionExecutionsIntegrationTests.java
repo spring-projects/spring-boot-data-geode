@@ -26,7 +26,6 @@ import java.util.Optional;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.execute.FunctionService;
 import org.apache.shiro.util.Assert;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,11 +69,6 @@ public class AutoConfiguredFunctionExecutionsIntegrationTests extends Integratio
 
 	@Autowired
 	private Calculator calculator;
-
-	@BeforeClass
-	public static void setup() {
-		closeGemFireCacheWaitOnCloseEvent();
-	}
 
 	@Test
 	public void cacheClientIsInGroupTest() {
