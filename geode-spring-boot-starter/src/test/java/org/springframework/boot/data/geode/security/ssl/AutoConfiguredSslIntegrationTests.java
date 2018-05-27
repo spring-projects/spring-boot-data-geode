@@ -22,11 +22,14 @@ import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newI
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -130,6 +133,10 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 		return locateKeyStoreInFileSystem(directory, TRUSTED_KEYSTORE_FILENAME);
 	}
 
+	private static Optional<File> locateKeyStoreInFileSystem(String keystoreFileName) {
+		return locateKeyStoreInFileSystem(FileSystemUtils.WORKING_DIRECTORY, keystoreFileName);
+	}
+
 	@SuppressWarnings("all")
 	private static Optional<File> locateKeyStoreInFileSystem(File directory, String keystoreFilename) {
 
@@ -160,6 +167,20 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 		}
 
 		return Optional.empty();
+	}
+
+	@AfterClass
+	public static void clearSslSystemProperties() {
+
+		List<String> sslSystemProperties = System.getProperties().keySet().stream()
+			.map(String::valueOf)
+			.map(String::toLowerCase)
+			.filter(property -> property.contains("ssl"))
+			.collect(Collectors.toList());
+
+		//System.err.printf("SSL System Properties [%s]%n", sslSystemProperties);
+
+		sslSystemProperties.forEach(System::clearProperty);
 	}
 
 	@javax.annotation.Resource(name = "Echo")
