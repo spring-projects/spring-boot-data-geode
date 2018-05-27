@@ -46,7 +46,7 @@ import org.springframework.data.gemfire.config.annotation.CacheServerApplication
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
-import org.springframework.data.gemfire.tests.integration.config.SubscriptionEnabledClientServerIntegrationTestConfiguration;
+import org.springframework.data.gemfire.tests.integration.config.SubscriptionEnabledClientServerIntegrationTestsConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.geode.query.cq.event.TemperatureReading;
@@ -65,7 +65,7 @@ import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
- * @see org.springframework.data.gemfire.tests.integration.config.SubscriptionEnabledClientServerIntegrationTestConfiguration
+ * @see org.springframework.data.gemfire.tests.integration.config.SubscriptionEnabledClientServerIntegrationTestsConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
@@ -111,7 +111,8 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 
 	@SpringBootApplication(exclude = SslAutoConfiguration.class)
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
-	public static class GemFireClientConfiguration extends SubscriptionEnabledClientServerIntegrationTestConfiguration {
+	public static class GemFireClientConfiguration
+			extends SubscriptionEnabledClientServerIntegrationTestsConfiguration {
 
 		@Bean("TemperatureReadings")
 		public ClientRegionFactoryBean<Long, TemperatureReading> temperatureReadingsRegion(GemFireCache gemfireCache) {
