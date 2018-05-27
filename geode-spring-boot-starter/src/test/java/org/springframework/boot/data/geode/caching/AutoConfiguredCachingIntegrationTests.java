@@ -44,6 +44,7 @@ import example.app.service.support.CachingBookService;
  * or Pivotal GemFire as the caching provider.
  *
  * @author John Blum
+ * @see org.junit.Test
  * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest

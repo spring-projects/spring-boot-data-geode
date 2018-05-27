@@ -39,10 +39,11 @@ import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests testing the auto-configuration of an Apache Geode peer {@link Cache} instance, overriding
- * the default, {@link ClientCache} instance.
+ * Integration test testing the auto-configuration of an Apache Geode peer {@link Cache} instance, overriding
+ * the default {@link ClientCache} instance.
  *
  * @author John Blum
+ * @see org.junit.Test
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.cache.client.ClientCache

@@ -47,6 +47,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0

@@ -19,7 +19,6 @@ package org.springframework.boot.data.geode.cq;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import javax.annotation.Resource;
 
@@ -29,13 +28,11 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.LoaderHelper;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,50 +43,43 @@ import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
-import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
-import org.springframework.data.gemfire.support.ConnectionEndpoint;
-import org.springframework.data.gemfire.tests.integration.ClientServerIntegrationTestsSupport;
-import org.springframework.data.gemfire.tests.process.ProcessWrapper;
+import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
+import org.springframework.data.gemfire.tests.integration.config.SubscriptionEnabledClientServerIntegrationTestConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.geode.query.cq.event.TemperatureReading;
 import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
 
 /**
- * The AutoConfiguredContinuousQueryIntegrationTests class...
+ * Integration tests testing the auto-configuration of Apache Geode/Pivotal GemFire Continuous Query functionality.
  *
  * @author John Blum
+ * @see org.junit.Test
+ * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.Region
+ * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.context.annotation.AnnotationConfigApplicationContext
+ * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
+ * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
+ * @see org.springframework.data.gemfire.tests.integration.config.SubscriptionEnabledClientServerIntegrationTestConfiguration
+ * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
 	classes = AutoConfiguredContinuousQueryIntegrationTests.GemFireClientConfiguration.class)
 @SuppressWarnings("unused")
-public class AutoConfiguredContinuousQueryIntegrationTests extends ClientServerIntegrationTestsSupport {
+public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 
-	private static ProcessWrapper gemfireServer;
-
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
-
-		int availablePort = findAvailablePort();
-
-		gemfireServer = run(GemFireServerConfiguration.class,
-			String.format("-D%s=%d", GEMFIRE_CACHE_SERVER_PORT_PROPERTY, availablePort));
-
-		waitForServerToStart("localhost", availablePort);
-
-		System.setProperty(GEMFIRE_CACHE_SERVER_PORT_PROPERTY, String.valueOf(availablePort));
-	}
-
-	@AfterClass
-	public static void stopGemFireServer() {
-		System.clearProperty(GEMFIRE_CACHE_SERVER_PORT_PROPERTY);
-		stop(gemfireServer);
+		startGemFireServer(GemFireServerConfiguration.class);
 	}
 
 	@Autowired
@@ -121,15 +111,7 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ClientServerI
 
 	@SpringBootApplication(exclude = SslAutoConfiguration.class)
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
-	public static class GemFireClientConfiguration {
-
-		@Bean
-		ClientCacheConfigurer clientCachePoolPortConfigurer(
-			@Value("${" + GEMFIRE_CACHE_SERVER_PORT_PROPERTY + ":40404}") int port) {
-
-			return (beanName, clientCacheFactoryBean) -> clientCacheFactoryBean.setServers(
-				Collections.singletonList(new ConnectionEndpoint("localhost", port)));
-		}
+	public static class GemFireClientConfiguration extends SubscriptionEnabledClientServerIntegrationTestConfiguration {
 
 		@Bean("TemperatureReadings")
 		public ClientRegionFactoryBean<Long, TemperatureReading> temperatureReadingsRegion(GemFireCache gemfireCache) {
