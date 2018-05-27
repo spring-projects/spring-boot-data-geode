@@ -22,13 +22,11 @@ import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newI
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Optional;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,12 +41,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
-import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
+import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnableSsl;
 import org.springframework.data.gemfire.config.annotation.PeerCacheConfigurer;
-import org.springframework.data.gemfire.support.ConnectionEndpoint;
-import org.springframework.data.gemfire.tests.integration.ClientServerIntegrationTestsSupport;
-import org.springframework.data.gemfire.tests.process.ProcessWrapper;
+import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
+import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
 import org.springframework.data.gemfire.tests.util.FileSystemUtils;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
@@ -64,11 +61,12 @@ import example.geode.cache.EchoCacheLoader;
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.context.annotation.Bean
  * @see org.springframework.core.io.Resource
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableSsl
- * @see org.springframework.data.gemfire.tests.integration.ClientServerIntegrationTestsSupport
- * @see org.springframework.data.gemfire.tests.process.ProcessWrapper
+ * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
+ * @see org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
@@ -76,26 +74,14 @@ import example.geode.cache.EchoCacheLoader;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
 	classes = AutoConfiguredSslIntegrationTests.GemFireClientConfiguration.class)
 @SuppressWarnings("unused")
-public class AutoConfiguredSslIntegrationTests extends ClientServerIntegrationTestsSupport {
+public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 	private static final String TRUSTED_KEYSTORE_FILENAME = "trusted.keystore";
 
-	private static ProcessWrapper gemfireServer;
-
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
-
-		int availablePort = findAvailablePort();
-
-		gemfireServer = run(GemFireServerConfiguration.class,
-			javaxNetSslKeyStorePropertyFromClassPath(),
-			//javaxNetSslKeyStorePropertyFromFileSystem(),
-			String.format("-D%s=%d", GEMFIRE_CACHE_SERVER_PORT_PROPERTY, availablePort));
-
-		waitForServerToStart("localhost", availablePort);
-
-		System.setProperty(GEMFIRE_CACHE_SERVER_PORT_PROPERTY, String.valueOf(availablePort));
+		startGemFireServer(GemFireServerConfiguration.class, javaxNetSslKeyStorePropertyFromClassPath());
 	}
 
 	private static String javaxNetSslKeyStorePropertyFromClassPath() {
@@ -176,12 +162,6 @@ public class AutoConfiguredSslIntegrationTests extends ClientServerIntegrationTe
 		return Optional.empty();
 	}
 
-	@AfterClass
-	public static void stopGemFireServer() {
-		System.clearProperty(GEMFIRE_CACHE_SERVER_PORT_PROPERTY);
-		stop(gemfireServer);
-	}
-
 	@javax.annotation.Resource(name = "Echo")
 	private Region<String, String> echo;
 
@@ -195,15 +175,8 @@ public class AutoConfiguredSslIntegrationTests extends ClientServerIntegrationTe
 	}
 
 	@SpringBootApplication
-	static class GemFireClientConfiguration {
-
-		@Bean
-		ClientCacheConfigurer clientCachePoolPortConfigurer(
-			@Value("${" + GEMFIRE_CACHE_SERVER_PORT_PROPERTY + ":40404}") int port) {
-
-			return (bean, clientCacheFactoryBean) -> clientCacheFactoryBean.setServers(
-				Collections.singletonList(new ConnectionEndpoint("localhost", port)));
-		}
+	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
+	static class GemFireClientConfiguration extends ClientServerIntegrationTestsConfiguration {
 
 		@Bean("Echo")
 		public ClientRegionFactoryBean<String, String> echoRegion(GemFireCache gemfireCache) {
