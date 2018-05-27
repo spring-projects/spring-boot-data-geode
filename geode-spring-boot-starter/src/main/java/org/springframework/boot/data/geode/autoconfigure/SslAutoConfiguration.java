@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
+import java.util.Properties;
 
 import org.apache.geode.cache.client.ClientCache;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -79,6 +81,7 @@ public class SslAutoConfiguration {
 
 	private static final String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
 	private static final String GEMFIRE_SSL_KEYSTORE_PROPERTY = "gemfire.ssl-keystore";
+	private static final String GEMFIRE_SSL_PROPERTY_SOURCE_NAME = "gemfire-ssl";
 	private static final String GEMFIRE_SSL_TRUSTSTORE_PROPERTY = "gemfire.ssl-truststore";
 	private static final String SECURITY_SSL_KEYSTORE_PROPERTY = "spring.data.gemfire.security.ssl.keystore";
 	private static final String SECURITY_SSL_TRUSTSTORE_PROPERTY = "spring.data.gemfire.security.ssl.truststore";
@@ -269,8 +272,14 @@ public class SslAutoConfiguration {
 				.map(SslAutoConfiguration::resolveTrustedKeyStore)
 				.filter(StringUtils::hasText)
 				.ifPresent(trustedKeyStore -> {
-					System.setProperty(SECURITY_SSL_KEYSTORE_PROPERTY, trustedKeyStore);
-					System.setProperty(SECURITY_SSL_TRUSTSTORE_PROPERTY, trustedKeyStore);
+
+					Properties gemfireSslProperties = new Properties();
+
+					gemfireSslProperties.setProperty(SECURITY_SSL_KEYSTORE_PROPERTY, trustedKeyStore);
+					gemfireSslProperties.setProperty(SECURITY_SSL_TRUSTSTORE_PROPERTY, trustedKeyStore);
+
+					environment.getPropertySources()
+						.addFirst(new PropertiesPropertySource(GEMFIRE_SSL_PROPERTY_SOURCE_NAME, gemfireSslProperties));
 				});
 		}
 	}
