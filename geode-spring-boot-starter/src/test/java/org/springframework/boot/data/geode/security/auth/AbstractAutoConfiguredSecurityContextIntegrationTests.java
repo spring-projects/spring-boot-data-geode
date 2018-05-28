@@ -19,11 +19,13 @@ package org.springframework.boot.data.geode.security.auth;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer.SECURITY_PASSWORD_PROPERTY;
 import static org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer.SECURITY_USERNAME_PROPERTY;
+import static org.springframework.data.gemfire.util.ArrayUtils.nullSafeArray;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalArgumentException;
+import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -34,11 +36,13 @@ import org.apache.geode.security.ResourcePermission;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import example.geode.cache.EchoCacheLoader;
@@ -63,9 +67,8 @@ import lombok.ToString;
 public abstract class AbstractAutoConfiguredSecurityContextIntegrationTests
 		extends ForkingClientServerIntegrationTestsSupport {
 
-	protected static String applicationProperties = "Not Set";
-	protected static String securityContextUsername = "Not Set";
-	protected static String securityContextPassword = "Not Set";
+	private static final String SECURITY_CONTEXT_USERNAME_PROPERTY = "security.context.username.property";
+	private static final String SECURITY_CONTEXT_PASSWORD_PROPERTY = "security.context.password.property";
 
 	@Autowired
 	private GemfireTemplate echoTemplate;
@@ -112,6 +115,11 @@ public abstract class AbstractAutoConfiguredSecurityContextIntegrationTests
 
 			return echoRegion;
 		}
+
+		@Bean
+		TestSecurityManager testSecurityManager(Environment environment) {
+			return new TestSecurityManager(environment);
+		}
 	}
 
 	public static class TestSecurityManager implements org.apache.geode.security.SecurityManager {
@@ -119,19 +127,32 @@ public abstract class AbstractAutoConfiguredSecurityContextIntegrationTests
 		private final String username;
 		private final String password;
 
-		public TestSecurityManager() throws IOException {
+		public TestSecurityManager(Environment environment) {
 
-			Properties securityProperties = new Properties();
-
-			securityProperties.load(new ClassPathResource(applicationProperties).getInputStream());
-
-			this.username = Optional.ofNullable(securityProperties.getProperty(securityContextUsername))
+			this.username = Optional.ofNullable(environment.getProperty(SECURITY_CONTEXT_USERNAME_PROPERTY))
 				.filter(StringUtils::hasText)
 				.orElseThrow(() -> newIllegalArgumentException("Username is required"));
 
-			this.password = Optional.ofNullable(securityProperties.getProperty(securityContextPassword))
+			this.password = Optional.ofNullable(environment.getProperty(SECURITY_CONTEXT_PASSWORD_PROPERTY))
 				.filter(StringUtils::hasText)
 				.orElseThrow(() -> newIllegalArgumentException("Password is required"));
+		}
+
+		private ClassPathResource resolveApplicationProperties(Environment environment) {
+
+			Assert.notNull(environment, "Environment must not be null");
+
+			return Arrays.stream(nullSafeArray(environment.getActiveProfiles(), String.class))
+				.filter(StringUtils::hasText)
+				.filter(it -> !"default".equalsIgnoreCase(it))
+				.map(it -> String.format("application-%s.properties", it))
+				.map(ClassPathResource::new)
+				.filter(ClassPathResource::exists)
+				.findFirst()
+				.orElseThrow(() ->
+					newIllegalStateException("Unable to resolve application.properties from Environment [%s]",
+						environment));
+
 		}
 
 		String getUsername() {
@@ -165,14 +186,14 @@ public abstract class AbstractAutoConfiguredSecurityContextIntegrationTests
 	@ToString(of = "name")
 	@EqualsAndHashCode(of = "name")
 	@RequiredArgsConstructor(staticName = "with")
-	protected static class User implements Principal, Serializable {
+	static class User implements Principal, Serializable {
 
 		@NonNull
 		private String name;
 
 		private String password;
 
-		public User having(String password) {
+		User having(String password) {
 			setPassword(password);
 			return this;
 		}
