@@ -62,6 +62,7 @@ import example.geode.cache.EchoCacheLoader;
  * @author John Blum
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.annotation.Bean
