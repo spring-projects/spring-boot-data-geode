@@ -89,9 +89,8 @@ public class VcapPropertySourceUnitTests {
 		}
 		catch (IllegalArgumentException expected) {
 
-			assertThat(expected).hasMessage(
-				"Environment [%s] was not configurable or does not contain an enumerable [vcap] PropertySource",
-					mockEnvironment);
+			assertThat(expected)
+				.hasMessage("Environment was not configurable or does not contain an enumerable [vcap] PropertySource");
 
 			assertThat(expected).hasNoCause();
 
@@ -117,9 +116,8 @@ public class VcapPropertySourceUnitTests {
 		}
 		catch (IllegalArgumentException expected) {
 
-			assertThat(expected).hasMessage(
-				"Environment [%s] was not configurable or does not contain an enumerable [vcap] PropertySource",
-					mockEnvironment);
+			assertThat(expected)
+				.hasMessage("Environment was not configurable or does not contain an enumerable [vcap] PropertySource");
 
 			assertThat(expected).hasNoCause();
 

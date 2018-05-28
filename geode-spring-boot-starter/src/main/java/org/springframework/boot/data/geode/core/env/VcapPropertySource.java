@@ -98,8 +98,8 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 			.map(propertySources -> propertySources.get(VCAP_PROPERTY_SOURCE_NAME))
 			.map(VcapPropertySource::from)
 			.orElseThrow(() -> newIllegalArgumentException(
-				"Environment [%1$s] was not configurable or does not contain an enumerable [%2$s] PropertySource",
-					environment, VCAP_PROPERTY_SOURCE_NAME));
+				"Environment was not configurable or does not contain an enumerable [%s] PropertySource",
+					VCAP_PROPERTY_SOURCE_NAME));
 	}
 
 	public static VcapPropertySource from(Properties properties) {
