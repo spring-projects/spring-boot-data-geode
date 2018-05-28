@@ -10,4 +10,5 @@ org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration
 
 # Environment Post Processing
 org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.boot.data.geode.autoconfigure.SecurityAutoConfiguration.AutoConfiguredCloudSecurityEnvironmentPostProcessor,\
 org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration.SslEnvironmentPostProcessor

@@ -19,7 +19,7 @@ package org.springframework.boot.data.geode.autoconfigure;
 import java.util.Optional;
 
 import org.apache.geode.cache.client.ClientCache;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
@@ -30,14 +30,14 @@ import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.boot.data.geode.core.env.VcapPropertySource;
 import org.springframework.boot.data.geode.core.env.support.CloudCacheService;
 import org.springframework.boot.data.geode.core.env.support.Service;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer;
-import org.springframework.util.Assert;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Security functionality,
@@ -45,16 +45,20 @@ import org.springframework.util.Assert;
  *
  * @author John Blum
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
+ * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.core.env.Environment
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
+ * @see org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer
  * @since 1.0.0
  */
 @Configuration
-@ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
-@Conditional(SecurityAutoConfiguration.EnableSecurityCondition.class)
 @AutoConfigureBefore(ClientCacheAutoConfiguration.class)
+@Conditional(SecurityAutoConfiguration.EnableSecurityCondition.class)
+@ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
 @EnableSecurity
 @SuppressWarnings("unused")
 public class SecurityAutoConfiguration {
@@ -73,72 +77,22 @@ public class SecurityAutoConfiguration {
 
 	private static final String VCAP_PROPERTY_SOURCE_NAME = "vcap";
 
-	@Bean
-	@ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
-	AutoConfiguredCloudSecurityEnvironmentProcessor securityEnvironmentProcessor(Environment environment) {
-		return AutoConfiguredCloudSecurityEnvironmentProcessor.with(environment);
-	}
-
-	static class AutoConfiguredCloudSecurityEnvironmentProcessor implements InitializingBean {
-
-		private final Environment environment;
-
-		/**
-		 * Factory method used to construct a new instance of {@link AutoConfiguredCloudSecurityEnvironmentProcessor}
-		 * initialized with the given {@link Environment} from which to extract environment and contextual-based
-		 * meta-data used to configure Apache Geode/Pivotal GemFire client Security (specifically Authentication).
-		 *
-		 * @param environment {@link Environment} to evaluate.
-		 * @return a new {@link AutoConfiguredCloudSecurityEnvironmentProcessor} initialized with
-		 * the given {@link Environment}.
-		 * @throws IllegalArgumentException if {@link Environment} is {@literal null}.
-		 * @see #AutoConfiguredCloudSecurityEnvironmentProcessor(Environment)
-		 * @see org.springframework.core.env.Environment
-		 */
-		static AutoConfiguredCloudSecurityEnvironmentProcessor with(Environment environment) {
-			return new AutoConfiguredCloudSecurityEnvironmentProcessor(environment);
-		}
-
-		/**
-		 * Constructs a new instance of {@link AutoConfiguredCloudSecurityEnvironmentProcessor} initialized with
-		 * the given {@link Environment} from which to extract environment and contextual-based meta-data
-		 * used to configure Apache Geode/Pivotal GemFire client Security (specifically Authentication).
-		 *
-		 * @param environment {@link Environment} to evaluate.
-		 * @throws IllegalArgumentException if {@link Environment} is {@literal null}.
-		 * @see org.springframework.core.env.Environment
-		 */
-		AutoConfiguredCloudSecurityEnvironmentProcessor(Environment environment) {
-
-			Assert.notNull(environment, "Environment must not be null");
-
-			this.environment = environment;
-		}
-
-		/**
-		 * Returns a reference to the configured {@link Environment}.
-		 *
-		 * @return a reference to the configured {@link Environment}.
-		 * @see org.springframework.core.env.Environment
-		 */
-		Environment getEnvironment() {
-			return this.environment;
-		}
+	static class AutoConfiguredCloudSecurityEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
 		@Override
-		public void afterPropertiesSet() throws Exception {
+		public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 
-			Optional.of(getEnvironment())
+			Optional.of(environment)
 				.filter(this::isCloudFoundryEnvironment)
-				.ifPresent(environment -> {
+				.ifPresent(env -> {
 
-					VcapPropertySource propertySource = VcapPropertySource.from(environment);
+					VcapPropertySource propertySource = VcapPropertySource.from(env);
 
 					CloudCacheService cloudCache = propertySource.findFirstCloudCacheService();
 
-					configureAuthentication(environment, propertySource, cloudCache);
-					configureLocators(environment, propertySource, cloudCache);
-					configureManagementRestApiAccess(environment, propertySource, cloudCache);
+					configureAuthentication(env, propertySource, cloudCache);
+					configureLocators(env, propertySource, cloudCache);
+					configureManagementRestApiAccess(env, propertySource, cloudCache);
 				});
 		}
 
@@ -201,8 +155,6 @@ public class SecurityAutoConfiguration {
 		@ConditionalOnProperty({
 			"gemfire.security-username",
 			"gemfire.security-password",
-			"security-username",
-			"security-password"
 		})
 		static class StandaloneApacheGeodeSecurityContextCondition { }
 
