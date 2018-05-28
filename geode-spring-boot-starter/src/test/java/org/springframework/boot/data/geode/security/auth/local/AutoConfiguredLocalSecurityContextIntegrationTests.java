@@ -17,12 +17,16 @@
 package org.springframework.boot.data.geode.security.auth.local;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer.SDG_SECURITY_PASSWORD_PROPERTY;
+import static org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer.SDG_SECURITY_USERNAME_PROPERTY;
 import static org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer.SECURITY_PASSWORD_PROPERTY;
 import static org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer.SECURITY_USERNAME_PROPERTY;
+import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalArgumentException;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.Principal;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.geode.cache.GemFireCache;
@@ -38,6 +42,7 @@ import org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
@@ -49,6 +54,7 @@ import org.springframework.data.gemfire.tests.integration.ForkingClientServerInt
 import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.StringUtils;
 
 import example.geode.cache.EchoCacheLoader;
 import lombok.Data;
@@ -61,6 +67,7 @@ import lombok.RequiredArgsConstructor;
  * authentication/authorization in a local, non-managed context.
  *
  * @author John Blum
+ * @see java.security.Principal
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
@@ -156,22 +163,17 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests extends ForkingC
 
 		public TestSecurityManager() throws IOException {
 
-			this.username = "ghostrider";
-			this.password = "p@55w0rd";
-
-			/*
 			Properties securityProperties = new Properties();
 
 			securityProperties.load(new ClassPathResource("application-security-local.properties").getInputStream());
 
-			this.username = Optional.ofNullable(securityProperties.getProperty(SDG_SECURITY_PASSWORD_PROPERTY))
+			this.username = Optional.ofNullable(securityProperties.getProperty(SDG_SECURITY_USERNAME_PROPERTY))
 				.filter(StringUtils::hasText)
 				.orElseThrow(() -> newIllegalArgumentException("Username is required"));
 
 			this.password = Optional.ofNullable(securityProperties.getProperty(SDG_SECURITY_PASSWORD_PROPERTY))
 				.filter(StringUtils::hasText)
 				.orElseThrow(() -> newIllegalArgumentException("Password is required"));
-			*/
 		}
 
 		@Override
