@@ -67,7 +67,7 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
-		startGemFireServer(GemFireServerConfiguration.class,"-Dspring.profiles.active=security-local");
+		startGemFireServer(GemFireServerConfiguration.class);
 	}
 
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
@@ -78,7 +78,7 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 	@CacheServerApplication(name = "AutoConfiguredLocalSecurityContextIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL,
 		useBeanFactoryLocator = true)
 	@EnableSecurity(securityManagerClassName = "org.springframework.boot.data.geode.security.support.SecurityManagerProxy")
-	@PropertySource("application-security-local.properties")
+	@PropertySource(name = "security-local", value="application-security-local.properties")
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {
