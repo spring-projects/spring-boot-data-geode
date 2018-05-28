@@ -88,6 +88,7 @@ public class SslAutoConfiguration {
 	private static final String SSL_KEYSTORE_PROPERTY = "ssl-keystore";
 	private static final String SSL_TRUSTSTORE_PROPERTY = "ssl-truststore";
 	private static final String TRUSTED_KEYSTORE_FILENAME = "trusted.keystore";
+	private static final String TRUSTED_KEYSTORE_FILENAME_PROPERTY = "spring.data.gemfire.security.ssl.keystore.name";
 	private static final String USER_HOME_DIRECTORY = System.getProperty("user.home");
 
 	private static final Logger logger = LoggerFactory.getLogger(SslAutoConfiguration.class);
@@ -102,36 +103,44 @@ public class SslAutoConfiguration {
 				&& environment.containsProperty(SSL_TRUSTSTORE_PROPERTY));
 	}
 
-	private static boolean sslIsNotConfigured(Environment environment) {
+	private static boolean isSslNotConfigured(Environment environment) {
 		return !isSslConfigured(environment);
 	}
 
 	private static String resolveTrustedKeyStore(Environment environment) {
 
-		return locateKeyStoreInFileSystem()
+		return locateKeyStoreInFileSystem(environment)
 			.map(File::getAbsolutePath)
-			.orElseGet(() -> locateKeyStoreInUserHome()
+			.orElseGet(() -> locateKeyStoreInUserHome(environment)
 				.map(File::getAbsolutePath)
-				.orElseGet(() -> resolveKeyStoreFromClassPathAsPathname()
+				.orElseGet(() -> resolveKeyStoreFromClassPathAsPathname(environment)
 					.orElse(null)));
 	}
 
-	private static Optional<String> resolveKeyStoreFromClassPathAsPathname() {
+	private static String resolveTrustedKeystoreName(Environment environment) {
 
-		return resolveKeyStoreFromClassPath()
+		return Optional.ofNullable(environment)
+			.filter(it -> environment.containsProperty(TRUSTED_KEYSTORE_FILENAME_PROPERTY))
+			.map(it -> environment.getProperty(TRUSTED_KEYSTORE_FILENAME_PROPERTY))
+			.orElse(TRUSTED_KEYSTORE_FILENAME);
+	}
+
+	private static Optional<String> resolveKeyStoreFromClassPathAsPathname(Environment environment) {
+
+		return resolveKeyStoreFromClassPath(environment)
 			.filter(File::isFile)
 			.map(File::getAbsolutePath)
 			.filter(StringUtils::hasText);
 	}
 
-	private static Optional<File> resolveKeyStoreFromClassPath() {
+	private static Optional<File> resolveKeyStoreFromClassPath(Environment environment) {
 
 		/*
 		System.err.printf("KEYSTORE LOCATION [%s]%n", ObjectUtils.doOperationSafely(() ->
 			new File(new ClassPathResource(keystoreName).getURL().toURI())).getAbsolutePath());
 		*/
 
-		return locateKeyStoreInClassPath().map(resource -> {
+		return locateKeyStoreInClassPath(environment).map(resource -> {
 
 			File trustedKeyStore = null;
 
@@ -143,7 +152,7 @@ public class SslAutoConfiguration {
 					trustedKeyStore = new File(url.toURI());
 				}
 				else if (ResourceUtils.isJarURL(url)) {
-					trustedKeyStore = new File(CURRENT_WORKING_DIRECTORY, TRUSTED_KEYSTORE_FILENAME);
+					trustedKeyStore = new File(CURRENT_WORKING_DIRECTORY, resolveTrustedKeystoreName(environment));
 					FileCopyUtils.copy(url.openStream(), new FileOutputStream(trustedKeyStore));
 				}
 			}
@@ -172,8 +181,8 @@ public class SslAutoConfiguration {
 		*/
 	}
 
-	private static Optional<ClassPathResource> locateKeyStoreInClassPath() {
-		return locateKeyStoreInClassPath(TRUSTED_KEYSTORE_FILENAME);
+	private static Optional<ClassPathResource> locateKeyStoreInClassPath(Environment environment) {
+		return locateKeyStoreInClassPath(resolveTrustedKeystoreName(environment));
 	}
 
 	@SuppressWarnings("all")
@@ -183,12 +192,16 @@ public class SslAutoConfiguration {
 			.filter(Resource::exists);
 	}
 
-	private static Optional<File> locateKeyStoreInFileSystem() {
-		return locateKeyStoreInFileSystem(new File(CURRENT_WORKING_DIRECTORY));
+	private static Optional<File> locateKeyStoreInFileSystem(Environment environment) {
+		return locateKeyStoreInFileSystem(environment, new File(CURRENT_WORKING_DIRECTORY));
 	}
 
-	private static Optional<File> locateKeyStoreInFileSystem(File directory) {
-		return locateKeyStoreInFileSystem(directory, TRUSTED_KEYSTORE_FILENAME);
+	private static Optional<File> locateKeyStoreInFileSystem(Environment environment, File directory) {
+		return locateKeyStoreInFileSystem(directory, resolveTrustedKeystoreName(environment));
+	}
+
+	private static Optional<File> locateKeyStoreInFileSystem(String keystoreName) {
+		return locateKeyStoreInFileSystem(new File(CURRENT_WORKING_DIRECTORY), keystoreName);
 	}
 
 	@SuppressWarnings("all")
@@ -222,8 +235,8 @@ public class SslAutoConfiguration {
 		return Optional.empty();
 	}
 
-	private static Optional<File> locateKeyStoreInUserHome() {
-		return locateKeyStoreInUserHome(TRUSTED_KEYSTORE_FILENAME);
+	private static Optional<File> locateKeyStoreInUserHome(Environment environment) {
+		return locateKeyStoreInUserHome(resolveTrustedKeystoreName(environment));
 	}
 
 	private static Optional<File> locateKeyStoreInUserHome(String keystoreFilename) {
@@ -268,7 +281,7 @@ public class SslAutoConfiguration {
 		public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 
 			Optional.of(environment)
-				.filter(SslAutoConfiguration::sslIsNotConfigured)
+				.filter(SslAutoConfiguration::isSslNotConfigured)
 				.map(SslAutoConfiguration::resolveTrustedKeyStore)
 				.filter(StringUtils::hasText)
 				.ifPresent(trustedKeyStore -> {
@@ -290,9 +303,11 @@ public class SslAutoConfiguration {
 		@SuppressWarnings("all")
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
-			return locateKeyStoreInClassPath().isPresent()
-				|| locateKeyStoreInUserHome().isPresent()
-				|| locateKeyStoreInFileSystem().isPresent();
+			Environment environment = context.getEnvironment();
+
+			return locateKeyStoreInClassPath(environment).isPresent()
+				|| locateKeyStoreInUserHome(environment).isPresent()
+				|| locateKeyStoreInFileSystem(environment).isPresent();
 		}
 	}
 }
