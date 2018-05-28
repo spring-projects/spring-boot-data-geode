@@ -17,6 +17,7 @@
 package org.springframework.boot.data.geode.autoconfigure;
 
 import java.util.Optional;
+import java.util.Properties;
 
 import org.apache.geode.cache.client.ClientCache;
 import org.springframework.boot.SpringApplication;
@@ -35,6 +36,7 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer;
@@ -63,6 +65,8 @@ import org.springframework.data.gemfire.config.annotation.support.AutoConfigured
 @SuppressWarnings("unused")
 public class SecurityAutoConfiguration {
 
+	private static final String CLOUD_CACHE_PROPERTY_SOURCE_NAME = "cloudcache-security";
+
 	private static final String MANAGEMENT_HTTP_HOST_PROPERTY = "spring.data.gemfire.management.http.host";
 	private static final String MANAGEMENT_HTTP_PORT_PROPERTY = "spring.data.gemfire.management.http.port";
 	private static final String MANAGEMENT_USE_HTTP_PROPERTY = "spring.data.gemfire.management.use-http";
@@ -88,11 +92,16 @@ public class SecurityAutoConfiguration {
 
 					VcapPropertySource propertySource = VcapPropertySource.from(env);
 
+					Properties cloudCacheProperties = new Properties();
+
 					CloudCacheService cloudCache = propertySource.findFirstCloudCacheService();
 
-					configureAuthentication(env, propertySource, cloudCache);
-					configureLocators(env, propertySource, cloudCache);
-					configureManagementRestApiAccess(env, propertySource, cloudCache);
+					configureAuthentication(env, cloudCacheProperties, propertySource, cloudCache);
+					configureLocators(env, cloudCacheProperties, propertySource, cloudCache);
+					configureManagementRestApiAccess(env, cloudCacheProperties, propertySource, cloudCache);
+
+					environment.getPropertySources()
+						.addFirst(new PropertiesPropertySource(CLOUD_CACHE_PROPERTY_SOURCE_NAME, cloudCacheProperties));
 				});
 		}
 
@@ -109,30 +118,32 @@ public class SecurityAutoConfiguration {
 			return !isSecurityPropertiesSet(environment);
 		}
 
-		private void configureAuthentication(Environment environment, VcapPropertySource propertySource,
-				Service cloudCache) {
+		private void configureAuthentication(Environment environment, Properties cloudCacheProperties,
+				VcapPropertySource propertySource, Service cloudCache) {
 
 			propertySource.findFirstUserByRoleClusterOperator(cloudCache)
 				.filter(user -> isSecurityPropertiesNotSet(environment))
 				.ifPresent(user -> {
-					System.setProperty(SECURITY_USERNAME_PROPERTY, user.getName());
-					user.getPassword().ifPresent(password -> System.setProperty(SECURITY_PASSWORD_PROPERTY, password));
+					cloudCacheProperties.setProperty(SECURITY_USERNAME_PROPERTY, user.getName());
+					user.getPassword().ifPresent(password ->
+						cloudCacheProperties.setProperty(SECURITY_PASSWORD_PROPERTY, password));
 				});
 		}
 
-		private void configureLocators(Environment environment, VcapPropertySource propertySource,
-				CloudCacheService cloudCache) {
+		private void configureLocators(Environment environment, Properties cloudCacheProperties,
+				VcapPropertySource propertySource, CloudCacheService cloudCache) {
 
-			cloudCache.getLocators().ifPresent(locators -> System.setProperty(POOL_LOCATORS_PROPERTY, locators));
+			cloudCache.getLocators().ifPresent(locators ->
+				cloudCacheProperties.setProperty(POOL_LOCATORS_PROPERTY, locators));
 		}
 
-		private void configureManagementRestApiAccess(Environment environment, VcapPropertySource propertySource,
-				CloudCacheService cloudCache) {
+		private void configureManagementRestApiAccess(Environment environment, Properties cloudCacheProperties,
+				VcapPropertySource propertySource, CloudCacheService cloudCache) {
 
 			cloudCache.getGfshUrl().ifPresent(url -> {
-				System.setProperty(MANAGEMENT_USE_HTTP_PROPERTY, Boolean.TRUE.toString());
-				System.setProperty(MANAGEMENT_HTTP_HOST_PROPERTY, url.getHost());
-				System.setProperty(MANAGEMENT_HTTP_PORT_PROPERTY, String.valueOf(url.getPort()));
+				cloudCacheProperties.setProperty(MANAGEMENT_USE_HTTP_PROPERTY, Boolean.TRUE.toString());
+				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_HOST_PROPERTY, url.getHost());
+				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_PORT_PROPERTY, String.valueOf(url.getPort()));
 			});
 		}
 	}
