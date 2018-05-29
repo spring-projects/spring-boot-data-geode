@@ -64,7 +64,6 @@ import org.springframework.data.gemfire.config.annotation.support.AutoConfigured
 @Configuration
 @AutoConfigureBefore(ClientCacheAutoConfiguration.class)
 @Conditional(ClientSecurityAutoConfiguration.EnableSecurityCondition.class)
-//@ConditionalOnBean(ClientCacheFactoryBean.class)
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
 @EnableSecurity
 @SuppressWarnings("unused")

@@ -31,6 +31,7 @@ import org.springframework.data.gemfire.config.annotation.CacheServerApplication
 import org.springframework.data.gemfire.config.annotation.EnableLocator;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -54,6 +55,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AutoConfiguredCloudSecurityContextIntegrationTests.GemFireClientConfiguration.class,
 	webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -61,28 +63,34 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AutoConfiguredCloudSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
 
-	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap.properties";
 	private static final String GEMFIRE_LOG_LEVEL = "error";
+	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap.properties";
 
-	public static void loadVcapApplicationProperties() throws IOException {
-
-		Properties vcapApplicationProperties = new Properties();
-
-		vcapApplicationProperties.load(new ClassPathResource(VCAP_APPLICATION_PROPERTIES).getInputStream());
-
-		vcapApplicationProperties.stringPropertyNames()
-			.forEach(property -> System.setProperty(property, vcapApplicationProperties.getProperty(property)));
-	}
+	private static Properties vcapApplicationProperties = new Properties();
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
+
 		startGemFireServer(GemFireServerConfiguration.class, "-Dspring.profiles.active=security-cloud");
+
 		loadVcapApplicationProperties();
+
 		GemfireBeanFactoryLocatorProxy.clean();
 	}
 
+	public static void loadVcapApplicationProperties() throws IOException {
+
+		vcapApplicationProperties.load(new ClassPathResource(VCAP_APPLICATION_PROPERTIES).getInputStream());
+
+		vcapApplicationProperties.stringPropertyNames().forEach(property ->
+			System.setProperty(property, vcapApplicationProperties.getProperty(property)));
+	}
+
 	@AfterClass
-	public static void cleanUpBeanFactoryLocatorReferences() {
+	public static void cleanUpUsedResources() {
+
+		vcapApplicationProperties.stringPropertyNames().forEach(System::clearProperty);
+
 		GemfireBeanFactoryLocatorProxy.clean();
 	}
 
