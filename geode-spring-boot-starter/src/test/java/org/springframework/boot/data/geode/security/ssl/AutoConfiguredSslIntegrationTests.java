@@ -34,11 +34,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.data.geode.core.util.ObjectUtils;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
@@ -50,6 +51,7 @@ import org.springframework.data.gemfire.config.annotation.PeerCacheConfigurer;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
 import org.springframework.data.gemfire.tests.util.FileSystemUtils;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -74,6 +76,7 @@ import example.geode.cache.EchoCacheLoader;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
+@ActiveProfiles("ssl")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
 	classes = AutoConfiguredSslIntegrationTests.GemFireClientConfiguration.class)
@@ -215,10 +218,15 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 
 	@EnableSsl
 	@CacheServerApplication(name = "AutoConfiguredSslIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
+	@PropertySource(name = "gemfire-ssl", value = "application-ssl.properties")
 	static class GemFireServerConfiguration {
 
 		public static void main(String[] args) {
-			SpringApplication.run(GemFireServerConfiguration.class, args);
+
+			AnnotationConfigApplicationContext applicationContext =
+				new AnnotationConfigApplicationContext(GemFireServerConfiguration.class);
+
+			applicationContext.registerShutdownHook();
 		}
 
 		@Bean
