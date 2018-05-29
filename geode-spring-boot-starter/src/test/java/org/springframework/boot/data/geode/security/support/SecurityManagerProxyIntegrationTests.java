@@ -55,7 +55,7 @@ public class SecurityManagerProxyIntegrationTests {
 	@BeforeClass
 	@AfterClass
 	public static void cleanUpBeanFactoryLocatorReferences() {
-		GemfireBeanFactoryLocatorProxy.clean();
+		GemfireBeanFactoryLocatorProxy.clear();
 	}
 
 	@Autowired

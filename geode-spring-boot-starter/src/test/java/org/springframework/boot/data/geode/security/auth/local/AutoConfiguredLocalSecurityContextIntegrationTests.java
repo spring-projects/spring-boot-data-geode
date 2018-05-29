@@ -67,7 +67,7 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
 
-		GemfireBeanFactoryLocatorProxy.clean();
+		GemfireBeanFactoryLocatorProxy.clear();
 
 		startGemFireServer(GemFireServerConfiguration.class,
 			"-Dspring.profiles.active=security-local-server");
@@ -75,7 +75,7 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 
 	@AfterClass
 	public static void cleanUpBeanFactoryLocatorReferences() {
-		GemfireBeanFactoryLocatorProxy.clean();
+		GemfireBeanFactoryLocatorProxy.clear();
 	}
 
 	@SpringBootApplication

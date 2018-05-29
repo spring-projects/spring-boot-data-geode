@@ -31,7 +31,6 @@ import org.springframework.data.gemfire.config.annotation.CacheServerApplication
 import org.springframework.data.gemfire.config.annotation.EnableLocator;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -55,7 +54,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
-@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AutoConfiguredCloudSecurityContextIntegrationTests.GemFireClientConfiguration.class,
 	webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -75,7 +73,7 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 
 		loadVcapApplicationProperties();
 
-		GemfireBeanFactoryLocatorProxy.clean();
+		GemfireBeanFactoryLocatorProxy.clear();
 	}
 
 	public static void loadVcapApplicationProperties() throws IOException {
@@ -91,7 +89,7 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 
 		vcapApplicationProperties.stringPropertyNames().forEach(System::clearProperty);
 
-		GemfireBeanFactoryLocatorProxy.clean();
+		GemfireBeanFactoryLocatorProxy.clear();
 	}
 
 	@SpringBootApplication

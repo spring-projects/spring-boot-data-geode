@@ -20,7 +20,8 @@ import org.springframework.beans.factory.BeanFactory;
 
 /**
  * The {@link GemfireBeanFactoryLocatorProxy} class is an extension of {@link GemfireBeanFactoryLocator}
- * used to clean up all Spring {@link BeanFactory} references.
+ * used to clean up all Spring {@link BeanFactory} references, which are stored throughout the runtime
+ * of an application for different purposes, like configuration of non-Spring managed components.
  *
  * @author John Blum
  * @see org.springframework.beans.factory.BeanFactory
@@ -30,7 +31,7 @@ import org.springframework.beans.factory.BeanFactory;
 // TODO: remove this class once and refactor the SDG GemfireBeanFactoryLocator!
 public class GemfireBeanFactoryLocatorProxy extends GemfireBeanFactoryLocator {
 
-	public static void clean() {
+	public static void clear() {
 		BEAN_FACTORIES.clear();
 	}
 }
