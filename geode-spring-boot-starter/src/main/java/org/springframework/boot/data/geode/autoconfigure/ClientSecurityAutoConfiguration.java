@@ -63,16 +63,17 @@ import org.springframework.data.gemfire.config.annotation.support.AutoConfigured
  */
 @Configuration
 @AutoConfigureBefore(ClientCacheAutoConfiguration.class)
-@Conditional(SecurityAutoConfiguration.EnableSecurityCondition.class)
+@Conditional(ClientSecurityAutoConfiguration.EnableSecurityCondition.class)
+//@ConditionalOnBean(ClientCacheFactoryBean.class)
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
 @EnableSecurity
 @SuppressWarnings("unused")
-public class SecurityAutoConfiguration {
+public class ClientSecurityAutoConfiguration {
 
 	public static final String SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY =
 		"spring.boot.data.gemfire.security.auth.environment.post-processor.disabled";
 
-	private static final String CLOUD_CACHE_PROPERTY_SOURCE_NAME = "cloudcache-security";
+	private static final String CLOUD_CACHE_PROPERTY_SOURCE_NAME = "cloudcache-configuration";
 
 	private static final String MANAGEMENT_HTTP_HOST_PROPERTY = "spring.data.gemfire.management.http.host";
 	private static final String MANAGEMENT_HTTP_PORT_PROPERTY = "spring.data.gemfire.management.http.port";

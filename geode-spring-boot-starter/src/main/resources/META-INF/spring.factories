@@ -2,13 +2,14 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.CachingProviderAutoConfiguration,\
+org.springframework.boot.data.geode.autoconfigure.ClientSecurityAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.ContinuousQueryAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.FunctionExecutionAutoConfiguration,\
+org.springframework.boot.data.geode.autoconfigure.PeerSecurityAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.RepositoriesAutoConfiguration,\
-org.springframework.boot.data.geode.autoconfigure.SecurityAutoConfiguration,\
 org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration
 
 # Environment Post Processing
 org.springframework.boot.env.EnvironmentPostProcessor=\
-org.springframework.boot.data.geode.autoconfigure.SecurityAutoConfiguration.AutoConfiguredCloudSecurityEnvironmentPostProcessor,\
+org.springframework.boot.data.geode.autoconfigure.ClientSecurityAutoConfiguration.AutoConfiguredCloudSecurityEnvironmentPostProcessor,\
 org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration.SslEnvironmentPostProcessor
