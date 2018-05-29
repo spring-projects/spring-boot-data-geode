@@ -19,6 +19,7 @@ package org.springframework.boot.data.geode.security.auth.cloud;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.boot.SpringApplication;
@@ -29,6 +30,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLocator;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
+import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -76,6 +78,12 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 	public static void startGemFireServer() throws IOException {
 		startGemFireServer(GemFireServerConfiguration.class, "-Dspring.profiles.active=security-cloud");
 		loadVcapApplicationProperties();
+		GemfireBeanFactoryLocatorProxy.clean();
+	}
+
+	@AfterClass
+	public static void cleanUpBeanFactoryLocatorReferences() {
+		GemfireBeanFactoryLocatorProxy.clean();
 	}
 
 	@SpringBootApplication

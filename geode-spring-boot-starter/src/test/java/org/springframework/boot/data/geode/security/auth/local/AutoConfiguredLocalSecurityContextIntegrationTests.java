@@ -18,6 +18,7 @@ package org.springframework.boot.data.geode.security.auth.local;
 
 import java.io.IOException;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.boot.SpringApplication;
@@ -27,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
+import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
 import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -64,8 +66,16 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
+
+		GemfireBeanFactoryLocatorProxy.clean();
+
 		startGemFireServer(GemFireServerConfiguration.class,
 			"-Dspring.profiles.active=security-local-server");
+	}
+
+	@AfterClass
+	public static void cleanUpBeanFactoryLocatorReferences() {
+		GemfireBeanFactoryLocatorProxy.clean();
 	}
 
 	@SpringBootApplication

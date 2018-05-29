@@ -20,12 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import org.apache.geode.cache.GemFireCache;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
+import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -48,6 +51,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class SecurityManagerProxyIntegrationTests {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
+
+	@BeforeClass
+	@AfterClass
+	public static void cleanUpBeanFactoryLocatorReferences() {
+		GemfireBeanFactoryLocatorProxy.clean();
+	}
 
 	@Autowired
 	private org.apache.geode.security.SecurityManager mockSecurityManager;
