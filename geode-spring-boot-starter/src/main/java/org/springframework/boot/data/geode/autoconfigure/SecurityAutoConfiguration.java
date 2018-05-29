@@ -65,6 +65,9 @@ import org.springframework.data.gemfire.config.annotation.support.AutoConfigured
 @SuppressWarnings("unused")
 public class SecurityAutoConfiguration {
 
+	public static final String SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY =
+		"spring.boot.data.geode.security.auth.environment.post-processor.disabled";
+
 	private static final String CLOUD_CACHE_PROPERTY_SOURCE_NAME = "cloudcache-security";
 
 	private static final String MANAGEMENT_HTTP_HOST_PROPERTY = "spring.data.gemfire.management.http.host";
@@ -87,6 +90,7 @@ public class SecurityAutoConfiguration {
 		public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 
 			Optional.of(environment)
+				.filter(this::isEnabled)
 				.filter(this::isCloudFoundryEnvironment)
 				.ifPresent(env -> {
 
@@ -107,6 +111,14 @@ public class SecurityAutoConfiguration {
 
 		private boolean isCloudFoundryEnvironment(Environment environment) {
 			return Optional.ofNullable(environment).filter(CloudPlatform.CLOUD_FOUNDRY::isActive).isPresent();
+		}
+
+		private boolean isDisabled(Environment environment) {
+			return Boolean.getBoolean(SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY);
+		}
+
+		private boolean isEnabled(Environment environment) {
+			return !isDisabled(environment);
 		}
 
 		private boolean isSecurityPropertiesSet(Environment environment) {
