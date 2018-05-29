@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.Properties;
 
-import org.apache.geode.cache.client.ClientCache;
+import org.apache.geode.cache.GemFireCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -46,7 +46,7 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
+import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableSsl;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
@@ -62,7 +62,7 @@ import org.springframework.util.StringUtils;
  * @see java.net.URL
  * @see java.util.Properties
  * @see org.springframework.boot.SpringApplication
- * @see org.apache.geode.cache.client.ClientCache
+ * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.boot.env.EnvironmentPostProcessor
@@ -72,14 +72,14 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.io.Resource
- * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
+ * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.EnableSsl
  * @since 1.0.0
  */
 @Configuration
 @AutoConfigureBefore(ClientCacheAutoConfiguration.class)
 @Conditional(SslAutoConfiguration.EnableSslCondition.class)
-@ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
+@ConditionalOnClass({ CacheFactoryBean.class, GemFireCache.class })
 @EnableSsl
 @SuppressWarnings("unused")
 public class SslAutoConfiguration {
@@ -271,6 +271,7 @@ public class SslAutoConfiguration {
 		@ConditionalOnProperty(prefix = "spring.data.gemfire.security.ssl", name = { "keystore", "truststore", })
 		static class SpringDataGeodeSslContextCondition {}
 
+		// TODO: ;-)
 		@ConditionalOnProperty({
 			GEMFIRE_SSL_KEYSTORE_PROPERTY,
 			GEMFIRE_SSL_TRUSTSTORE_PROPERTY,
