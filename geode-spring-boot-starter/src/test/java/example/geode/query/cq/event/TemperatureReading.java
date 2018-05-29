@@ -16,7 +16,6 @@
 
 package example.geode.query.cq.event;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.util.ObjectUtils;
