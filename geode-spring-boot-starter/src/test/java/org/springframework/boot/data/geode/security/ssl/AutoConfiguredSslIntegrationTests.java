@@ -84,7 +84,7 @@ import example.geode.cache.EchoCacheLoader;
 public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
-	private static final String TRUSTED_KEYSTORE_FILENAME = "trusted.keystore";
+	private static final String TRUSTED_KEYSTORE_FILENAME = "test-trusted.keystore";
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
@@ -216,9 +216,9 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 		}
 	}
 
-	@EnableSsl
 	@CacheServerApplication(name = "AutoConfiguredSslIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
 	@PropertySource(name = "gemfire-ssl", value = "application-ssl.properties")
+	@EnableSsl
 	static class GemFireServerConfiguration {
 
 		public static void main(String[] args) {

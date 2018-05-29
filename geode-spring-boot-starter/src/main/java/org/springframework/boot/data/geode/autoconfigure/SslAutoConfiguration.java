@@ -148,45 +148,38 @@ public class SslAutoConfiguration {
 			new File(new ClassPathResource(keystoreName).getURL().toURI())).getAbsolutePath());
 		*/
 
-		return locateKeyStoreInClassPath(environment).map(resource -> {
+		return locateKeyStoreInClassPath(environment)
+			.map(resource -> {
 
-			File trustedKeyStore = null;
+				File trustedKeyStore = null;
 
-			try {
+				try {
 
-				URL url = resource.getURL();
+					URL url = resource.getURL();
 
-				if (ResourceUtils.isFileURL(url)) {
-					trustedKeyStore = new File(url.toURI());
-				}
-				else if (ResourceUtils.isJarURL(url)) {
-					trustedKeyStore = new File(CURRENT_WORKING_DIRECTORY, resolveTrustedKeystoreName(environment));
-					FileCopyUtils.copy(url.openStream(), new FileOutputStream(trustedKeyStore));
-				}
-			}
-			catch (IOException | URISyntaxException cause) {
-
-				if (logger.isWarnEnabled()) {
-
-					logger.warn("Trusted KeyStore {} found in Class Path but is not resolvable as a File: {}",
-						resource, cause.getMessage());
-
-					if (logger.isTraceEnabled()) {
-						logger.trace("Caused by:", cause);
+					if (ResourceUtils.isFileURL(url)) {
+						trustedKeyStore = new File(url.toURI());
+					}
+					else if (ResourceUtils.isJarURL(url)) {
+						trustedKeyStore = new File(CURRENT_WORKING_DIRECTORY, resolveTrustedKeystoreName(environment));
+						FileCopyUtils.copy(url.openStream(), new FileOutputStream(trustedKeyStore));
 					}
 				}
-			}
+				catch (IOException | URISyntaxException cause) {
 
-			return trustedKeyStore;
-		});
+					if (logger.isWarnEnabled()) {
 
-		/*
-		return locateKeyStoreInClassPath()
-			.map(it -> ObjectUtils.doOperationSafely(it::getURL))
-			.map(url -> ObjectUtils.doOperationSafely(url::toURI))
-			.map(uri -> ObjectUtils.doOperationSafely(() -> new File(uri)))
-			.filter(File::isFile);
-		*/
+						logger.warn("Trusted KeyStore {} found in Class Path but is not resolvable as a File: {}",
+							resource, cause.getMessage());
+
+						if (logger.isTraceEnabled()) {
+							logger.trace("Caused by:", cause);
+						}
+					}
+				}
+
+				return trustedKeyStore;
+			});
 	}
 
 	private static Optional<ClassPathResource> locateKeyStoreInClassPath(Environment environment) {
