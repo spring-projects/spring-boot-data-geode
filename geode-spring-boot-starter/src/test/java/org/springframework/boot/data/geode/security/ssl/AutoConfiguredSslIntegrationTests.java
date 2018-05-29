@@ -125,7 +125,7 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 	static class GemFireServerConfiguration {
 
 		public static void main(String[] args) {
-			SpringApplication.run(GemFireServerConfiguration.class);
+			SpringApplication.run(GemFireServerConfiguration.class, args);
 		}
 
 		@Bean("Echo")
