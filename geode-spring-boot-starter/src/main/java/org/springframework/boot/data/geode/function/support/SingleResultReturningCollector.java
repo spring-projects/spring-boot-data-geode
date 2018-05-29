@@ -44,20 +44,24 @@ public class SingleResultReturningCollector<T> extends AbstractResultCollector<T
 	private <T> T extractSingleResult(Object result) {
 
 		return (T) Optional.ofNullable(result)
-			.filter(this::isInstanceOfIterable)
-			.map(it -> (Iterable<T>) it)
+			.filter(this::isInstanceOfIterableOrIterator)
 			.map(this::toIterator)
 			.filter(Iterator::hasNext)
 			.map(Iterator::next)
 			.map(this::extractSingleResult)
-			.orElse(result);
+			.orElseGet(() -> isInstanceOfIterableOrIterator(result) ? null : result);
 	}
 
-	private boolean isInstanceOfIterable(Object obj) {
-		return obj instanceof Iterable;
+	private boolean isInstanceOfIterableOrIterator(Object obj) {
+		return obj instanceof Iterable || obj instanceof Iterator;
 	}
 
-	private <T> Iterator<T> toIterator(Iterable<T> obj) {
-		return obj != null ? obj.iterator() : Collections.emptyIterator();
+	@SuppressWarnings("unchecked")
+	private <T> Iterator<T> toIterator(Object obj) {
+		return obj instanceof Iterator ? (Iterator<T>) obj : toIterator((Iterable<T>) obj);
+	}
+
+	private <T> Iterator<T> toIterator(Iterable<T> iterable) {
+		return iterable != null ? iterable.iterator() : Collections.emptyIterator();
 	}
 }
