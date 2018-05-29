@@ -18,9 +18,8 @@ package example.geode.query.cq.event;
 
 import java.time.LocalDateTime;
 
-import org.springframework.util.ObjectUtils;
-
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +32,7 @@ import lombok.RequiredArgsConstructor;
  * @since 1.0.0
  */
 @Data
+@EqualsAndHashCode(of = { "temperature", "temperatureUnit" })
 @RequiredArgsConstructor(staticName = "of")
 public class TemperatureReading {
 
@@ -51,34 +51,6 @@ public class TemperatureReading {
 	public TemperatureReading in(TemperatureUnit temperatureUnit) {
 		setTemperatureUnit(temperatureUnit);
 		return this;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof TemperatureReading)) {
-			return false;
-		}
-
-		TemperatureReading that = (TemperatureReading) obj;
-
-		return ObjectUtils.nullSafeEquals(this.getTemperature(), that.getTemperature())
-			&& ObjectUtils.nullSafeEquals(this.getTemperatureUnit(), that.getTemperatureUnit());
-	}
-
-	@Override
-	public int hashCode() {
-
-		int hashValue = 17;
-
-		hashValue = 37 * hashValue + ObjectUtils.nullSafeHashCode(getTemperature());
-		hashValue = 37 * hashValue + ObjectUtils.nullSafeHashCode(getTemperatureUnit());
-
-		return hashValue;
 	}
 
 	@Override
