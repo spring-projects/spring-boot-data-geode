@@ -33,8 +33,6 @@ import org.apache.geode.cache.execute.ResultCollector;
 @SuppressWarnings("unused")
 public abstract class AbstractResultCollector<T, S> implements ResultCollector<T, S> {
 
-	private static final Object MUTEX = new Object();
-
 	protected static final String NOT_IMPLEMENTED = "Not Implemented";
 
 	protected static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MILLISECONDS;
@@ -55,12 +53,11 @@ public abstract class AbstractResultCollector<T, S> implements ResultCollector<T
 
 		long durationInMilliseconds = unit.toMillis(duration);
 		long timeout = System.currentTimeMillis() + unit.toMillis(duration);
-		long waitInMilliseconds = Math.max(durationInMilliseconds,
-			Math.min(durationInMilliseconds / 5, durationInMilliseconds));
+		long waitInMilliseconds = Math.max(50, Math.min(durationInMilliseconds / 5, durationInMilliseconds));
 
-		while (getResult() == null && System.currentTimeMillis() < timeout) {
-			synchronized (MUTEX) {
-				unit.timedWait(MUTEX, waitInMilliseconds);
+		synchronized (this) {
+			while (getResult() == null && System.currentTimeMillis() < timeout) {
+				unit.timedWait(this, waitInMilliseconds);
 			}
 		}
 
@@ -77,7 +74,7 @@ public abstract class AbstractResultCollector<T, S> implements ResultCollector<T
 
 	@Override
 	public void clearResults() {
-		this.result = null;
+		setResult(null);
 	}
 
 	@Override
