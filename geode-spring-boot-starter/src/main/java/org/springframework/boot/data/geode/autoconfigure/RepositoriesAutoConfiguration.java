@@ -58,12 +58,12 @@ import org.springframework.data.gemfire.repository.support.GemfireRepositoryFact
  * @since 1.0.0
  */
 @Configuration
+@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass(GemfireRepository.class)
 @ConditionalOnMissingBean({ GemfireRepositoryConfigurationExtension.class, GemfireRepositoryFactoryBean.class })
 @ConditionalOnProperty(prefix = "spring.data.gemfire.repositories", name = "enabled", havingValue = "true",
 	matchIfMissing = true)
-@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @Import(GemFireRepositoriesAutoConfigurationRegistrar.class)
 public class RepositoriesAutoConfiguration {
 

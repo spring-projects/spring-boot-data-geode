@@ -19,6 +19,7 @@ package org.springframework.boot.data.geode.autoconfigure;
 import java.util.Optional;
 import java.util.Properties;
 
+import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -26,6 +27,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.boot.data.geode.core.env.VcapPropertySource;
@@ -47,12 +49,14 @@ import org.springframework.data.gemfire.config.annotation.support.AutoConfigured
  *
  * @author John Blum
  * @see java.util.Properties
+ * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.boot.data.geode.core.env.VcapPropertySource
+ * @see org.springframework.boot.data.geode.core.env.support.CloudCacheService
  * @see org.springframework.boot.env.EnvironmentPostProcessor
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.env.Environment
@@ -65,6 +69,7 @@ import org.springframework.data.gemfire.config.annotation.support.AutoConfigured
 @AutoConfigureBefore(ClientCacheAutoConfiguration.class)
 @Conditional(ClientSecurityAutoConfiguration.EnableSecurityCondition.class)
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
+@ConditionalOnMissingBean(GemFireCache.class)
 @EnableSecurity
 @SuppressWarnings("unused")
 public class ClientSecurityAutoConfiguration {

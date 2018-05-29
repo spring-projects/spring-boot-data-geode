@@ -44,9 +44,9 @@ import org.springframework.data.gemfire.function.execution.GemfireFunctionOperat
  * @since 1.0.0
  */
 @Configuration
+@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemfireFunctionOperations.class, GemFireCache.class })
-@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @EnableGemfireFunctions
 @Import(GemFireFunctionExecutionAutoConfigurationRegistrar.class)
 @SuppressWarnings("unused")

@@ -54,13 +54,13 @@ import org.springframework.data.gemfire.cache.config.EnableGemfireCaching;
  * @since 1.0.0
  */
 @Configuration
+@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemfireCacheManager.class, GemFireCache.class })
 @ConditionalOnMissingBean(CacheManager.class)
-@AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @EnableGemfireCaching
 @SuppressWarnings("all")
-class CachingProviderAutoConfiguration {
+public class CachingProviderAutoConfiguration {
 
 	private final CacheManagerCustomizers cacheManagerCustomizers;
 
