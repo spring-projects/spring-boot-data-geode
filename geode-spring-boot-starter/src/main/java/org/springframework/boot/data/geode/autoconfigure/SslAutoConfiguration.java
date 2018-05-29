@@ -85,7 +85,7 @@ import org.springframework.util.StringUtils;
 public class SslAutoConfiguration {
 
 	public static final String SECURITY_SSL_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY =
-		"spring.boot.data.geode.security.ssl.environment.post-processor.disabled";
+		"spring.boot.data.gemfire.security.ssl.environment.post-processor.disabled";
 
 	private static final String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
 	private static final String GEMFIRE_SSL_KEYSTORE_PROPERTY = "gemfire.ssl-keystore";
@@ -96,7 +96,7 @@ public class SslAutoConfiguration {
 	private static final String SSL_KEYSTORE_PROPERTY = "ssl-keystore";
 	private static final String SSL_TRUSTSTORE_PROPERTY = "ssl-truststore";
 	private static final String TRUSTED_KEYSTORE_FILENAME = "trusted.keystore";
-	private static final String TRUSTED_KEYSTORE_FILENAME_PROPERTY = "spring.data.gemfire.security.ssl.keystore.name";
+	private static final String TRUSTED_KEYSTORE_FILENAME_PROPERTY = "spring.boot.data.gemfire.security.ssl.keystore.name";
 	private static final String USER_HOME_DIRECTORY = System.getProperty("user.home");
 
 	private static final Logger logger = LoggerFactory.getLogger(SslAutoConfiguration.class);

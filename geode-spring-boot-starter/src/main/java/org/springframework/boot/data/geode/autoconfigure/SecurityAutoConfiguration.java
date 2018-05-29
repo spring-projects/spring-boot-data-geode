@@ -70,7 +70,7 @@ import org.springframework.data.gemfire.config.annotation.support.AutoConfigured
 public class SecurityAutoConfiguration {
 
 	public static final String SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY =
-		"spring.boot.data.geode.security.auth.environment.post-processor.disabled";
+		"spring.boot.data.gemfire.security.auth.environment.post-processor.disabled";
 
 	private static final String CLOUD_CACHE_PROPERTY_SOURCE_NAME = "cloudcache-security";
 
