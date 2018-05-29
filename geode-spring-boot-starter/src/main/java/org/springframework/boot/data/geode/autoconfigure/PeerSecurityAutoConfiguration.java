@@ -16,16 +16,19 @@
 
 package org.springframework.boot.data.geode.autoconfigure;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.ApacheShiroSecurityConfiguration;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurityConfiguration;
-import org.springframework.data.gemfire.config.annotation.PeerCacheConfigurer;
+import org.springframework.lang.Nullable;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Security functionality,
@@ -33,6 +36,7 @@ import org.springframework.data.gemfire.config.annotation.PeerCacheConfigurer;
  *
  * @author John Blum
  * @see org.apache.geode.security.SecurityManager
+ * @see org.springframework.beans.factory.config.BeanPostProcessor
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.CacheFactoryBean
@@ -55,7 +59,27 @@ import org.springframework.data.gemfire.config.annotation.PeerCacheConfigurer;
 public class PeerSecurityAutoConfiguration {
 
 	@Bean
+	@SuppressWarnings("all")
+	BeanPostProcessor cacheFactoryBeanPostProcessor() {
+
+		return new BeanPostProcessor() {
+
+			@Nullable @Override
+			public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+
+				if (bean instanceof CacheFactoryBean) {
+					((CacheFactoryBean) bean).setUseBeanFactoryLocator(true);
+				}
+
+				return bean;
+			}
+		};
+	}
+
+	/*
 	PeerCacheConfigurer gemfireCacheUseBeanFactoryLocatorConfigurer() {
 		return (beanName, cacheFactoryBean) -> cacheFactoryBean.setUseBeanFactoryLocator(true);
 	}
+	*/
+
 }
