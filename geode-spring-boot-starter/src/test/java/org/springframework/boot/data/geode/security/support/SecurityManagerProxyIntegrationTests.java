@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -43,12 +44,13 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
  * @see org.springframework.test.context.ContextConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 @SuppressWarnings("unused")
-public class SecurityManagerProxyIntegrationTests {
+public class SecurityManagerProxyIntegrationTests extends IntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 
