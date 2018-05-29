@@ -20,16 +20,13 @@ import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration;
 import org.springframework.boot.data.geode.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
-import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -39,14 +36,14 @@ import org.springframework.test.context.junit4.SpringRunner;
  * authentication/authorization in a local, non-managed context.
  *
  * @author John Blum
- * @see java.security.Principal
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
- * @see org.springframework.boot.data.geode.autoconfigure.SecurityAutoConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.ClientSecurityAutoConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.PeerSecurityAutoConfiguration
  * @see org.springframework.boot.data.geode.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests
  * @see org.springframework.boot.test.context.SpringBootTest
- * @see org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
@@ -55,7 +52,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
-@ActiveProfiles("security-local")
+@ActiveProfiles("security-local-client")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AutoConfiguredLocalSecurityContextIntegrationTests.GemFireClientConfiguration.class,
 	webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -67,26 +64,22 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
-		startGemFireServer(GemFireServerConfiguration.class);
+		startGemFireServer(GemFireServerConfiguration.class,
+			"-Dspring.profiles.active=security-local-server");
 	}
 
+	@SpringBootApplication
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	@Import(ClientServerIntegrationTestsConfiguration.class)
-	@SpringBootApplication(exclude = SslAutoConfiguration.class)
 	static class GemFireClientConfiguration extends BaseGemFireClientConfiguration { }
 
+	@SpringBootApplication
 	@CacheServerApplication(name = "AutoConfiguredLocalSecurityContextIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL,
 		useBeanFactoryLocator = true)
-	@EnableSecurity(securityManagerClassName = "org.springframework.boot.data.geode.security.support.SecurityManagerProxy")
-	@PropertySource(name = "security-local", value="application-security-local.properties")
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {
-
-			AnnotationConfigApplicationContext applicationContext =
-				new AnnotationConfigApplicationContext(GemFireServerConfiguration.class);
-
-			applicationContext.registerShutdownHook();
+			SpringApplication.run(GemFireServerConfiguration.class, args);
 		}
 	}
 }

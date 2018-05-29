@@ -21,17 +21,14 @@ import java.util.Properties;
 
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration;
 import org.springframework.boot.data.geode.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLocator;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
-import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -42,11 +39,12 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see java.security.Principal
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
- * @see org.springframework.boot.data.geode.autoconfigure.SecurityAutoConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.ClientSecurityAutoConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.PeerSecurityAutoConfiguration
  * @see org.springframework.boot.data.geode.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests
  * @see org.springframework.boot.test.context.SpringBootTest
- * @see org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableLocator
  * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
@@ -76,28 +74,22 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
-		startGemFireServer(GemFireServerConfiguration.class);
+		startGemFireServer(GemFireServerConfiguration.class, "-Dspring.profiles.active=security-cloud");
 		loadVcapApplicationProperties();
 	}
 
+	@SpringBootApplication
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
-	@SpringBootApplication(exclude = SslAutoConfiguration.class)
 	static class GemFireClientConfiguration extends BaseGemFireClientConfiguration { }
 
+	@SpringBootApplication
 	@CacheServerApplication(name = "AutoConfiguredCloudSecurityContextIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL,
 		useBeanFactoryLocator = true)
 	@EnableLocator(port = 55221)
-	@EnableSecurity(securityManagerClassName =
-		"org.springframework.boot.data.geode.security.support.SecurityManagerProxy")
-	@PropertySource(name = "security-cloud", value = "application-security-cloud.properties")
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {
-
-			AnnotationConfigApplicationContext applicationContext =
-				new AnnotationConfigApplicationContext(GemFireServerConfiguration.class);
-
-			applicationContext.registerShutdownHook();
+			SpringApplication.run(GemFireServerConfiguration.class, args);
 		}
 	}
 }
