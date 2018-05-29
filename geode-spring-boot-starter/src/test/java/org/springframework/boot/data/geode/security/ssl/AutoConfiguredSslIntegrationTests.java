@@ -22,19 +22,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.Region;
-import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
-import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
@@ -42,7 +39,8 @@ import org.springframework.data.gemfire.tests.integration.config.ClientServerInt
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import example.geode.cache.EchoCacheLoader;
+import example.echo.config.EchoClientConfiguration;
+import example.echo.config.EchoServerConfiguration;
 
 /**
  * Integration tests testing the auto-configuration of Apache Geode/Pivotal GemFire SSL.
@@ -91,54 +89,30 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 		sslSystemProperties.forEach(System::clearProperty);
 	}
 
-	@javax.annotation.Resource(name = "Echo")
-	private Region<String, String> echo;
+	@Autowired
+	private GemfireTemplate echoTemplate;
 
 	@Test
 	public void clientServerCommunicationsSuccessful() {
 
-		assertThat(this.echo).isNotNull();
-		assertThat(this.echo.get("Hello")).isEqualTo("Hello");
-		assertThat(this.echo.get("Test")).isEqualTo("Test");
-		assertThat(this.echo.get("Good-Bye")).isEqualTo("Good-Bye");
+		assertThat(this.echoTemplate).isNotNull();
+		assertThat(this.echoTemplate.<String, String>get("Hello")).isEqualTo("Hello");
+		assertThat(this.echoTemplate.<String, String>get("Test")).isEqualTo("Test");
+		assertThat(this.echoTemplate.<String, String>get("Good-Bye")).isEqualTo("Good-Bye");
 	}
 
 	@SpringBootApplication
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
-	static class GemFireClientConfiguration extends ClientServerIntegrationTestsConfiguration {
-
-		@Bean("Echo")
-		public ClientRegionFactoryBean<String, String> echoRegion(GemFireCache gemfireCache) {
-
-			ClientRegionFactoryBean<String, String> echoRegion = new ClientRegionFactoryBean<>();
-
-			echoRegion.setCache(gemfireCache);
-			echoRegion.setClose(false);
-			echoRegion.setShortcut(ClientRegionShortcut.PROXY);
-
-			return echoRegion;
-		}
-	}
+	@Import(EchoClientConfiguration.class)
+	static class GemFireClientConfiguration extends ClientServerIntegrationTestsConfiguration { }
 
 	@SpringBootApplication
 	@CacheServerApplication(name = "AutoConfiguredSslIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
+	@Import(EchoServerConfiguration.class)
 	static class GemFireServerConfiguration {
 
 		public static void main(String[] args) {
 			SpringApplication.run(GemFireServerConfiguration.class, args);
-		}
-
-		@Bean("Echo")
-		public PartitionedRegionFactoryBean<String, String> echoRegion(GemFireCache gemfireCache) {
-
-			PartitionedRegionFactoryBean<String, String> echoRegion = new PartitionedRegionFactoryBean<>();
-
-			echoRegion.setCache(gemfireCache);
-			echoRegion.setCacheLoader(EchoCacheLoader.INSTANCE);
-			echoRegion.setClose(false);
-			echoRegion.setPersistent(false);
-
-			return echoRegion;
 		}
 	}
 }

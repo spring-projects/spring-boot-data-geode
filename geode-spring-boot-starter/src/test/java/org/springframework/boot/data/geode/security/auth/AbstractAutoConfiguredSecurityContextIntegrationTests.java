@@ -29,23 +29,22 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.security.AuthenticationFailedException;
 import org.apache.geode.security.ResourcePermission;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.GemfireTemplate;
-import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
-import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import example.geode.cache.EchoCacheLoader;
+import example.echo.config.EchoClientConfiguration;
+import example.echo.config.EchoServerConfiguration;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -81,40 +80,13 @@ public abstract class AbstractAutoConfiguredSecurityContextIntegrationTests
 		assertThat(this.echoTemplate.<String, String>get("Good-Bye")).isEqualTo("Good-Bye");
 	}
 
-	protected static abstract class BaseGemFireClientConfiguration {
+	@Configuration
+	@Import(EchoClientConfiguration.class)
+	protected static abstract class BaseGemFireClientConfiguration { }
 
-		@Bean("Echo")
-		public ClientRegionFactoryBean<String, String> echoRegion(GemFireCache gemfireCache) {
-
-			ClientRegionFactoryBean<String, String> echoRegion = new ClientRegionFactoryBean<>();
-
-			echoRegion.setCache(gemfireCache);
-			echoRegion.setClose(false);
-			echoRegion.setShortcut(ClientRegionShortcut.PROXY);
-
-			return echoRegion;
-		}
-
-		@Bean
-		GemfireTemplate echoTemplate(GemFireCache gemfireCache) {
-			return new GemfireTemplate(gemfireCache.getRegion("/Echo"));
-		}
-	}
-
+	@Configuration
+	@Import(EchoServerConfiguration.class)
 	protected static abstract class BaseGemFireServerConfiguration {
-
-		@Bean("Echo")
-		public PartitionedRegionFactoryBean<String, String> echoRegion(GemFireCache gemfireCache) {
-
-			PartitionedRegionFactoryBean<String, String> echoRegion = new PartitionedRegionFactoryBean<>();
-
-			echoRegion.setCache(gemfireCache);
-			echoRegion.setCacheLoader(EchoCacheLoader.INSTANCE);
-			echoRegion.setClose(false);
-			echoRegion.setPersistent(false);
-
-			return echoRegion;
-		}
 
 		@Bean
 		TestSecurityManager testSecurityManager(Environment environment) {
