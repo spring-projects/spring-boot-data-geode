@@ -79,6 +79,9 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings("unused")
 public class SslAutoConfiguration {
 
+	public static final String SSL_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY =
+		"spring.boot.data.geode.security.ssl.environment.post-processor.disabled";
+
 	private static final String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
 	private static final String GEMFIRE_SSL_KEYSTORE_PROPERTY = "gemfire.ssl-keystore";
 	private static final String GEMFIRE_SSL_PROPERTY_SOURCE_NAME = "gemfire-ssl";
@@ -281,6 +284,7 @@ public class SslAutoConfiguration {
 		public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 
 			Optional.of(environment)
+				.filter(this::isEnabled)
 				.filter(SslAutoConfiguration::isSslNotConfigured)
 				.map(SslAutoConfiguration::resolveTrustedKeyStore)
 				.filter(StringUtils::hasText)
@@ -294,6 +298,14 @@ public class SslAutoConfiguration {
 					environment.getPropertySources()
 						.addFirst(new PropertiesPropertySource(GEMFIRE_SSL_PROPERTY_SOURCE_NAME, gemfireSslProperties));
 				});
+		}
+
+		private boolean isEnabled(Environment environment) {
+			return !isDisabled(environment);
+		}
+
+		private boolean isDisabled(Environment environment) {
+			return Boolean.getBoolean(SSL_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY);
 		}
 	}
 
