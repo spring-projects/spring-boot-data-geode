@@ -34,7 +34,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.data.geode.autoconfigure.SslAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -60,6 +59,7 @@ import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.data.geode.autoconfigure.ContinuousQueryAutoConfiguration
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @see org.springframework.context.annotation.Bean
@@ -109,7 +109,7 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 		assertThat(this.temperatureReadingsHandler.getFreezingTemperatures()).contains(16, -51);
 	}
 
-	@SpringBootApplication(exclude = SslAutoConfiguration.class)
+	@SpringBootApplication
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	public static class GemFireClientConfiguration
 			extends SubscriptionEnabledClientServerIntegrationTestsConfiguration {
