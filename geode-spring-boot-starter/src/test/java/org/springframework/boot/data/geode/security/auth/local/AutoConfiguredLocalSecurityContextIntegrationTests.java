@@ -74,8 +74,7 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 	static class GemFireClientConfiguration extends BaseGemFireClientConfiguration { }
 
 	@SpringBootApplication
-	@CacheServerApplication(name = "AutoConfiguredLocalSecurityContextIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL,
-		useBeanFactoryLocator = true)
+	@CacheServerApplication(name = "AutoConfiguredLocalSecurityContextIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {
