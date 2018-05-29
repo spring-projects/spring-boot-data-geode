@@ -48,10 +48,10 @@ import org.springframework.util.Assert;
  * {@link org.apache.geode.security.SecurityManager} interface...
  *
  * <code>
- * @Configuration
+ * Configuration
  * class MyApplicationConfiguration {
  *
- *     @Bean
+ *     Bean
  *     ExampleSecurityManager exampleSecurityManager(Environment environment) {
  *         return new ExampleSecurityManager(environment);
  *     }
