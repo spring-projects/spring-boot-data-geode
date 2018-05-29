@@ -46,10 +46,14 @@ import org.springframework.data.gemfire.config.annotation.support.AutoConfigured
  * and specifically Authentication between a client and server using Spring Data Geode Security annotations.
  *
  * @author John Blum
+ * @see java.util.Properties
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
- * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.boot.data.geode.core.env.VcapPropertySource
+ * @see org.springframework.boot.env.EnvironmentPostProcessor
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.env.Environment
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean

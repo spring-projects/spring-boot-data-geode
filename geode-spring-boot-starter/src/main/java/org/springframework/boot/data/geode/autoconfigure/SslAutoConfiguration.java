@@ -58,8 +58,13 @@ import org.springframework.util.StringUtils;
  * between client and servers when using the client/server topology.
  *
  * @author John Blum
+ * @see java.io.File
+ * @see java.net.URL
+ * @see java.util.Properties
+ * @see org.springframework.boot.SpringApplication
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.data.geode.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.boot.env.EnvironmentPostProcessor
  * @see org.springframework.context.annotation.Condition
  * @see org.springframework.context.annotation.Conditional
@@ -72,14 +77,14 @@ import org.springframework.util.StringUtils;
  * @since 1.0.0
  */
 @Configuration
-@ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
-@Conditional(SslAutoConfiguration.EnableSslCondition.class)
 @AutoConfigureBefore(ClientCacheAutoConfiguration.class)
+@Conditional(SslAutoConfiguration.EnableSslCondition.class)
+@ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
 @EnableSsl
 @SuppressWarnings("unused")
 public class SslAutoConfiguration {
 
-	public static final String SSL_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY =
+	public static final String SECURITY_SSL_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY =
 		"spring.boot.data.geode.security.ssl.environment.post-processor.disabled";
 
 	private static final String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
@@ -273,7 +278,12 @@ public class SslAutoConfiguration {
 		@ConditionalOnProperty(prefix = "spring.data.gemfire.security.ssl", name = { "keystore", "truststore", })
 		static class SpringDataGeodeSslContextCondition {}
 
-		@ConditionalOnProperty({ "gemfire.ssl-keystore", "gemfire.ssl-truststore", "ssl-keystore", "ssl-truststore", })
+		@ConditionalOnProperty({
+			GEMFIRE_SSL_KEYSTORE_PROPERTY,
+			GEMFIRE_SSL_TRUSTSTORE_PROPERTY,
+			SSL_KEYSTORE_PROPERTY,
+			SSL_TRUSTSTORE_PROPERTY,
+		})
 		static class StandaloneApacheGeodeSslContextCondition {}
 
 	}
@@ -305,7 +315,7 @@ public class SslAutoConfiguration {
 		}
 
 		private boolean isDisabled(Environment environment) {
-			return Boolean.getBoolean(SSL_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY);
+			return Boolean.getBoolean(SECURITY_SSL_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY);
 		}
 	}
 
