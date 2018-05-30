@@ -30,6 +30,7 @@ import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
+import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -43,6 +44,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
  * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.test.context.ContextConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
@@ -68,9 +70,9 @@ public class SecurityManagerProxyIntegrationTests extends IntegrationTestsSuppor
 		assertThat(SecurityManagerProxy.getInstance().getSecurityManager()).isEqualTo(this.mockSecurityManager);
 	}
 
+	@EnableGemFireMockObjects
 	@PeerCacheApplication(logLevel = GEMFIRE_LOG_LEVEL, useBeanFactoryLocator = true)
-	@EnableSecurity(securityManagerClassName =
-		"org.springframework.geode.security.support.SecurityManagerProxy")
+	@EnableSecurity(securityManagerClassName = "org.springframework.geode.security.support.SecurityManagerProxy")
 	static class TestConfiguration {
 
 		@Bean
