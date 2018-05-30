@@ -14,27 +14,27 @@
  * permissions and limitations under the License.
  */
 
-package example.geode.cache;
+package org.springframework.geode.cache.support;
 
 import org.apache.geode.cache.CacheLoader;
-import org.apache.geode.cache.CacheLoaderException;
-import org.apache.geode.cache.LoaderHelper;
-import org.springframework.geode.cache.support.CacheLoaderSupport;
 
 /**
- * The {@link EchoCacheLoader} class is an implementation of {@link CacheLoader} that echos the key as the value.
+ * The {@link CacheLoaderSupport} interface is an extension of {@link CacheLoader} and a {@link FunctionalInterface}
+ * useful in Lambda expressions.
  *
  * @author John Blum
- * @see org.springframework.geode.cache.support.CacheLoaderSupport
+ * @see org.apache.geode.cache.CacheLoader
  * @since 1.0.0
  */
-@SuppressWarnings("unused")
-public class EchoCacheLoader implements CacheLoaderSupport<String, String> {
+@FunctionalInterface
+public interface CacheLoaderSupport<K, V> extends CacheLoader<K, V> {
 
-	public static final EchoCacheLoader INSTANCE = new EchoCacheLoader();
-
+	/**
+	 * Closes any resources opened and used by this {@link CacheLoader}.
+	 *
+	 * @see org.apache.geode.cache.CacheLoader#close()
+	 */
 	@Override
-	public String load(LoaderHelper<String, String> helper) throws CacheLoaderException {
-		return helper.getKey();
-	}
+	default void close() {}
+
 }
