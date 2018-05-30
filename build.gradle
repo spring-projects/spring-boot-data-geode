@@ -10,8 +10,8 @@ buildscript {
 
 apply plugin: 'io.spring.convention.root'
 
-group = 'org.springframework.data'
-description = 'Spring Boot for Apache Geode'
+group = 'org.springframework.geode'
+description = 'Spring Boot for Apache Geode & Pivotal GemFire'
 
 ext.releaseBuild = version.endsWith('RELEASE')
 ext.snapshotBuild = version.endsWith('SNAPSHOT')
