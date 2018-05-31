@@ -1,7 +1,7 @@
 apply plugin: 'io.spring.convention.spring-module'
 apply from: IDE_GRADLE
 
-description = "Spring Boot for Apache Geode"
+description = "Spring Boot for Apache Geode Auto-Configuration"
 
 repositories {
 	maven { url "https://repo.spring.io/libs-snapshot" }
@@ -17,6 +17,8 @@ dependencies {
 		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
 	}
 
+	compile project(":geode-spring-boot")
+
 	testCompile "org.assertj:assertj-core"
 	testCompile "junit:junit"
 	testCompile "org.mockito:mockito-core"
@@ -29,6 +31,8 @@ dependencies {
 
 	testCompile slf4jDependencies
 	testCompile "org.springframework.data:spring-test-data-geode"
+
+	testRuntime "javax.cache:cache-api"
 
 //	integrationTestRuntime "org.springframework.shell:spring-shell"
 
