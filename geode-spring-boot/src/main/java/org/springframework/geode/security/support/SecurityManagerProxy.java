@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.geode.security.AuthenticationFailedException;
 import org.apache.geode.security.ResourcePermission;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.gemfire.support.LazyWiringDeclarableSupport;
 import org.springframework.util.Assert;
@@ -69,7 +70,7 @@ import org.springframework.util.Assert;
  */
 @SuppressWarnings("unused")
 public class SecurityManagerProxy extends LazyWiringDeclarableSupport
-		implements org.apache.geode.security.SecurityManager {
+		implements org.apache.geode.security.SecurityManager, DisposableBean {
 
 	private static final AtomicReference<SecurityManagerProxy> INSTANCE = new AtomicReference<>();
 
@@ -86,7 +87,6 @@ public class SecurityManagerProxy extends LazyWiringDeclarableSupport
 		return Optional.ofNullable(INSTANCE.get())
 			.orElseThrow(() -> newIllegalStateException("SecurityManagerProxy was not configured"));
 	}
-
 
 	/**
 	 * Constructs a new instance of {@link SecurityManagerProxy}, which will delegate all Apache Geode
@@ -153,5 +153,11 @@ public class SecurityManagerProxy extends LazyWiringDeclarableSupport
 	@Override
 	public void close() {
 		getSecurityManager().close();
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		super.destroy();
+		INSTANCE.set(null);
 	}
 }
