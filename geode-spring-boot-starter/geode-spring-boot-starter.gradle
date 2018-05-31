@@ -1,0 +1,26 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+apply plugin: 'io.spring.convention.spring-module'
+apply plugin: 'io.spring.dependency-management'
+
+apply from: IDE_GRADLE
+
+description = "Spring Boot Starter for Apache Geode"
+
+dependencyManagement {
+	imports {
+		mavenBom SpringBootPlugin.BOM_COORDINATES
+	}
+}
+
+dependencies {
+
+	compile("org.springframework.boot:spring-boot-starter") {
+		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+	}
+
+	compile(project(':geode-spring-boot'))
+
+	compile(project(':geode-spring-boot-autoconfigure'))
+
+}
