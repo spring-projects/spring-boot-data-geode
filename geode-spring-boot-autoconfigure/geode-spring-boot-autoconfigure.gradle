@@ -1,4 +1,6 @@
 apply plugin: 'io.spring.convention.spring-module'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.springframework.boot'
 apply from: IDE_GRADLE
 
 description = "Spring Boot for Apache Geode Auto-Configuration"
@@ -8,14 +10,6 @@ repositories {
 }
 
 dependencies {
-
-	compile "org.springframework:spring-context-support"
-	compile "org.springframework:spring-jcl"
-	compile "org.springframework.data:spring-data-geode:$springDataGeodeVersion"
-
-	compile("org.springframework.boot:spring-boot-starter") {
-		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
-	}
 
 	compile project(":geode-spring-boot")
 
