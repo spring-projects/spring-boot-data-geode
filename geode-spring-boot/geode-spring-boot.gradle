@@ -1,12 +1,19 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 apply plugin: 'io.spring.convention.spring-module'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'org.springframework.boot'
 apply from: IDE_GRADLE
 
 description = "Spring Boot for Apache Geode"
 
 repositories {
 	maven { url "https://repo.spring.io/libs-snapshot" }
+}
+
+dependencyManagement {
+	imports {
+		mavenBom SpringBootPlugin.BOM_COORDINATES
+	}
 }
 
 dependencies {
