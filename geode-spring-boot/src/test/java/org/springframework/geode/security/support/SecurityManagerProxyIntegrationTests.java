@@ -31,6 +31,7 @@ import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -61,8 +62,14 @@ public class SecurityManagerProxyIntegrationTests extends IntegrationTestsSuppor
 
 	@BeforeClass
 	@AfterClass
-	public static void cleanUpBeanFactoryLocatorReferences() {
+	public static void cleanUpBeanFactoryLocatorReferences() throws Exception {
+
 		GemfireBeanFactoryLocatorProxy.clear();
+
+		ObjectUtils.doOperationSafely(() -> {
+			SecurityManagerProxy.getInstance().destroy();
+			return true;
+		}, true);
 	}
 
 	@Autowired
