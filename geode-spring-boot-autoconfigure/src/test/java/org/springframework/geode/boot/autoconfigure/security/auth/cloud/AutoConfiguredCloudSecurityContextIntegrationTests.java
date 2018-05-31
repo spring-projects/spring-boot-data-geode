@@ -31,6 +31,7 @@ import org.springframework.data.gemfire.config.annotation.EnableLocator;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
 import org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -51,9 +52,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration
  * @see org.springframework.geode.boot.autoconfigure.PeerSecurityAutoConfiguration
  * @see org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests
+ * @see org.springframework.test.annotation.DirtiesContext
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = AutoConfiguredCloudSecurityContextIntegrationTests.GemFireClientConfiguration.class,
 	webEnvironment = SpringBootTest.WebEnvironment.NONE)
