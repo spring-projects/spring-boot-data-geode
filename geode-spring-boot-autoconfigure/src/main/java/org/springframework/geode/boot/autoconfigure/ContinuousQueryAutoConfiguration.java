@@ -42,7 +42,8 @@ import org.springframework.data.gemfire.config.annotation.EnableContinuousQuerie
  */
 @Configuration
 @ConditionalOnBean(ClientCacheFactoryBean.class)
-@ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor")
+@ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor",
+	type = "org.springframework.data.gemfire.listener.ContinuousQueryListenerContainer")
 @EnableContinuousQueries
 @SuppressWarnings("unused")
 public class ContinuousQueryAutoConfiguration {
