@@ -37,7 +37,7 @@ dependencies {
 	}
 
 	testCompile slf4jDependencies
-	testCompile "org.springframework.data:spring-test-data-geode"
+	testCompile "org.springframework.data:spring-data-geode-test"
 
 //	integrationTestRuntime "org.springframework.shell:spring-shell"
 

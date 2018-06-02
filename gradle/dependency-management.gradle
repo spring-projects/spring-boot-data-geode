@@ -18,7 +18,7 @@ dependencyManagement {
 		dependency "org.slf4j:jcl-over-slf4j:$slf4jVersion"
 		dependency "org.slf4j:jul-to-slf4j:$slf4jVersion"
 		dependency "org.slf4j:log4j-over-slf4j:$slf4jVersion"
-		dependency "org.springframework.data:spring-test-data-geode:$springTestDataGeode"
+		dependency "org.springframework.data:spring-data-geode-test:$springDataGeodeTest"
 		dependency "org.springframework.shell:spring-shell:$springShellVersion"
 	}
 }
