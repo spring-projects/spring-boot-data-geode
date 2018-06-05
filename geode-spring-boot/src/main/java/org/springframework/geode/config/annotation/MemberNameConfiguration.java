@@ -33,10 +33,10 @@ import org.springframework.data.gemfire.config.annotation.support.AbstractAnnota
 import org.springframework.util.StringUtils;
 
 /**
- * The {@link MemberNameConfiguration} class is a Spring {@link Configuration} class used to set
- * an Apache Geode or Pivotal GemFire's name in the distributed system, whether the member
- * is a {@link ClientCache client} in the client/server topology or a {@link Cache peer} member
- * of the cluster.
+ * The {@link MemberNameConfiguration} class is a Spring {@link Configuration} class used to configure
+ * an Apache Geode or Pivotal GemFire's member name in the distributed system, whether the member
+ * is a {@link ClientCache client} in the client/server topology or a {@link Cache peer} in a cluster
+ * using the P2P topology.
  *
  * @author John Blum
  * @see org.apache.geode.cache.Cache
@@ -44,6 +44,9 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.ImportAware
+ * @see org.springframework.core.annotation.AnnotationAttributes
+ * @see org.springframework.core.type.AnnotationMetadata
+ * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer
  * @see org.springframework.data.gemfire.config.annotation.PeerCacheConfigurer
  * @see org.springframework.data.gemfire.config.annotation.support.AbstractAnnotationConfigSupport
@@ -64,26 +67,26 @@ public class MemberNameConfiguration extends AbstractAnnotationConfigSupport imp
 	}
 
 	@Override
+	@SuppressWarnings("all")
 	public void setImportMetadata(AnnotationMetadata importMetadata) {
 
 		if (isAnnotationPresent(importMetadata)) {
 
 			AnnotationAttributes memberNameAttributes = getAnnotationAttributes(importMetadata);
 
-			setMemberNameIfNotSet(memberNameAttributes.containsKey("name")
-				? memberNameAttributes.getString("name") : null);
-
-			setMemberNameIfNotSet(memberNameAttributes.containsKey("value")
+			setMemberName(memberNameAttributes.containsKey("value")
 				? memberNameAttributes.getString("value") : null);
+
+			setMemberName(memberNameAttributes.containsKey("name")
+				? memberNameAttributes.getString("name") : null);
 		}
 	}
 
 	protected void setMemberName(String memberName) {
-		this.memberName = memberName;
-	}
 
-	protected void setMemberNameIfNotSet(String memberName) {
-		setMemberName(this.memberName != null ? this.memberName : memberName);
+		this.memberName = Optional.ofNullable(memberName)
+			.filter(StringUtils::hasText)
+			.orElse(this.memberName);
 	}
 
 	protected Optional<String> getMemberName() {

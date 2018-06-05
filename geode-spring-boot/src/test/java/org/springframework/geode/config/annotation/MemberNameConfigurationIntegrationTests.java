@@ -32,7 +32,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  * Integration tests for {@link UseMemberName} and {@link MemberNameConfiguration}.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.test.context.ContextConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -47,7 +49,7 @@ public class MemberNameConfigurationIntegrationTests extends IntegrationTestsSup
 	private GemFireCache gemfireCache;
 
 	@Test
-	public void memberNameIsCorrect() {
+	public void memberNameWasConfiguredCorrectly() {
 
 		assertThat(this.gemfireCache).isNotNull();
 		assertThat(this.gemfireCache.getDistributedSystem()).isNotNull();
