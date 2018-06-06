@@ -56,10 +56,12 @@ import org.springframework.util.StringUtils;
 public class DurableClientConfiguration extends AbstractAnnotationConfigSupport implements ImportAware {
 
 	public static final boolean DEFAULT_KEEP_ALIVE = true;
+	public static final boolean DEFAULT_READY_FOR_EVENTS = true;
 
 	public static final int DEFAULT_DURABLE_CLIENT_TIMEOUT = 300;
 
 	private Boolean keepAlive = DEFAULT_KEEP_ALIVE;
+	private Boolean readyForEvents = DEFAULT_READY_FOR_EVENTS;
 
 	private Integer durableClientTimeout = DEFAULT_DURABLE_CLIENT_TIMEOUT;
 
@@ -91,6 +93,10 @@ public class DurableClientConfiguration extends AbstractAnnotationConfigSupport 
 			this.keepAlive = enableDurableClientAttributes.containsKey("keepAlive")
 				? enableDurableClientAttributes.getBoolean("keepAlive")
 				: DEFAULT_KEEP_ALIVE;
+
+			this.readyForEvents = enableDurableClientAttributes.containsKey("readyForEvents")
+				? enableDurableClientAttributes.getBoolean("readyForEvents")
+				: DEFAULT_READY_FOR_EVENTS;
 		}
 	}
 
@@ -106,10 +112,16 @@ public class DurableClientConfiguration extends AbstractAnnotationConfigSupport 
 			.orElse(DEFAULT_DURABLE_CLIENT_TIMEOUT);
 	}
 
-	public Boolean getKeepAlive() {
+	protected Boolean getKeepAlive() {
 
 		return Optional.ofNullable(this.keepAlive)
 			.orElse(DEFAULT_KEEP_ALIVE);
+	}
+
+	protected Boolean getReadyForEvents() {
+
+		return Optional.ofNullable(this.readyForEvents)
+			.orElse(DEFAULT_READY_FOR_EVENTS);
 	}
 
 	protected Logger getLogger() {
@@ -120,9 +132,11 @@ public class DurableClientConfiguration extends AbstractAnnotationConfigSupport 
 	ClientCacheConfigurer clientCacheDurableClientConfigurer() {
 
 		return (beanName, clientCacheFactoryBean) -> getDurableClientId().ifPresent(durableClientId -> {
+
 			clientCacheFactoryBean.setDurableClientId(durableClientId);
 			clientCacheFactoryBean.setDurableClientTimeout(getDurableClientTimeout());
 			clientCacheFactoryBean.setKeepAlive(getKeepAlive());
+			clientCacheFactoryBean.setReadyForEvents(getReadyForEvents());
 		});
 	}
 

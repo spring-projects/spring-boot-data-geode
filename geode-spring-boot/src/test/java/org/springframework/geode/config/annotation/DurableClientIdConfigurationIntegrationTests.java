@@ -111,6 +111,13 @@ public class DurableClientIdConfigurationIntegrationTests extends IntegrationTes
 		assertThat(this.clientCacheFactoryBean.isKeepAlive()).isTrue();
 	}
 
+	@Test
+	public void setClientCacheFactoryBeanSetsReadyForEventOnContextRefreshedEvent() {
+
+		assertThat(this.clientCacheFactoryBean).isNotNull();
+		assertThat(this.clientCacheFactoryBean.isReadyForEvents()).isTrue();
+	}
+
 	@ClientCacheApplication
 	@EnableGemFireMockObjects
 	@EnableDurableClient(id = "abc123", timeout = 600)

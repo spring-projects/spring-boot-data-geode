@@ -62,6 +62,13 @@ public @interface EnableDurableClient {
 	boolean keepAlive() default DurableClientConfiguration.DEFAULT_KEEP_ALIVE;
 
 	/**
+	 * Configures whether the {@link ClientCache} is ready to recieve events on startup.
+	 *
+	 * Defaults to {@literal true}.
+	 */
+	boolean readyForEvents() default DurableClientConfiguration.DEFAULT_READY_FOR_EVENTS;
+
+	/**
 	 * Used only for clients in a client/server installation. Number of seconds this client can remain disconnected
 	 * from its server and have the server continue to accumulate durable events for it.
 	 *
