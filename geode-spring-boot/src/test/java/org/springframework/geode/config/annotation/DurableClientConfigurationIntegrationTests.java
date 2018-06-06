@@ -60,7 +60,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 @SuppressWarnings("unused")
-public class DurableClientIdConfigurationIntegrationTests extends IntegrationTestsSupport {
+public class DurableClientConfigurationIntegrationTests extends IntegrationTestsSupport {
 
 	private static final AtomicReference<ConfigurableApplicationContext> applicationContextReference =
 		new AtomicReference<>(null);
