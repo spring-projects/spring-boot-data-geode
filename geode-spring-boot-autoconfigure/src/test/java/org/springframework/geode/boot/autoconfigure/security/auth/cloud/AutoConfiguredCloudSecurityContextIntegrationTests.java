@@ -29,7 +29,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLocator;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
-import org.springframework.data.gemfire.support.GemfireBeanFactoryLocatorProxy;
+import org.springframework.data.gemfire.support.GemfireBeanFactoryLocator;
 import org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -76,7 +76,7 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 
 		loadVcapApplicationProperties();
 
-		GemfireBeanFactoryLocatorProxy.clear();
+		GemfireBeanFactoryLocator.clear();
 	}
 
 	public static void loadVcapApplicationProperties() throws IOException {
@@ -89,10 +89,7 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 
 	@AfterClass
 	public static void cleanUpUsedResources() {
-
 		vcapApplicationProperties.stringPropertyNames().forEach(System::clearProperty);
-
-		GemfireBeanFactoryLocatorProxy.clear();
 	}
 
 	@SpringBootApplication
