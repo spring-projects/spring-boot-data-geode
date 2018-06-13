@@ -13,6 +13,8 @@ dependencyManagement {
 	}
 }
 
+ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
+
 dependencies {
 
 	compile("org.springframework.boot:spring-boot-starter") {

@@ -16,6 +16,8 @@ dependencyManagement {
 	}
 }
 
+ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
+
 dependencies {
 
 	compile "org.springframework:spring-context-support"
