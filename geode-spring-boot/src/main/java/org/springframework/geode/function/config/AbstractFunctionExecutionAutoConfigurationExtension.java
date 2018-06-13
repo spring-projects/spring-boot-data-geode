@@ -14,52 +14,42 @@
  * permissions and limitations under the License.
  */
 
-package org.springframework.data.gemfire.function.config;
+package org.springframework.geode.function.config;
 
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
 import java.util.Optional;
 
+import org.apache.geode.cache.execute.Execution;
+import org.apache.geode.cache.execute.Function;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.StandardAnnotationMetadata;
+import org.springframework.data.gemfire.function.config.AbstractFunctionExecutionConfigurationSource;
+import org.springframework.data.gemfire.function.config.AnnotationFunctionExecutionConfigurationSource;
+import org.springframework.data.gemfire.function.config.FunctionExecutionBeanDefinitionRegistrar;
 
 /**
- * The AbstractFunctionExecutionAutoConfigurationExtension class...
+ * The {@link AbstractFunctionExecutionAutoConfigurationExtension} class extends SDG's {@link FunctionExecutionBeanDefinitionRegistrar}
+ * to redefine the location of application POJO {@link Function} {@link Execution} interfaces.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.execute.Execution
+ * @see org.apache.geode.cache.execute.Function
+ * @see org.springframework.beans.factory.BeanFactory
+ * @see org.springframework.beans.factory.BeanFactoryAware
+ * @see org.springframework.boot.autoconfigure.AutoConfigurationPackages
+ * @see org.springframework.core.type.AnnotationMetadata
+ * @see org.springframework.data.gemfire.function.config.FunctionExecutionBeanDefinitionRegistrar
  * @since 1.0.0
  */
-// TODO replace this class once SD Lovelace is GA and SBDG is rebased on SD Lovelace
 public abstract class AbstractFunctionExecutionAutoConfigurationExtension
 		extends FunctionExecutionBeanDefinitionRegistrar implements BeanFactoryAware {
 
 	private BeanFactory beanFactory;
-
-	@Override
-	public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
-		registerBeanDefinitions(newAnnotationBasedFunctionExecutionConfigurationSource(annotationMetadata), registry);
-	}
-
-	@SuppressWarnings("unused")
-	private AbstractFunctionExecutionConfigurationSource newAnnotationBasedFunctionExecutionConfigurationSource(
-			AnnotationMetadata annotationMetadata) {
-
-		StandardAnnotationMetadata metadata =
-			new StandardAnnotationMetadata(getConfiguration(), true);
-
-		return new AnnotationFunctionExecutionConfigurationSource(metadata) {
-
-			@Override
-			public Iterable<String> getBasePackages() {
-				return AutoConfigurationPackages.get(getBeanFactory());
-			}
-		};
-	}
 
 	@Override
 	@SuppressWarnings("all")
@@ -76,4 +66,20 @@ public abstract class AbstractFunctionExecutionAutoConfigurationExtension
 
 	protected abstract Class<?> getConfiguration();
 
+	@SuppressWarnings("unused")
+	@Override
+	protected AbstractFunctionExecutionConfigurationSource newAnnotationBasedFunctionExecutionConfigurationSource(
+			AnnotationMetadata annotationMetadata) {
+
+		StandardAnnotationMetadata metadata =
+			new StandardAnnotationMetadata(getConfiguration(), true);
+
+		return new AnnotationFunctionExecutionConfigurationSource(metadata) {
+
+			@Override
+			public Iterable<String> getBasePackages() {
+				return AutoConfigurationPackages.get(getBeanFactory());
+			}
+		};
+	}
 }

@@ -24,8 +24,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.function.config.EnableGemfireFunctions;
-import org.springframework.data.gemfire.function.config.GemFireFunctionExecutionAutoConfigurationRegistrar;
 import org.springframework.data.gemfire.function.execution.GemfireFunctionOperations;
+import org.springframework.geode.function.config.GemFireFunctionExecutionAutoConfigurationRegistrar;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Function Execution
@@ -38,7 +38,7 @@ import org.springframework.data.gemfire.function.execution.GemfireFunctionOperat
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.function.config.EnableGemfireFunctions
  * @see org.springframework.data.gemfire.function.config.EnableGemfireFunctionExecutions
- * @see org.springframework.data.gemfire.function.config.GemFireFunctionExecutionAutoConfigurationRegistrar
+ * @see org.springframework.geode.function.config.GemFireFunctionExecutionAutoConfigurationRegistrar
  * @see org.springframework.data.gemfire.function.execution.GemfireFunctionOperations
  * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  * @since 1.0.0
