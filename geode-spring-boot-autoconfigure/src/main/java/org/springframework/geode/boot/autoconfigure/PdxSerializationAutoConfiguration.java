@@ -16,32 +16,33 @@
 
 package org.springframework.geode.boot.autoconfigure;
 
+import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
-import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
+import org.springframework.data.gemfire.config.annotation.EnablePdx;
 
 /**
- * Spring Boot {@link EnableAutoConfiguration auto-configuration} for bootstrapping an Apache Geode {@link ClientCache}
- * instance constructed, configured and initialized with Spring Data for Apache Geode.
+ * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's PDX Serialization
+ * functionality in a either a {@link Cache peer cache} or {@link ClientCache} application.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
- * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
- * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
+ * @see org.springframework.data.gemfire.config.annotation.EnablePdx
  * @since 1.0.0
  */
 @Configuration
-@ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
-@ConditionalOnMissingBean(GemFireCache.class)
-@ClientCacheApplication
-public class ClientCacheAutoConfiguration {
+@ConditionalOnBean(GemFireCache.class)
+@ConditionalOnMissingBean(name = { "clientCachePdxConfigurer", "peerCachePdxConfigurer" },
+	type = "org.springframework.data.gemfire.config.support.PdxDiskStoreAwareBeanFactoryPostProcessor")
+@EnablePdx
+public class PdxSerializationAutoConfiguration {
 
 }
