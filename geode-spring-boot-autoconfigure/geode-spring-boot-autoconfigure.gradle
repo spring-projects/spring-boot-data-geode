@@ -16,7 +16,7 @@ dependencyManagement {
 	}
 }
 
-ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
+//ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
 
 dependencies {
 
