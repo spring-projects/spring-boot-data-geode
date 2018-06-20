@@ -5,7 +5,7 @@ apply plugin: 'io.spring.dependency-management'
 
 apply from: IDE_GRADLE
 
-description = "Spring Boot Starter for Apache Geode"
+description = "Spring Boot Starter for Pivotal GemFire"
 
 dependencyManagement {
 	imports {
@@ -21,8 +21,14 @@ dependencies {
 		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
 	}
 
-	compile(project(':geode-spring-boot'))
+	compile(project(':spring-geode')) {
+		exclude group: "org.springframework.data", module: "spring-data-geode"
+	}
 
-	compile(project(':geode-spring-boot-autoconfigure'))
+	compile(project(':spring-geode-autoconfigure')) {
+		exclude group: "org.springframework.data", module: "spring-data-geode"
+	}
+
+	compile "org.springframework.data:spring-data-gemfire"
 
 }

@@ -20,7 +20,7 @@ dependencyManagement {
 
 dependencies {
 
-	compile project(":geode-spring-boot")
+	compile project(":spring-geode")
 
 	testCompile "org.assertj:assertj-core"
 	testCompile "junit:junit"
