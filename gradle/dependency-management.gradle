@@ -1,23 +1,10 @@
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework:spring-framework-bom:$springVersion"
-		mavenBom "org.springframework.data:spring-data-releasetrain:$springDataReleaseTrainVersion"
+		mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
 	}
 	dependencies {
-		dependency "javax.cache:cache-api:$cacheApiVersion"
 		dependency "antlr:antlr:$antlrVersion"
-		dependency "ch.qos.logback:logback-classic:$logbackVersion"
-		dependency "ch.qos.logback:logback-core:$logbackVersion"
 		dependency "edu.umd.cs.mtc:multithreadedtc:$multithreadedtcVersion"
-		dependency "junit:junit:$junitVersion"
-		dependency "org.assertj:assertj-core:$assertjVersion"
-		dependency "org.hamcrest:hamcrest-core:$hamcrestVersion"
-		dependency "org.projectlombok:lombok:$lombokVersion"
-		dependency "org.hamcrest:hamcrest-library:$hamcrestVersion"
-		dependency "org.mockito:mockito-core:$mockitoVersion"
-		dependency "org.slf4j:jcl-over-slf4j:$slf4jVersion"
-		dependency "org.slf4j:jul-to-slf4j:$slf4jVersion"
-		dependency "org.slf4j:log4j-over-slf4j:$slf4jVersion"
 		dependency "org.springframework.data:spring-data-geode-test:$springDataGeodeTest"
 		dependency "org.springframework.shell:spring-shell:$springShellVersion"
 	}

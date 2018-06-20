@@ -1,17 +1,7 @@
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
-
 apply plugin: 'io.spring.convention.spring-module'
-apply plugin: 'io.spring.dependency-management'
-
 apply from: IDE_GRADLE
 
 description = "Spring Boot Starter for Pivotal GemFire"
-
-dependencyManagement {
-	imports {
-		mavenBom SpringBootPlugin.BOM_COORDINATES
-	}
-}
 
 //ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
 
