@@ -1,0 +1,49 @@
+apply plugin: 'io.spring.convention.docs'
+apply plugin: 'io.spring.convention.spring-test'
+
+apply from: IDE_GRADLE
+
+dependencies {
+
+	testCompile project(':spring-geode-starter')
+	testCompile "junit:junit"
+	testCompile "org.assertj:assertj-core"
+	testCompile "org.mockito:mockito-core"
+	testCompile "edu.umd.cs.mtc:multithreadedtc"
+	testCompile "org.springframework:spring-test"
+
+}
+
+def versions = dependencyManagement.managedVersions
+
+asciidoctor {
+
+	def ghTag = snapshotBuild ? 'master' : project.version
+	def ghUrl = "https://github.com/spring-projects/spring-boot-data-geode/tree/$ghTag"
+
+	attributes	'version-snapshot': snapshotBuild,
+		'version-milestone': milestoneBuild,
+		'version-release': releaseBuild,
+		'gh-url': ghUrl,
+		'gh-samples-url': "$ghUrl/samples/",
+		'download-url' : "https://github.com/spring-projects/spring-boot-data-geode/archive/${ghTag}.zip",
+		'spring-version' : versions['org.springframework:spring-core'],
+		'spring-boot-version' : version,
+		'docs-itest-dir' : rootProject.projectDir.path + '/docs/src/integration-test/java/',
+		'docs-test-dir' : rootProject.projectDir.path + '/docs/src/test/java/',
+		'docs-test-resources-dir' : rootProject.projectDir.path + '/docs/src/test/resources/',
+		'samples-dir' : rootProject.projectDir.path + '/samples/',
+		'boot-main-resources-dir' : rootProject.projectDir.path + '/geode-spring-boot-autoconfigure/src/main/resources/'
+}
+
+javadoc {
+	configure(options) {
+		links = [
+			"http://docs.spring.io/spring/docs/current/javadoc-api/",
+			"http://docs.spring.io/spring-data/commons/docs/current/api/index.html?index-all.html",
+			"http://docs.spring.io/spring-data-gemfire/docs/current/api/",
+			"http://docs.spring.io/spring-boot-data-geode/docs/1.0.0.BUILD-SNAPSHOT/api/",
+			"http://geode.apache.org/releases/latest/javadoc/index.html",
+		]
+	}
+}
