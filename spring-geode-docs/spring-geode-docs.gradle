@@ -5,7 +5,10 @@ apply from: IDE_GRADLE
 
 dependencies {
 
-	testCompile project(':spring-geode-starter')
+	compile project(':spring-geode-starter')
+
+	runtime 'org.springframework.shell:spring-shell'
+
 	testCompile "junit:junit"
 	testCompile "org.assertj:assertj-core"
 	testCompile "org.mockito:mockito-core"
@@ -18,32 +21,36 @@ def versions = dependencyManagement.managedVersions
 
 asciidoctor {
 
-	def ghTag = snapshotBuild ? 'master' : project.version
-	def ghUrl = "https://github.com/spring-projects/spring-boot-data-geode/tree/$ghTag"
+	def githubBaseUrl = "https://github.com/spring-projects/spring-boot-data-geode"
+	def githubTag = snapshotBuild ? 'master' : project.version
+	def githubUrl = "$githubBaseUrl/tree/$githubTag"
 
-	attributes	'version-snapshot': snapshotBuild,
+	attributes 'version-snapshot': snapshotBuild,
 		'version-milestone': milestoneBuild,
 		'version-release': releaseBuild,
-		'gh-url': ghUrl,
-		'gh-samples-url': "$ghUrl/samples/",
-		'download-url' : "https://github.com/spring-projects/spring-boot-data-geode/archive/${ghTag}.zip",
+		'github-url': githubUrl,
+		'download-url' : "${githubBaseUrl}/archive/${githubTag}.zip",
 		'spring-version' : versions['org.springframework:spring-core'],
-		'spring-boot-version' : version,
-		'docs-itest-dir' : rootProject.projectDir.path + '/docs/src/integration-test/java/',
+		'spring-boot-version' : "${springBootVersion}",
+		'spring-boot-data-geode-version' : project.version,
+		'spring-data-commons-version' : "${springDataReleaseTrainVersion}",
+		'spring-data-gemfire-version' : "${springDataGemFireVersion}",
+		'spring-data-geode-version' : "${springDataGeodeVersion}",
 		'docs-test-dir' : rootProject.projectDir.path + '/docs/src/test/java/',
 		'docs-test-resources-dir' : rootProject.projectDir.path + '/docs/src/test/resources/',
-		'samples-dir' : rootProject.projectDir.path + '/samples/',
-		'boot-main-resources-dir' : rootProject.projectDir.path + '/geode-spring-boot-autoconfigure/src/main/resources/'
+		'docs-itest-dir' : rootProject.projectDir.path + '/docs/src/integration-test/java/',
+		'samples-dir' : rootProject.projectDir.path + '/samples/'
 }
 
 javadoc {
 	configure(options) {
 		links = [
 			"http://docs.spring.io/spring/docs/current/javadoc-api/",
-			"http://docs.spring.io/spring-data/commons/docs/current/api/index.html?index-all.html",
-			"http://docs.spring.io/spring-data-gemfire/docs/current/api/",
-			"http://docs.spring.io/spring-boot-data-geode/docs/1.0.0.BUILD-SNAPSHOT/api/",
-			"http://geode.apache.org/releases/latest/javadoc/index.html",
+			"https://docs.spring.io/spring-boot/docs/current/api/",
+			"http://docs.spring.io/spring-data/commons/docs/current/api/",
+			"https://docs.spring.io/spring-data/geode/docs/current/api/",
+			"http://docs.spring.io/spring-boot-data-geode/docs/${project.version}/api/",
+			"http://geode.apache.org/releases/latest/javadoc/",
 		]
 	}
 }
