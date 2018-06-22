@@ -19,6 +19,7 @@ package example.app.model;
 import java.time.LocalDate;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
 import lombok.Data;
@@ -51,6 +52,7 @@ public class Book {
 	@NonNull
 	private String title;
 
+	@Transient
 	public boolean isNew() {
 		return getIsbn() == null;
 	}
