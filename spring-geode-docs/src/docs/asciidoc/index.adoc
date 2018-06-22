@@ -9,13 +9,21 @@ John Blum
 :hide-uri-scheme:
 :apache-geode-version: 16
 :apache-geode-docs: http://geode.apache.org/docs/guide/{apache-geode-version}
+:apache-geode-javadoc: http://geode.apache.org/releases/latest/javadoc
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference
-:spring-boot-docs-html: {spring-boot-docs}/htmlsingle/
+:spring-boot-docs-html: {spring-boot-docs}/htmlsingle
+:spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-data-commons-docs: https://docs.spring.io/spring-data/commons/docs/current/reference
 :spring-data-commons-docs-html: {spring-data-commons-docs}/html
+:spring-data-commons-javadoc: https://docs.spring.io/spring-data/commons/docs/current/api
 :spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference
 :spring-data-geode-docs-html: {spring-data-geode-docs}/html
+:spring-data-geode-javadoc: https://docs.spring.io/spring-data/geode/docs/current/api
+:spring-data-gemfire-docs: https://docs.spring.io/spring-data/gemfire/docs/current/reference
+:spring-data-gemfire-docs-html: {spring-data-gemfire-docs}/html
+:spring-data-gemfire-javadoc: https://docs.spring.io/spring-data/gemfire/docs/current/api
 :spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
+:spring-framework-javadoc: https://docs.spring.io/spring/docs/current/javadoc-api
 :wikipedia-docs: https://en.wikipedia.org/wiki
 
 [[abstract]]
