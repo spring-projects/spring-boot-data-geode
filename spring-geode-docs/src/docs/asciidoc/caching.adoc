@@ -14,9 +14,9 @@ expensive operation when, given the same input, the operation yields the same ou
 fully understanding the {spring-framework-docs}/integration.html#cache-strategies[concepts] behind _Spring's Cache Abstraction_
 before you continue.
 
-You can also refer to the relevant section on {spring-boot-docs-html}/#boot-features-caching[Caching]
+You can also refer to the relevant section on {spring-boot-docs-html}/\#boot-features-caching[Caching]
 in Spring Boot's Reference Guide. Spring Boot even provides _auto-configuration_ support for a few,
-simple {spring-boot-docs-html}/#_supported_cache_providers[_caching providers_] out-of-the-box.
+simple {spring-boot-docs-html}/#_supported_cache_providers[caching providers] out-of-the-box.
 
 However, if you need the proven power of an enterprise-class caching solution, with strong consistency,
 high availability and multi-site (WAN) capabilities, then you should consider http://geode.apache.org/[Apache Geode]
@@ -176,11 +176,11 @@ class LoanApplicationServer {
 
 
     @Bean
-	public CacheLoader<?, EligibilityDecision> decisionManagementSystemLoader(
-	        DataSource dataSource) {
+    public CacheLoader<?, EligibilityDecision> decisionManagementSystemLoader(
+            DataSource dataSource) {
 
-	    return new DecisionManagementSystemLoader(dataSource);
-	}
+        return new DecisionManagementSystemLoader(dataSource);
+    }
 }
 ----
 
@@ -198,7 +198,7 @@ available memory wisely.  After all, by default, both Apache Geode and Pivotal G
 Several techniques can be employed to more effectively manage memory, such as using
 {apache-geode-docs}/developing/eviction/chapter_overview.html[Eviction], possibly
 {apache-geode-docs}/developing/storing_data_on_disk/chapter_overview.html[overflowing to disk],
-configuring both entry _Idle-Timeout (TTI) as well as _Time-To-Live (TTL)_
+configuring both entry _Idle-Timeout_ (TTI) as well as _Time-To-Live_ (TTL)_
 {apache-geode-docs}/developing/expiration/chapter_overview.html[Expiration policies],
 configuring {apache-geode-docs}/managing/region_compression.html[Compression],
 and using {apache-geode-docs}/managing/heap_use/off_heap_management.html[Off-Heap], or main memory.
