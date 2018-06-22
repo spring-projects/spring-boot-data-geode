@@ -106,3 +106,4 @@ As such, it would be pertinent to begin your Spring Boot education {spring-boot-
 Finally, we arrive at Spring Boot for Apache Geode & Pivotal GemFire.
 
 include::clientcache-applications.adoc[]
+include::caching.adoc[]
