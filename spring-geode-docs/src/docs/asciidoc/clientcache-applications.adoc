@@ -7,33 +7,11 @@ simply by putting either Spring Boot for Apache Geode or Pivotal GemFire on your
 
 It is assumed that most developers using Spring Boot to build applications backed by either Apache Geode
 or Pivotal GemFire will be building Spring cache client applications in Apache Geode/Pivotal GemFire's
-{apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[Client/Server Configuration]
-and topology.  This is the most common and traditional arrangement employed in most application system architectures.
+{apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[Client/Server configuration]
+and topology.  This is the most common and traditional arrangement employed by most application system architectures.
 
-For example, declare the `spring-geode-starter` on your application classpath:
-
-.Maven
-[source,xml]
-----
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.geode</groupId>
-        <artifactId>spring-geode-starter</artifactId>
-        <version>{spring-boot-data-geode-version}</version>
-    </dependency>
-</dependencies
-----
-
-.Grade
-[source,groovy]
-----
-compile 'org.springframework.geode:spring-geode-starter:{spring-boot-data-geode-version}'
-----
-
-TIP: To use Pivotal GemFire in place of Apache Geode, simply change the `artifactId` from `spring-geode-starter`
-to `spring-gemfire-starter`.
-
-Then, build your Spring Boot application:
+For example, build your Spring Boot, Apache Geode/Pivotal GemFire, `ClientCache` application with either
+the `spring-geode-starter` or `spring-gemfire-starter`, respectively on application classpath, and then:
 
 .Spring Boot, Apache Geode/Pivotal GemFire ClientCache Application
 [source,java]

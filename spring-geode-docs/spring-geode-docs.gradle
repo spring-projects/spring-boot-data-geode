@@ -25,11 +25,12 @@ asciidoctor {
 	def githubTag = snapshotBuild ? 'master' : project.version
 	def githubUrl = "$githubBaseUrl/tree/$githubTag"
 
-	attributes 'version-snapshot': snapshotBuild,
+	attributes 'version' : project.version,
+	    'version-snapshot': snapshotBuild,
 		'version-milestone': milestoneBuild,
 		'version-release': releaseBuild,
-		'github-url': githubUrl,
 		'download-url' : "${githubBaseUrl}/archive/${githubTag}.zip",
+		'github-url': githubUrl,
 		'spring-version' : versions['org.springframework:spring-core'],
 		'spring-boot-version' : "${springBootVersion}",
 		'spring-boot-data-geode-version' : project.version,

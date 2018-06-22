@@ -1,8 +1,11 @@
 = Spring Boot for Apache Geode & Pivotal GemFire Reference Guide
-John Blum
+John Blum;
+:revnumber: {version}
+:revdate: {localdate}
 :doctype: book
 :toc:
 :toclevels: 4
+:!toc-placement:
 :source-highlighter: prettify
 :numbered:
 :icons: font
@@ -25,6 +28,14 @@ John Blum
 :spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
 :spring-framework-javadoc: https://docs.spring.io/spring/docs/current/javadoc-api
 :wikipedia-docs: https://en.wikipedia.org/wiki
+
+(C) 2018 The original authors.
+
+NOTE: Copies of this document may be made for your own use and for distribution to others provided that you do not
+charge any fee for such copies and further provided that each copy contains this Copyright Notice
+whether distributed in print or electronically.
+
+toc::[]
 
 [[abstract]]
 Welcome to _Spring Boot for Apache Geode & Pivotal GemFire_.
@@ -105,6 +116,86 @@ As such, it would be pertinent to begin your Spring Boot education {spring-boot-
 
 Finally, we arrive at Spring Boot for Apache Geode & Pivotal GemFire.
 
+[[maven-gradle]]
+== Using Spring Boot for Apache Geode or Pivotal GemFire
+
+To use Spring Boot for Apache Geode, declare the `spring-geode-starter` on your application classpath:
+
+.Maven
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.geode</groupId>
+        <artifactId>spring-geode-starter</artifactId>
+        <version>{spring-boot-data-geode-version}</version>
+    </dependency>
+</dependencies
+----
+
+.Grade
+[source,groovy]
+[subs="verbatim,attributes"]
+----
+compile 'org.springframework.geode:spring-geode-starter:{spring-boot-data-geode-version}'
+----
+
+TIP: To use Pivotal GemFire in place of Apache Geode, simply change the `artifactId` from `spring-geode-starter`
+to `spring-gemfire-starter`.
+
+ifeval::["{version-snapshot}" == "true"]
+Since we are using a SNAPSHOT version, we need to add the _Spring_ Snapshot Maven Repository.
+If you are using _Maven_, include the following `repository` declaration in your `pom.xml`:
+
+.Maven
+[source,xml]
+----
+<repositories>
+    <repository>
+        <id>spring-snapshot</id>
+        <url>https://repo.spring.io/libs-snapshot</url>
+    </repository>
+</repositories>
+----
+
+If you are using _Gradle_, include the following `repository` declaration in your `build.gradle`:
+
+.Gradle
+[source,gradle]
+----
+repositories {
+    maven { url: 'https://repo.spring.io/libs-snapshot' }
+}
+----
+endif::[]
+
+ifeval::["{version-milestone}" == "true"]
+Since we are using a Milestone version, we need to add the _Spring_ Milestone Maven Repository.
+If you are using _Maven_, include the following `repository` declaration in your `pom.xml`:
+
+.Maven
+[source,xml]
+----
+<repositories>
+    <repository>
+        <id>spring-milestone</id>
+        <url>https://repo.spring.io/libs-milestone</url>
+    </repository>
+</repositories>
+----
+
+If you are using _Gradle_, include the following `repository` declaration in your `build.gradle`:
+
+.Gradle
+[source,gradle]
+----
+repositories {
+    maven { url: 'https://repo.spring.io/libs-milestone' }
+}
+endif::[]
+
 include::clientcache-applications.adoc[]
 include::caching.adoc[]
 include::repositories.adoc[]
+include::functions.adoc[]
