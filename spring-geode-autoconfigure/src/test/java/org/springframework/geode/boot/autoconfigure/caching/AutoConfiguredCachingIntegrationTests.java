@@ -34,6 +34,7 @@ import org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRe
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.util.RegionUtils;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.app.NonBeanType;
@@ -55,6 +56,7 @@ import example.app.service.support.CachingBookService;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
