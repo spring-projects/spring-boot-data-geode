@@ -1,0 +1,111 @@
+[[geode-functions]]
+== Function Implementations & Executions
+
+=== Background
+
+Distributed processing, particularly in conjunction with data access and mutation operations, is a very effective
+and efficient use of clustered computing resources.  This is along the same lines as {wikipedia-docs}/MapReduce[MapReduce].
+
+A naively conceived query returning potentially hundreds of thousands, or even millions of rows of data in a result set
+back to the application that queried and requested the data can be very costly, especially under load.  Therefore, it is
+typically more efficient to move the processing and computations on the predicated data set to where the data resides,
+perform the required computations, summarize the results and then send the reduced data set back to the client.
+
+Additionally, when the computations are handled in parallel, across the cluster of computing resources, the operation
+can be performed much faster.  This typically involves intelligently organizing the data, which implies partitioning
+(a.k.a. sharding) and balancing the data set across the cluster.
+
+Well, both Apache Geode and Pivotal GemFire address this very important application concern in its
+{apache-geode-docs}/developing/function_exec/chapter_overview.html[Function Execution] framework.
+
+Spring Data for Apache Geode/Pivotal GemFire {spring-data-geode-docs-html}/#function-annotations[builds] on
+this Functional framework by enable developers to {spring-data-geode-docs-html}/#function-implementation[implement]
+and {spring-data-geode-docs-html}/#function-execution[execute] GemFire/Geode Functions using a very simple POJO,
+annotation-based configuration model.
+
+TIP: See {spring-data-geode-docs-html}/#_implementation_vs_execution[here] for the difference between
+Function implementation & executions.
+
+Taking this 1 step further, Spring Boot for Apache Geode/Pivotal GemFire _auto-configures_ and enables both Function
+implementation and execution out-of-the-box, so that you can immediately begin writing Functions and invoking them
+without you having to worry about all the necessary plumbing and setup.  You can rest assured that it will just work
+as expected.
+
+=== Applying Functions
+
+Earlier, when we talked about <<geode-caching-provider, caching>>, we described a `LoanApplicationService` class
+that could process eligibility when a `Person` applied for a financial loan.
+
+This can be a very resource intensive operation (i.e. expensive!), since it might involve collecting credit history,
+employment history, information on existing, outstanding/unpaid loans, and so on and so forth.  We applied caching
+to not have to recompute/redetermine eligibility every time a loan office may want to review the decision with
+the customer.
+
+But what about computing eligibility in the first place?
+
+Currently the application's `LoanApplicationService` class seems to be designed to fetch the data and perform
+the eligibility determination in place.  However, it might be far better to distribute the processing and even
+determine eligibility for a larger group of people at once.  Maybe even multiple people are involved in
+a single decision, as is typically the case.
+
+We implement an `EligibilityDeterminationFunction` class using SDG very simply as:
+
+.Function implementation
+[source,java]
+----
+@Component
+class EligibilityDeterminationFunction {
+
+    @GemfireFunction(HA = true, hasResult = true, optimizeForWrite=true)
+    public EligibilityDecision determineEligibility(FunctionContext functionContext, Person person, TimeSpan timeSpan) {
+        ...
+    }
+}
+----
+
+Using SDG's {spring-data-geode-javadoc}/org/springframework/data/gemfire/function/annotation/GemfireFunction.html[`@GemfireFunction`]
+annotation, it is easy to implement our Function using a POJO method.  SDG handles registering this POJO method
+as a proper Function with GemFire/Geode appropriately.
+
+If we now want to call this Function from our Spring Boot, `ClientCache` application, then we simply define
+a Function Execution interface with a method name matching the Function name, and targeting the execution
+on the "EligibilityDecisions" Region:
+
+.Function execution
+[source,java]
+----
+@OnRegion("EligibilityDecisions")
+interface EligibilityDeterminationExecution {
+
+  EligibilityDecision determineEligibility(Person person, TimeSpan timeSpan);
+
+}
+----
+
+We can then inject the `EligibilityDeterminationExecution` into our `LoanApplicationService` like any other
+object/Spring bean:
+
+.Function use
+[source,java]
+----
+@Service
+class LoanApplicationService {
+
+    private final EligibilityDeterminationExecution execution;
+
+    public LoanApplicationService(EligibilityDeterminationExecution execution) {
+        this.execution = execution;
+    }
+
+    @Cacheable("EligibilityDecisions", ...)
+    EligibilityDecision processEligility(Person person, TimeSpan timeSpan) {
+        return this.execution.determineEligibility(person, timeSpan);
+    }
+
+}
+----
+
+Just like caching, no addition configuration is required to enable and find your application Function implementations
+and executions. Simply build and run.  Spring Boot for Apache Geode/Pivotal GemFire handles the rest.
+
+TIP: It is common to implement and register your application Functions on the server and execute them from the client.
