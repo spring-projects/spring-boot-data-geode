@@ -5,6 +5,7 @@ The following appendices provide additional help while developing Spring Boot ap
 or Pivotal GemFire.
 
 
+[[geode-cluster-configuration-bootstrapping]]
 === Running an Apache Geode/Pivotal GemFire cluster using Spring Boot from your IDE
 
 As described in <<geode-clientcache-applications>>, it is possible to configure and run a small Apache Geode
@@ -346,6 +347,7 @@ It is pretty simple to build and run a Spring Boot, Apache Geode/Pivotal GemFire
 that connects to this cluster.  Simply include and use Spring Boot for Apache Geode/Pivotal GemFire, ;-).
 
 
+[[geode-testing]]
 === Testing
 
 https://github.com/spring-projects/spring-test-data-geode[Spring Test for Apache Geode & Pivotal GemFire] is a new,
@@ -362,6 +364,7 @@ for all your Spring application testing needs.
 Later on, this reference guide will include and dedicate an entire chapter on testing.
 
 
+[[references]]
 === References
 
 1. Spring Framework {spring-framework-docs}[Reference Guide] | {spring-framework-javadoc}[Javadoc]
