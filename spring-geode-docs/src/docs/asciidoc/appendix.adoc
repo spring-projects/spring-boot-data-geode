@@ -364,6 +364,14 @@ for all your Apache Geode/Pivotal GemFire application testing needs when using S
 Later on, this reference guide will include and dedicate an entire chapter on testing.
 
 
+[[geode-examples]]
+=== Examples
+
+Refer to the Pivotal Cloud Cache (PCC), https://github.com/pivotal-cf/PCC-Sample-App-PizzaStore[Pizza Store],
+Spring Boot application for an example of using Spring Boot for Pivotal GemFire in a Pivotal GemFire `ClientCache`
+application interfacing with PCC.
+
+
 [[references]]
 === References
 
