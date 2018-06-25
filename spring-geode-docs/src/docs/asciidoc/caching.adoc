@@ -39,7 +39,7 @@ For example, suppose you want to cache the result for determining a person's eli
 class LoanApplicationService {
 
     @Cacheable("EligibilityDecisions", ...)
-    EligibilityDecision processEligility(Person person, TimeSpan timeSpan) {
+    EligibilityDecision processEligility(Person person, Timespan timespan) {
         ...
     }
 }

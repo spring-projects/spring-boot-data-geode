@@ -57,7 +57,7 @@ We implement an `EligibilityDeterminationFunction` class using SDG very simply a
 class EligibilityDeterminationFunction {
 
     @GemfireFunction(HA = true, hasResult = true, optimizeForWrite=true)
-    public EligibilityDecision determineEligibility(FunctionContext functionContext, Person person, TimeSpan timeSpan) {
+    public EligibilityDecision determineEligibility(FunctionContext functionContext, Person person, Timespan timespan) {
         ...
     }
 }
@@ -77,7 +77,7 @@ on the "EligibilityDecisions" Region:
 @OnRegion("EligibilityDecisions")
 interface EligibilityDeterminationExecution {
 
-  EligibilityDecision determineEligibility(Person person, TimeSpan timeSpan);
+  EligibilityDecision determineEligibility(Person person, Timespan timespan);
 
 }
 ----
@@ -98,7 +98,7 @@ class LoanApplicationService {
     }
 
     @Cacheable("EligibilityDecisions", ...)
-    EligibilityDecision processEligility(Person person, TimeSpan timeSpan) {
+    EligibilityDecision processEligility(Person person, Timespan timespan) {
         return this.execution.determineEligibility(person, timeSpan);
     }
 
