@@ -371,6 +371,10 @@ Refer to the Pivotal Cloud Cache (PCC), https://github.com/pivotal-cf/PCC-Sample
 Spring Boot application for an example of using Spring Boot for Pivotal GemFire in a Pivotal GemFire `ClientCache`
 application interfacing with PCC.
 
+You may also refer to the https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example]
+from the _Contact Application_ Reference Implementation for Spring Data for Apache Geode/Pivotal GemFire
+as another example.
+
 
 [[references]]
 === References
