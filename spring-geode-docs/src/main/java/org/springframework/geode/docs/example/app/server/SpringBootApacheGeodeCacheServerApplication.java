@@ -14,11 +14,8 @@
  * permissions and limitations under the License.
  */
 
-package example.app.server;
+package org.springframework.geode.docs.example.app.server;
 
-import org.apache.geode.cache.Cache;
-import org.apache.geode.cache.server.CacheServer;
-import org.apache.geode.distributed.Locator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
@@ -28,23 +25,7 @@ import org.springframework.data.gemfire.config.annotation.EnableLocator;
 import org.springframework.data.gemfire.config.annotation.EnableManager;
 import org.springframework.geode.config.annotation.UseLocators;
 
-/**
- * Example Spring Boot configured and bootstrapped Apache Geode/Pivotal GemFire peer {@link Cache}, {@link CacheServer}
- * application, running an embedded {@link Locator} and {@literal Manager} service.
- *
- * @author John Blum
- * @see org.apache.geode.cache.Cache
- * @see org.apache.geode.cache.server.CacheServer
- * @see org.apache.geode.distributed.Locator
- * @see org.springframework.boot.SpringApplication
- * @see org.springframework.boot.autoconfigure.SpringBootApplication
- * @see org.springframework.context.annotation.Configuration
- * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
- * @see org.springframework.data.gemfire.config.annotation.EnableLocator
- * @see org.springframework.data.gemfire.config.annotation.EnableManager
- * @see org.springframework.geode.config.annotation.UseLocators
- * @since 1.0.0
- */
+// tag::class[]
 @SpringBootApplication
 @CacheServerApplication(name = "SpringBootApacheGeodeCacheServerApplication")
 @SuppressWarnings("unused")
@@ -66,3 +47,4 @@ public class SpringBootApacheGeodeCacheServerApplication {
 	static class LonerConfiguration { }
 
 }
+// end::class[]
