@@ -109,7 +109,7 @@ Then, our journey continues with the extensions built into Spring Data for Apach
 (SDGfootnoteref:[SDG, Spring Data for Apache Geode and Spring Data for Pivotal GemFire are commonly known as SDG.])
 to truly simplify the development of Apache Geode & Pivotal GemFire applications in a Spring context, using Spring's
 powerful abstractions and highly consistent programming model.  This part of the story was greatly enhanced in
-Spring Data *Kay*, with SDGfootnoteref:[SDG] new {spring-data-geode-docs-html}/#bootstrap-annotation-config[annotation-based configuration model].
+Spring Data *Kay*, with the SDGfootnoteref:[SDG] {spring-data-geode-docs-html}/#bootstrap-annotation-config[annotation-based configuration model].
 Though this new configuration approach using annotations provides sensible defaults out-of-the-box, its use
 is also very explicit and assumes nothing.  That is, you still must tell SDGfootnoteref:[SDG] what you want.
 
@@ -153,7 +153,8 @@ TIP: To use Pivotal GemFire in place of Apache Geode, simply change the `artifac
 to `spring-gemfire-starter`.
 
 ifeval::["{version-snapshot}" == "true"]
-Since you are using a SNAPSHOT version, you need to add the _Spring_ Snapshot Maven Repository.
+Since you are using a SNAPSHOT version, you need to add the Spring Snapshot Maven Repository.
+
 If you are using _Maven_, include the following `repository` declaration in your `pom.xml`:
 
 .Maven
@@ -179,7 +180,8 @@ repositories {
 endif::[]
 
 ifeval::["{version-milestone}" == "true"]
-Since you are using a Milestone version, you need to add the _Spring_ Milestone Maven Repository.
+Since you are using a Milestone version, you need to add the Spring Milestone Maven Repository.
+
 If you are using _Maven_, include the following `repository` declaration in your `pom.xml`:
 
 .Maven
