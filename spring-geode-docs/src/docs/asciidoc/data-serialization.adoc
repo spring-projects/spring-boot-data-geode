@@ -89,8 +89,7 @@ The SDG `MappingPdxSerializer` offers the following capabilities:
 2. Includes support for both `includes` and `excludes` with {spring-data-geode-docs-html}/#mapping.pdx-serializer.type-filtering[type filtering].
 Additionally, type filters can be implemented using Java's `java.util.function.Predicate` interface as opposed to GemFire/Geode's
 limited regex capabilities provided by the `ReflectionBasedAutoSerializer` class.  By default, `MappingPdxSerializer`
-excludes all types in the following packages: `java.*`, `org.apache.geode.*`, `org.springframework.*`
-and `com.gemstone.gemfire.*` (legacy).
+excludes all types in the following packages: `java`, `org.apache.geode`, `org.springframework` & `com.gemstone.gemfire`.
 
 3. Handles {spring-data-geode-docs-html}/#mapping.pdx-serializer.transient-properties[transient object fields & properties]
 when either Java's `transient` keyword or Spring Data's `@Transient` annotation is used.
