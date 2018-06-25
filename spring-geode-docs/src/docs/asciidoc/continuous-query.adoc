@@ -3,7 +3,7 @@
 
 Arguably, the most invaluable of applications are those that can process a stream of events as they happen,
 and intelligently react in near real-time to the countless changes in the data over time.  The most useful
-of frameworks are those that can make processing a stream of events, as they happen, as easy as possible.
+of frameworks are those that can make processing a stream of events as they happen, as easy as possible.
 
 Spring Boot for Apache Geode & Pivotal GemFire does just that, without users having to perform any complex setup
 or configure any necessary infrastructure components to enable such functionality.  Developers can simply define
@@ -12,7 +12,7 @@ as they occur.
 
 Apache Geode & Pivotal GemFire make defining criteria for data of interests easy when using
 {apache-geode-docs}/developing/continuous_querying/chapter_overview.html[Continuous Query (CQ)]. With CQ, you can
-express the criteria matching the data of interests using a query predicate.  Apache Geode & Pivotal GemFire supports
+express the criteria matching the data of interests using a query predicate.  Apache Geode & Pivotal GemFire implements
 the {apache-geode-docs}/developing/querying_basics/query_basics.html[Object Query Language (OQL)] for defining
 and executing queries.  OQL is not unlike SQL, and supports projections, query predicates, ordering and aggregates.
 And, when used in CQs, they execute continuously, firing events when the data changes in such ways as to match
@@ -21,8 +21,8 @@ the criteria expressed in the query predicate.
 Spring Boot for Apache Geode/Pivotal GemFire combines the ease of expressing interests in data using an OQL
 query statement with implementing the listener handler callback, in 1 easy step.
 
-For example, suppose we want to perform some follow up action anytime a customer's loan application is either
-approved or denied.
+For example, suppose we want to perform some follow up action anytime a customer's financial loan application
+is either approved or denied.
 
 First, the application model for our `EligibilityDecision` class might look something like:
 
@@ -50,7 +50,8 @@ class EligibilityDecision {
 }
 ----
 
-Then, we can implement and declare our CQ event handler methods:
+Then, we can implement and declare our CQ event handler methods to be notified when a decision
+is either APPROVED or DENIED:
 
 [source,java]
 ----
@@ -79,9 +80,9 @@ class EligibilityDecisionPostProcessor {
 Thus, anytime eligibility is processed and a decision as been made, either approved or denied, our application
 will get notified, and as an application developer, you are free to code your handler and respond to the event
 anyway you like.  And, because our Continuous Query handler class is a component, or bean in the Spring
-`ApplicationContext`, we can auto-wire any other beans to carry out the applications function.
+`ApplicationContext`, you can auto-wire any other beans necessary to carry out the application's intended function.
 
-This is not unlike Spring's {spring-framework-docs}/integration.html#jms-annotated[Annotation-based listener endpoints]
-using in (JMS) message listeners/handlers, except in Spring Boot for Apache Geode/Pivotal GemFire, you do not need to do
-anything special to enable this functionality.  Just declare the `@ContinuousQuery` annotation on a POJO handler method
-and off you go.  Simple!
+This is not unlike Spring's {spring-framework-docs}/integration.html#jms-annotated[Annotation-driven listener endpoints]
+used in (JMS) message listeners/handlers, except in Spring Boot for Apache Geode/Pivotal GemFire, you do not need to do
+anything special to enable this functionality.  Just declare the `@ContinuousQuery` annotation on any POJO method
+and off you go.
