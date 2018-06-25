@@ -352,14 +352,14 @@ that connects to this cluster.  Simply include and use Spring Boot for Apache Ge
 
 https://github.com/spring-projects/spring-test-data-geode[Spring Test for Apache Geode & Pivotal GemFire] is a new,
 soon to be released and upcoming project to help developers write both _Unit_ and _Integration Tests_
-when using Apache Geode or Pivotal GemFire in Spring context.
+when using either Apache Geode or Pivotal GemFire in a Spring context.
 
 In fact, the entire {github-url}/tree/master/spring-geode-autoconfigure/src/test/java/org/springframework/geode/boot/autoconfigure[test suite]
-for Spring Boot for Apache Geode & Pivotal GemFire is based on this project.
+in Spring Boot for Apache Geode & Pivotal GemFire is based on this project.
 
-All Spring projects involving either Apache Geode or Pivotal GemFire will use this new test framework for all their
-testing purposes making this new test framework for Apache Geode and Pivotal GemFire a proven and reliable solution
-for all your Spring application testing needs.
+All Spring projects integrating with either Apache Geode or Pivotal GemFire will use this new test framework for all
+their testing needs, making this new test framework for Apache Geode and Pivotal GemFire a proven and reliable solution
+for all your Apache Geode/Pivotal GemFire application testing needs when using Spring as well.
 
 Later on, this reference guide will include and dedicate an entire chapter on testing.
 
