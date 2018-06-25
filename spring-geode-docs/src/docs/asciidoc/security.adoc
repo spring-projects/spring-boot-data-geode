@@ -1,0 +1,203 @@
+[[geode-security]]
+== Security
+
+This sections covers Security configuration for Apache Geode/Pivotal GemFire, which encompasses both
+Authentication/Authorization (collectively, Auth) as well as Transport Layer Security (TLS)
+using SSL.
+
+
+[[geode-security-auth]]
+=== Authentication & Authorization
+
+Apache Geode and Pivotal GemFire employ username/password-based {apache-geode-docs}/managing/security/authentication_overview.html[Authentication]
+along with Role-based {apache-geode-docs}/managing/security/authorization_overview.html[Authorization] to secure
+your client to server data operations.
+
+Spring Data for Apache Geode/Pivotal GemFire (SDG) provides {spring-data-geode-docs-html}/#bootstrap-annotation-config-security[first-class support]
+for Apache Geode/Pivotal GemFire's Security framework, which is rooted in the
+{apache-geode-javadoc}/org/apache/geode/security/SecurityManager.html[SecurityManager] interface.  Additionally,
+Apache Geode's Security framework is integrated with Apache Shiro, making securing servers an even easier,
+more familiar task.
+
+And, when you apply Spring Boot for Apache Geode/Pivotal GemFire, which builds on the bits provided in SDG, it makes
+short work of enabling auth in both your clients and servers.
+
+[[geode-security-auth-servers]]
+==== Auth for Servers
+
+The easiest and most standard way to enable auth on your servers is to simply define 1 or more Apache Shiro
+http://shiro.apache.org/realm.html[Realms] as beans in the Spring `ApplicationContext`.
+
+For example:
+
+.Declaring an Apache Shiro Realm
+[source,java]
+----
+@Configuration
+class ApacheGeodeSecurityConfiguration {
+
+    @Bean
+    DefaultLdapRealm ldapRealm(..) {
+        return new DefaultLdapRealm();
+    }
+
+    ...
+}
+----
+
+When an Apache Shiro Realm (e.g. `DefaultLdapRealm`) is declared and registered in the Spring `ApplicationContext`,
+then Spring Boot automatically detects this Realm bean (or Realm beans if more than 1) and the Apache Geode
+/Pivotal GemFire servers in the cluster will automatically be configured with Authentication/Authorization enabled.
+
+Alternatively, you can provide an custom, application-specific implementation of Apache Geode/Pivotal GemFire's
+{apache-geode-javadoc}/org/apache/geode/security/SecurityManager.html[`o.a.g.security.SecurityManager`] interface,
+declared and registered as a bean in the Spring `ApplicationContext`:
+
+.Declaring a custom Apache Geode/Pivotal GemFire `SecurityManager`
+[source,java]
+----
+@Configuration
+class ApacheGeodeSecurityConfiguration {
+
+    @Bean
+    CustomSecurityManager customSecurityManager(..) {
+        return new CustomSecurityManager();
+    }
+
+    ...
+}
+----
+
+Spring Boot will auto-detect your custom, application-specific `SecurityManager` implementation and also configure
+the Apache Geode/Pivotal GemFire servers in the cluster with Authentication/Authorization enabled.
+
+TIP: The Spring team recommends that you use Apache Shiro to manage the Authentication & Authorization
+for your Apache Geode/Pivotal GemFire servers over implementing Apache Geode/Pivotal GemFire's
+`SecurityManager` interface.
+
+[[geode-security-auth-clients]]
+==== Auth for Clients
+
+When Apache Geode/Pivotal GemFire servers have been configured with Authentication/Authorization enabled, then clients
+must authenticate when connecting.
+
+Spring Boot for Apache Geode/Pivotal GemFire makes this easy, whether running your Spring Boot `ClientCache` applications
+in a local, non-managed, standalone context or running in a managed environment, like Pivotal CloudFoundry (PCF).
+
+[[geode-security-auth-clients-standalone]]
+===== Standalone Auth for Clients
+
+To enable auth for clients and connect to a secure Apache Geode/Pivotal GemFire cluster, you simply need to set
+a username and password in Spring Boot `application.properties`:
+
+[source,txt]
+----
+# Spring Boot client application.properties
+spring.data.gemfire.security.username = jdoe
+spring.data.gemfire.security.password = p@55w0rd!
+----
+
+Spring Boot for Apaceh Geode/Pivotal GemFire will handle the rest.
+
+[[geode-secuirty-auth-clients-managed]]
+===== Managed Auth for Clients
+
+The process to enable auth for clients when connecting to Pivotal Cloud Cache (PCC) instances in Pivotal CloudFoundry
+(PCF) is even easier.
+
+You do not need to do anything!
+
+When your Spring Boot application using PCC is pushed (deployed) to PCF, Spring Boot for Apache Geode/Pivotal GemFire
+is smart enough to extract the necessary auth credentials from the environment you setup when you provisioned a PCC
+service instance your PCF organization/space.  PCC automatically assigns 2 users with roles "_cluster_operator_"
+and "_developer_", respectively, to any Spring Boot application bound to the PCC service instance.
+
+See the {pivotal-cloudcache-docs}/index.html#security[PCC documentation] for more details.
+
+
+[[geode-security-ssl]]
+=== Transport Layer Security using SSL
+
+Securing data in motion is also super critical to the integrity of your application.  It would not do much good to send
+usernames/passwords over plain Socket connections between your clients and servers, nor send sensitive data over
+the same connections, for instance.
+
+Therefore, Apache Geode and Pivotal GemFire support SSL between clients & servers, JMX clients (e.g. _Gfsh_, JConsole)
+and the Manager, HTTP clients when using the Developer REST API or Pulse, between peers in the cluster,
+and when using WAN Gateway components.
+
+Spring Data for Apache Geode/Pivotal GemFire provides https://docs.spring.io/spring-data/geode/docs/current/reference/html/#bootstrap-annotation-config-ssl[first-class support]
+for enabling and configuring SSL as well.  However, Spring Boot strives to make it even easier, especially during development,
+to configure and enable SSL.
+
+Apache Geode/Pivotal GemFire require certain properties to be configured, which translate to the appropriate
+`javax.net.ssl.*` properties, to create Secure Sockets Connections using
+https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html[JSSE].
+
+But, ensuring you set all the properties correctly is error-prone, and tedious task.  So, Spring Boot for Apache Geode
+& Pivotal GemFire applies some basic conventions for you, out-of-the-box.
+
+Simply create a "`trusted.keystore`" JKS-based `KeyStore` file and place it in 1 of 3 well-known locations:
+
+1. In your Spring Boot application's working directory.
+2. In your user home directory (as defined by `user.home` Java System property).
+3. In your application JAR file at the root of the classpath.
+
+When the file is named "`trusted.keystore`" and is placed in 1 of these 3 locations, then Spring Boot
+for Apache Geode/Pivotal GemFire will automatically configure your client to use SSL connections.
+
+If you are using Spring Boot to configure and bootstrap an Apache Geode or Pivotal GemFire server:
+
+.Spring Boot configured/bootstrapped Apache Geode/Pivotal GemFire server
+[source,java]
+----
+@SpringBootApplication
+@CacheServerApplication
+class SpringBootApacheGeodeCacheServerApplication {
+    ...
+}
+----
+
+Then, Spring Boot applies the same procedure to SSL enable the servers.
+
+During development it is convenient *not&* to set a `trusted.keystore` password when accessing the keys in the file.
+
+However, it is highly recommended that you do secure the `trusted.keystore` file when deploying to your production
+environment.  Therefore, when your your `trusted.keystore` file is secured by a password, you will additionally need to
+specify the following property:
+
+.Accessing a secure `trusted.keystore`
+[source,txt]
+----
+# Spring Boot application.properties
+spring.data.gemfire.security.ssl.keystore.password = p@55w0rd!
+----
+
+You can also configure the location of the keystore, and additionally truststore files, if they not in 1 of the default
+locations searched by Spring Boot:
+
+.Accessing a secure `trusted.keystore`
+[source,txt]
+----
+# Spring Boot application.properties
+spring.data.gemfire.security.ssl.keystore = /absolute/file/system/path/to/keystore.jks
+spring.data.gemfire.security.ssl.keystore.password = keystorePassword
+spring.data.gemfire.security.ssl.truststore = /absolute/file/system/path/to/truststore.jks
+spring.data.gemfire.security.ssl.truststore.password = truststorePassword
+----
+
+See SDG's {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html[`EnableSsl`]
+annotation for all the configuration options and their corresponding properties.
+
+
+[[geode-security-encryption]]
+=== Securing Data at Rest
+
+Currently, neither Apache Geode/Pivotal GemFire nor Spring Boot/Spring Data for Apache Geode/Pivotal GemFire offer
+any support for securing your data while at rest (e.g. when overflowed/persisted to disk).
+
+To secure data at rest when using Apache Geode or Pivotal GemFire, with or without Spring, you must employ 3rd party
+solutions like disk encryption, and is usually highly contextual.
+
+For instance, securing data at rest using Amazon EC2
+https://aws.amazon.com/blogs/security/how-to-protect-data-at-rest-with-amazon-ec2-instance-store-encryption/[Instance Store Encryption].
