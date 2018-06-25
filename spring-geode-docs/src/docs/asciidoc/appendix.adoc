@@ -1,0 +1,371 @@
+[[appendix]]
+== Appendix
+
+The following appendices provide additional help while developing Spring Boot applications backed by Apache Geode
+or Pivotal GemFire.
+
+
+=== Running an Apache Geode/Pivotal GemFire cluster using Spring Boot from your IDE
+
+As described in <<geode-clientcache-applications>>, it is possible to configure and run a small Apache Geode
+or Pivotal GemFire cluster from inside your IDE using Spring Boot.  This is extremely helpful during development
+since it allows you to manually spin up, test and debug your applications quickly and easily.
+
+Spring Boot for Apache Geode/Pivotal GemFire includes such a class:
+
+.Spring Boot application class used to configure and boostrap an Apache Geode/Pivotal GemFire server
+[source,java]
+----
+include::{docs-src-dir}/org/springframework/geode/docs/example/app/server/SpringBootApacheGeodeCacheServerApplication.java[tags=class]
+----
+
+This class is a proper Spring Boot application that can be used to configure and bootstrap multiple Apache Geode
+or Pivotal GemFire servers and joining them together to form a small cluster simply by modifying
+the runtime configuration of this class ever so slightly.
+
+Initially you will want to start a single, primary server with the embedded Locator and Manager service.
+
+The Locator service enables members in the cluster to locate one another and allows new members to attempt to
+join the cluster as a peer.  Additionally, the Locator service also allows clients to connect to the servers
+in the cluster.  When the cache client's Pool is configured to use Locators, then the Pool can intelligently
+route data requests directly to the server hosting the data (a.k.a. single-hop access), especially when the data
+is partitioned/sharded across servers in the cluster.  Locator Pools include support for load balancing connections
+and handling automatic fail-over in the event of failed connections, among other things.
+
+The Manager service enables you to connect to this server using _Gfsh_ (the Apache Geode and Pivotal GemFire
+{apache-geode-docs}/tools_modules/gfsh/chapter_overview.html[shell tool]).
+
+To start our primary server, create a run configuration in your IDE for the `SpringBootApacheGeodeCacheServerApplication`
+class with the following, recommended JRE command-line options:
+
+.Server 1 run profile configuration
+[source,txt]
+----
+-server -ea -Dspring.profiles-active=
+----
+
+Start the class.  You should see similar output:
+
+.Server 1 output on startup
+[source,txt]
+----
+/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/bin/java -server -ea -Dspring.profiles.active= "-javaagent:/Applications/IntelliJ IDEA 17 CE.app/Contents/lib/idea_rt.jar=62866:/Applications/IntelliJ IDEA 17 CE.app/Contents/bin" -Dfile.encoding=UTF-8 -classpath /Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/deploy.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/cldrdata.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/dnsns.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/jaccess.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/jfxrt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/localedata.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/nashorn.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/sunec.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/sunjce_provider.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/sunpkcs11.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/ext/zipfs.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/javaws.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/jfxswt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/management-agent.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/plugin.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/lib/ant-javafx.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/lib/dt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/lib/javafx-mx.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/lib/jconsole.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/lib/packager.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/lib/sa-jdi.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/lib/tools.jar:/Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build/classes/main:/Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build/resources/main:/Users/jblum/pivdev/spring-boot-data-geode/spring-geode-autoconfigure/build/classes/main:/Users/jblum/pivdev/spring-boot-data-geode/spring-geode-autoconfigure/build/resources/main:/Users/jblum/pivdev/spring-boot-data-geode/spring-geode/build/classes/main:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter/2.0.3.RELEASE/ffaa050dbd36b0441645598f1a7ddaf67fd5e678/spring-boot-starter-2.0.3.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-autoconfigure/2.0.3.RELEASE/11bc4cc96b08fabad2b3186755818fa0b32d83f/spring-boot-autoconfigure-2.0.3.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot/2.0.3.RELEASE/b874870d915adbc3dd932e19077d3d45c8e54aa0/spring-boot-2.0.3.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/javax.annotation/javax.annotation-api/1.3.2/934c04d3cfef185a8008e7bf34331b79730a9d43/javax.annotation-api-1.3.2.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.data/spring-data-geode/2.0.8.RELEASE/9e0a3cd2805306d355c77537aea07c281fc581b/spring-data-geode-2.0.8.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context-support/5.0.7.RELEASE/e8ee4902d9d8bfbb21bc5e8f30cfbb4324adb4f3/spring-context-support-5.0.7.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context/5.0.7.RELEASE/243a23f8968de8754d8199d669780d683ab177bd/spring-context-5.0.7.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-tx/5.0.7.RELEASE/4ca59b21c61162adb146ad1b40c30b60d8dc42b8/spring-tx-5.0.7.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/5.0.7.RELEASE/2e04c6c2922fbfa06b5948be14a5782db168b6ec/spring-web-5.0.7.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.data/spring-data-commons/2.0.8.RELEASE/5c19af63b5acb0eab39066684e813d5ecd9d03b7/spring-data-commons-2.0.8.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-aop/5.0.7.RELEASE/fdd0b6aa3c9c7a188c3bfbf6dfd8d40e843be9ef/spring-aop-5.0.7.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-beans/5.0.7.RELEASE/c1196cb3e56da83e3c3a02ef323699f4b05feedc/spring-beans-5.0.7.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-expression/5.0.7.RELEASE/ca01fb473f53dd0ee3c85663b26d5dc325602057/spring-expression-5.0.7.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/5.0.7.RELEASE/54b731178d81e66eca9623df772ff32718208137/spring-core-5.0.7.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/1.19/2d998d3d674b172a588e54ab619854d073f555b5/snakeyaml-1.19.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-jcl/5.0.7.RELEASE/699016ddf454c2c167d9f84ae5777eccadf54728/spring-jcl-5.0.7.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-lucene/1.2.1/3d22a050bd4eb64bd8c82a74677f45c070f102d5/geode-lucene-1.2.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-core/1.2.1/fe853317e33dd2a1c291f29cee3c4be549f75a69/geode-core-1.2.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-cq/1.2.1/69873d6b956ba13b55c894a13e72106fb552e840/geode-cq-1.2.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-wan/1.2.1/df0dd8516e1af17790185255ff21a54b56d94344/geode-wan-1.2.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/antlr/antlr/2.7.7/83cd2cd674a217ade95a4bb83a8a14f351f48bd0/antlr-2.7.7.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-spring/1.3.2/281a6b565f6cf3aebd31ddb004632008d7106f2d/shiro-spring-1.3.2.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjweaver/1.8.13/ad94df2a28d658a40dc27bbaff6a1ce5fbf04e9b/aspectjweaver-1.8.13.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.9.6/cfa4f316351a91bfd95cb0644c6a2c95f52db1fc/jackson-databind-2.9.6.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.9.0/7c10d545325e3a6e72e06381afe469fd40eb701/jackson-annotations-2.9.0.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-web/1.3.2/725be023e1c65a0fd70c01b8c0c13a2936c23315/shiro-web-1.3.2.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-core/1.3.2/b5dede9d890f335998a8ebf479809fe365b927fc/shiro-core-1.3.2.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.25/da76ca59f6a57ee3102f8f9bd9cee742973efa8a/slf4j-api-1.7.25.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/com.github.stephenc.findbugs/findbugs-annotations/1.3.9-1/a6b11447635d80757d64b355bed3c00786d86801/findbugs-annotations-1.3.9-1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.jgroups/jgroups/3.6.10.Final/fc0ff5a8a9de27ab62939956f705c2909bf86bc2/jgroups-3.6.10.Final.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.5/2852e6e05fbb95076fc091f6d1780f1f8fe35e0f/commons-io-2.5.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.6/ce1edb914c94ebc388f086c6827e8bdeec71ac2/commons-lang-2.6.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/it.unimi.dsi/fastutil/7.1.0/9835253257524c1be7ab50c057aa2d418fb72082/fastutil-7.1.0.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/javax.resource/javax.resource-api/1.7/ae40e0864eb1e92c48bf82a2a3399cbbf523fb79/javax.resource-api-1.7.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna/4.5.1/65bd0cacc9c79a21c6ed8e9f588577cd3c2f85b9/jna-4.5.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.3/cdd846cfc4e0f7eefafc02c0f5dce32b9303aa2a/jopt-simple-5.0.3.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.10.0/c90b597163cd28ab6d9687edd53db601b6ea75a1/log4j-core-2.10.0.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.10.0/fec5797a55b786184a537abd39c3fa1449d752d6/log4j-api-2.10.0.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/commons-beanutils/commons-beanutils/1.9.3/c845703de334ddc6b4b3cd26835458cb1cba1f3d/commons-beanutils-1.9.3.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/io.github.lukehutch/fast-classpath-scanner/2.0.11/ae34a7a5e6de8ad1f86e12f6f7ae1869fcfe9987/fast-classpath-scanner-2.0.11.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-common/1.2.1/9db253081d33f424f6e3ce0cde4b306e23e3420b/geode-common-1.2.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-json/1.2.1/bdb4c262e4ce6bb3b22e0f511cfb133a65fa0c04/geode-json-1.2.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-analyzers-common/6.4.1/c6f0f593503080204e9d33189cdc59320f55db37/lucene-analyzers-common-6.4.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queryparser/6.4.1/1fc5795a072770a2c47dce11a3c85a80f3437af6/lucene-queryparser-6.4.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queries/6.4.1/6de41d984c16185a244b52c4d069b00f5b2b120f/lucene-queries-6.4.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-core/6.4.1/2a18924b9e0ed86b318902cb475a0b9ca4d7be5b/lucene-core-6.4.1.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.9.6/4e393793c37c77e042ccc7be5a914ae39251b365/jackson-core-2.9.6.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/javax.transaction/javax.transaction-api/1.2/d81aff979d603edd90dcd8db2abc1f4ce6479e3e/javax.transaction-api-1.2.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.2/4bfc12adfe4842bf07b657f0369c4cb522955686/commons-logging-1.2.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5/commons-collections-3.2.2.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.shell/spring-shell/1.2.0.RELEASE/d94047721f292bd5334b5654e8600cef4b845049/spring-shell-1.2.0.RELEASE.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/17.0/9c6ef172e8de35fd8d4d8783e4821e57cdef7445/guava-17.0.jar:/Users/jblum/.gradle/caches/modules-2/files-2.1/jline/jline/2.12/ce9062c6a125e0f9ad766032573c041ae8ecc986/jline-2.12.jar org.springframework.geode.docs.example.app.server.SpringBootApacheGeodeCacheServerApplication
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.0.3.RELEASE)
+
+[info 2018/06/24 21:42:28.183 PDT <main> tid=0x1] Starting SpringBootApacheGeodeCacheServerApplication on jblum-mbpro-2.local with PID 41795 (/Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build/classes/main started by jblum in /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build)
+
+[info 2018/06/24 21:42:28.186 PDT <main> tid=0x1] No active profile set, falling back to default profiles: default
+
+[info 2018/06/24 21:42:28.278 PDT <main> tid=0x1] Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@6fa51cd4: startup date [Sun Jun 24 21:42:28 PDT 2018]; root of context hierarchy
+
+[warn 2018/06/24 21:42:28.962 PDT <main> tid=0x1] @Bean method PdxConfiguration.pdxDiskStoreAwareBeanFactoryPostProcessor is non-static and returns an object assignable to Spring's BeanFactoryPostProcessor interface. This will result in a failure to process annotations such as @Autowired, @Resource and @PostConstruct within the method's declaring @Configuration class. Add the 'static' modifier to this method to avoid these container lifecycle issues; see @Bean javadoc for complete details.
+
+[info 2018/06/24 21:42:30.036 PDT <main> tid=0x1]
+---------------------------------------------------------------------------
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with this
+  work for additional information regarding copyright ownership.
+
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with the
+  License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+  License for the specific language governing permissions and limitations
+  under the License.
+
+---------------------------------------------------------------------------
+Build-Date: 2017-09-16 07:20:46 -0700
+Build-Id: abaker 0
+Build-Java-Version: 1.8.0_121
+Build-Platform: Mac OS X 10.12.3 x86_64
+Product-Name: Apache Geode
+Product-Version: 1.2.1
+Source-Date: 2017-09-08 11:57:38 -0700
+Source-Repository: release/1.2.1
+Source-Revision: 0b881b515eb1dcea974f0f5c1b40da03d42af9cf
+Native version: native code unavailable
+Running on: /10.0.0.121, 8 cpu(s), x86_64 Mac OS X 10.10.5
+Communications version: 65
+Process ID: 41795
+User: jblum
+Current dir: /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build
+Home dir: /Users/jblum
+Command Line Parameters:
+  -ea
+  -Dspring.profiles.active=
+  -javaagent:/Applications/IntelliJ IDEA 17 CE.app/Contents/lib/idea_rt.jar=62866:/Applications/IntelliJ IDEA 17 CE.app/Contents/bin
+  -Dfile.encoding=UTF-8
+Class Path:
+  /Library/Java/JavaVirtualMachines/jdk1.8.0_152.jdk/Contents/Home/jre/lib/charsets.jar
+  ...
+Library Path:
+  /Users/jblum/Library/Java/Extensions
+  /Library/Java/Extensions
+  /Network/Library/Java/Extensions
+  /System/Library/Java/Extensions
+  /usr/lib/java
+  .
+System Properties:
+    PID = 41795
+  ...
+[info 2018/06/24 21:42:30.045 PDT <main> tid=0x1] Startup Configuration:
+ ### GemFire Properties defined with api ###
+disable-auto-reconnect=true
+jmx-manager=true
+jmx-manager-port=1099
+jmx-manager-start=true
+jmx-manager-update-rate=2000
+log-level=config
+mcast-port=0
+name=SpringBootApacheGeodeCacheServerApplication
+start-locator=localhost[10334]
+use-cluster-configuration=false
+### GemFire Properties using default values ###
+ack-severe-alert-threshold=0
+...
+
+[info 2018/06/24 21:42:30.090 PDT <main> tid=0x1] Starting peer location for Distribution Locator on localhost/127.0.0.1
+
+[info 2018/06/24 21:42:30.093 PDT <main> tid=0x1] Starting Distribution Locator on localhost/127.0.0.1
+
+[info 2018/06/24 21:42:30.094 PDT <main> tid=0x1] Locator was created at Sun Jun 24 21:42:30 PDT 2018
+
+[info 2018/06/24 21:42:30.094 PDT <main> tid=0x1] Listening on port 10334 bound on address localhost/127.0.0.1
+
+...
+
+[info 2018/06/24 21:42:30.685 PDT <main> tid=0x1] Initializing region _monitoringRegion_10.0.0.121<v0>1024
+
+[info 2018/06/24 21:42:30.688 PDT <main> tid=0x1] Initialization of region _monitoringRegion_10.0.0.121<v0>1024 completed
+
+...
+
+[info 2018/06/24 21:42:31.570 PDT <main> tid=0x1] CacheServer Configuration:   port=40404 max-connections=800 max-threads=0 notify-by-subscription=true socket-buffer-size=32768 maximum-time-between-pings=60000 maximum-message-count=230000 message-time-to-live=180 eviction-policy=none capacity=1 overflow directory=. groups=[] loadProbe=ConnectionCountProbe loadPollInterval=5000 tcpNoDelay=true
+
+[info 2018/06/24 21:42:31.588 PDT <main> tid=0x1] Started SpringBootApacheGeodeCacheServerApplication in 3.77 seconds (JVM running for 5.429)
+----
+
+You can now connect to this server using _Gfsh_:
+
+.Connect with Gfsh
+[source,txt]
+----
+$ echo $GEMFIRE
+/Users/jblum/pivdev/apache-geode-1.2.1
+jblum-mbpro-2:lab jblum$
+jblum-mbpro-2:lab jblum$ gfsh
+    _________________________     __
+   / _____/ ______/ ______/ /____/ /
+  / /  __/ /___  /_____  / _____  /
+ / /__/ / ____/  _____/ / /    / /
+/______/_/      /______/_/    /_/    1.2.1
+
+Monitor and Manage Apache Geode
+
+gfsh>connect
+Connecting to Locator at [host=localhost, port=10334] ..
+Connecting to Manager at [host=10.0.0.121, port=1099] ..
+Successfully connected to: [host=10.0.0.121, port=1099]
+
+
+gfsh>list members
+                   Name                     | Id
+------------------------------------------- | --------------------------------------------------------------------------
+SpringBootApacheGeodeCacheServerApplication | 10.0.0.121(SpringBootApacheGeodeCacheServerApplication:41795)<ec><v0>:1024
+
+
+gfsh>describe member --name=SpringBootApacheGeodeCacheServerApplication
+Name        : SpringBootApacheGeodeCacheServerApplication
+Id          : 10.0.0.121(SpringBootApacheGeodeCacheServerApplication:41795)<ec><v0>:1024
+Host        : 10.0.0.121
+Regions     :
+PID         : 41795
+Groups      :
+Used Heap   : 184M
+Max Heap    : 3641M
+Working Dir : /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build
+Log file    : /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build
+Locators    : localhost[10334]
+
+Cache Server Information
+Server Bind              :
+Server Port              : 40404
+Running                  : true
+Client Connections       : 0
+----
+
+Now, let's start some additional servers to scale-out our cluster.
+
+To do so, you simply need to vary the name of the members we will add to our cluster as peers. Apache Geode
+and Pivotal GemFire require that the members in a cluster be named and the names of each member in the cluster
+be unique.
+
+Additionally, since we are running multiple instances of our `SpringBootApacheGeodeCacheServerApplication` class,
+which also embeds a `CacheServer` instance enabling cache clients to connect, we need to be careful to vary our
+ports used by the embedded services.
+
+Fortunately, we do not need to run another embedded _Locator_ or _Manager_ service (we only need 1 in this case),
+therefore, we can switch profiles from non-clusted to using the Spring "_clustered_" profile, which includes different
+configuration (the `ClusterConfiguration` class) to connect another server as a peer member in the cluster,
+which currently only has 1 member as shown in the `list members` _Gfsh_ command output above.
+
+To add another server, set the member name and the `CacheServer` port to a different number with the following
+run profile configuration:
+
+.Run profile configuration for server 2
+[source,txt]
+----
+-server -ea -Dspring.profiles.active=clustered -Dspring.data.gemfire.name=ServerTwo -Dspring.data.gemfire.cache.server.port=41414
+----
+
+Notice that we explicitly activated the "_clustered_" Spring profile, which enables the configuration provided
+in the nested `ClusteredConfiguration` class while disabling the `LonerConfiguration` class.
+
+This `ClusteredConfiguration` class is also annotated with `@UseLocators`, which sets the GemFire/Geode `locators`
+property to "_localhost[10334]_".  By default, it assumes the Locator process/service is running on "_locahost_",
+listening on the default Locator port of "_10334_".  You can of course adjust your Locators endpoint if your Locators
+are running elsewhere in your network by using the "locators" attribute of the `@UseLocators` annotation.
+
+TIP: It is common in production environments to run multiple Locators as a separate process.  Running multiple Locators
+provides redundancy in case a Locator process fails.  If all Locator processes in your network fail, don't fret,
+your cluster will not go down.  It simply means no other members will be able to join the cluster, allowing you to
+scale your cluster out, nor will any clients be able to connect.  Simply just restart the Locators if this happens.
+
+Additionally, we set the `spring.data.gemfire.name` property to "_ServerTwo_" adjusting the name of our member
+when it joins the cluster as a peer.
+
+Finally, we set the `spring.data.gemfire.cache.server.port` to "41414" to vary the `CacheServer` port
+used by "_ServerTwo_".  The default `CacheServer` port is "40404".  If we had not set this property before starting
+"_ServerTwo_" we would have hit a `java.net.BindException`.
+
+TIP: Both the `spring.data.gemfire.name` and `spring.data.gemfire.cache.server.port` properties are well-known properties
+used by SDG to dynamically configure GemFire/Geode using a Spring Boot `application.properties` file
+or Java System properties.  You can find these properties in the Annotation Javadoc in SDG's Annotation-based
+Configuration model.  For instance, the `spring.data.gemfire.cache.server.port` property is documented
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#port--[here].
+Most of the SDG annotations include corresponding properties that can be defined in `application.properties`
+and is explained in more detail {spring-data-geode-docs-html}/#bootstrap-annotation-config-properties[here].
+
+After starting our second server, "_ServerTwo_", we should see similar output at the command-line, and in _Gfsh_,
+when we `list members` and `describe member` again:
+
+.Gfsh output after starting server 2
+[source,txt]
+---
+gfsh>list members
+                   Name                     | Id
+------------------------------------------- | --------------------------------------------------------------------------
+SpringBootApacheGeodeCacheServerApplication | 10.0.0.121(SpringBootApacheGeodeCacheServerApplication:41795)<ec><v0>:1024
+ServerTwo                                   | 10.0.0.121(ServerTwo:41933)<v1>:1025
+
+
+gfsh>describe member --name=ServerTwo
+Name        : ServerTwo
+Id          : 10.0.0.121(ServerTwo:41933)<v1>:1025
+Host        : 10.0.0.121
+Regions     :
+PID         : 41933
+Groups      :
+Used Heap   : 165M
+Max Heap    : 3641M
+Working Dir : /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build
+Log file    : /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build
+Locators    : localhost[10334]
+
+Cache Server Information
+Server Bind              :
+Server Port              : 41414
+Running                  : true
+Client Connections       : 0
+---
+
+When list members, we see "_ServerTwo_" and when we `describe` "_ServerTwo_", we see that its `CacheServer` port
+is appropriately set to "41414".
+
+If we add 1 more server, "_ServerThree_" using the following run configuration:
+
+.Add server 3 to our cluster
+[source,txt]
+----
+-server -ea -Dspring.profiles.active=clustered -Dspring.data.gemfire.name=ServerThree -Dspring.data.gemfire.cache.server.port=42424
+----
+
+Again, we will see similar output at the command-line and in Gfsh:
+
+.Gfsh output after starting server 3
+[source,txt]
+----
+gfsh>list members
+                   Name                     | Id
+------------------------------------------- | --------------------------------------------------------------------------
+SpringBootApacheGeodeCacheServerApplication | 10.0.0.121(SpringBootApacheGeodeCacheServerApplication:41795)<ec><v0>:1024
+ServerTwo                                   | 10.0.0.121(ServerTwo:41933)<v1>:1025
+ServerThree                                 | 10.0.0.121(ServerThree:41965)<v2>:1026
+
+
+gfsh>describe member --name=ServerThree
+Name        : ServerThree
+Id          : 10.0.0.121(ServerThree:41965)<v2>:1026
+Host        : 10.0.0.121
+Regions     :
+PID         : 41965
+Groups      :
+Used Heap   : 180M
+Max Heap    : 3641M
+Working Dir : /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build
+Log file    : /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build
+Locators    : localhost[10334]
+
+Cache Server Information
+Server Bind              :
+Server Port              : 42424
+Running                  : true
+Client Connections       : 0
+----
+
+Congratulations!  You just started a small Apache Geode/Pivotal GemFire cluster, with 3 members, using Spring Boot
+from inside your IDE.
+
+It is pretty simple to build and run a Spring Boot, Apache Geode/Pivotal GemFire, `ClientCache` application
+that connects to this cluster.  Simply include and use Spring Boot for Apache Geode/Pivotal GemFire, ;-).
+
+
+=== Testing
+
+https://github.com/spring-projects/spring-test-data-geode[Spring Test for Apache Geode & Pivotal GemFire] is a new,
+soon to be released and upcoming project to help developers write both _Unit_ and _Integration Tests_
+when using Apache Geode or Pivotal GemFire in Spring context.
+
+In fact, the entire {github-url}/tree/master/spring-geode-autoconfigure/src/test/java/org/springframework/geode/boot/autoconfigure[test suite]
+for Spring Boot for Apache Geode & Pivotal GemFire is based on this project.
+
+All Spring projects involving either Apache Geode or Pivotal GemFire will use this new test framework for all their
+testing purposes making this new test framework for Apache Geode and Pivotal GemFire a proven and reliable solution
+for all your Spring application testing needs.
+
+Later on, this reference guide will include and dedicate an entire chapter on testing.
+
+
+=== References
+
+1. Spring Framework {spring-framework-docs}[Reference Guide] | {spring-framework-javadoc}[Javadoc]
+2. Spring Data Commons {spring-data-commons-docs-html}[Reference Guide] | {spring-data-commons-javadoc}[Javadoc]
+3. Spring Data for Apache Geode {spring-data-geode-docs-html}[Reference Guide] | {spring-data-geode-javadoc}[Javadoc]
+4. Apache Geode {apache-geode-docs}[User Guide] | {apache-geode-javadoc}[Javadoc]
+5. Pivotal GemFire {pivotal-gemfire-docs}[User Guide] | {pivotal-gemfire-javadoc}[Javadoc]
