@@ -1,0 +1,22 @@
+SPRING BOOT FOR APACHE GEODE & PIVOTAL GEMFIRE CHANGELOG
+--------------------------------------------------------
+https://github.com/spring-projects/spring-boot-data-geode
+=========================================================
+
+
+Changes in version 1.0.0.M1 (2018-06-25)
+----------------------------------------
+Inception of the Spring Boot for Apache Geode & Pivotal GemFire project.
+
+* Adds the spring-geode module containing the core bits and functionality for this project.
+* Adds the spring-geode-autoconfigure module building on Spring Boot's auto-configuration functionality.
+** Includes auto-configuration for a ClientCache instance.
+** Includes auto-configuration for using Apache Geode/Pivotal GemFire as a caching provider in Spring's Cache Abstraction.
+** Includes auto-configuration for Spring Data Repositories.
+** Includes auto-configuration for Apache Geode/Pivotal GemFire Function Execution framework.
+** Includes auto-configuration for Apache Geode/Pivotal GemFire CQ.
+** Includes auto-configuration for Apache Geode/Pivotal GemFire PDX serialization.
+** Includes auto-configuration for Apache Geode/Pivotal GemFire Security.
+* Adds the spring-geode-docs modules containg the project documentation and reference guide.
+* Adds the spring-geode-starter module to get started building Sring Boot applications with Apache Geode.
+* Adds the spring-gemfire-starter module to get started building Sring Boot applications with Pivotal GemFire.
