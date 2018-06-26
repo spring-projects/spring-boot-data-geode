@@ -1,11 +1,10 @@
 = Spring Boot for Apache Geode & Pivotal GemFire Reference Guide
-John Blum;
-:revnumber: {version}
+Blum; John Blum
 :revdate: {localdate}
+:revnumber: {version}
 :doctype: book
 :toc:
 :toclevels: 3
-:!toc-placement:
 :source-highlighter: prettify
 :numbered:
 :icons: font
@@ -34,13 +33,6 @@ John Blum;
 :spring-framework-javadoc: https://docs.spring.io/spring/docs/current/javadoc-api
 :wikipedia-docs: https://en.wikipedia.org/wiki
 
-(C) 2018 The original authors.
-
-NOTE: Copies of this document may be made for your own use and for distribution to others provided that you do not
-charge any fee for such copies and further provided that each copy contains this Copyright Notice
-whether distributed in print or electronically.
-
-toc::[]
 
 [[abstract]]
 Welcome to _Spring Boot for Apache Geode & Pivotal GemFire_.
