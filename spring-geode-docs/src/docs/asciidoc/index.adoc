@@ -138,7 +138,9 @@ To use Spring Boot for Apache Geode, declare the `spring-geode-starter` on your 
 [source,groovy]
 [subs="verbatim,attributes"]
 ----
-compile 'org.springframework.geode:spring-geode-starter:{spring-boot-data-geode-version}'
+dependencies {
+    compile 'org.springframework.geode:spring-geode-starter:{spring-boot-data-geode-version}'
+}
 ----
 
 TIP: To use Pivotal GemFire in place of Apache Geode, simply change the `artifactId` from `spring-geode-starter`
