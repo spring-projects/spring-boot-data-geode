@@ -2,13 +2,14 @@ image:https://api.travis-ci.org/spring-projects/spring-boot-data-geode.svg?branc
 
 = Spring Boot for Apache Geode & Pivotal GemFire
 
-_Spring Boot for Apache Geode_ extends http://projects.spring.io/spring-boot/[_Spring Boot_] with _auto-configuration_ support
-as well as other _convention or configuration_ features to simplify the development of _Spring_ applications
-using either https://pivotal.io/pivotal-gemfire[Pivotal GemFire] or http://geode.apache.org/[Apache Geode]
+_Spring Boot for Apache Geode & Pivotal GemFire_ extends http://projects.spring.io/spring-boot/[_Spring Boot_] with
+_auto-configuration_ support as well as other _convention or configuration_ features to simplify the development
+of _Spring_ applications using either http://geode.apache.org/[Apache Geode] or https://pivotal.io/pivotal-gemfire[Pivotal GemFire]
 in a _Spring_ context.
 
-This project builds on both http://projects.spring.io/spring-data-gemfire/[_Spring Data for Pivotal GemFire_]
-and https://github.com/spring-projects/spring-data-geode[_Spring Data for Apache Geode_].
+This project builds on both https://github.com/spring-projects/spring-data-geode[_Spring Data for Apache Geode_]
+and http://projects.spring.io/spring-data-gemfire/[_Spring Data for Pivotal GemFire_]
+as well as https://spring.io/projects/spring-boot[Spring Boot].
 
 === Project Goals
 
@@ -16,38 +17,52 @@ This project adds _Spring Boot_ **auto-configuration** support for both http://g
 and https://pivotal.io/pivotal-gemfire[Pivotal GemFire].
 
 Among other things, this project builds on http://projects.spring.io/spring-boot/[_Spring Boot_]
-as well as http://projects.spring.io/spring-data-gemfire/[_Spring Data for Pivotal GemFire/Apache Geode_]
+as well as http://projects.spring.io/spring-data-gemfire/[_Spring Data for Apache Geode & Pivotal GemFire_]
 and additionally offers...
 
-1. _Auto-configures_ a _Pivotal GemFire_ or _Apache Geode_ http://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
-instance automatically when either _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_
-is on the application's CLASSPATH.
+1. _Auto-configures_ an _Apache Geode_ or _Pivotal GemFire_ http://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
+instance automatically when either _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_
+are on the application's CLASSPATH.
 
-2. _Auto-configures_ either _Pivotal GemFire_ or _Apache Geode_ as a _caching provider_ in http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
-when either _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ is on the application's CLASSPATH.
+2. _Auto-configures_ either _Apache Geode_ or _Pivotal GemFire_ as a _caching provider_ in http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
+when either _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_ are on the application's CLASSPATH.
 
-3. _Auto-configures_ _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ http://docs.spring.io/spring-data-gemfire/docs/current/reference/html/#gemfire-repositories[Repositories]
-when _Spring Data for Pivotal GemFire_ or _Spring Data for Apache Geode_ is on the application's CLASSPATH and _Spring Boot_ detects SDG _Repositories_ in your _Spring Boot_ application.
+3. _Auto-configures_ _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_
+http://docs.spring.io/spring-data-gemfire/docs/current/reference/html/#gemfire-repositories[Repositories]
+when _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_ are on the application's CLASSPATH
+and _Spring Boot_ detects SDG _Repositories_ in your _Spring Boot_ application.
 
-4. Provides additional support for _Spring Boot_/_Spring Data for Pivotal GemFire_/_Spring Data for Apache Geode_
-applications deployed to PCF using either the PCC (_Pivotal Cloud Caching_) or SSC (_Session State Caching_) services.
+4. Provides additional support for _Spring Boot_/_Spring Data for Apache Geode_/_Pivotal GemFire_ applications
+deployed to PCF using either the PCC (_Pivotal Cloud Cache_) or SSC (_Session State Caching_) services.
 Also, when using SSC, you can also take advantage of
-https://github.com/spring-projects/spring-session-data-geode[_Spring Session for Pivotal GemFire_].
+https://github.com/spring-projects/spring-session-data-geode[_Spring Session for Apache Geode/Pivotal GemFire_].
 
-5. As an added benefit, _Spring Boot for Pivotal GemFire_ will automatically authenticate your _Spring Boot_, _Pivotal GemFire_-based application
-when deployed to PCF and the application is granted access to and connects with a secure PCC instance for all of its caching concerns.
+5. As an added benefit, _Spring Boot for Pivotal GemFire_ will automatically authenticate your _Spring Boot_, _Pivotal GemFire_ based application
+when deployed to PCF and the application is granted access to a secure PCC instance for all of its caching concerns.
 
 This, along with many other things will be provided in and by this project.
 
-=== Code of Conduct
+=== Documentation
 
-This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code of conduct].
-By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
+You can find the documentation for this project [here].
+
+=== Examples
+
+You can find an example of using this project in the Pivotal Cloud Cache (PCC) https://github.com/pivotal-cf/PCC-Sample-App-PizzaStore[Pizza Store],
+Spring Boot, Pivotal GemFire `ClientCache` application.
+
+Another example, https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example], can be found
+in the Contacts Application Reference Implementation for _Spring Data for Apache Geode/Pivotal GemFire_.
 
 == Spring Boot Project Site
 
 You can find the documentation, issue management, support, samples, and guides for using _Spring Boot_
 at http://projects.spring.io/spring-boot/
+
+== Code of Conduct
+
+This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code of conduct].
+By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
 
 == License
 
