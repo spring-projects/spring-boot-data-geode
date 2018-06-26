@@ -33,7 +33,7 @@ when _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_ are on 
 and _Spring Boot_ detects SDG _Repositories_ in your _Spring Boot_ application.
 
 4. Provides additional support for _Spring Boot_/_Spring Data for Apache Geode_/_Pivotal GemFire_ applications
-deployed to PCF using either the PCC (_Pivotal Cloud Cache_) or SSC (_Session State Caching_) services.
+deployed to PCF using either the Pivotal Cloud Cache (PCC) or Session State Caching (SSC) services.
 Also, when using SSC, you can also take advantage of
 https://github.com/spring-projects/spring-session-data-geode[_Spring Session for Apache Geode/Pivotal GemFire_].
 
