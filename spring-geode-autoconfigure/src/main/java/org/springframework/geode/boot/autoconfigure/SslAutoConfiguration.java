@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -85,8 +86,8 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings("unused")
 public class SslAutoConfiguration {
 
-	public static final String SECURITY_SSL_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY =
-		"spring.boot.data.gemfire.security.ssl.environment.post-processor.disabled";
+	public static final String SECURITY_SSL_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY =
+		"spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled";
 
 	private static final String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
 	private static final String GEMFIRE_SSL_KEYSTORE_PROPERTY = "gemfire.ssl-keystore";
@@ -144,10 +145,8 @@ public class SslAutoConfiguration {
 
 	private static Optional<File> resolveKeyStoreFromClassPath(Environment environment) {
 
-		/*
-		System.err.printf("KEYSTORE LOCATION [%s]%n", ObjectUtils.doOperationSafely(() ->
-			new File(new ClassPathResource(keystoreName).getURL().toURI())).getAbsolutePath());
-		*/
+		//System.err.printf("KEYSTORE LOCATION [%s]%n", ObjectUtils.doOperationSafely(() ->
+		//	new File(new ClassPathResource(keystoreName).getURL().toURI())).getAbsolutePath());
 
 		return locateKeyStoreInClassPath(environment)
 			.map(resource -> {
@@ -283,7 +282,7 @@ public class SslAutoConfiguration {
 
 	}
 
-	static class SslEnvironmentPostProcessor implements EnvironmentPostProcessor {
+	public static class SslEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
 		@Override
 		public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -293,24 +292,27 @@ public class SslAutoConfiguration {
 				.filter(SslAutoConfiguration::isSslNotConfigured)
 				.map(SslAutoConfiguration::resolveTrustedKeyStore)
 				.filter(StringUtils::hasText)
-				.ifPresent(trustedKeyStore -> {
+				.ifPresent(trustedKeyStore -> configureSsl(environment, trustedKeyStore));
+		}
 
-					Properties gemfireSslProperties = new Properties();
-
-					gemfireSslProperties.setProperty(SECURITY_SSL_KEYSTORE_PROPERTY, trustedKeyStore);
-					gemfireSslProperties.setProperty(SECURITY_SSL_TRUSTSTORE_PROPERTY, trustedKeyStore);
-
-					environment.getPropertySources()
-						.addFirst(new PropertiesPropertySource(GEMFIRE_SSL_PROPERTY_SOURCE_NAME, gemfireSslProperties));
-				});
+		private PropertySource<?> newPropertySource(String name, Properties properties) {
+			return new PropertiesPropertySource(name, properties);
 		}
 
 		private boolean isEnabled(Environment environment) {
-			return !isDisabled(environment);
+			return environment.getProperty(SECURITY_SSL_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY,
+				Boolean.class, true);
 		}
 
-		private boolean isDisabled(Environment environment) {
-			return Boolean.getBoolean(SECURITY_SSL_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY);
+		private void configureSsl(ConfigurableEnvironment environment, String trustedKeyStore) {
+
+			Properties gemfireSslProperties = new Properties();
+
+			gemfireSslProperties.setProperty(SECURITY_SSL_KEYSTORE_PROPERTY, trustedKeyStore);
+			gemfireSslProperties.setProperty(SECURITY_SSL_TRUSTSTORE_PROPERTY, trustedKeyStore);
+
+			environment.getPropertySources()
+				.addFirst(newPropertySource(GEMFIRE_SSL_PROPERTY_SOURCE_NAME, gemfireSslProperties));
 		}
 	}
 
