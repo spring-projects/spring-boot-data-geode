@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.PropertySource;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer;
@@ -77,8 +78,8 @@ import org.springframework.geode.core.env.support.Service;
 @SuppressWarnings("unused")
 public class ClientSecurityAutoConfiguration {
 
-	public static final String SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY =
-		"spring.boot.data.gemfire.security.auth.environment.post-processor.disabled";
+	public static final String SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY =
+		"spring.boot.data.gemfire.security.auth.environment.post-processor.enabled";
 
 	private static final String CLOUD_CACHE_PROPERTY_SOURCE_NAME = "cloudcache-configuration";
 
@@ -96,7 +97,7 @@ public class ClientSecurityAutoConfiguration {
 
 	private static final String VCAP_PROPERTY_SOURCE_NAME = "vcap";
 
-	static class AutoConfiguredCloudSecurityEnvironmentPostProcessor implements EnvironmentPostProcessor {
+	public static class AutoConfiguredCloudSecurityEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
 		@Override
 		public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -104,33 +105,16 @@ public class ClientSecurityAutoConfiguration {
 			Optional.of(environment)
 				.filter(this::isEnabled)
 				.filter(this::isCloudFoundryEnvironment)
-				.ifPresent(env -> {
-
-					VcapPropertySource propertySource = VcapPropertySource.from(env);
-
-					Properties cloudCacheProperties = new Properties();
-
-					CloudCacheService cloudCache = propertySource.findFirstCloudCacheService();
-
-					configureAuthentication(env, cloudCacheProperties, propertySource, cloudCache);
-					configureLocators(env, cloudCacheProperties, propertySource, cloudCache);
-					configureManagementRestApiAccess(env, cloudCacheProperties, propertySource, cloudCache);
-
-					environment.getPropertySources()
-						.addFirst(new PropertiesPropertySource(CLOUD_CACHE_PROPERTY_SOURCE_NAME, cloudCacheProperties));
-				});
+				.ifPresent(this::configureSecurityContext);
 		}
 
 		private boolean isCloudFoundryEnvironment(Environment environment) {
 			return Optional.ofNullable(environment).filter(CloudPlatform.CLOUD_FOUNDRY::isActive).isPresent();
 		}
 
-		private boolean isDisabled(Environment environment) {
-			return Boolean.getBoolean(SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_DISABLED_PROPERTY);
-		}
-
 		private boolean isEnabled(Environment environment) {
-			return !isDisabled(environment);
+			return environment.getProperty(SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY,
+				Boolean.class, true);
 		}
 
 		private boolean isSecurityPropertiesSet(Environment environment) {
@@ -169,6 +153,26 @@ public class ClientSecurityAutoConfiguration {
 				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_HOST_PROPERTY, url.getHost());
 				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_PORT_PROPERTY, String.valueOf(url.getPort()));
 			});
+		}
+
+		public void configureSecurityContext(ConfigurableEnvironment environment) {
+
+			VcapPropertySource propertySource = VcapPropertySource.from(environment);
+
+			Properties cloudCacheProperties = new Properties();
+
+			CloudCacheService cloudCache = propertySource.findFirstCloudCacheService();
+
+			configureAuthentication(environment, cloudCacheProperties, propertySource, cloudCache);
+			configureLocators(environment, cloudCacheProperties, propertySource, cloudCache);
+			configureManagementRestApiAccess(environment, cloudCacheProperties, propertySource, cloudCache);
+
+			environment.getPropertySources()
+				.addFirst(newPropertySource(CLOUD_CACHE_PROPERTY_SOURCE_NAME, cloudCacheProperties));
+		}
+
+		private PropertySource<?> newPropertySource(String name, Properties properties) {
+			return new PropertiesPropertySource(name, properties);
 		}
 	}
 
