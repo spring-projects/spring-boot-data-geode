@@ -1,5 +1,5 @@
 = Spring Boot for Apache Geode & Pivotal GemFire Reference Guide
-Blum; John Blum
+John Blum
 :revdate: {localdate}
 :revnumber: {version}
 :doctype: book
@@ -46,7 +46,7 @@ building and running Spring Boot, Apache Geode/Pivotal GemFire applications loca
 such as with https://pivotal.io/platform[Pivotal CloudFoundry] (PCF).
 
 This project is a continuation and logical extension to Spring Data for Apache Geode/Pivotal GemFire's
-{spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based Configuration Model] and the goals
+{spring-data-geode-docs-html}/#bootstrap-annotation-config[annotation-based configuration model] and the goals
 set forth with that: _enable application developers to *get up and running* as *quickly* and as *easily*
 as possible_.  In fact, Spring Boot for Apache Geode/Pivotal GemFire builds on this very
 {spring-data-geode-docs-html}/#bootstrap-annotation-config[foundation] cemented in
