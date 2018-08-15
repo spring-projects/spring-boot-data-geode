@@ -46,7 +46,7 @@ import org.springframework.data.gemfire.config.annotation.CacheServerApplication
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
-import org.springframework.data.gemfire.tests.integration.config.SubscriptionEnabledClientServerIntegrationTestsConfiguration;
+import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.geode.query.cq.event.TemperatureReading;
@@ -102,6 +102,9 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 			.isEqualTo(TemperatureReading.of(99));
 
 		assertThat(this.temperatureReadings.sizeOnServer()).isEqualTo(8);
+
+		this.temperatureReadings.keySetOnServer().forEach(key ->
+			assertThat(this.temperatureReadings.get(key)).isNotEqualTo(0));
 	}
 
 	@Test
@@ -114,7 +117,8 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 
 	@SpringBootApplication
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
-	@Import(SubscriptionEnabledClientServerIntegrationTestsConfiguration.class)
+	@Import(ClientServerIntegrationTestsConfiguration.class)
+	//@Import(SubscriptionEnabledClientServerIntegrationTestsConfiguration.class)
 	public static class GemFireClientConfiguration {
 
 		@Bean("TemperatureReadings")
