@@ -28,7 +28,6 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.LoaderHelper;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,6 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
@@ -98,7 +98,7 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 	@Before
 	public void setup() {
 
-		Assertions.assertThat(this.temperatureReadingsTemplate.<Long, TemperatureReading>get(1L))
+		assertThat(this.temperatureReadingsTemplate.<Long, TemperatureReading>get(1L))
 			.isEqualTo(TemperatureReading.of(99));
 
 		assertThat(this.temperatureReadings.sizeOnServer()).isEqualTo(8);
@@ -107,15 +107,15 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 	@Test
 	public void assertTemperatureReadingsAreCorrect() {
 
-		Assertions.assertThat(this.temperatureReadingsHandler.getTemperatureReadingCount()).isEqualTo(4);
-		Assertions.assertThat(this.temperatureReadingsHandler.getBoilingTemperatures()).contains(300, 242);
-		Assertions.assertThat(this.temperatureReadingsHandler.getFreezingTemperatures()).contains(16, -51);
+		assertThat(this.temperatureReadingsHandler.getTemperatureReadingCount()).isEqualTo(4);
+		assertThat(this.temperatureReadingsHandler.getBoilingTemperatures()).contains(300, 242);
+		assertThat(this.temperatureReadingsHandler.getFreezingTemperatures()).contains(16, -51);
 	}
 
 	@SpringBootApplication
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
-	public static class GemFireClientConfiguration
-			extends SubscriptionEnabledClientServerIntegrationTestsConfiguration {
+	@Import(SubscriptionEnabledClientServerIntegrationTestsConfiguration.class)
+	public static class GemFireClientConfiguration {
 
 		@Bean("TemperatureReadings")
 		public ClientRegionFactoryBean<Long, TemperatureReading> temperatureReadingsRegion(GemFireCache gemfireCache) {
