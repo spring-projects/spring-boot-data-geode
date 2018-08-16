@@ -42,7 +42,7 @@ class with the following, recommended JRE command-line options:
 .Server 1 run profile configuration
 [source,txt]
 ----
--server -ea -Dspring.profiles-active=
+-server -ea -Dspring.profiles.active=
 ----
 
 Start the class.  You should see similar output:
