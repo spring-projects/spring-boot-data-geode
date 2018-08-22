@@ -37,8 +37,8 @@ import lombok.RequiredArgsConstructor;
  * @see example.app.model.ISBN
  * @since 1.0.0
  */
-@Region("Books")
 @Data
+@Region("Books")
 @RequiredArgsConstructor(staticName = "newBook")
 public class Book {
 
