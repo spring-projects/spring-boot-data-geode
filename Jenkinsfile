@@ -12,34 +12,38 @@ currentBuild.result = SUCCESS
 try {
 	parallel check: {
 		stage('Check') {
-			node {
-				checkout scm
-				try {
-					sh "./gradlew clean check --refresh-dependencies --no-daemon"
-				}
-				catch (Exception cause) {
-					currentBuild.result = 'FAILED: check'
-					throw cause
-				}
-				finally {
-					junit '**/build/test-results/test/*.xml'
+			timeout(time: 10, unit: 'MINUTES') {
+				node {
+					checkout scm
+					try {
+						sh "./gradlew clean check --refresh-dependencies --no-daemon"
+					}
+					catch (Exception cause) {
+						currentBuild.result = 'FAILED: check'
+						throw cause
+					}
+					finally {
+						junit '**/build/test-results/test/*.xml'
+					}
 				}
 			}
 		}
 	},
 	springio: {
 		stage('Spring IO') {
-			node {
-				checkout scm
-				try {
-					sh "./gradlew clean springIoCheck -PplatformVersion=Cairo-SR2 -PexcludeProjects='**/samples/**' --stacktrace --refresh-dependencies --no-daemon"
-				}
-				catch (Exception cause) {
-					currentBuild.result = 'FAILED: springio'
-					throw cause
-				}
-				finally {
-					junit '**/build/spring-io*-results/*.xml'
+			timeout(time: 10, unit: 'MINUTES') {
+				node {
+					checkout scm
+					try {
+						sh "./gradlew clean springIoCheck -PplatformVersion=Cairo-SR2 -PexcludeProjects='**/samples/**' --stacktrace --refresh-dependencies --no-daemon"
+					}
+					catch (Exception cause) {
+						currentBuild.result = 'FAILED: springio'
+						throw cause
+					}
+					finally {
+						junit '**/build/spring-io*-results/*.xml'
+					}
 				}
 			}
 		}
