@@ -16,11 +16,9 @@ dependencies {
 		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
 	}
 
-	testCompile slf4jDependencies
 	testCompile "org.springframework.data:spring-data-geode-test"
+	testCompile slf4jDependencies
 
 	testRuntime "javax.cache:cache-api"
-
-//	integrationTestRuntime "org.springframework.shell:spring-shell"
 
 }
