@@ -1,6 +1,5 @@
 apply plugin: 'io.spring.convention.docs'
 apply plugin: 'io.spring.convention.spring-test'
-apply from: IDE_GRADLE
 
 dependencies {
 

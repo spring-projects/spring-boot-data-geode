@@ -1,6 +1,0 @@
-idea {
-	module {
-		testSourceDirs += file('src/integration-test/java')
-	}
-}
-
