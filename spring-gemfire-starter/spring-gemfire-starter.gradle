@@ -2,8 +2,6 @@ apply plugin: 'io.spring.convention.spring-module'
 
 description = "Spring Boot Starter for Pivotal GemFire"
 
-//ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
-
 dependencies {
 
 	compile("org.springframework.boot:spring-boot-starter") {
