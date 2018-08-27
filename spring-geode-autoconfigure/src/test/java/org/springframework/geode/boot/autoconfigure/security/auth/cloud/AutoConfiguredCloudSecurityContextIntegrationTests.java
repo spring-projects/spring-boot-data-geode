@@ -22,8 +22,9 @@ import java.util.Properties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
@@ -58,8 +59,10 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @DirtiesContext
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = AutoConfiguredCloudSecurityContextIntegrationTests.GemFireClientConfiguration.class,
-	webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+	classes = AutoConfiguredCloudSecurityContextIntegrationTests.GemFireClientConfiguration.class,
+	webEnvironment = SpringBootTest.WebEnvironment.NONE
+)
 @SuppressWarnings("unused")
 public class AutoConfiguredCloudSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
@@ -102,7 +105,10 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {
-			SpringApplication.run(GemFireServerConfiguration.class, args);
+			new SpringApplicationBuilder(GemFireServerConfiguration.class)
+				.web(WebApplicationType.NONE)
+				.build()
+				.run(args);
 		}
 	}
 }

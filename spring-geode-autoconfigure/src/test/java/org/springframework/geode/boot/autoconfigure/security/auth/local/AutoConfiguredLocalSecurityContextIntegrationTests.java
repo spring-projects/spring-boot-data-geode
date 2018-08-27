@@ -20,8 +20,9 @@ import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
@@ -59,8 +60,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("security-local-client")
 @DirtiesContext
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = AutoConfiguredLocalSecurityContextIntegrationTests.GemFireClientConfiguration.class,
-	webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+	classes = AutoConfiguredLocalSecurityContextIntegrationTests.GemFireClientConfiguration.class,
+	webEnvironment = SpringBootTest.WebEnvironment.NONE
+)
 @SuppressWarnings("unused")
 public class AutoConfiguredLocalSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
@@ -86,7 +89,11 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {
-			SpringApplication.run(GemFireServerConfiguration.class, args);
+
+			new SpringApplicationBuilder(GemFireServerConfiguration.class)
+				.web(WebApplicationType.NONE)
+				.build()
+				.run(args);
 		}
 	}
 }
