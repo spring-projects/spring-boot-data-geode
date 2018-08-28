@@ -16,17 +16,27 @@
 
 package org.springframework.geode.boot.autoconfigure;
 
+import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
+
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.geode.cache.GemFireCache;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.session.Session;
 import org.springframework.session.data.gemfire.config.annotation.web.http.EnableGemFireHttpSession;
 import org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration;
 import org.springframework.session.web.http.SessionRepositoryFilter;
+import org.springframework.util.StringUtils;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} for configuring either Apache Geode
@@ -44,6 +54,7 @@ import org.springframework.session.web.http.SessionRepositoryFilter;
  */
 @Configuration
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
+@Conditional(SpringSessionAutoConfiguration.SpringSessionStoreTypeCondition.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemFireCache.class, GemFireHttpSessionConfiguration.class })
 @ConditionalOnMissingBean(SessionRepositoryFilter.class)
@@ -51,4 +62,22 @@ import org.springframework.session.web.http.SessionRepositoryFilter;
 @SuppressWarnings("unused")
 public class SpringSessionAutoConfiguration {
 
+	static final Set<String> SPRING_SESSION_STORE_TYPES = asSet("gemfire", "geode");
+
+	static final String SPRING_SESSION_STORE_TYPE_PROPERTY = "spring.session.store-type";
+
+	static class SpringSessionStoreTypeCondition implements Condition {
+
+		@Override @SuppressWarnings("all")
+		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+
+			String springSessionStoreTypeValue =
+				context.getEnvironment().getProperty(SPRING_SESSION_STORE_TYPE_PROPERTY);
+
+			return Optional.ofNullable(springSessionStoreTypeValue)
+				.filter(StringUtils::hasText)
+				.map(it -> SPRING_SESSION_STORE_TYPES.contains(it.trim().toLowerCase()))
+				.orElse(true);
+		}
+	}
 }
