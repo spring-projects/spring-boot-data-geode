@@ -347,6 +347,54 @@ It is pretty simple to build and run a Spring Boot, Apache Geode/Pivotal GemFire
 that connects to this cluster.  Simply include and use Spring Boot for Apache Geode/Pivotal GemFire, ;-).
 
 
+[[geode-auto-configuration-disable]]
+=== Disabling Auto-configuration
+
+If you would like to disable the auto-configuration of any feature provided by Spring Boot for
+Apache Geode/Pivotal GemFire, then you can specify the auto-configuration class in the `exclude` attribute
+of the `@SpringBootApplication` annotation, as follows:
+
+.Disable Auto-configuration of PDX
+[source,java]
+----
+@SpringBootApplication(exclude = PdxSerializationAutoConfiguration.class)
+public class MySpringBootApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(MySpringBootApplication.class, args);
+  }
+}
+----
+
+Of course, you can disable more than 1 auto-configuration class at a time by specifying each class
+in the `exclude` attribute using array syntax, as follows:
+
+.Disable Auto-configuration of PDX & SSL
+[source,java]
+----
+@SpringBootApplication(exclude = { PdxSerializationAutoConfiguration.class, SslAutoConfiguration.class })
+public class MySpringBootApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(MySpringBootApplication.class, args);
+  }
+}
+----
+
+The current set of auto-configuration classes in Spring Boot for Apache Geode/Pivotal GemFire include:
+
+* `CachingProviderAutoConfiguration`
+* `ClientCacheAutoConfiguration`
+* `ClientSecurityAutoConfiguration`
+* `ContinuousQueryAutoConfiguration`
+* `FunctionExecutionAutoConfiguration`
+* `PdxSerializationAutoConfiguration`
+* `PeerSecurityAutoConfiguration`
+* `RepositoriesAutoConfiguration`
+* `SpringSessionAutoConfiguration`
+* `SslAutoConfiguration`
+
+
 [[geode-testing]]
 === Testing
 
