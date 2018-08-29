@@ -1,4 +1,4 @@
-[[geode-session]
+[[geode-session]]
 == Spring Session
 
 This section covers auto-configuration of Spring Session using either Apache Geode or Pivotal GemFire to manage
@@ -157,3 +157,7 @@ Again, see Spring Boot {spring-boot-docs-html}/boot-features-session.html[docs] 
 TIP: It is possible to include multiple providers on the classpath of your Spring Boot application.  For instance,
 you might be using Redis to cache your application's (HTTP) Session state while using either Apache Geode
 or Pivotal GemFire as your application's persistent store (_System of Record_).
+
+NOTE: Spring Boot does not properly or correctly recognize `spring.session.store-type=[gemfire|geode]` even though
+Spring Boot for Apache Geode/Pivotal GemFire is setup to handle either of these property values
+(i.e. either "`gemfire`" or "`geode`").
