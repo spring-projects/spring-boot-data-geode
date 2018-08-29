@@ -4,7 +4,6 @@
 This sections covers Security configuration for Apache Geode/Pivotal GemFire, which encompasses Authentication/Authorization
 (collectively, Auth) as well as Transport Layer Security (TLS) using SSL.
 
-
 [[geode-security-auth]]
 === Authentication & Authorization
 
@@ -114,7 +113,6 @@ and "_developer_", respectively, to any Spring Boot application bound to the PCC
 
 See the {pivotal-cloudcache-docs}/index.html#security[PCC documentation] for more details.
 
-
 [[geode-security-ssl]]
 === Transport Layer Security using SSL
 
@@ -189,7 +187,6 @@ spring.data.gemfire.security.ssl.truststore.password = truststorePassword
 
 See the SDG {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html[EnableSsl]
 annotation for all the configuration options and their corresponding properties.
-
 
 [[geode-security-encryption]]
 === Securing Data at Rest
