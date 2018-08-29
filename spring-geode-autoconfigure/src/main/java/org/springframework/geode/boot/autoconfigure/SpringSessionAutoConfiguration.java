@@ -19,18 +19,24 @@ package org.springframework.geode.boot.autoconfigure;
 import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
 
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.geode.cache.GemFireCache;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.session.Session;
 import org.springframework.session.data.gemfire.config.annotation.web.http.EnableGemFireHttpSession;
@@ -62,11 +68,56 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings("unused")
 public class SpringSessionAutoConfiguration {
 
-	static final Set<String> SPRING_SESSION_STORE_TYPES = asSet("gemfire", "geode");
+	protected static final Set<String> SPRING_SESSION_STORE_TYPES = asSet("gemfire", "geode");
 
-	static final String SPRING_SESSION_STORE_TYPE_PROPERTY = "spring.session.store-type";
+	protected static final String SERVER_SERVLET_SESSION_TIMEOUT_PROPERTY = "server.servlet.session.timeout";
+	protected static final String SPRING_SESSION_DATA_GEMFIRE_SESSION_EXPIRATION_TIMEOUT =
+		"spring.session.data.gemfire.session.expiration.max-inactive-interval-seconds";
+	protected static final String SPRING_SESSION_PROPERTY_SOURCE_NAME = "SpringSessionProperties";
+	protected static final String SPRING_SESSION_STORE_TYPE_PROPERTY = "spring.session.store-type";
+	protected static final String SPRING_SESSION_TIMEOUT_PROPERTY = "spring.session.timeout";
 
-	static class SpringSessionStoreTypeCondition implements Condition {
+	public static class SpringSessionPropertiesEnvironmentPostProcessor implements EnvironmentPostProcessor {
+
+		@Override
+		public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+
+			if (isNotSet(environment, SPRING_SESSION_DATA_GEMFIRE_SESSION_EXPIRATION_TIMEOUT)) {
+
+				Properties springSessionProperties = new Properties();
+
+				if (isSet(environment, SPRING_SESSION_TIMEOUT_PROPERTY)) {
+					springSessionProperties.setProperty(SPRING_SESSION_DATA_GEMFIRE_SESSION_EXPIRATION_TIMEOUT,
+						environment.getProperty(SPRING_SESSION_TIMEOUT_PROPERTY));
+				}
+				else if (isSet(environment, SERVER_SERVLET_SESSION_TIMEOUT_PROPERTY)) {
+					springSessionProperties.setProperty(SPRING_SESSION_DATA_GEMFIRE_SESSION_EXPIRATION_TIMEOUT,
+						environment.getProperty(SERVER_SERVLET_SESSION_TIMEOUT_PROPERTY));
+				}
+
+				if (!springSessionProperties.isEmpty()) {
+					environment.getPropertySources()
+						.addFirst(newPropertySource(SPRING_SESSION_PROPERTY_SOURCE_NAME, springSessionProperties));
+				}
+			}
+		}
+
+		private PropertySource<?> newPropertySource(String name, Properties properties) {
+			return new PropertiesPropertySource(name, properties);
+		}
+	}
+
+	protected static boolean isNotSet(ConfigurableEnvironment environment, String propertyName) {
+		return !isSet(environment, propertyName);
+	}
+
+	protected static boolean isSet(ConfigurableEnvironment environment, String propertyName) {
+
+		return environment.containsProperty(propertyName)
+			&& StringUtils.hasText(environment.getProperty(propertyName));
+	}
+
+	protected static class SpringSessionStoreTypeCondition implements Condition {
 
 		@Override @SuppressWarnings("all")
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {

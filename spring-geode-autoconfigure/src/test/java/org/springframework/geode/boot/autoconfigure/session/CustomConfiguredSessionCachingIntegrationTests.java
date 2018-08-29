@@ -18,32 +18,32 @@ package org.springframework.geode.boot.autoconfigure.session;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalArgumentException;
 
-import java.lang.reflect.Method;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.apache.geode.cache.RegionShortcut;
 import org.apache.geode.cache.client.ClientRegionShortcut;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.PropertySource;
-import org.springframework.data.gemfire.tests.integration.SpringApplicationContextIntegrationTestsSupport;
+import org.springframework.data.gemfire.tests.integration.SpringBootApplicationIntegrationTestsSupport;
+import org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
+import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.mock.env.MockPropertySource;
 import org.springframework.session.Session;
 import org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration;
 import org.springframework.session.data.gemfire.config.annotation.web.http.support.SpringSessionGemFireConfigurer;
 import org.springframework.session.data.gemfire.serialization.SessionSerializer;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * Integration Test for the auto-configuration of Spring Session using either Apache Geode or Pivotal GemFire
@@ -62,61 +62,90 @@ import org.springframework.util.ReflectionUtils;
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.env.PropertySource
- * @see org.springframework.data.gemfire.tests.integration.SpringApplicationContextIntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
+ * @see org.springframework.data.gemfire.tests.integration.SpringBootApplicationIntegrationTestsSupport
  * @see org.springframework.session.Session
  * @see org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration
  * @see org.springframework.session.data.gemfire.config.annotation.web.http.support.SpringSessionGemFireConfigurer
  * @since 1.0.0
  */
 @SuppressWarnings("unused")
-public class CustomConfiguredSessionCachingIntegrationTests extends SpringApplicationContextIntegrationTestsSupport {
+public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootApplicationIntegrationTestsSupport {
 
 	private static final String SPRING_SESSION_DATA_GEMFIRE_PROPERTY = "spring.session.data.gemfire";
 
-	@SuppressWarnings("unchecked")
-	private <T> T invoke(Object obj, String methodName) {
+	private volatile Function<ConfigurableApplicationContext, ConfigurableApplicationContext> applicationContextFunction =
+		Function.identity();
 
-		return (T) Optional.ofNullable(obj)
-			.map(Object::getClass)
-			.map(type -> ReflectionUtils.findMethod(type, methodName))
-			.map(this::makeAccessible)
-			.map(method -> ReflectionUtils.invokeMethod(method, obj))
-			.orElseThrow(() -> newIllegalArgumentException("Method [%s] not found on Object of type [%s]",
-				methodName, ObjectUtils.nullSafeClassName(obj)));
+	private volatile Function<SpringApplicationBuilder, SpringApplicationBuilder> springApplicationBuilderFunction =
+		Function.identity();
+
+	private static Properties singletonProperties(String propertyName, String propertyValue) {
+
+		Properties properties = new Properties();
+
+		properties.setProperty(propertyName, propertyValue);
+
+		return properties;
 	}
 
-	private Method makeAccessible(Method method) {
-		ReflectionUtils.makeAccessible(method);
-		return method;
+	private Function<SpringApplicationBuilder, SpringApplicationBuilder> newSpringBootSessionPropertiesConfigurationFunction() {
+
+		return springApplicationBuilder ->
+			springApplicationBuilder.properties(singletonProperties("spring.session.timeout", "300"));
 	}
 
-	private PropertySource newSpringSessionGemFireProperties() {
+	private Function<ConfigurableApplicationContext, ConfigurableApplicationContext> newSpringSessionGemFirePropertiesConfigurationFunction() {
 
-		return new MockPropertySource("TestSpringSessionGemFireProperties")
-			.withProperty(springSessionPropertyName("cache.client.region.shortcut"), "LOCAL")
-			.withProperty(springSessionPropertyName("session.attributes.indexable"), "one, two")
-			.withProperty(springSessionPropertyName("session.expiration.max-inactive-interval-seconds"), "600")
-			.withProperty(springSessionPropertyName("cache.client.pool.name"), "MockPool")
-			.withProperty(springSessionPropertyName("session.region.name"), "MockRegion")
-			.withProperty(springSessionPropertyName("cache.server.region.shortcut"), "REPLICATE")
-			.withProperty(springSessionPropertyName("session.serializer.bean-name"), "MockSessionSerializer");
+		return applicationContext -> {
+
+			PropertySource springSessionGemFireProperties = new MockPropertySource("TestSpringSessionGemFireProperties")
+				.withProperty(springSessionPropertyName("cache.client.region.shortcut"), "LOCAL")
+				.withProperty(springSessionPropertyName("session.attributes.indexable"), "one, two")
+				.withProperty(springSessionPropertyName("session.expiration.max-inactive-interval-seconds"), "600")
+				.withProperty(springSessionPropertyName("cache.client.pool.name"), "MockPool")
+				.withProperty(springSessionPropertyName("session.region.name"), "MockRegion")
+				.withProperty(springSessionPropertyName("cache.server.region.shortcut"), "REPLICATE")
+				.withProperty(springSessionPropertyName("session.serializer.bean-name"), "MockSessionSerializer");
+
+			applicationContext.getEnvironment().getPropertySources().addFirst(springSessionGemFireProperties);
+
+			return applicationContext;
+		};
+	}
+
+	private Function<SpringApplicationBuilder, SpringApplicationBuilder> newWebServerSessionPropertiesConfigurationFunction() {
+
+		return springApplicationBuilder ->
+			springApplicationBuilder.properties(singletonProperties("server.servlet.session.timeout", "3600"));
+	}
+
+	@Override
+	protected SpringApplicationBuilder processBeforeBuild(SpringApplicationBuilder springApplicationBuilder) {
+		return this.springApplicationBuilderFunction.apply(springApplicationBuilder);
 	}
 
 	@Override
 	protected ConfigurableApplicationContext processBeforeRefresh(ConfigurableApplicationContext applicationContext) {
-
-		applicationContext.getEnvironment().getPropertySources().addFirst(newSpringSessionGemFireProperties());
-
-		return applicationContext;
+		return this.applicationContextFunction.apply(applicationContext);
 	}
 
 	private String springSessionPropertyName(String propertyNameSuffix) {
 		return String.format("%1$s.%2$s", SPRING_SESSION_DATA_GEMFIRE_PROPERTY, propertyNameSuffix);
 	}
 
+	@Before
+	public void setup() {
+		GemFireMockObjectsSupport.destroy();
+	}
+
 	@Test
 	public void springSessionConfigurationCustomizedWithConfigurer() {
+
+		this.applicationContextFunction = newSpringSessionGemFirePropertiesConfigurationFunction();
+
+		this.springApplicationBuilderFunction = newSpringBootSessionPropertiesConfigurationFunction()
+			.andThen(newWebServerSessionPropertiesConfigurationFunction());
 
 		newApplicationContext(TestConfiguration.class, SpringSessionGemFireConfigurerTestConfiguration.class);
 
@@ -124,29 +153,34 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringApplic
 
 		assertThat(sessionConfiguration).isNotNull();
 
-		assertThat(this.<ClientRegionShortcut>invoke(sessionConfiguration, "getClientRegionShortcut"))
+		assertThat(ObjectUtils.<ClientRegionShortcut>invoke(sessionConfiguration, "getClientRegionShortcut"))
 			.isEqualTo(ClientRegionShortcut.CACHING_PROXY);
 
-		assertThat(this.<String[]>invoke(sessionConfiguration, "getIndexableSessionAttributes"))
+		assertThat(ObjectUtils.<String[]>invoke(sessionConfiguration, "getIndexableSessionAttributes"))
 			.contains("two", "four");
 
-		assertThat(this.<Integer>invoke(sessionConfiguration, "getMaxInactiveIntervalInSeconds"))
+		assertThat(ObjectUtils.<Integer>invoke(sessionConfiguration, "getMaxInactiveIntervalInSeconds"))
 			.isEqualTo(900);
 
-		assertThat(this.<String>invoke(sessionConfiguration, "getPoolName")).isEqualTo("TestPool");
+		assertThat(ObjectUtils.<String>invoke(sessionConfiguration, "getPoolName")).isEqualTo("TestPool");
 
-		assertThat(this.<RegionShortcut>invoke(sessionConfiguration, "getServerRegionShortcut"))
+		assertThat(ObjectUtils.<RegionShortcut>invoke(sessionConfiguration, "getServerRegionShortcut"))
 			.isEqualTo(RegionShortcut.PARTITION_REDUNDANT_PERSISTENT_OVERFLOW);
 
-		assertThat(this.<String>invoke(sessionConfiguration, "getSessionRegionName"))
+		assertThat(ObjectUtils.<String>invoke(sessionConfiguration, "getSessionRegionName"))
 			.isEqualTo("TestRegion");
 
-		assertThat(this.<String>invoke(sessionConfiguration, "getSessionSerializerBeanName"))
+		assertThat(ObjectUtils.<String>invoke(sessionConfiguration, "getSessionSerializerBeanName"))
 			.isEqualTo("TestSessionSerializer");
 	}
 
 	@Test
 	public void springSessionConfigurationCustomizedWithProperties() {
+
+		this.applicationContextFunction = newSpringSessionGemFirePropertiesConfigurationFunction();
+
+		this.springApplicationBuilderFunction = newSpringBootSessionPropertiesConfigurationFunction()
+			.andThen(newWebServerSessionPropertiesConfigurationFunction());
 
 		newApplicationContext(TestConfiguration.class);
 
@@ -154,25 +188,56 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringApplic
 
 		assertThat(sessionConfiguration).isNotNull();
 
-		assertThat(this.<ClientRegionShortcut>invoke(sessionConfiguration, "getClientRegionShortcut"))
+		assertThat(ObjectUtils.<ClientRegionShortcut>invoke(sessionConfiguration, "getClientRegionShortcut"))
 			.isEqualTo(ClientRegionShortcut.LOCAL);
 
-		assertThat(this.<String[]>invoke(sessionConfiguration, "getIndexableSessionAttributes"))
+		assertThat(ObjectUtils.<String[]>invoke(sessionConfiguration, "getIndexableSessionAttributes"))
 			.contains("one", "two");
 
-		assertThat(this.<Integer>invoke(sessionConfiguration, "getMaxInactiveIntervalInSeconds"))
+		assertThat(ObjectUtils.<Integer>invoke(sessionConfiguration, "getMaxInactiveIntervalInSeconds"))
 			.isEqualTo(600);
 
-		assertThat(this.<String>invoke(sessionConfiguration, "getPoolName")).isEqualTo("MockPool");
+		assertThat(ObjectUtils.<String>invoke(sessionConfiguration, "getPoolName")).isEqualTo("MockPool");
 
-		assertThat(this.<RegionShortcut>invoke(sessionConfiguration, "getServerRegionShortcut"))
+		assertThat(ObjectUtils.<RegionShortcut>invoke(sessionConfiguration, "getServerRegionShortcut"))
 			.isEqualTo(RegionShortcut.REPLICATE);
 
-		assertThat(this.<String>invoke(sessionConfiguration, "getSessionRegionName"))
+		assertThat(ObjectUtils.<String>invoke(sessionConfiguration, "getSessionRegionName"))
 			.isEqualTo("MockRegion");
 
-		assertThat(this.<String>invoke(sessionConfiguration, "getSessionSerializerBeanName"))
+		assertThat(ObjectUtils.<String>invoke(sessionConfiguration, "getSessionSerializerBeanName"))
 			.isEqualTo("MockSessionSerializer");
+	}
+
+	@Test
+	public void springSessionExpirationTimeoutConfiguredWithSpringBootProperties() {
+
+		this.springApplicationBuilderFunction = newSpringBootSessionPropertiesConfigurationFunction()
+			.andThen(newWebServerSessionPropertiesConfigurationFunction());
+
+		newApplicationContext(TestConfiguration.class);
+
+		GemFireHttpSessionConfiguration sessionConfiguration = getBean(GemFireHttpSessionConfiguration.class);
+
+		assertThat(sessionConfiguration).isNotNull();
+
+		assertThat(ObjectUtils.<Integer>invoke(sessionConfiguration, "getMaxInactiveIntervalInSeconds"))
+			.isEqualTo(300);
+	}
+
+	@Test
+	public void springSessionExpirationTimeoutConfiguredWithWebContainerProperties() {
+
+		this.springApplicationBuilderFunction = newWebServerSessionPropertiesConfigurationFunction();
+
+		newApplicationContext(TestConfiguration.class);
+
+		GemFireHttpSessionConfiguration sessionConfiguration = getBean(GemFireHttpSessionConfiguration.class);
+
+		assertThat(sessionConfiguration).isNotNull();
+
+		assertThat(ObjectUtils.<Integer>invoke(sessionConfiguration, "getMaxInactiveIntervalInSeconds"))
+			.isEqualTo(3600);
 	}
 
 	@SpringBootConfiguration
