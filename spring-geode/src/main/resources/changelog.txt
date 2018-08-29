@@ -4,6 +4,23 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.0.0.M2 (2018-08-29)
+----------------------------------------
+Add support to auto-configure Spring Session using Apache Geode or Pivotal GemFire as the Session state
+management provider.
+
+* Adds support to auto-configure Spring Session for Apache Geode or Pivotal GemFire as the Spring Session provider
+when Spring Session for Apache Geode or Pivotal GemFire is on the classpath
+(https://github.com/spring-projects/spring-boot-data-geode/issues/3).
+* Improve caching provider auto-configuration to respect 'spring.cache.type'
+(https://github.com/spring-projects/spring-boot-data-geode/issues/11).
+* Add section to appendix describing how to disable Spring Boot auto-configuration on a feature by feature basis.
+* Upgrades to Spring Framework 5.0.8.RELEASE.
+* Upgrades to Spring Boot 2.0.4.RELEASE.
+* Upgrades to Spring Data Release Train Kay-SR9.
+* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.1.M3.
+
+
 Changes in version 1.0.0.M1 (2018-06-25)
 ----------------------------------------
 Inception of the Spring Boot for Apache Geode & Pivotal GemFire project.
@@ -16,7 +33,8 @@ Inception of the Spring Boot for Apache Geode & Pivotal GemFire project.
 ** Includes auto-configuration for Apache Geode/Pivotal GemFire Function Execution framework.
 ** Includes auto-configuration for Apache Geode/Pivotal GemFire CQ.
 ** Includes auto-configuration for Apache Geode/Pivotal GemFire PDX serialization.
-** Includes auto-configuration for Apache Geode/Pivotal GemFire Security.
-* Adds the spring-geode-docs modules containg the project documentation and reference guide.
-* Adds the spring-geode-starter module to get started building Sring Boot applications with Apache Geode.
-* Adds the spring-gemfire-starter module to get started building Sring Boot applications with Pivotal GemFire.
+** Includes auto-configuration for Apache Geode/Pivotal GemFire Security (Authentication/Authorization).
+** Includes auto-configuration for Apache Geode/Pivotal GemFire Security (TLS using SSL).
+* Adds the spring-geode-docs modules containing the project documentation and reference guide.
+* Adds the spring-geode-starter module to get started building Spring Boot applications with Apache Geode.
+* Adds the spring-gemfire-starter module to get started building Spring Boot applications with Pivotal GemFire.
