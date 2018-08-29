@@ -1,5 +1,5 @@
 [[geode-repositories]]
-== Repositories and Apache Geode or Pivotal GemFire
+== Spring Data Repositories
 
 Using Spring Data Repositories with Apache Geode or Pivotal GemFire makes short work of data access operations when
 using either Apache Geode or Pivotal GemFire as your System of Record (SOR) to persist your application's state.
