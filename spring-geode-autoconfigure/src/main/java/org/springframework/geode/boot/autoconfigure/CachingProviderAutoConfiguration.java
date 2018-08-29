@@ -16,9 +16,11 @@
 
 package org.springframework.geode.boot.autoconfigure;
 
+import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -32,9 +34,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.data.gemfire.cache.GemfireCacheManager;
 import org.springframework.data.gemfire.cache.config.EnableGemfireCaching;
+import org.springframework.util.StringUtils;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} for Spring's Cache Abstraction
@@ -55,12 +62,17 @@ import org.springframework.data.gemfire.cache.config.EnableGemfireCaching;
  */
 @Configuration
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
+@Conditional(CachingProviderAutoConfiguration.SpringCacheTypeCondition.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemfireCacheManager.class, GemFireCache.class })
 @ConditionalOnMissingBean(CacheManager.class)
 @EnableGemfireCaching
 @SuppressWarnings("all")
 public class CachingProviderAutoConfiguration {
+
+	protected static final Set<String> SPRING_CACHE_TYPES = asSet("gemfire", "geode");
+
+	protected static final String SPRING_CACHE_TYPE_PROPERTY = "spring.cache.type";
 
 	private final CacheManagerCustomizers cacheManagerCustomizers;
 
@@ -94,5 +106,19 @@ public class CachingProviderAutoConfiguration {
 	public void onGeodeCachingInitialization() {
 		getCacheManagerCustomizers()
 			.ifPresent(cacheManagerCustomizers -> cacheManagerCustomizers.customize(getCacheManager()));
+	}
+
+	public static class SpringCacheTypeCondition implements Condition {
+
+		@Override
+		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+
+			String springCacheType = context.getEnvironment().getProperty(SPRING_CACHE_TYPE_PROPERTY);
+
+			return Optional.ofNullable(springCacheType)
+				.filter(StringUtils::hasText)
+				.map(it -> SPRING_CACHE_TYPES.contains(it.trim().toLowerCase()))
+				.orElse(true);
+		}
 	}
 }
