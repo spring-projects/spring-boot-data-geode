@@ -93,6 +93,11 @@ is annotated with Spring's `@Service` stereotype annotation.
 Three different types of caching strategies can be enabled with Spring when using Apace Geode or Pivotal GemFire
 for your application caching needs.
 
+NOTE: Spring Boot for Apache Geode/Pivotal GemFire does not recognize and apply the `spring.cache.cache-names` property.
+Instead, you should use SDG's `@EnableCachingDefinedRegions` on an appropriate Spring Boot application
+`@Configuration` class.
+
+[[geode-caching-provider-look-aside]]
 ==== Look-Aside Caching
 
 The caching pattern we demonstrated in the example above is a form of
@@ -104,6 +109,7 @@ If the item can be found in the cache (usually, in-memory) then the item is retu
 the expensive operation.  If the item cannot be found in the cache, then the operation must be invoked.  However,
 the result of the operation is cached for subsequent requests when the the same input is provided.
 
+[[geode-caching-provider-near]]
 ==== Near Caching
 
 _Near Caching_ is another form of caching where the cache is collocated with the application.  This is useful when
@@ -139,6 +145,7 @@ TIP: The default, client Region data management policy is
 {apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html#PROXY[`ClientRegionShortcut.PROXY`].
 As such, all data access operations are immediately forwarded to the server.
 
+[[geode-caching-provider-inline]]
 ==== Inline Caching
 
 The final form of caching is _Inline Caching_.
@@ -219,3 +226,42 @@ There are several other strategies that can be used as well, as described in
 
 While this is well beyond the scope of this document, know that Spring Data for Apache Geode & Pivotal GemFire
 make all of these {spring-data-geode-docs-html}/#bootstrap-annotation-config-regions[configuration options] simple.
+
+[[geode-caching-provider-disable]]
+=== Disable Caching
+
+There may be cases where you do not want your Spring Boot application to cache application state with
+{spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction] using Apache Geode or Pivotal GemFire.
+In certain cases, you may be using another Spring Cache Abstraction provider, such as Redis, to cache and manage
+your application state, or in other cases, perhaps you do not want to use Spring's Cache Abstraction at all.
+
+Either way, you can specifically call out your Spring Cache Abstraction provider using the `spring.cache.type` property
+in `application.properties`, as follows:
+
+.Use Redis as the Spring Session Provider
+[source,txt]
+---
+#application.properties
+
+spring.cache.type=redis
+...
+---
+
+If you prefer not to use Spring's Cache Abstraction to manage your Spring Boot application's state at all, then
+do the following:
+
+.Use Web Server Session State Management
+[source,txt]
+----
+#application.properties
+
+spring.cache.type=none
+...
+----
+
+See Spring Boot {spring-boot-docs-html}/boot-features-caching.html#boot-features-caching-provider-none[docs]
+for more details.
+
+TIP: It is possible to include multiple providers on the classpath of your Spring Boot application.  For instance,
+you might be using Redis to cache your application's state while using either Apache Geode or Pivotal GemFire
+as your application's persistent store (_System of Record_).
