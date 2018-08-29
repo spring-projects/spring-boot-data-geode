@@ -1,5 +1,5 @@
 [[geode-caching-provider]]
-== Caching with Apache Geode or Pivotal GemFire
+== Caching using Apache Geode or Pivotal GemFire
 
 One of the quickest and easiest ways to get started using Apache Geode or Pivotal GemFire in your Spring Boot applications
 is to use either Apache Geode or Pivotal GemFire as a {spring-framework-docs}/integration.html#cache-store-configuration[_caching provider_]
@@ -231,26 +231,26 @@ make all of these {spring-data-geode-docs-html}/#bootstrap-annotation-config-reg
 === Disable Caching
 
 There may be cases where you do not want your Spring Boot application to cache application state with
-{spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction] using Apache Geode or Pivotal GemFire.
-In certain cases, you may be using another Spring Cache Abstraction provider, such as Redis, to cache and manage
-your application state, or in other cases, perhaps you do not want to use Spring's Cache Abstraction at all.
+{spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction] using either Apache Geode or Pivotal GemFire.
+In certain cases, you may be using another Spring supported caching provider, such as Redis, to cache and manage
+your application state, while, even in other cases, you may not want to use Spring's Cache Abstraction at all.
 
 Either way, you can specifically call out your Spring Cache Abstraction provider using the `spring.cache.type` property
 in `application.properties`, as follows:
 
-.Use Redis as the Spring Session Provider
+.Use Redis as the Spring Cache Abstraction Provider
 [source,txt]
----
+----
 #application.properties
 
 spring.cache.type=redis
 ...
----
+----
 
 If you prefer not to use Spring's Cache Abstraction to manage your Spring Boot application's state at all, then
 do the following:
 
-.Use Web Server Session State Management
+.Disable Spring's Cache Abstraction
 [source,txt]
 ----
 #application.properties
@@ -266,6 +266,6 @@ TIP: It is possible to include multiple providers on the classpath of your Sprin
 you might be using Redis to cache your application's state while using either Apache Geode or Pivotal GemFire
 as your application's persistent store (_System of Record_).
 
-NOTE: Spring Boot does not properly or correctly recognize `spring.cache.type=[gemfire|geode]` even though
+NOTE: Spring Boot does not properly recognize `spring.cache.type=[gemfire|geode]` even though
 Spring Boot for Apache Geode/Pivotal GemFire is setup to handle either of these property values
 (i.e. either "`gemfire`" or "`geode`").

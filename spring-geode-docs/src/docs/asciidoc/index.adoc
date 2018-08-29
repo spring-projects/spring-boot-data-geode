@@ -18,7 +18,7 @@ John Blum
 :pivotal-gemfire-docs: http://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference/topics/gemfire_properties.html
 :pivotal-gemfire-javadoc: http://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference
-:spring-boot-docs-html: {spring-boot-docs}/htmlsingle
+:spring-boot-docs-html: {spring-boot-docs}/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-data-commons-docs: https://docs.spring.io/spring-data/commons/docs/current/reference
 :spring-data-commons-docs-html: {spring-data-commons-docs}/html
@@ -123,7 +123,7 @@ As such, it would be pertinent to begin your Spring Boot education {spring-boot-
 Finally, we arrive at Spring Boot for Apache Geode & Pivotal GemFire.
 
 [[maven-gradle]]
-== Using Spring Boot for Apache Geode or Pivotal GemFire
+== Using Spring Boot for Apache Geode and Pivotal GemFire
 
 To use Spring Boot for Apache Geode, declare the `spring-geode-starter` on your application classpath:
 
