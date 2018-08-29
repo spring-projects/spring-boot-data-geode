@@ -35,6 +35,8 @@ asciidoctor {
 		'spring-data-commons-version' : "${springDataReleaseTrainVersion}",
 		'spring-data-gemfire-version' : "${springDataGemFireVersion}",
 		'spring-data-geode-version' : "${springDataGeodeVersion}",
+		'spring-session-data-gemfire-version' : "${springSessionDataGeodeVersion}",
+		'spring-session-data-geode-version' : "${springSessionDataGeodeVersion}",
 		'docs-src-dir' : rootProject.projectDir.path + '/spring-geode-docs/src/main/java',
 		'examples-dir' : rootProject.projectDir.path + '/spring-geode-examples/'
 }

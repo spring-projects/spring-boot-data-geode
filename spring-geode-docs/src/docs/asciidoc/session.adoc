@@ -1,0 +1,159 @@
+[[geode-session]
+== Spring Session
+
+This section covers auto-configuration of Spring Session using either Apache Geode or Pivotal GemFire to manage
+(HTTP) Session state in a reliable (consistent), highly-available (replicated) and clustered manner.
+
+{spring-session-website}[Spring Session] provides an API and several implementations for managing a user's
+session information.  It has the ability to replace the `javax.servlet.http.HttpSession` in an application container
+neutral way along with proving Session IDs in HTTP headers to work with RESTful APIs.  Furthermore, Spring Session
+provides the ability to keep the HttpSession alive even when working with WebSockets and reactive Spring WebFlux
+WebSessions.  A full discussion of Spring Session is beyond the scope of this document, and the reader is encouraged
+to learn more by reading the {spring-session-docs}[docs] and reviewing the {spring-session-docs}/#samples[samples].
+
+Of course, Spring Boot for Apache Geode & Pivotal GemFire adds auto-configuration support to configure
+either Apache Geode or Pivotal GemFire as the user session information management provider when
+{spring-session-data-gemfire-website}[Spring Session for Apache Geode or Pivotal GemFire] is on
+your Spring Boot application classpath.
+
+TIP: You can learn more about Spring Session for Apache Geode/Pivotal GemFire in
+the {spring-session-data-gemfire-docs}[docs].
+
+[[geode-session-configuration]]
+=== Configuration
+
+There is nothing special that you need to do to use either Apache Geode or Pivotal GemFire as a Spring Session provider
+to manage the (HTTP) Session state of your Spring Boot application.
+
+Simply include the appropriate Spring Session dependency on your Spring Boot application classpath, for example:
+
+.Maven dependency declaration
+[source,xml]
+[subs="verbatim,attributes"]
+----
+  <dependency>
+    <groupId>org.springframework.session</groupId>
+    <artifactId>spring-session-data-geode</artifactId>
+    <version>{spring-session-data-gemfire-version}</version>
+  </dependency>
+----
+
+TIP: You may replace Apache Geode with Pivotal GemFire simply by changing the artifact from `spring-session-data-geode`
+to `spring-session-data-gemfire`.  The version number stays the same.
+
+Then begin your Spring Boot application as you normally would:
+
+.Spring Boot Application
+[source,java]
+----
+@SpringBootApplication
+public MySpringBootApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(MySpringBootApplication.class, args);
+  }
+
+  ...
+}
+----
+
+Of course, you are free to create application-specific, Spring Web MVC `Controllers` an interact with
+the `HttpSession` as you need by your application:
+
+.Application Controller using HttpSession
+[source,java]
+----
+@Controller
+class MyApplicationController {
+
+  @GetRequest(...)
+  public String processGet(HttpSession session) {
+    // interact with HttpSession
+  }
+}
+----
+
+The `HttpSession` is replaced by a Spring Session and managed in either Apache Geode or Pivotal GemFire.
+
+[[geode-session-configuration-custom]]
+=== Custom Configuration
+
+By default, Spring Boot for Apache Geode/Pivotal GemFire (SBDG) applies reasonable and sensible defaults
+when configuring Apache Geode or Pivotal GemFire as the provider in Spring Session.
+
+So, for instance, by default SBDG uses `30 minutes` as the session expiration timeout.  It also uses a
+`ClientRegionShortcut.PROXY` as the client Region data management policy for the Apache Geode/Pivotal GemFire
+Region managing the (HTTP) Session state when the Spring Boot application is using a `ClientCache`, which it does
+by <<geode-clientcache-applications, default>>.
+
+However, what if the defaults are not sufficient for your application requirements?
+
+[[geode-session-configuration-custom-properties]]
+==== Custom Configuration using Properties
+
+Spring Session for Apache Geode/Pivotal GemFire publishes
+{spring-session-data-gemfire-docs}/#httpsession-gemfire-configuration-properties[well-known configuration properties]
+for each of the various Spring Session configuration options when using Apache Geode or Pivotal GemFire
+as the (HTTP) Session state management provider.
+
+You may specify any of these properties in a Srinng Boot `application.properties` file to adjust Spring Sessions'
+configuration when using Apache Geode or Pivotal GemFire.
+
+In addition to the properties provided in and by Spring Session for Apache Geode/Pivotal GemFire,
+Spring Boot for Apache Geode/Pivotal GemFire also recognizes and respects the `spring.session.timeout` property
+as well as the `server.servlet.session.timeout` property as discussed {spring-boot-docs-html}/boot-features-session.html[here].
+
+TIP: `spring.session.data.gemfire.session.expiration.max-inactive-interval-seconds` takes precedence over
+`spring.session.timeout`, which takes precedence over `server.servlet.session.timeout`, when any combination
+of these properties have been simultaneously configured in the Spring `Environment` of your application.
+
+[[geode-session-configuration-custom-configurer]]
+==== Custom Configuration using a Configurer
+
+Spring Session for Apache Geode/Pivotal GemFire also provides the
+{spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/support/SpringSessionGemFireConfigurer.html[`SpringSessionGemFireConfigurer`]
+callback interface, which can be declared in your Spring `ApplicationContext` to programmatically control
+the configuration of Spring Session when using Apache Geode or Pivotal GemFire.
+
+The `SpringSessionGemFireConfigurer`, when declared in the Spring `ApplicationContext`, takes precedence over any of the
+Spring Session (for Apache Geode/Pivotal GemFire) configuration properties, and will effectively override them when both
+are present.
+
+[[geode-session-disable]]
+=== Disabling Session State Caching
+
+There may be cases where you do not want your Spring Boot application to manage the (HTTP) Session state
+using Apache Geode or Pivotal GemFire.  In certain cases, you may be using another Spring Session provider,
+such as Redis, to cache and manage your Spring Boot application's (HTTP) Session state.  Or, perhaps
+you do not want to use Spring Session to manage your (HTTP) Session state at all.  Rather, you prefer to use
+your Web Server's (e.g. Tomcat) `HttpSession` state management.
+
+Either way, you can specifically call out your Spring Session provider using the `spring.session.store-type` property
+in `application.properties`, as follows:
+
+.Use Redis as the Spring Session Provider
+[source,txt]
+---
+#application.properties
+
+spring.session.store-type=redis
+...
+---
+
+If you prefer not to use Spring Session to manage your Spring Boot application's (HTTP) Session state at all, then
+do the following:
+
+.Use Web Server Session State Management
+[source,txt]
+----
+#application.properties
+
+spring.session.store-type=none
+...
+----
+
+Again, see Spring Boot {spring-boot-docs-html}/boot-features-session.html[docs] for more details.
+
+TIP: It is possible to include multiple providers on the classpath of your Spring Boot application.  For instance,
+you might be using Redis to cache your application's (HTTP) Session state while using either Apache Geode
+or Pivotal GemFire as your application's persistent store (_System of Record_).
