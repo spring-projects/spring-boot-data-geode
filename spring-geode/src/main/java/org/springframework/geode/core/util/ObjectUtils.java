@@ -19,15 +19,20 @@ package org.springframework.geode.core.util;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalArgumentException;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
+import java.lang.reflect.Method;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * The {@link ObjectUtils} class is an abstract utility class with operations for {@link Object objects}.
  *
  * @author John Blum
  * @see java.lang.Object
+ * @see java.lang.reflect.Method
  * @since 1.0.0
  */
 @SuppressWarnings("all")
@@ -83,6 +88,34 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 			return returnValueThrowOnNull(defaultValue,
 				newIllegalStateException(cause, "Failed to execute operation"));
 		}
+	}
+
+	/**
+	 * Invokes a {@link Method} on an {@link Object} with the given {@link String name}.
+	 *
+	 * @param <T> {@link Class type} of the {@link Method} return value.
+	 * @param obj {@link Object} on which to invoke the {@link Method}.
+	 * @param methodName {@link String} containing the name of the {@link Method} to invoke on {@link Object}.
+	 * @return the return value of the invoked {@link Method} on {@link Object}.
+	 * @throws IllegalArgumentException if no {@link Method} with {@link String name} could be found on {@link Object}.
+	 * @see java.lang.reflect.Method
+	 * @see java.lang.Object
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T invoke(Object obj, String methodName) {
+
+		return (T) Optional.ofNullable(obj)
+			.map(Object::getClass)
+			.map(type -> ReflectionUtils.findMethod(type, methodName))
+			.map(ObjectUtils::makeAccessible)
+			.map(method -> ReflectionUtils.invokeMethod(method, obj))
+			.orElseThrow(() -> newIllegalArgumentException("Method [%1$s] on Object of type [%2$s] not found",
+				methodName, org.springframework.util.ObjectUtils.nullSafeClassName(obj)));
+	}
+
+	private static Method makeAccessible(Method method) {
+		ReflectionUtils.makeAccessible(method);
+		return method;
 	}
 
 	/**

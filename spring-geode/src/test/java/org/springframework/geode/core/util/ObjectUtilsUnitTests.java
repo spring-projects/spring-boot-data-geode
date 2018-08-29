@@ -60,6 +60,28 @@ public class ObjectUtilsUnitTests {
 	}
 
 	@Test
+	public void invokeMethodOnObjectReturnsValue() {
+		assertThat(ObjectUtils.<String>invoke(new TestObject(), "testMethod")).isEqualTo("TEST");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void invokeNonExistingMethodOnObjectThrowsIllegalArgumentException() {
+
+		try {
+			ObjectUtils.invoke(new TestObject(), "nonExistingMethod");
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("Method [nonExistingMethod] on Object of type [%s] not found",
+				TestObject.class.getName());
+
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test
 	public void returnValueThrowOnNullWithNonNullValueReturnsValue() {
 		assertThat(ObjectUtils.returnValueThrowOnNull("test")).isEqualTo("test");
 	}
@@ -76,6 +98,13 @@ public class ObjectUtilsUnitTests {
 			assertThat(expected).hasNoCause();
 
 			throw expected;
+		}
+	}
+
+	public static class TestObject {
+
+		public String testMethod() {
+			return "TEST";
 		}
 	}
 }
