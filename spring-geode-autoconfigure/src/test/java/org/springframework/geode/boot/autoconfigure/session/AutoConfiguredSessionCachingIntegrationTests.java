@@ -31,6 +31,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.gemfire.GemfireAccessor;
 import org.springframework.data.gemfire.GemfireOperations;
 import org.springframework.data.gemfire.GemfireTemplate;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
@@ -54,6 +55,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.data.gemfire.GemfireTemplate
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.session.Session
  * @see org.springframework.session.SessionRepository
@@ -68,7 +70,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 	webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
 @SuppressWarnings("unused")
-public class AutoConfiguredSessionCachingIntegrationTests {
+public class AutoConfiguredSessionCachingIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private ApplicationContext applicationContext;
