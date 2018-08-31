@@ -45,7 +45,8 @@ This, along with many other things will be provided in and by this project.
 === Documentation
 
 You can find the documentation for this project
-https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.BUILD-SNAPSHOT/reference/htmlsingle/[here].
+https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.BUILD-SNAPSHOT/reference/htmlsingle/[here],
+and API is https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.BUILD-SNAPSHOT/api/[here].
 
 === Examples
 
