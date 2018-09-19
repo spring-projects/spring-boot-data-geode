@@ -86,8 +86,8 @@ public class GeodeCacheHealthIndicatorUnitTests {
 		ResourceManager mockResourceManager = CacheMockObjects.mockResourceManager(0.9f,
 			0.95f, 0.85f, 0.9f);
 
-		GemFireCache mockGemFireCache =
-			CacheMockObjects.mockGemFireCache(this.mockGemFireCache, mockDistributedSystem, mockResourceManager);
+		GemFireCache mockGemFireCache = CacheMockObjects.mockGemFireCache(this.mockGemFireCache,
+			"MockGemFireCache", mockDistributedSystem, mockResourceManager);
 
 		CancelCriterion mockCancelCriterion = mock(CancelCriterion.class);
 
