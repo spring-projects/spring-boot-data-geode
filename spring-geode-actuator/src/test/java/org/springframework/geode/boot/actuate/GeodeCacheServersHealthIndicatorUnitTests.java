@@ -17,6 +17,7 @@
 package org.springframework.geode.boot.actuate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.server.CacheServer;
+import org.apache.geode.cache.server.ServerLoadProbe;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +36,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
+import org.springframework.data.gemfire.tests.mock.CacheServerMockObjects;
 
 /**
  * The GeodeCacheServersHealthIndicatorUnitTests class...
@@ -59,6 +62,18 @@ public class GeodeCacheServersHealthIndicatorUnitTests {
 
 		List<CacheServer> mockCacheServers = new ArrayList<>();
 
+		ServerLoadProbe mockServerLoadProbe = mock(ServerLoadProbe.class);
+
+		mockCacheServers.add(CacheServerMockObjects.mockCacheServer("10.11.111.1", null,
+			"Mailbox", 15000L, mockServerLoadProbe, 100, 500,
+			8, 20000, 30000, 41414, true, 16384,
+			true));
+
+		mockCacheServers.add(CacheServerMockObjects.mockCacheServer("10.12.120.2", null,
+			"Skullbox", 10000L, mockServerLoadProbe, 250, 50,
+			16, 5000, 15000, 42424, false, 8192,
+			false));
+
 		when(this.mockCache.getCacheServers()).thenReturn(mockCacheServers);
 
 		Health.Builder builder = new Health.Builder();
@@ -70,11 +85,55 @@ public class GeodeCacheServersHealthIndicatorUnitTests {
 		assertThat(health).isNotNull();
 		assertThat(health.getStatus()).isEqualTo(Status.UP);
 
-		Map<String, Object> details = health.getDetails();
+		Map<String, Object> healthDetails = health.getDetails();
 
-		assertThat(details).isNotNull();
-		assertThat(details).isNotEmpty();
+		assertThat(healthDetails).isNotNull();
+		assertThat(healthDetails).isNotEmpty();
+		assertThat(healthDetails).containsEntry("geode.cache.server.count", 2);
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.bind-address", "10.11.111.1");
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.hostname-for-clients", "Mailbox");
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.load-poll-interval", 15000L);
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.max-connections", 100);
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.max-message-count", 500);
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.max-threads", 8);
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.max-time-between-pings", 20000);
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.message-time-to-live", 30000);
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.port", 41414);
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.running", "Yes");
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.socket-buffer-size", 16384);
+		assertThat(healthDetails).containsEntry("geode.cache.server.0.tcp-no-delay", "Yes");
+		assertThat(healthDetails).doesNotContainKeys("geode.cache.server.0.client-subscription-config",
+			"geode.cache.server.0.metrics.client-count", "geode.cache.server.0.load.connection-load");
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.bind-address", "10.12.120.2");
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.hostname-for-clients", "Skullbox");
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.load-poll-interval", 10000L);
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.max-connections", 250);
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.max-message-count", 50);
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.max-threads", 16);
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.max-time-between-pings", 5000);
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.message-time-to-live", 15000);
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.port", 42424);
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.running", "No");
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.socket-buffer-size", 8192);
+		assertThat(healthDetails).containsEntry("geode.cache.server.1.tcp-no-delay", "No");
+		assertThat(healthDetails).doesNotContainKeys("geode.cache.server.1.client-subscription-config",
+			"geode.cache.server.1.metrics.client-count", "geode.cache.server.1.load.connection-load");
 
 		verify(this.mockCache, times(1)).getCacheServers();
+	}
+
+	@Test
+	public void healthCheckFailsWhenNoGemFireCacheIsPresent() throws Exception {
+
+		GeodeCacheServersHealthIndicator healthIndicator = new GeodeCacheServersHealthIndicator();
+
+		Health.Builder builder = new Health.Builder();
+
+		healthIndicator.doHealthCheck(builder);
+
+		Health health = builder.build();
+
+		assertThat(health).isNotNull();
+		assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
 	}
 }

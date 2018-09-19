@@ -93,13 +93,13 @@ public class GeodeCacheServersHealthIndicator extends AbstractGeodeHealthIndicat
 						.withDetail(cacheServerKey(cacheServerIndex, "load-poll-interval"), cacheServer.getLoadPollInterval())
 						.withDetail(cacheServerKey(cacheServerIndex, "max-connections"), cacheServer.getMaxConnections())
 						.withDetail(cacheServerKey(cacheServerIndex, "max-message-count"), cacheServer.getMaximumMessageCount())
-						.withDetail(cacheServerKey(cacheServerIndex, "max-time-between-pings"), cacheServer.getMaximumTimeBetweenPings())
 						.withDetail(cacheServerKey(cacheServerIndex, "max-threads"), cacheServer.getMaxThreads())
+						.withDetail(cacheServerKey(cacheServerIndex, "max-time-between-pings"), cacheServer.getMaximumTimeBetweenPings())
 						.withDetail(cacheServerKey(cacheServerIndex, "message-time-to-live"), cacheServer.getMessageTimeToLive())
 						.withDetail(cacheServerKey(cacheServerIndex, "port"), cacheServer.getPort())
 						.withDetail(cacheServerKey(cacheServerIndex, "running"), toYesNoString(cacheServer.isRunning()))
 						.withDetail(cacheServerKey(cacheServerIndex, "socket-buffer-size"), cacheServer.getSocketBufferSize())
-						.withDetail(cacheServerKey(cacheServerIndex, "tcp-no-delay"), cacheServer.getTcpNoDelay());
+						.withDetail(cacheServerKey(cacheServerIndex, "tcp-no-delay"), toYesNoString(cacheServer.getTcpNoDelay()));
 
 					Optional.ofNullable(cacheServer.getLoadProbe())
 						.filter(ActuatorServerLoadProbeWrapper.class::isInstance)
