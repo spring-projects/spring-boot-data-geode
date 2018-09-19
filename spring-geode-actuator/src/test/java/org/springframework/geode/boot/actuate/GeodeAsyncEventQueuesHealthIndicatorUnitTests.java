@@ -45,6 +45,10 @@ import org.springframework.data.gemfire.tests.mock.AsyncEventQueueMockObjects;
  * @see org.mockito.Mock
  * @see org.mockito.Mockito
  * @see org.mockito.junit.MockitoJUnitRunner
+ * @see org.apache.geode.cache.Cache
+ * @see org.apache.geode.cache.asyncqueue.AsyncEventQueue
+ * @see org.springframework.boot.actuate.health.Health
+ * @see org.springframework.geode.boot.actuate.GeodeAsyncEventQueuesHealthIndicator
  * @since 1.0.0
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -120,5 +124,20 @@ public class GeodeAsyncEventQueuesHealthIndicatorUnitTests {
 		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.size", 8192);
 
 		verify(this.mockCache, times(1)).getAsyncEventQueues();
+	}
+
+	@Test
+	public void healthCheckFailsWhenNoGemFireCacheIsPresent() throws Exception {
+
+		GeodeAsyncEventQueuesHealthIndicator healthIndicator = new GeodeAsyncEventQueuesHealthIndicator();
+
+		Health.Builder builder = new Health.Builder();
+
+		healthIndicator.doHealthCheck(builder);
+
+		Health health = builder.build();
+
+		assertThat(health).isNotNull();
+		assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
 	}
 }
