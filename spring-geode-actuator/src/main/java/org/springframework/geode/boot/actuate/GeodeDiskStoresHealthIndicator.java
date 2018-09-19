@@ -16,8 +16,6 @@
 
 package org.springframework.geode.boot.actuate;
 
-import static org.springframework.data.gemfire.util.ArrayUtils.nullSafeArray;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +29,7 @@ import org.apache.shiro.util.Assert;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicator;
 
 /**
@@ -102,11 +101,11 @@ public class GeodeDiskStoresHealthIndicator extends AbstractGeodeHealthIndicator
 
 				String diskStoreName = diskStore.getName();
 
-				builder.withDetail(diskStoreKey(diskStoreName, "allow-force-compaction"), diskStore.getAllowForceCompaction())
-					.withDetail(diskStoreKey(diskStoreName, "auto-compact"), diskStore.getAutoCompact())
+				builder.withDetail(diskStoreKey(diskStoreName, "allow-force-compaction"), toYesNoString(diskStore.getAllowForceCompaction()))
+					.withDetail(diskStoreKey(diskStoreName, "auto-compact"), toYesNoString(diskStore.getAutoCompact()))
 					.withDetail(diskStoreKey(diskStoreName, "compaction-threshold"), diskStore.getCompactionThreshold())
 					.withDetail(diskStoreKey(diskStoreName, "disk-directories"), toFilePathnamesString(diskStore.getDiskDirs()))
-					.withDetail(diskStoreKey(diskStoreName, "disk-directory-sizes"), Arrays.toString(diskStore.getDiskDirSizes()))
+					.withDetail(diskStoreKey(diskStoreName, "disk-directory-sizes"), Arrays.toString(nullSafeArray(diskStore.getDiskDirSizes())))
 					.withDetail(diskStoreKey(diskStoreName, "disk-usage-critical-percentage"), diskStore.getDiskUsageCriticalPercentage())
 					.withDetail(diskStoreKey(diskStoreName, "disk-usage-warning-percentage"), diskStore.getDiskUsageWarningPercentage())
 					.withDetail(diskStoreKey(diskStoreName, "max-oplog-size"), diskStore.getMaxOplogSize())
@@ -124,16 +123,20 @@ public class GeodeDiskStoresHealthIndicator extends AbstractGeodeHealthIndicator
 		builder.unknown();
 	}
 
+	private String diskStoreKey(String diskStoreName, String suffix) {
+		return String.format("geode.disk-store.%1$s.%2$s", diskStoreName, suffix);
+	}
+
+	private int[] nullSafeArray(int[] array) {
+		return array != null ? array : new int[0];
+	}
+
 	private String toFilePathnamesString(File... files) {
 
-		return Arrays.toString(Arrays.stream(nullSafeArray(files, File.class))
+		return Arrays.toString(Arrays.stream(ArrayUtils.nullSafeArray(files, File.class))
 			.filter(Objects::nonNull)
 			.map(File::getAbsolutePath)
 			.collect(Collectors.toSet())
 			.toArray());
-	}
-
-	private String diskStoreKey(String diskStoreName, String suffix) {
-		return String.format("geode.disk-store.%1$s.%2$s", diskStoreName, suffix);
 	}
 }
