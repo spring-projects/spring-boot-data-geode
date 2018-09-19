@@ -4,8 +4,8 @@ description = "Spring Boot for Apache Geode Actuator Auto-Configuration"
 
 dependencies {
 
-    compile project(":spring-geode-autoconfigure")
     compile project(":spring-geode-actuator")
+    compile project(":spring-geode-autoconfigure")
 
     testCompile "org.assertj:assertj-core"
     testCompile "junit:junit"
@@ -18,5 +18,5 @@ dependencies {
     }
 
     testCompile "org.springframework.data:spring-data-geode-test"
-    testCompile slf4jDependencies
+
 }

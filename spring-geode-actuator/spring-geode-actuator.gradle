@@ -6,7 +6,9 @@ dependencies {
 
     compile project(":spring-geode")
 
-    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile ("org.springframework.boot:spring-boot-starter-actuator") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
 
     testCompile "org.assertj:assertj-core"
     testCompile "junit:junit"
@@ -19,6 +21,5 @@ dependencies {
     }
 
     testCompile "org.springframework.data:spring-data-geode-test"
-    testCompile slf4jDependencies
 
 }

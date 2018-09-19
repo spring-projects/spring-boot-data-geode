@@ -21,7 +21,6 @@ dependencies {
 	}
 
 	testCompile "org.springframework.data:spring-data-geode-test"
-	testCompile slf4jDependencies
 
 	testRuntime "javax.cache:cache-api"
 
