@@ -46,7 +46,7 @@ public class ObjectUtilsUnitTests {
 	public void doOperationSafelyThrowsIllegalStateException() {
 
 		try {
-			ObjectUtils.doOperationSafely(() -> { throw newRuntimeException("test"); }, null);
+			ObjectUtils.doOperationSafely(() -> { throw newRuntimeException("test"); }, (Object) null);
 		}
 		catch (IllegalStateException expected) {
 

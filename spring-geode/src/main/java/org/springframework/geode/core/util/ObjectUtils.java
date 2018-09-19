@@ -19,12 +19,16 @@ package org.springframework.geode.core.util;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalArgumentException;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -54,7 +58,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	 */
 	@Nullable
 	public static <T> T doOperationSafely(ExceptionThrowingOperation<T> operation) {
-		return doOperationSafely(operation, null);
+		return doOperationSafely(operation, (T) null);
 	}
 
 	/**
@@ -76,6 +80,15 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	@Nullable
 	public static <T> T doOperationSafely(ExceptionThrowingOperation<T> operation, T defaultValue) {
 
+		Function<Throwable, T> exceptionHandlingFunction = cause ->
+			returnValueThrowOnNull(defaultValue, newIllegalStateException(cause, "Failed to execute operation"));
+
+		return doOperationSafely(operation, exceptionHandlingFunction);
+	}
+
+	public static <T> T doOperationSafely(ExceptionThrowingOperation<T> operation,
+			Function<Throwable, T> exceptionHandlingFunction) {
+
 		try {
 			return operation.doExceptionThrowingOperation();
 		}
@@ -85,9 +98,28 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 				logger.debug(String.format("Failed to execute operation [%s]", operation), cause);
 			}
 
-			return returnValueThrowOnNull(defaultValue,
-				newIllegalStateException(cause, "Failed to execute operation"));
+			return exceptionHandlingFunction.apply(cause);
 		}
+	}
+
+	public static <T> T get(Object obj, String fieldName) {
+
+		Assert.notNull(obj, "Object is requried");
+		Assert.hasText(fieldName, String.format("Field name [%s] is require", fieldName));
+
+		return Optional.ofNullable(ReflectionUtils.findField(obj.getClass(), fieldName))
+			.map(ObjectUtils::makeAccessible)
+			.map(field -> ObjectUtils.<T>get(obj, field))
+			.orElseThrow(() -> newIllegalArgumentException("No field with name [%s] exists on object of type [%s]",
+				fieldName, ObjectUtils.nullSafeClassName(obj)));
+	}
+
+	public static <T> T get(Object obj, Field field) {
+
+		Assert.notNull(obj, "Object is requried");
+		Assert.notNull(field, "Field is required");
+
+		return doOperationSafely(() -> (T) field.get(obj), (T) null);
 	}
 
 	/**
@@ -111,6 +143,16 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 			.map(method -> ReflectionUtils.invokeMethod(method, obj))
 			.orElseThrow(() -> newIllegalArgumentException("Method [%1$s] on Object of type [%2$s] not found",
 				methodName, org.springframework.util.ObjectUtils.nullSafeClassName(obj)));
+	}
+
+	private static Constructor makeAccessible(Constructor<?> constructor) {
+		ReflectionUtils.makeAccessible(constructor);
+		return constructor;
+	}
+
+	private static Field makeAccessible(Field field) {
+		ReflectionUtils.makeAccessible(field);
+		return field;
 	}
 
 	private static Method makeAccessible(Method method) {
