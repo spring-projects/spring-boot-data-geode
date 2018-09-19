@@ -1,0 +1,22 @@
+apply plugin: 'io.spring.convention.spring-module'
+
+description = "Spring Boot for Apache Geode Actuator Auto-Configuration"
+
+dependencies {
+
+    compile project(":spring-geode-autoconfigure")
+    compile project(":spring-geode-actuator")
+
+    testCompile "org.assertj:assertj-core"
+    testCompile "junit:junit"
+    testCompile "org.mockito:mockito-core"
+    testCompile "org.projectlombok:lombok"
+    testCompile "edu.umd.cs.mtc:multithreadedtc"
+
+    testCompile("org.springframework.boot:spring-boot-starter-test") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    }
+
+    testCompile "org.springframework.data:spring-data-geode-test"
+    testCompile slf4jDependencies
+}
