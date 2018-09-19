@@ -18,6 +18,7 @@ package org.springframework.geode.boot.actuate;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.geode.cache.Cache;
@@ -27,6 +28,7 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.data.gemfire.util.CacheUtils;
 import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicator;
+import org.springframework.util.StringUtils;
 
 /**
  * The {@link GeodeGatewaySendersHealthIndicator} class is a Spring Boot {@link HealthIndicator} providing details about
@@ -74,7 +76,7 @@ public class GeodeGatewaySendersHealthIndicator extends AbstractGeodeHealthIndic
 				.map(Cache::getGatewaySenders)
 				.orElseGet(Collections::emptySet);
 
-			builder.withDetail("geode.gateway.sender.count", gatewaySenders.size());
+			builder.withDetail("geode.gateway-sender.count", gatewaySenders.size());
 
 			gatewaySenders.stream()
 				.filter(Objects::nonNull)
@@ -86,7 +88,9 @@ public class GeodeGatewaySendersHealthIndicator extends AbstractGeodeHealthIndic
 						.withDetail(gatewaySendersKey(gatewaySenderId, "batch-conflation-enabled"), toYesNoString(gatewaySender.isBatchConflationEnabled()))
 						.withDetail(gatewaySendersKey(gatewaySenderId, "batch-size"), gatewaySender.getBatchSize())
 						.withDetail(gatewaySendersKey(gatewaySenderId, "batch-time-interval"), gatewaySender.getBatchTimeInterval())
-						.withDetail(gatewaySendersKey(gatewaySenderId, "disk-store-name"), gatewaySender.getDiskStoreName())
+						.withDetail(gatewaySendersKey(gatewaySenderId, "disk-store-name"), Optional.ofNullable(gatewaySender.getDiskStoreName())
+							.filter(StringUtils::hasText)
+							.orElse(""))
 						.withDetail(gatewaySendersKey(gatewaySenderId, "disk-synchronous"), toYesNoString(gatewaySender.isDiskSynchronous()))
 						.withDetail(gatewaySendersKey(gatewaySenderId, "dispatcher-threads"), gatewaySender.getDispatcherThreads())
 						.withDetail(gatewaySendersKey(gatewaySenderId, "max-queue-memory"), gatewaySender.getMaximumQueueMemory())
@@ -110,6 +114,6 @@ public class GeodeGatewaySendersHealthIndicator extends AbstractGeodeHealthIndic
 	}
 
 	private String gatewaySendersKey(String id, String suffix) {
-		return String.format("geode.gateway.sender.%1$s.%2$s", id, suffix);
+		return String.format("geode.gateway-sender.%1$s.%2$s", id, suffix);
 	}
 }
