@@ -17,7 +17,7 @@ dependencies {
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
-		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
+		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
 	}
 
 	testCompile "org.springframework.data:spring-data-geode-test"
