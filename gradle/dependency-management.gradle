@@ -5,6 +5,7 @@ dependencyManagement {
 	dependencies {
 		dependency "antlr:antlr:$antlrVersion"
 		dependency "edu.umd.cs.mtc:multithreadedtc:$multithreadedtcVersion"
+		dependency "org.mockito:mockito-core:$mockitoVersion"
 		dependency "org.springframework.data:spring-data-geode-test:$springDataGeodeTestVersion"
 		dependency "org.springframework.session:spring-session-data-geode:$springSessionDataGeodeVersion"
 		dependency "org.springframework.shell:spring-shell:$springShellVersion"
