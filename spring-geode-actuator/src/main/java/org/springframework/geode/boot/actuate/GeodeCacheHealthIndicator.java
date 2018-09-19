@@ -51,9 +51,9 @@ import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicato
 public class GeodeCacheHealthIndicator extends AbstractGeodeHealthIndicator {
 
 	private final Function<Health.Builder, Health.Builder> gemfireHealthIndicatorFunctions = withCacheDetails()
-		.andThen(withResourceManagerDetails())
 		.andThen(withDistributedSystemDetails())
-		.andThen(withDistributedMemberDetails());
+		.andThen(withDistributedMemberDetails())
+		.andThen(withResourceManagerDetails());
 
 	/**
 	 * Default constructor to construct an uninitialized instance of {@link GeodeCacheHealthIndicator},
