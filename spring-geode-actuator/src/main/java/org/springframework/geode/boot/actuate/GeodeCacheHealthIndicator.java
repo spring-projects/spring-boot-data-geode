@@ -106,8 +106,8 @@ public class GeodeCacheHealthIndicator extends AbstractGeodeHealthIndicator {
 
 	private Function<Health.Builder, Health.Builder> withCacheDetails() {
 
-		return healthBuilder -> healthBuilder.withDetail("geode.cache.closed",
-				getGemFireCache().filter(GemFireCache::isClosed).isPresent() ? "Yes" : "No")
+		return healthBuilder -> healthBuilder.withDetail("geode.cache.name", getGemFireCache().map(GemFireCache::getName).orElse(""))
+				.withDetail("geode.cache.closed", getGemFireCache().map(GemFireCache::isClosed).map(this::toYesNoString).orElse("Yes"))
 			.withDetail("geode.cache.cancel-in-progress", getGemFireCache()
 				.map(GemFireCache::getCancelCriterion)
 				.filter(CancelCriterion::isCancelInProgress)
@@ -134,8 +134,8 @@ public class GeodeCacheHealthIndicator extends AbstractGeodeHealthIndicator {
 		return healthBuilder -> getGemFireCache()
 			.map(GemFireCache::getDistributedSystem)
 			.map(distributedSystem -> healthBuilder
-				.withDetail("geode.distributed-system.connection", distributedSystem.isConnected() ? "Connected" : "Disconnected")
-				.withDetail("geode.distributed-system.reconnecting", distributedSystem.isReconnecting() ? "Yes" : "No")
+				.withDetail("geode.distributed-system.connection", toConnectedNoConnectedString(distributedSystem.isConnected()))
+				.withDetail("geode.distributed-system.reconnecting", toYesNoString(distributedSystem.isReconnecting()))
 				.withDetail("geode.distributed-system.properties-location",
 					Optional.ofNullable(DistributedSystem.getPropertiesFileURL()).map(URL::toExternalForm))
 				.withDetail("geode.distributed-system.security-properties-location",
@@ -155,5 +155,9 @@ public class GeodeCacheHealthIndicator extends AbstractGeodeHealthIndicator {
 				.withDetail("geode.resource-manager.eviction-off-heap-percentage", resourceManager.getEvictionOffHeapPercentage())
 			)
 			.orElse(healthBuilder);
+	}
+
+	private String toConnectedNoConnectedString(Boolean connected) {
+		return Boolean.TRUE.equals(connected) ? "Connected" : "Not Connected";
 	}
 }

@@ -108,6 +108,7 @@ public class GeodeCacheHealthIndicatorUnitTests {
 
 		assertThat(healthDetails).isNotNull();
 		assertThat(healthDetails).isNotEmpty();
+		assertThat(healthDetails).containsEntry("geode.cache.name", "MockGemFireCache");
 		assertThat(healthDetails).containsEntry("geode.cache.closed", "No");
 		assertThat(healthDetails).containsEntry("geode.cache.cancel-in-progress", "No");
 		assertThat(healthDetails).containsKey("geode.distributed-member.id");
