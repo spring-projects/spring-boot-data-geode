@@ -145,9 +145,10 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 				.map(Region::getAttributes)
 				.map(RegionAttributes::getPartitionAttributes)
 				.ifPresent(partitionAttributes -> builder
-					.withDetail(cachePartitionRegionKey(regionName, "colocated-with"), partitionAttributes.getColocatedWith())
+					.withDetail(cachePartitionRegionKey(regionName, "collocated-with"), partitionAttributes.getColocatedWith())
 					.withDetail(cachePartitionRegionKey(regionName, "local-max-memory"), partitionAttributes.getLocalMaxMemory())
 					.withDetail(cachePartitionRegionKey(regionName, "redundant-copies"), partitionAttributes.getRedundantCopies())
+					.withDetail(cachePartitionRegionKey(regionName, "total-max-memory"), partitionAttributes.getTotalMaxMemory())
 					.withDetail(cachePartitionRegionKey(regionName, "total-number-of-buckets"), partitionAttributes.getTotalNumBuckets()));
 		};
 	}
