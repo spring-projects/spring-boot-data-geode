@@ -103,7 +103,7 @@ public class GeodeIndexesHealthIndicator extends AbstractGeodeHealthIndicator {
 
 					builder.withDetail(indexKey(indexName, "from-clause"), index.getFromClause())
 						.withDetail(indexKey(indexName, "indexed-expression"), index.getIndexedExpression())
-						.withDetail(indexKey(indexName, "project-attributes"), index.getProjectionAttributes())
+						.withDetail(indexKey(indexName, "projection-attributes"), index.getProjectionAttributes())
 						.withDetail(indexKey(indexName, "region"), Optional.ofNullable(index.getRegion())
 							.map(Region::getFullPath)
 							.orElse(""))
