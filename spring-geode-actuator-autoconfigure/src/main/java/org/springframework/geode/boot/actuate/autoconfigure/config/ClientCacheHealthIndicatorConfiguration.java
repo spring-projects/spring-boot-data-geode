@@ -20,6 +20,7 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -32,9 +33,15 @@ import org.springframework.geode.boot.actuate.GeodeContinuousQueriesHealthIndica
 import org.springframework.geode.boot.actuate.GeodePoolsHealthIndicator;
 
 /**
- * The ClientCacheHealthIndicatorConfiguration class...
+ * Spring {@link Configuration @Configuration} class declaring Spring beans for Apache Geode/Pivotal GemFire
+ * {@link ClientCache} {@link HealthIndicator HealthIndicators}.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.actuate.health.HealthIndicator
+ * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.geode.boot.actuate.GeodeContinuousQueriesHealthIndicator
  * @see org.springframework.geode.boot.actuate.GeodePoolsHealthIndicator
  * @since 1.0.0

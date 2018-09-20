@@ -19,8 +19,10 @@ package org.springframework.geode.boot.actuate.autoconfigure;
 import org.apache.geode.cache.GemFireCache;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.autoconfigure.health.HealthIndicatorAutoConfiguration;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
@@ -32,9 +34,19 @@ import org.springframework.geode.boot.actuate.autoconfigure.config.PeerCacheHeal
 import org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration;
 
 /**
- * The GeodeHealthIndicatorAutoConfiguration class...
+ * Spring Boot {@link EnableAutoConfiguration auto-configuration} for Apache Geode/Pivotal GemFire
+ * {@link HealthIndicator HealthIndicators}.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator
+ * @see org.springframework.boot.actuate.autoconfigure.health.HealthIndicatorAutoConfiguration
+ * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.context.annotation.Import
+ * @see org.springframework.geode.boot.actuate.autoconfigure.config.BaseGeodeHealthIndicatorConfiguration
+ * @see org.springframework.geode.boot.actuate.autoconfigure.config.ClientCacheHealthIndicatorConfiguration
+ * @see org.springframework.geode.boot.actuate.autoconfigure.config.PeerCacheHealthIndicatorConfiguration
+ * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  * @since 1.0.0
  */
 @Configuration

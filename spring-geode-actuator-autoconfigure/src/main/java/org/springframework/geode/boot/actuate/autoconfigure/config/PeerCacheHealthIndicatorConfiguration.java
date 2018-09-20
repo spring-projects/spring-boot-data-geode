@@ -25,6 +25,7 @@ import org.apache.geode.cache.server.CacheServer;
 import org.apache.geode.cache.server.ServerLoadProbe;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -42,9 +43,16 @@ import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.lang.Nullable;
 
 /**
- * The PeerCacheHealthIndicatorConfiguration class...
+ * Spring {@link Configuration @Configuration} class declaring Spring beans for Apache Geode/Pivotal GemFire
+ * peer {@link Cache} {@link HealthIndicator HealthIndicators}.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.Cache
+ * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.beans.factory.config.BeanPostProcessor
+ * @see org.springframework.boot.actuate.health.HealthIndicator
+ * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.geode.boot.actuate.GeodeAsyncEventQueuesHealthIndicator
  * @see org.springframework.geode.boot.actuate.GeodeCacheServersHealthIndicator
  * @see org.springframework.geode.boot.actuate.GeodeGatewayReceiversHealthIndicator
