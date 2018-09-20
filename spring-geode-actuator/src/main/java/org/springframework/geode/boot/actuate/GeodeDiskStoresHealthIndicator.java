@@ -104,7 +104,7 @@ public class GeodeDiskStoresHealthIndicator extends AbstractGeodeHealthIndicator
 				builder.withDetail(diskStoreKey(diskStoreName, "allow-force-compaction"), toYesNoString(diskStore.getAllowForceCompaction()))
 					.withDetail(diskStoreKey(diskStoreName, "auto-compact"), toYesNoString(diskStore.getAutoCompact()))
 					.withDetail(diskStoreKey(diskStoreName, "compaction-threshold"), diskStore.getCompactionThreshold())
-					.withDetail(diskStoreKey(diskStoreName, "disk-directories"), toFilePathnamesString(diskStore.getDiskDirs()))
+					.withDetail(diskStoreKey(diskStoreName, "disk-directories"), toFileAbsolutePathStrings(diskStore.getDiskDirs()))
 					.withDetail(diskStoreKey(diskStoreName, "disk-directory-sizes"), Arrays.toString(nullSafeArray(diskStore.getDiskDirSizes())))
 					.withDetail(diskStoreKey(diskStoreName, "disk-usage-critical-percentage"), diskStore.getDiskUsageCriticalPercentage())
 					.withDetail(diskStoreKey(diskStoreName, "disk-usage-warning-percentage"), diskStore.getDiskUsageWarningPercentage())
@@ -131,7 +131,7 @@ public class GeodeDiskStoresHealthIndicator extends AbstractGeodeHealthIndicator
 		return array != null ? array : new int[0];
 	}
 
-	private String toFilePathnamesString(File... files) {
+	private String toFileAbsolutePathStrings(File... files) {
 
 		return Arrays.toString(Arrays.stream(ArrayUtils.nullSafeArray(files, File.class))
 			.filter(Objects::nonNull)

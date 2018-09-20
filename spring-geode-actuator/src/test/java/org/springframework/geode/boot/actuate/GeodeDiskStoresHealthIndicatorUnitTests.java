@@ -51,6 +51,7 @@ import org.springframework.data.gemfire.util.ArrayUtils;
  * @see org.springframework.boot.actuate.health.Health
  * @see org.springframework.boot.actuate.health.HealthIndicator
  * @see org.springframework.context.ApplicationContext
+ * @see org.springframework.data.gemfire.tests.mock.DiskStoreMockObjects
  * @see org.springframework.geode.boot.actuate.GeodeDiskStoresHealthIndicator
  * @since 1.0.0
  */
@@ -78,19 +79,19 @@ public class GeodeDiskStoresHealthIndicatorUnitTests {
 
 		int[] diskDirectorySizes = { 1024, 8192 };
 
-		Map<String, DiskStore> diskStoreBeans = new HashMap<>();
+		Map<String, DiskStore> mockDiskStores = new HashMap<>();
 
-		diskStoreBeans.put("MockDiskStoreOne", DiskStoreMockObjects.mockDiskStore("MockDiskStoreOne",
+		mockDiskStores.put("MockDiskStoreOne", DiskStoreMockObjects.mockDiskStore("MockDiskStoreOne",
 			true, true, 90,
 			ArrayUtils.asArray(mockDirectoryOne, mockDirectoryTwo), diskDirectorySizes, 0.95f,
 			0.90f, 1024000L, 16384, 5000L, 32768));
 
-		diskStoreBeans.put("MockDiskStoreTwo", DiskStoreMockObjects.mockDiskStore("MockDiskStoreTwo",
+		mockDiskStores.put("MockDiskStoreTwo", DiskStoreMockObjects.mockDiskStore("MockDiskStoreTwo",
 			false, true, 50,null, null,
 			0.90f,0.80f, 2048000L, 4096,
 			15000L, 8192));
 
-		when(this.mockApplicationContext.getBeansOfType(DiskStore.class)).thenReturn(diskStoreBeans);
+		when(this.mockApplicationContext.getBeansOfType(DiskStore.class)).thenReturn(mockDiskStores);
 
 		Health.Builder builder = new Health.Builder();
 
@@ -105,7 +106,7 @@ public class GeodeDiskStoresHealthIndicatorUnitTests {
 
 		assertThat(healthDetails).isNotNull();
 		assertThat(healthDetails).isNotEmpty();
-		assertThat(healthDetails).containsEntry("geode.disk-store.count", diskStoreBeans.size());
+		assertThat(healthDetails).containsEntry("geode.disk-store.count", mockDiskStores.size());
 		assertThat(healthDetails).containsEntry("geode.disk-store.MockDiskStoreOne.allow-force-compaction", "Yes");
 		assertThat(healthDetails).containsEntry("geode.disk-store.MockDiskStoreOne.auto-compact", "Yes");
 		assertThat(healthDetails).containsEntry("geode.disk-store.MockDiskStoreOne.compaction-threshold", 90);
@@ -135,7 +136,7 @@ public class GeodeDiskStoresHealthIndicatorUnitTests {
 	}
 
 	@Test
-	public void healthCheckFailsWhenNoApplcationContextIsPresent() throws Exception {
+	public void healthCheckFailsWhenApplicationContextIsNotPresent() throws Exception {
 
 		GeodeDiskStoresHealthIndicator healthIndicator = new GeodeDiskStoresHealthIndicator();
 
@@ -146,6 +147,7 @@ public class GeodeDiskStoresHealthIndicatorUnitTests {
 		Health health = builder.build();
 
 		assertThat(health).isNotNull();
+		assertThat(health.getDetails()).isEmpty();
 		assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
 	}
 }

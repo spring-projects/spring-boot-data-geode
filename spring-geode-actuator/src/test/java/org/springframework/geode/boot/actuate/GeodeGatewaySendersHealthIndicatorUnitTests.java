@@ -87,7 +87,8 @@ public class GeodeGatewaySendersHealthIndicatorUnitTests {
 			GatewaySender.OrderPolicy.KEY, false, false, 789,
 			false, 65536, 20000);
 
-		Set<GatewaySender> mockGatewaySenders = new TreeSet<>(Comparator.comparing(GatewaySender::getId));
+		Set<GatewaySender> mockGatewaySenders =
+			new TreeSet<>(Comparator.comparing(GatewaySender::getId));
 
 		mockGatewaySenders.addAll(asSet(mockGatewaySenderOne, mockGatewaySenderTwo));
 
@@ -161,12 +162,12 @@ public class GeodeGatewaySendersHealthIndicatorUnitTests {
 	}
 
 	@Test
-	public void healthCheckFailsWhenNoGemFireCacheIsPresent() throws Exception {
-		testHealthCheckFailsWithInvalidGemFireCache(null);
+	public void healthCheckFailsWhenGemFireCacheIsNotPeerCache() throws Exception {
+		testHealthCheckFailsWithInvalidGemFireCache(mock(ClientCache.class));
 	}
 
 	@Test
-	public void healthCheckFailsWhenGemFireCacheIsAClientCache() throws Exception {
-		testHealthCheckFailsWithInvalidGemFireCache(mock(ClientCache.class));
+	public void healthCheckFailsWhenGemFireCacheIsNotPresent() throws Exception {
+		testHealthCheckFailsWithInvalidGemFireCache(null);
 	}
 }

@@ -87,14 +87,14 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		when(mockRegionOne.getAttributes().getScope()).thenReturn(Scope.DISTRIBUTED_ACK);
 		when(mockRegionOne.getAttributes().getValueConstraint()).thenReturn((Class) Currency.class);
 
-		PartitionAttributes<?, ?> mockRegionOnePartitionAttributes = mock(PartitionAttributes.class);
+		PartitionAttributes<?, ?> mockPartitionAttributes = mock(PartitionAttributes.class);
 
-		when(mockRegionOnePartitionAttributes.getColocatedWith()).thenReturn("CollocatedRegion");
-		when(mockRegionOnePartitionAttributes.getLocalMaxMemory()).thenReturn(10240);
-		when(mockRegionOnePartitionAttributes.getRedundantCopies()).thenReturn(2);
-		when(mockRegionOnePartitionAttributes.getTotalMaxMemory()).thenReturn(4096000L);
-		when(mockRegionOnePartitionAttributes.getTotalNumBuckets()).thenReturn(226);
-		when(mockRegionOne.getAttributes().getPartitionAttributes()).thenReturn(mockRegionOnePartitionAttributes);
+		when(mockPartitionAttributes.getColocatedWith()).thenReturn("CollocatedRegion");
+		when(mockPartitionAttributes.getLocalMaxMemory()).thenReturn(10240);
+		when(mockPartitionAttributes.getRedundantCopies()).thenReturn(2);
+		when(mockPartitionAttributes.getTotalMaxMemory()).thenReturn(4096000L);
+		when(mockPartitionAttributes.getTotalNumBuckets()).thenReturn(226);
+		when(mockRegionOne.getAttributes().getPartitionAttributes()).thenReturn(mockPartitionAttributes);
 
 		Region<?, ?> mockRegionTwo = CacheMockObjects.mockRegion("MockRegionTwo", DataPolicy.EMPTY);
 
@@ -119,7 +119,7 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 
 		Set<Region<?, ?>> mockRegions = asSet(mockRegionOne, mockRegionTwo);
 
-		when(mockGemFireCache.rootRegions()).thenReturn(mockRegions);
+		when(this.mockGemFireCache.rootRegions()).thenReturn(mockRegions);
 
 		Health.Builder builder = new Health.Builder();
 

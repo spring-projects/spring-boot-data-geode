@@ -55,6 +55,7 @@ import org.springframework.data.gemfire.tests.mock.IndexMockObjects;
  * @see org.apache.geode.cache.query.IndexStatistics
  * @see org.springframework.boot.actuate.health.Health
  * @see org.springframework.boot.actuate.health.HealthIndicator
+ * @see org.springframework.context.ApplicationContext
  * @see org.springframework.data.gemfire.tests.mock.CacheMockObjects
  * @see org.springframework.data.gemfire.tests.mock.IndexMockObjects
  * @see org.springframework.geode.boot.actuate.GeodeIndexesHealthIndicator
@@ -86,9 +87,9 @@ public class GeodeIndexesHealthIndicatorUnitTests {
 			"id", "one, two", mockRegion, mockIndexStatistics,
 			IndexType.PRIMARY_KEY.getGemfireIndexType());
 
-		Map<String, Index> mockIndexBeans = Collections.singletonMap("MockIndex", mockIndex);
+		Map<String, Index> mockIndexes = Collections.singletonMap("MockIndex", mockIndex);
 
-		when(this.applicationContext.getBeansOfType(eq(Index.class))).thenReturn(mockIndexBeans);
+		when(this.applicationContext.getBeansOfType(eq(Index.class))).thenReturn(mockIndexes);
 
 		Health.Builder builder = new Health.Builder();
 
@@ -103,7 +104,7 @@ public class GeodeIndexesHealthIndicatorUnitTests {
 
 		assertThat(healthDetails).isNotNull();
 		assertThat(healthDetails).isNotEmpty();
-		assertThat(healthDetails).containsEntry("geode.index.count", mockIndexBeans.size());
+		assertThat(healthDetails).containsEntry("geode.index.count", mockIndexes.size());
 		assertThat(healthDetails).containsEntry("geode.index.MockIndex.from-clause", "/Example");
 		assertThat(healthDetails).containsEntry("geode.index.MockIndex.indexed-expression", "id");
 		assertThat(healthDetails).containsEntry("geode.index.MockIndex.projection-attributes", "one, two");
@@ -123,7 +124,7 @@ public class GeodeIndexesHealthIndicatorUnitTests {
 	}
 
 	@Test
-	public void healthCheckFailsWhenApplicationContextContainsNoIndexBeans() throws Exception {
+	public void healthCheckFailsWhenApplicationContextContainsIsNotPresent() throws Exception {
 
 		GeodeIndexesHealthIndicator healthIndicator = new GeodeIndexesHealthIndicator();
 

@@ -53,6 +53,7 @@ import org.springframework.data.gemfire.tests.mock.CacheMockObjects;
  * @see org.apache.geode.distributed.DistributedMember
  * @see org.apache.geode.distributed.DistributedSystem
  * @see org.springframework.boot.actuate.health.Health
+ * @see org.springframework.boot.actuate.health.HealthIndicator
  * @see org.springframework.data.gemfire.tests.mock.CacheMockObjects
  * @see org.springframework.geode.boot.actuate.GeodeCacheHealthIndicator
  * @since 1.0.0
@@ -133,7 +134,7 @@ public class GeodeCacheHealthIndicatorUnitTests {
 	}
 
 	@Test
-	public void healthCheckFailsWhenNoGemFireCacheIsPresent() throws Exception {
+	public void healthCheckFailsWhenGemFireCacheIsNotPresent() throws Exception {
 
 		GeodeCacheHealthIndicator healthIndicator = new GeodeCacheHealthIndicator();
 
@@ -144,6 +145,7 @@ public class GeodeCacheHealthIndicatorUnitTests {
 		Health health = builder.build();
 
 		assertThat(health).isNotNull();
+		assertThat(health.getDetails()).isEmpty();
 		assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
 	}
 }

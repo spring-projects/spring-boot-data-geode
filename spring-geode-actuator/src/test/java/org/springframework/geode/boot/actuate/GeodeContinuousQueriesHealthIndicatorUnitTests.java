@@ -50,6 +50,8 @@ import org.springframework.data.gemfire.listener.ContinuousQueryListenerContaine
  * @see org.apache.geode.cache.query.CqQuery
  * @see org.apache.geode.cache.query.Query
  * @see org.apache.geode.cache.query.QueryService
+ * @see org.springframework.boot.actuate.health.Health
+ * @see org.springframework.boot.actuate.health.HealthIndicator
  * @see org.springframework.data.gemfire.listener.ContinuousQueryListenerContainer
  * @see org.springframework.geode.boot.actuate.GeodeContinuousQueriesHealthIndicator
  * @since 1.0.0
@@ -123,7 +125,7 @@ public class GeodeContinuousQueriesHealthIndicatorUnitTests {
 
 		assertThat(healthDetails).isNotNull();
 		assertThat(healthDetails).isNotEmpty();
-		assertThat(healthDetails).containsEntry("geode.continuous-query.count", 1);
+		assertThat(healthDetails).containsEntry("geode.continuous-query.count", mockContinuousQueries.length);
 		assertThat(healthDetails).containsEntry("geode.continuous-query.MockContinuousQuery.oql-query-string", "SELECT * FROM /Example WHERE status = 'RUNNING'");
 		assertThat(healthDetails).containsEntry("geode.continuous-query.MockContinuousQuery.closed", "No");
 		assertThat(healthDetails).containsEntry("geode.continuous-query.MockContinuousQuery.closing", "No");
@@ -141,7 +143,7 @@ public class GeodeContinuousQueriesHealthIndicatorUnitTests {
 	}
 
 	@Test
-	public void healthCheckFailsWhenContinuousQueryListenerContainerNotPresent() throws Exception {
+	public void healthCheckFailsWhenContinuousQueryListenerContainerIsNotPresent() throws Exception {
 
 		GeodeContinuousQueriesHealthIndicator healthIndicator = new GeodeContinuousQueriesHealthIndicator();
 
@@ -152,6 +154,7 @@ public class GeodeContinuousQueriesHealthIndicatorUnitTests {
 		Health health = builder.build();
 
 		assertThat(health).isNotNull();
+		assertThat(health.getDetails()).isEmpty();
 		assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
 	}
 }

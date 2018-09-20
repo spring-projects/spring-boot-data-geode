@@ -36,6 +36,7 @@ import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicato
  * and the {@link ResourceManager}.
  *
  * @author John Blum
+ * @see java.net.URL
  * @see java.util.Optional
  * @see java.util.function.Function
  * @see org.apache.geode.cache.GemFireCache

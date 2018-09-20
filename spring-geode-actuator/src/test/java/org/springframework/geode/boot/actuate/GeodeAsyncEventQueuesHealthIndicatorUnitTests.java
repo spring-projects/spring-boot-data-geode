@@ -17,6 +17,7 @@
 package org.springframework.geode.boot.actuate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,7 +27,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.geode.cache.Cache;
+import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.asyncqueue.AsyncEventQueue;
+import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.wan.GatewaySender;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +51,8 @@ import org.springframework.data.gemfire.tests.mock.AsyncEventQueueMockObjects;
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.asyncqueue.AsyncEventQueue
  * @see org.springframework.boot.actuate.health.Health
+ * @see org.springframework.boot.actuate.health.HealthIndicator
+ * @see org.springframework.data.gemfire.tests.mock.AsyncEventQueueMockObjects
  * @see org.springframework.geode.boot.actuate.GeodeAsyncEventQueuesHealthIndicator
  * @since 1.0.0
  */
@@ -90,46 +95,46 @@ public class GeodeAsyncEventQueuesHealthIndicatorUnitTests {
 		assertThat(health).isNotNull();
 		assertThat(health.getStatus()).isEqualTo(Status.UP);
 
-		Map<String, Object> details = health.getDetails();
+		Map<String, Object> healthDetails = health.getDetails();
 
-		assertThat(details).isNotNull();
-		assertThat(details).isNotEmpty();
-
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.batch-conflation-enabled", "Yes");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.batch-size", 250);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.batch-time-interval", 10000);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.disk-store-name", "testDiskStoreOne");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.disk-synchronous", "Yes");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.dispatcher-threads", 16);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.forward-expiration-destroy", "Yes");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.max-queue-memory", 65536);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.order-policy", GatewaySender.OrderPolicy.THREAD);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.parallel", "Yes");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.persistent", "Yes");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.primary", "Yes");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqOne.size", 1024);
-
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.batch-conflation-enabled", "No");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.batch-size", 100);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.batch-time-interval", 1000);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.disk-store-name", "testDiskStoreTwo");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.disk-synchronous", "No");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.dispatcher-threads", 8);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.forward-expiration-destroy", "No");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.max-queue-memory", 32768);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.order-policy", GatewaySender.OrderPolicy.KEY);
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.parallel", "No");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.persistent", "Yes");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.primary", "No");
-		assertThat(details).containsEntry("geode.async-event-queue.aeqTwo.size", 8192);
+		assertThat(healthDetails).isNotNull();
+		assertThat(healthDetails).isNotEmpty();
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.count", mockAsyncEventQueues.size());
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.batch-conflation-enabled", "Yes");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.batch-size", 250);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.batch-time-interval", 10000);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.disk-store-name", "testDiskStoreOne");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.disk-synchronous", "Yes");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.dispatcher-threads", 16);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.forward-expiration-destroy", "Yes");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.max-queue-memory", 65536);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.order-policy", GatewaySender.OrderPolicy.THREAD);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.parallel", "Yes");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.persistent", "Yes");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.primary", "Yes");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqOne.size", 1024);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.batch-conflation-enabled", "No");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.batch-size", 100);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.batch-time-interval", 1000);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.disk-store-name", "testDiskStoreTwo");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.disk-synchronous", "No");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.dispatcher-threads", 8);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.forward-expiration-destroy", "No");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.max-queue-memory", 32768);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.order-policy", GatewaySender.OrderPolicy.KEY);
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.parallel", "No");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.persistent", "Yes");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.primary", "No");
+		assertThat(healthDetails).containsEntry("geode.async-event-queue.aeqTwo.size", 8192);
 
 		verify(this.mockCache, times(1)).getAsyncEventQueues();
 	}
 
-	@Test
-	public void healthCheckFailsWhenNoGemFireCacheIsPresent() throws Exception {
+	public void testHealthCheckFailsWhenGemFireCacheIsInvalid(GemFireCache gemfireCache) throws Exception {
 
-		GeodeAsyncEventQueuesHealthIndicator healthIndicator = new GeodeAsyncEventQueuesHealthIndicator();
+		GeodeAsyncEventQueuesHealthIndicator healthIndicator = gemfireCache != null
+			? new GeodeAsyncEventQueuesHealthIndicator(gemfireCache)
+			: new GeodeAsyncEventQueuesHealthIndicator();
 
 		Health.Builder builder = new Health.Builder();
 
@@ -138,6 +143,17 @@ public class GeodeAsyncEventQueuesHealthIndicatorUnitTests {
 		Health health = builder.build();
 
 		assertThat(health).isNotNull();
+		assertThat(health.getDetails()).isEmpty();
 		assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
+	}
+
+	@Test
+	public void healthCheckFailsWhenGemFireCacheIsNotPeerCache() throws Exception {
+		testHealthCheckFailsWhenGemFireCacheIsInvalid(mock(ClientCache.class));
+	}
+
+	@Test
+	public void healthCheckFailsWhenGemFireCacheIsNotPresent() throws Exception {
+		testHealthCheckFailsWhenGemFireCacheIsInvalid(null);
 	}
 }

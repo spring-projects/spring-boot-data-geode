@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.geode.cache.Cache;
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.server.CacheServer;
 import org.apache.geode.cache.server.ServerLoadProbe;
 import org.junit.Before;
@@ -39,9 +41,21 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.data.gemfire.tests.mock.CacheServerMockObjects;
 
 /**
- * The GeodeCacheServersHealthIndicatorUnitTests class...
+ * Unit tests for {@link GeodeCacheServersHealthIndicator}.
  *
  * @author John Blum
+ * @see org.junit.Test
+ * @see org.mockito.Mock
+ * @see org.mockito.Mockito
+ * @see org.mockito.junit.MockitoJUnitRunner
+ * @see org.apache.geode.cache.Cache
+ * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.server.CacheServer
+ * @see org.apache.geode.cache.server.ServerLoadProbe
+ * @see org.springframework.boot.actuate.health.Health
+ * @see org.springframework.boot.actuate.health.HealthIndicator
+ * @see org.springframework.data.gemfire.tests.mock.CacheServerMockObjects
+ * @see org.springframework.geode.boot.actuate.GeodeCacheServersHealthIndicator
  * @since 1.0.0
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -122,10 +136,11 @@ public class GeodeCacheServersHealthIndicatorUnitTests {
 		verify(this.mockCache, times(1)).getCacheServers();
 	}
 
-	@Test
-	public void healthCheckFailsWhenNoGemFireCacheIsPresent() throws Exception {
+	private void testHealthCheckFailsWhenGemFireCacheIsInvalid(GemFireCache gemfireCache) throws Exception {
 
-		GeodeCacheServersHealthIndicator healthIndicator = new GeodeCacheServersHealthIndicator();
+		GeodeCacheServersHealthIndicator healthIndicator = gemfireCache != null
+			? new GeodeCacheServersHealthIndicator(gemfireCache)
+			: new GeodeCacheServersHealthIndicator();
 
 		Health.Builder builder = new Health.Builder();
 
@@ -134,6 +149,17 @@ public class GeodeCacheServersHealthIndicatorUnitTests {
 		Health health = builder.build();
 
 		assertThat(health).isNotNull();
+		assertThat(health.getDetails()).isEmpty();
 		assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
+	}
+
+	@Test
+	public void healthCheckFailsWhenGemFireCacheIsNotPeerCache() throws Exception {
+		testHealthCheckFailsWhenGemFireCacheIsInvalid(mock(ClientCache.class));
+	}
+
+	@Test
+	public void healthCheckFailsWhenGemFireCacheIsNotPresent() throws Exception {
+		testHealthCheckFailsWhenGemFireCacheIsInvalid(null);
 	}
 }

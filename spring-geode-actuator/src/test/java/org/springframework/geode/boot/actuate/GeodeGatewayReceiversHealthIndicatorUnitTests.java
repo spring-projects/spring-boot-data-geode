@@ -124,7 +124,7 @@ public class GeodeGatewayReceiversHealthIndicatorUnitTests {
 		verify(this.mockCache, times(1)).getGatewayReceivers();
 	}
 
-	private void testHealthCheckFailsWithInvalidGemFireCache(GemFireCache gemfireCache) throws Exception {
+	private void testHealthCheckFailsWhenGemFireCacheIsInvalid(GemFireCache gemfireCache) throws Exception {
 
 		GeodeGatewayReceiversHealthIndicator healthIndicator = gemfireCache != null
 			? new GeodeGatewayReceiversHealthIndicator(gemfireCache)
@@ -137,17 +137,17 @@ public class GeodeGatewayReceiversHealthIndicatorUnitTests {
 		Health health = builder.build();
 
 		assertThat(health).isNotNull();
-		assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
 		assertThat(health.getDetails()).isEmpty();
+		assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
 	}
 
 	@Test
-	public void healthCheckFailsWhenNoGemFireCacheIsPresent() throws Exception {
-		testHealthCheckFailsWithInvalidGemFireCache(null);
+	public void healthCheckFailsWhenGemFireCacheIsNotPeerCache() throws Exception {
+		testHealthCheckFailsWhenGemFireCacheIsInvalid(mock(ClientCache.class));
 	}
 
 	@Test
-	public void healthCheckFailsWhenGemFireCacheIsAClientCache() throws Exception {
-		testHealthCheckFailsWithInvalidGemFireCache(mock(ClientCache.class));
+	public void healthCheckFailsWhenGemFireCacheIsNotPresent() throws Exception {
+		testHealthCheckFailsWhenGemFireCacheIsInvalid(null);
 	}
 }

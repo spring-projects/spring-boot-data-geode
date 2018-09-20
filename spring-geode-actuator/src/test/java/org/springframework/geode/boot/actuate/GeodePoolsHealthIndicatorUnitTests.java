@@ -135,7 +135,7 @@ public class GeodePoolsHealthIndicatorUnitTests {
 		verify(this.poolsHealthIndicator, times(1)).findAllPools();
 	}
 
-	public void testHealthCheckFailsWithIvalidGemFireCache(GemFireCache gemfireCache) throws Exception {
+	public void testHealthCheckFailsWhenGemFireCacheIsInvalid(GemFireCache gemfireCache) throws Exception {
 
 		GeodePoolsHealthIndicator healthIndicator = gemfireCache != null
 			? new GeodePoolsHealthIndicator(gemfireCache)
@@ -154,11 +154,11 @@ public class GeodePoolsHealthIndicatorUnitTests {
 
 	@Test
 	public void healthCheckFailsWhenGemFireCacheIsNotClientCache() throws Exception {
-		testHealthCheckFailsWithIvalidGemFireCache(mock(Cache.class));
+		testHealthCheckFailsWhenGemFireCacheIsInvalid(mock(Cache.class));
 	}
 
 	@Test
 	public void healthCheckFailsWhenGemFireCacheIsNotPresent() throws Exception {
-		testHealthCheckFailsWithIvalidGemFireCache(null);
+		testHealthCheckFailsWhenGemFireCacheIsInvalid(null);
 	}
 }
