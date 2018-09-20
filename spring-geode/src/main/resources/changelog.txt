@@ -4,6 +4,31 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.0.0.M3 (2018-09-20)
+----------------------------------------
+Add support for Spring Boot Actuator HealthIndicator endpoints providing details and insight into the runtime operation
+of either Apache Geode or Pivotal GemFire.
+
+Partly resolves (https://github.com/spring-projects/spring-boot-data-geode/issues/4).
+
+* Adds Spring Boot Actuator HealthIndicators for the Apache Geode/Pivotal GemFire peer Cache and ClientCache instances,
+the DistributedSystem, the DistributedMember and the ResourceManager.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire Regions.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire Indexes.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire DiskStores.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire ContinuousQueries.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire Pools.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire CacheServers.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire GatewaySenders.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire GatewayReceivers.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire AsyncEventQueues.
+* Upgrades to Mockito 2.22.0.
+* Upgrades to Spring Framework 5.0.9.RELEASE.
+* Upgrades to Spring Boot 2.0.5.RELEASE.
+* Upgrades to Spring Data Release Train Kay-SR10.
+* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.1.M4.
+
+
 Changes in version 1.0.0.M2 (2018-08-29)
 ----------------------------------------
 Add support to auto-configure Spring Session using Apache Geode or Pivotal GemFire as the Session state
