@@ -49,7 +49,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	 * the normal execution of the operation by rethrowing an {@link IllegalStateException} wrapping
 	 * the checked {@link Exception}.
 	 *
-	 * @param <T> {@link Class type} of the operation result.
+	 * @param <T> {@link Class type} of value returned from the operation execution.
 	 * @param operation {@link ExceptionThrowingOperation} to execute.
 	 * @return the result of the given {@link ExceptionThrowingOperation} or throw an {@link IllegalStateException}
 	 * wrapping the checked {@link Exception} thrown by the operation.
@@ -66,7 +66,8 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	 * during the normal execution of the operation, returning the {@link Object default value} in its place
 	 * or throwing a {@link RuntimeException} if the {@link Object default value} is {@literal null}.
 	 *
-	 * @param <T> {@link Class type} of the operation result as well as the {@link Object default value}.
+	 * @param <T> {@link Class type} of value returned from the operation execution as well as
+	 * the {@link Object default value}.
 	 * @param operation {@link ExceptionThrowingOperation} to execute.
 	 * @param defaultValue {@link Object value} to return if the operation results in a checked {@link Exception}.
 	 * @return the result of the given {@link ExceptionThrowingOperation}, returning the {@link Object default value}
@@ -75,6 +76,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	 * @throws IllegalStateException if the {@link ExceptionThrowingOperation} throws a checked {@link Exception}
 	 * and {@link Object default value} is {@literal null}.
 	 * @see org.springframework.geode.core.util.ObjectUtils.ExceptionThrowingOperation
+	 * @see #doOperationSafely(ExceptionThrowingOperation, Function)
 	 * @see #returnValueThrowOnNull(Object, RuntimeException)
 	 */
 	@Nullable
@@ -86,6 +88,20 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 		return doOperationSafely(operation, exceptionHandlingFunction);
 	}
 
+	/**
+	 * Executes the given {@link ExceptionThrowingOperation} handling any checked {@link Exception} thrown
+	 * during the normal execution of the operation by invoking the provided {@link Exception} handling
+	 * {@link Function}.
+	 *
+	 * @param <T> {@link Class type} of value returned from the operation execution.
+	 * @param operation {@link ExceptionThrowingOperation} to execute.
+	 * @param exceptionHandlingFunction {@link Function} used to handle any {@link Exception} thrown by
+	 * the {@link ExceptionThrowingOperation operation}.
+	 * @return the result of executing the given {@link ExceptionThrowingOperation}.
+	 * @see org.springframework.geode.core.util.ObjectUtils.ExceptionThrowingOperation
+	 * @see java.util.function.Function
+	 * @see java.lang.Throwable
+	 */
 	public static <T> T doOperationSafely(ExceptionThrowingOperation<T> operation,
 			Function<Throwable, T> exceptionHandlingFunction) {
 
@@ -102,10 +118,22 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 		}
 	}
 
+	/**
+	 * Gets the {@link Object value} of the given {@link String named} {@link Field} on the given {@link Object}.
+	 *
+	 * @param <T> {@link Class type} of the {@link Field Field's} value.
+	 * @param obj {@link Object} containing the {@link String named} {@link Field}.
+	 * @param fieldName {@link String} containing the name of the {@link Field}.
+	 * @return the {@link Object value} of the {@link String named} {@link Field} on the given {@link Object}.
+	 * @throws IllegalArgumentException if {@link Object} is {@literal null}, the {@link String named} {@link Field}
+	 * is not specified or the given {@link Object} contains no {@link Field} with the given {@link String name}.
+	 * @see #get(Object, Field)
+	 * @see java.lang.Object
+	 */
 	public static <T> T get(Object obj, String fieldName) {
 
-		Assert.notNull(obj, "Object is requried");
-		Assert.hasText(fieldName, String.format("Field name [%s] is require", fieldName));
+		Assert.notNull(obj, "Object is required");
+		Assert.hasText(fieldName, String.format("Field name [%s] is required", fieldName));
 
 		return Optional.ofNullable(ReflectionUtils.findField(obj.getClass(), fieldName))
 			.map(ObjectUtils::makeAccessible)
@@ -114,9 +142,20 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 				fieldName, ObjectUtils.nullSafeClassName(obj)));
 	}
 
+	/**
+	 * Gets the {@link Object value} of the given {@link Field} on the given {@link Object}.
+	 *
+	 * @param <T> {@link Class type} of the {@link Field Field's} value.
+	 * @param obj {@link Object} containing the {@link Field}.
+	 * @param field {@link Field} of the given {@link Object}.
+	 * @return the {@link Object value} of the {@link Field} on the given {@link Object}.
+	 * @throws IllegalArgumentException if {@link Object} or {@link Field} is {@literal null}.
+	 * @see java.lang.reflect.Field
+	 * @see java.lang.Object
+	 */
 	public static <T> T get(Object obj, Field field) {
 
-		Assert.notNull(obj, "Object is requried");
+		Assert.notNull(obj, "Object is required");
 		Assert.notNull(field, "Field is required");
 
 		return doOperationSafely(() -> (T) field.get(obj), (T) null);

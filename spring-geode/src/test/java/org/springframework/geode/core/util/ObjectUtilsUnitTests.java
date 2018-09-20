@@ -19,6 +19,8 @@ package org.springframework.geode.core.util;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newRuntimeException;
 
+import java.lang.reflect.Field;
+
 import org.junit.Test;
 
 /**
@@ -54,6 +56,83 @@ public class ObjectUtilsUnitTests {
 			assertThat(expected).hasCauseInstanceOf(RuntimeException.class);
 			assertThat(expected.getCause()).hasMessage("test");
 			assertThat(expected.getCause()).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test
+	public void getFieldValueIsSuccessful() throws Exception {
+
+		TestObject testObject = new TestObject();
+
+		Field existingField = testObject.getClass().getDeclaredField("existingField");
+
+		existingField.setAccessible(true);
+
+		assertThat(ObjectUtils.<String>get(testObject, existingField)).isEqualTo("MOCK");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetFieldWithNullObjectThrowsIllegalArgumentException() throws Exception {
+
+		try {
+			ObjectUtils.get(null, TestObject.class.getDeclaredField("existingField"));
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("Object is required");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetFieldWithNullFieldThrowsIllegalArgumentException() throws Exception {
+
+		try {
+			ObjectUtils.get(new TestObject(), (Field) null);
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("Field is required");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test
+	public void getNamedFieldValueIsSuccessful() {
+		assertThat(ObjectUtils.<String>get(new TestObject(), "existingField")).isEqualTo("MOCK");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getNamedFieldWithNullObjectThrowsIllegalArgumentException() {
+
+		try {
+			ObjectUtils.get(null, "testField");
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("Object is required");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getNamedFieldWithNoFieldNameThrowsIllegalArgumentException() {
+
+		try {
+			ObjectUtils.get(new TestObject(), "");
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("Field name [] is required");
+			assertThat(expected).hasNoCause();
 
 			throw expected;
 		}
@@ -101,7 +180,10 @@ public class ObjectUtilsUnitTests {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public static class TestObject {
+
+		private Object existingField = "MOCK";
 
 		public String testMethod() {
 			return "TEST";
