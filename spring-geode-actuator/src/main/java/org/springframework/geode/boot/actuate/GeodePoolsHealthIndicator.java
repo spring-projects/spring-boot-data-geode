@@ -21,6 +21,7 @@ import static org.springframework.data.gemfire.util.CollectionUtils.nullSafeMap;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -74,7 +75,11 @@ public class GeodePoolsHealthIndicator extends AbstractGeodeHealthIndicator {
 
 		if (getGemFireCache().filter(CacheUtils::isClient).isPresent()) {
 
-			nullSafeMap(PoolManager.getAll()).values().stream()
+			Map<String, Pool> pools = nullSafeMap(findAllPools());
+
+			builder.withDetail("geode.pool.count", pools.size());
+
+			pools.values().stream()
 				.filter(Objects::nonNull)
 				.forEach(pool -> {
 
@@ -97,12 +102,12 @@ public class GeodePoolsHealthIndicator extends AbstractGeodeHealthIndicator {
 						.withDetail(poolKey(poolName, "server-group"), pool.getServerGroup())
 						.withDetail(poolKey(poolName, "servers"), toCommaDelimitedHostAndPortsString(pool.getServers()))
 						.withDetail(poolKey(poolName, "socket-buffer-size"), pool.getSocketBufferSize())
-						.withDetail(poolKey(poolName, "statistics-interval"), pool.getStatisticInterval())
+						.withDetail(poolKey(poolName, "statistic-interval"), pool.getStatisticInterval())
 						.withDetail(poolKey(poolName, "subscription-ack-interval"), pool.getSubscriptionAckInterval())
 						.withDetail(poolKey(poolName, "subscription-enabled"), toYesNoString(pool.getSubscriptionEnabled()))
-						.withDetail(poolKey(poolName, "subscription-messaging-tracking-timeout"), pool.getSubscriptionMessageTrackingTimeout())
+						.withDetail(poolKey(poolName, "subscription-message-tracking-timeout"), pool.getSubscriptionMessageTrackingTimeout())
 						.withDetail(poolKey(poolName, "subscription-redundancy"), pool.getSubscriptionRedundancy())
-						.withDetail(poolKey(poolName, "thread-local-connections"), pool.getThreadLocalConnections());
+						.withDetail(poolKey(poolName, "thread-local-connections"), toYesNoString(pool.getThreadLocalConnections()));
 				});
 
 			builder.up();
@@ -111,6 +116,10 @@ public class GeodePoolsHealthIndicator extends AbstractGeodeHealthIndicator {
 		}
 
 		builder.unknown();
+	}
+
+	Map<String, Pool> findAllPools() {
+		return PoolManager.getAll();
 	}
 
 	private String poolKey(String poolName, String suffix) {
