@@ -24,6 +24,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.geode.CancelCriterion;
 import org.apache.geode.cache.GemFireCache;
@@ -70,6 +73,15 @@ public class GeodeCacheHealthIndicatorUnitTests {
 	public void setup() {
 		this.cacheHealthIndicator = new GeodeCacheHealthIndicator(this.mockGemFireCache);
 	}
+
+	@SuppressWarnings("all")
+	private Set<DistributedMember> mockDistributedMembers(int size) {
+
+		return IntStream.range(0, size)
+			.mapToObj(it -> mock(DistributedMember.class))
+			.collect(Collectors.toSet());
+	}
+
 	@Test
 	public void healthCheckCapturesDetails() throws Exception {
 
@@ -81,6 +93,7 @@ public class GeodeCacheHealthIndicatorUnitTests {
 
 		DistributedSystem mockDistributedSystem = CacheMockObjects.mockDistributedSystem(mockDistributedMember);
 
+		when(mockDistributedSystem.getAllOtherMembers()).thenAnswer(invocation -> mockDistributedMembers(8));
 		when(mockDistributedSystem.isConnected()).thenReturn(true);
 		when(mockDistributedSystem.isReconnecting()).thenReturn(false);
 
@@ -118,6 +131,7 @@ public class GeodeCacheHealthIndicatorUnitTests {
 		assertThat(healthDetails).containsEntry("geode.distributed-member.groups", Arrays.asList("TestGroup", "MockGroup"));
 		assertThat(healthDetails).containsEntry("geode.distributed-member.host", "Skullbox");
 		assertThat(healthDetails).containsEntry("geode.distributed-member.process-id", 12345);
+		assertThat(healthDetails).containsEntry("geode.distributed-system.member-count", 9);
 		assertThat(healthDetails).containsEntry("geode.distributed-system.connection", "Connected");
 		assertThat(healthDetails).containsEntry("geode.distributed-system.reconnecting", "No");
 		//assertThat(healthDetails).containsKey("geode.distributed-member.properties-location");

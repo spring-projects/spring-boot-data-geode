@@ -17,6 +17,7 @@
 package org.springframework.geode.boot.actuate;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -29,6 +30,7 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicator;
+import org.springframework.util.StringUtils;
 
 /**
  * The {@link GeodeCacheHealthIndicator} class is a Spring Boot {@link HealthIndicator} providing details about
@@ -135,12 +137,23 @@ public class GeodeCacheHealthIndicator extends AbstractGeodeHealthIndicator {
 		return healthBuilder -> getGemFireCache()
 			.map(GemFireCache::getDistributedSystem)
 			.map(distributedSystem -> healthBuilder
+				.withDetail("geode.distributed-system.member-count", Optional.of(distributedSystem)
+					.map(DistributedSystem::getAllOtherMembers)
+					.map(Collection::size)
+					.map(size -> size + 1)
+					.orElse(1))
 				.withDetail("geode.distributed-system.connection", toConnectedNoConnectedString(distributedSystem.isConnected()))
 				.withDetail("geode.distributed-system.reconnecting", toYesNoString(distributedSystem.isReconnecting()))
 				.withDetail("geode.distributed-system.properties-location",
-					Optional.ofNullable(DistributedSystem.getPropertiesFileURL()).map(URL::toExternalForm))
+					Optional.ofNullable(DistributedSystem.getPropertiesFileURL())
+						.map(URL::toExternalForm)
+						.filter(StringUtils::hasText)
+						.orElse(""))
 				.withDetail("geode.distributed-system.security-properties-location",
-					Optional.ofNullable(DistributedSystem.getSecurityPropertiesFileURL()).map(URL::toExternalForm))
+					Optional.ofNullable(DistributedSystem.getSecurityPropertiesFileURL())
+						.map(URL::toExternalForm)
+						.filter(StringUtils::hasText)
+						.orElse(""))
 			)
 			.orElse(healthBuilder);
 	}
