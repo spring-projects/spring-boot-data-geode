@@ -30,6 +30,11 @@ import java.util.Set;
 
 import org.apache.geode.cache.CacheStatistics;
 import org.apache.geode.cache.DataPolicy;
+import org.apache.geode.cache.EvictionAction;
+import org.apache.geode.cache.EvictionAlgorithm;
+import org.apache.geode.cache.EvictionAttributes;
+import org.apache.geode.cache.ExpirationAction;
+import org.apache.geode.cache.ExpirationAttributes;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.PartitionAttributes;
 import org.apache.geode.cache.Region;
@@ -96,6 +101,13 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		when(mockPartitionAttributes.getTotalNumBuckets()).thenReturn(226);
 		when(mockRegionOne.getAttributes().getPartitionAttributes()).thenReturn(mockPartitionAttributes);
 
+		EvictionAttributes mockEvictionAttributes = mock(EvictionAttributes.class);
+
+		when(mockEvictionAttributes.getAction()).thenReturn(EvictionAction.LOCAL_DESTROY);
+		when(mockEvictionAttributes.getAlgorithm()).thenReturn(EvictionAlgorithm.LRU_ENTRY);
+		when(mockEvictionAttributes.getMaximum()).thenReturn(10000);
+		when(mockRegionOne.getAttributes().getEvictionAttributes()).thenReturn(mockEvictionAttributes);
+
 		Region<?, ?> mockRegionTwo = CacheMockObjects.mockRegion("MockRegionTwo", DataPolicy.EMPTY);
 
 		when(mockRegionTwo.getAttributes().getCloningEnabled()).thenReturn(false);
@@ -107,6 +119,20 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		when(mockRegionTwo.getAttributes().getScope()).thenReturn(Scope.DISTRIBUTED_NO_ACK);
 		when(mockRegionTwo.getAttributes().getStatisticsEnabled()).thenReturn(true);
 		when(mockRegionTwo.getAttributes().getValueConstraint()).thenReturn((Class) String.class);
+
+		ExpirationAttributes mockIdleTimeoutEntryExpirationAttributes =
+			mock(ExpirationAttributes.class, "Entry-TTI");
+
+		when(mockIdleTimeoutEntryExpirationAttributes.getAction()).thenReturn(ExpirationAction.INVALIDATE);
+		when(mockIdleTimeoutEntryExpirationAttributes.getTimeout()).thenReturn(600);
+		when(mockRegionTwo.getAttributes().getEntryIdleTimeout()).thenReturn(mockIdleTimeoutEntryExpirationAttributes);
+
+		ExpirationAttributes mockTimeToLiveEntryExpirationAttributes =
+			mock(ExpirationAttributes.class, "Entry-TTL");
+
+		when(mockTimeToLiveEntryExpirationAttributes.getAction()).thenReturn(ExpirationAction.DESTROY);
+		when(mockTimeToLiveEntryExpirationAttributes.getTimeout()).thenReturn(900);
+		when(mockRegionTwo.getAttributes().getEntryTimeToLive()).thenReturn(mockTimeToLiveEntryExpirationAttributes);
 
 		CacheStatistics mockCacheStatistics = mock(CacheStatistics.class);
 
@@ -142,6 +168,9 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.load-factor", 0.75f);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.key-constraint", Long.class.getName());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.off-heap", "Yes");
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.eviction.action", EvictionAction.LOCAL_DESTROY);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.eviction.algorithm", EvictionAlgorithm.LRU_ENTRY);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.eviction.maximum", 10000);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.collocated-with", "CollocatedRegion");
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.local-max-memory", 10240);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.redundant-copies", 2);
@@ -158,6 +187,10 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.off-heap", "No");
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.pool-name", "TestPool");
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.scope", Scope.DISTRIBUTED_NO_ACK);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.tti.action", ExpirationAction.INVALIDATE);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.tti.timeout", 600);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.ttl.action", ExpirationAction.DESTROY);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.ttl.timeout", 900);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.statistics.hit-count", 202408L);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.statistics.hit-ratio", 0.82f);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.statistics.last-accessed-time", 1L);

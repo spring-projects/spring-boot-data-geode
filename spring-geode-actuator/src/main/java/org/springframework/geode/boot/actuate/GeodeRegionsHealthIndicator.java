@@ -47,6 +47,8 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 
 	private final BiConsumer<Region<?, ?>, Health.Builder> gemfireRegionHealthIndicatorConsumers = withRegionDetails()
 		.andThen(withPartitionRegionDetails())
+		.andThen(withRegionEvictionPolicyDetails())
+		.andThen(withRegionExpirationDetails())
 		.andThen(withRegionStatisticsDetails());
 
 	/**
@@ -142,6 +144,7 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 			String regionName = region.getName();
 
 			Optional.of(region)
+				.filter(it -> it.getAttributes() != null)
 				.map(Region::getAttributes)
 				.map(RegionAttributes::getPartitionAttributes)
 				.ifPresent(partitionAttributes -> builder
@@ -150,6 +153,54 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 					.withDetail(cachePartitionRegionKey(regionName, "redundant-copies"), partitionAttributes.getRedundantCopies())
 					.withDetail(cachePartitionRegionKey(regionName, "total-max-memory"), partitionAttributes.getTotalMaxMemory())
 					.withDetail(cachePartitionRegionKey(regionName, "total-number-of-buckets"), partitionAttributes.getTotalNumBuckets()));
+		};
+	}
+
+	private BiConsumer<Region<?, ?>, Health.Builder> withRegionEvictionPolicyDetails() {
+
+		return (region, builder) -> {
+
+			String regionName = region.getName();
+
+			Optional.of(region)
+				.filter(it -> it.getAttributes() != null)
+				.map(Region::getAttributes)
+				.map(RegionAttributes::getEvictionAttributes)
+				.ifPresent(evictionAttributes -> {
+
+					builder.withDetail(cacheRegionEvictionKey(regionName, "action"), evictionAttributes.getAction())
+						.withDetail(cacheRegionEvictionKey(regionName, "algorithm"), evictionAttributes.getAlgorithm());
+
+					// NOTE: Careful! Eviction Maximum does not apply when Algorithm is Heap LRU.
+					Optional.ofNullable(evictionAttributes.getAlgorithm())
+						.filter(it -> !it.isLRUHeap())
+						.ifPresent(it -> builder
+							.withDetail(cacheRegionEvictionKey(regionName,"maximum"), evictionAttributes.getMaximum()));
+				});
+		};
+	}
+
+	private BiConsumer<Region<?, ?>, Health.Builder> withRegionExpirationDetails() {
+
+		return (region, builder) -> {
+
+			String regionName = region.getName();
+
+			Optional.of(region)
+				.filter(it -> it.getAttributes() != null)
+				.map(Region::getAttributes)
+				.map(RegionAttributes::getEntryTimeToLive)
+				.ifPresent(expirationAttributes -> builder
+					.withDetail(cacheRegionExpirationKey(regionName, "entry.ttl.action"), expirationAttributes.getAction())
+					.withDetail(cacheRegionExpirationKey(regionName, "entry.ttl.timeout"), expirationAttributes.getTimeout()));
+
+			Optional.of(region)
+				.filter(it -> it.getAttributes() != null)
+				.map(Region::getAttributes)
+				.map(RegionAttributes::getEntryIdleTimeout)
+				.ifPresent(expirationAttributes -> builder
+					.withDetail(cacheRegionExpirationKey(regionName, "entry.tti.action"), expirationAttributes.getAction())
+					.withDetail(cacheRegionExpirationKey(regionName, "entry.tti.timeout"), expirationAttributes.getTimeout()));
 		};
 	}
 
@@ -178,6 +229,14 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 
 	private String cacheRegionKey(String regionName, String suffix) {
 		return String.format("geode.cache.regions.%1$s.%2$s", regionName, suffix);
+	}
+
+	private String cacheRegionEvictionKey(String regionName, String suffix) {
+		return cacheRegionKey(regionName, String.format("eviction.%s", suffix));
+	}
+
+	private String cacheRegionExpirationKey(String regionName, String suffix) {
+		return cacheRegionKey(regionName, String.format("expiration.%s", suffix));
 	}
 
 	private String cacheRegionStatisticsKey(String regionName, String suffix) {
