@@ -16,6 +16,8 @@
 
 package example.app.temp.geode.server;
 
+import java.util.Optional;
+
 import org.apache.geode.cache.GemFireCache;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,9 +25,13 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.gemfire.IndexFactoryBean;
+import org.springframework.data.gemfire.RegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
+import org.springframework.data.gemfire.config.annotation.EnableStatistics;
+import org.springframework.data.gemfire.config.annotation.RegionConfigurer;
 import org.springframework.data.gemfire.repository.config.EnableGemfireRepositories;
+import org.springframework.geode.config.annotation.UseGroups;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import example.app.temp.model.TemperatureReading;
@@ -37,6 +43,8 @@ import example.app.temp.service.TemperatureSensor;
 @EnableEntityDefinedRegions(basePackageClasses = TemperatureReading.class)
 @EnableGemfireRepositories(basePackageClasses = TemperatureReadingRepository.class)
 @EnableScheduling
+@EnableStatistics
+@UseGroups("TemperatureSensors")
 @SuppressWarnings("unused")
 public class BootGeodeServerApplication {
 
@@ -51,6 +59,21 @@ public class BootGeodeServerApplication {
 	@Bean
 	TemperatureSensor temperatureSensor(TemperatureReadingRepository repository) {
 		return new TemperatureSensor(repository);
+	}
+
+	@Bean
+	RegionConfigurer temperatureReadingsConfigurer() {
+
+		return new RegionConfigurer() {
+
+			@Override
+			public void configure(String beanName, RegionFactoryBean<?, ?> regionBean) {
+
+				Optional.ofNullable(beanName)
+					.filter("TemperatureReadings"::equals)
+					.ifPresent(it -> regionBean.setStatisticsEnabled(true));
+			}
+		};
 	}
 
 	@Bean
