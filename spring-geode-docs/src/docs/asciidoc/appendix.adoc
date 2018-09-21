@@ -428,7 +428,9 @@ as another example.
 === References
 
 1. Spring Framework {spring-framework-docs}[Reference Guide] | {spring-framework-javadoc}[Javadoc]
-2. Spring Data Commons {spring-data-commons-docs-html}[Reference Guide] | {spring-data-commons-javadoc}[Javadoc]
-3. Spring Data for Apache Geode {spring-data-geode-docs-html}[Reference Guide] | {spring-data-geode-javadoc}[Javadoc]
-4. Apache Geode {apache-geode-docs}[User Guide] | {apache-geode-javadoc}[Javadoc]
-5. Pivotal GemFire {pivotal-gemfire-docs}[User Guide] | {pivotal-gemfire-javadoc}[Javadoc]
+2. Spring Boot {spring-boot-docs-html}[Reference Guide] | {spring-boot-javadoc}[Javadoc]
+3. Spring Data Commons {spring-data-commons-docs-html}[Reference Guide] | {spring-data-commons-javadoc}[Javadoc]
+4. Spring Data for Apache Geode {spring-data-geode-docs-html}[Reference Guide] | {spring-data-geode-javadoc}[Javadoc]
+5. Spring Session for Apache Geode {spring-session-data-gemfire-docs}[Reference Guide] | {spring-session-data-gemfire-javadoc}[Javadoc]
+6. Apache Geode {apache-geode-docs}[User Guide] | {apache-geode-javadoc}[Javadoc]
+7. Pivotal GemFire {pivotal-gemfire-docs}[User Guide] | {pivotal-gemfire-javadoc}[Javadoc]
