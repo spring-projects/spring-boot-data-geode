@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import java.util.Map;
 
 import org.apache.geode.cache.query.CqQuery;
+import org.apache.geode.cache.query.CqServiceStatistics;
 import org.apache.geode.cache.query.CqState;
 import org.apache.geode.cache.query.CqStatistics;
 import org.apache.geode.cache.query.Query;
@@ -112,6 +113,15 @@ public class GeodeContinuousQueriesHealthIndicatorUnitTests {
 
 		when(this.mockQueryService.getCqs()).thenReturn(mockContinuousQueries);
 
+		CqServiceStatistics mockContinuousQueryServiceStatistics = mock(CqServiceStatistics.class);
+
+		when(mockContinuousQueryServiceStatistics.numCqsActive()).thenReturn(42L);
+		when(mockContinuousQueryServiceStatistics.numCqsClosed()).thenReturn(8L);
+		when(mockContinuousQueryServiceStatistics.numCqsCreated()).thenReturn(51L);
+		when(mockContinuousQueryServiceStatistics.numCqsStopped()).thenReturn(16L);
+		when(mockContinuousQueryServiceStatistics.numCqsOnClient()).thenReturn(64L);
+		when(this.mockQueryService.getCqStatistics()).thenReturn(mockContinuousQueryServiceStatistics);
+
 		Health.Builder builder = new Health.Builder();
 
 		this.continuousQueriesHealthIndicator.doHealthCheck(builder);
@@ -126,6 +136,11 @@ public class GeodeContinuousQueriesHealthIndicatorUnitTests {
 		assertThat(healthDetails).isNotNull();
 		assertThat(healthDetails).isNotEmpty();
 		assertThat(healthDetails).containsEntry("geode.continuous-query.count", mockContinuousQueries.length);
+		assertThat(healthDetails).containsEntry("geode.continuous-query.number-of-active", 42L);
+		assertThat(healthDetails).containsEntry("geode.continuous-query.number-of-closed", 8L);
+		assertThat(healthDetails).containsEntry("geode.continuous-query.number-of-created", 51L);
+		assertThat(healthDetails).containsEntry("geode.continuous-query.number-of-stopped", 16L);
+		assertThat(healthDetails).containsEntry("geode.continuous-query.number-on-client", 64L);
 		assertThat(healthDetails).containsEntry("geode.continuous-query.MockContinuousQuery.oql-query-string", "SELECT * FROM /Example WHERE status = 'RUNNING'");
 		assertThat(healthDetails).containsEntry("geode.continuous-query.MockContinuousQuery.closed", "No");
 		assertThat(healthDetails).containsEntry("geode.continuous-query.MockContinuousQuery.closing", "No");

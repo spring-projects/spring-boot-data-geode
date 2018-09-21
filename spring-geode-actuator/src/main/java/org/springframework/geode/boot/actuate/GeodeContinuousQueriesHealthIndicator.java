@@ -89,13 +89,26 @@ public class GeodeContinuousQueriesHealthIndicator extends AbstractGeodeHealthIn
 
 		if (getContinuousQueryListenerContainer().isPresent()) {
 
-			List<CqQuery> continuousQueries = getContinuousQueryListenerContainer()
-				.map(ContinuousQueryListenerContainer::getQueryService)
+			Optional<QueryService> queryService = getContinuousQueryListenerContainer()
+				.map(ContinuousQueryListenerContainer::getQueryService);
+
+			List<CqQuery> continuousQueries = queryService
 				.map(QueryService::getCqs)
 				.map(Arrays::asList)
 				.orElseGet(Collections::emptyList);
 
 			builder.withDetail("geode.continuous-query.count", continuousQueries.size());
+
+			queryService
+				.map(QueryService::getCqStatistics)
+				.ifPresent(cqServiceStatistics -> {
+
+					builder.withDetail("geode.continuous-query.number-of-active", cqServiceStatistics.numCqsActive())
+						.withDetail("geode.continuous-query.number-of-closed", cqServiceStatistics.numCqsClosed())
+						.withDetail("geode.continuous-query.number-of-created", cqServiceStatistics.numCqsCreated())
+						.withDetail("geode.continuous-query.number-of-stopped", cqServiceStatistics.numCqsStopped())
+						.withDetail("geode.continuous-query.number-on-client", cqServiceStatistics.numCqsOnClient());
+				});
 
 			continuousQueries.stream()
 				.filter(Objects::nonNull)
