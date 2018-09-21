@@ -20,3 +20,7 @@ dependencies {
 	}
 
 }
+
+bootJar {
+	mainClassName = 'example.app.temp.geode.client.BootGeodeClientApplication'
+}
