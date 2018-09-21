@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.Pool;
 import org.apache.geode.cache.client.PoolManager;
 import org.springframework.boot.actuate.health.Health;
@@ -94,7 +95,6 @@ public class GeodePoolsHealthIndicator extends AbstractGeodeHealthIndicator {
 						.withDetail(poolKey(poolName, "min-connections"), pool.getMinConnections())
 						.withDetail(poolKey(poolName, "multi-user-authentication"), toYesNoString(pool.getMultiuserAuthentication()))
 						.withDetail(poolKey(poolName, "online-locators"), toCommaDelimitedHostAndPortsString(pool.getOnlineLocators()))
-						.withDetail(poolKey(poolName, "pending-event-count"), pool.getPendingEventCount())
 						.withDetail(poolKey(poolName, "ping-interval"), pool.getPingInterval())
 						.withDetail(poolKey(poolName, "pr-single-hop-enabled"), toYesNoString(pool.getPRSingleHopEnabled()))
 						.withDetail(poolKey(poolName, "read-timeout"), pool.getReadTimeout())
@@ -108,6 +108,11 @@ public class GeodePoolsHealthIndicator extends AbstractGeodeHealthIndicator {
 						.withDetail(poolKey(poolName, "subscription-message-tracking-timeout"), pool.getSubscriptionMessageTrackingTimeout())
 						.withDetail(poolKey(poolName, "subscription-redundancy"), pool.getSubscriptionRedundancy())
 						.withDetail(poolKey(poolName, "thread-local-connections"), toYesNoString(pool.getThreadLocalConnections()));
+
+					getGemFireCache()
+						.map(ClientCache.class::cast)
+						.filter(CacheUtils::isDurable)
+						.ifPresent(it -> builder.withDetail(poolKey(poolName, "pending-event-count"), pool.getPendingEventCount()));
 				});
 
 			builder.up();

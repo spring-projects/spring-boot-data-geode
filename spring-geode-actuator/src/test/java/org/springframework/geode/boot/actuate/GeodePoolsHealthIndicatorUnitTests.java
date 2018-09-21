@@ -28,11 +28,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.Pool;
+import org.apache.geode.distributed.DistributedSystem;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +43,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.data.gemfire.tests.mock.PoolMockObjects;
+import org.springframework.data.gemfire.util.CacheUtils;
 
 /**
  * Unit tests for {@link GeodePoolsHealthIndicator}.
@@ -54,6 +57,7 @@ import org.springframework.data.gemfire.tests.mock.PoolMockObjects;
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.apache.geode.cache.client.Pool
+ * @see org.apache.geode.distributed.DistributedSystem
  * @see org.springframework.boot.actuate.health.Health
  * @see org.springframework.boot.actuate.health.HealthIndicator
  * @see org.springframework.data.gemfire.tests.mock.PoolMockObjects
@@ -70,7 +74,22 @@ public class GeodePoolsHealthIndicatorUnitTests {
 
 	@Before
 	public void setup() {
-		this.poolsHealthIndicator = spy(new GeodePoolsHealthIndicator(this.mockClientCache));
+		this.poolsHealthIndicator = spy(new GeodePoolsHealthIndicator(mockDurableClient(this.mockClientCache)));
+	}
+
+	private ClientCache mockDurableClient(ClientCache mockClientCache) {
+
+		Properties gemfireProperties = new Properties();
+
+		gemfireProperties.setProperty(CacheUtils.DURABLE_CLIENT_ID_PROPERTY_NAME, "test-durable-client");
+
+		DistributedSystem mockDistributedSystem = mock(DistributedSystem.class);
+
+		when(mockDistributedSystem.isConnected()).thenReturn(true);
+		when(mockDistributedSystem.getProperties()).thenReturn(gemfireProperties);
+		when(mockClientCache.getDistributedSystem()).thenReturn(mockDistributedSystem);
+
+		return mockClientCache;
 	}
 
 	private InetSocketAddress testSocketAddress(String hostname, int port) {
