@@ -141,7 +141,7 @@ To use Spring Boot for Apache Geode, declare the `spring-geode-starter` on your 
 ----
 
 .Grade
-[source,groovy]
+[source,java]
 [subs="verbatim,attributes"]
 ----
 dependencies {
