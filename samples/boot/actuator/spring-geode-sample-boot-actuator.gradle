@@ -1,0 +1,22 @@
+apply plugin: 'io.spring.convention.spring-sample-boot'
+
+description = "Spring Geode Sample demonstrating the use of Spring Boot Actuator with Apache Geode."
+
+dependencies {
+
+	compile project(":spring-geode-starter")
+	compile project(":spring-geode-actuator-autoconfigure")
+
+	compile ("org.springframework.boot:spring-boot-starter-web") {
+		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+	}
+
+	compile "org.springframework.data:spring-data-geode-test"
+
+	runtime "org.springframework.shell:spring-shell"
+
+	runtime ("org.springframework.boot:spring-boot-starter-jetty") {
+		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+	}
+
+}
