@@ -56,6 +56,7 @@ import org.springframework.data.gemfire.tests.mock.CacheMockObjects;
  * @see org.mockito.Mock
  * @see org.mockito.Mockito
  * @see org.mockito.junit.MockitoJUnitRunner
+ * @see org.apache.geode.cache.CacheStatistics
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.actuate.health.Health
@@ -90,6 +91,7 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		when(mockRegionOne.getAttributes().getOffHeap()).thenReturn(true);
 		when(mockRegionOne.getAttributes().getPoolName()).thenReturn("");
 		when(mockRegionOne.getAttributes().getScope()).thenReturn(Scope.DISTRIBUTED_ACK);
+		when(mockRegionOne.getAttributes().getStatisticsEnabled()).thenReturn(false);
 		when(mockRegionOne.getAttributes().getValueConstraint()).thenReturn((Class) Currency.class);
 
 		PartitionAttributes<?, ?> mockPartitionAttributes = mock(PartitionAttributes.class);
@@ -163,13 +165,13 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		assertThat(healthDetails).containsEntry("geode.cache.regions", Arrays.asList("/MockRegionOne", "/MockRegionTwo"));
 		assertThat(healthDetails).containsEntry("geode.cache.regions.count", (long) mockRegions.size());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.cloning-enabled", "Yes");
-		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.data-policy", DataPolicy.PARTITION);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.data-policy", DataPolicy.PARTITION.toString());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.initial-capacity", 101);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.load-factor", 0.75f);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.key-constraint", Long.class.getName());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.off-heap", "Yes");
-		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.eviction.action", EvictionAction.LOCAL_DESTROY);
-		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.eviction.algorithm", EvictionAlgorithm.LRU_ENTRY);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.eviction.action", EvictionAction.LOCAL_DESTROY.toString());
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.eviction.algorithm", EvictionAlgorithm.LRU_ENTRY.toString());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.eviction.maximum", 10000);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.collocated-with", "CollocatedRegion");
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.local-max-memory", 10240);
@@ -177,19 +179,21 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.total-max-memory", 4096000L);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.total-number-of-buckets", 226);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.pool-name", "");
-		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.scope", Scope.DISTRIBUTED_ACK);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.scope", Scope.DISTRIBUTED_ACK.toString());
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.statistics-enabled", "No");
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.value-constraint", Currency.class.getName());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.cloning-enabled", "No");
-		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.data-policy", DataPolicy.EMPTY);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.data-policy", DataPolicy.EMPTY.toString());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.initial-capacity", 0);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.load-factor", 0.0f);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.key-constraint", Integer.class.getName());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.off-heap", "No");
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.pool-name", "TestPool");
-		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.scope", Scope.DISTRIBUTED_NO_ACK);
-		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.tti.action", ExpirationAction.INVALIDATE);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.scope", Scope.DISTRIBUTED_NO_ACK.toString());
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.statistics-enabled", "Yes");
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.tti.action", ExpirationAction.INVALIDATE.toString());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.tti.timeout", 600);
-		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.ttl.action", ExpirationAction.DESTROY);
+		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.ttl.action", ExpirationAction.DESTROY.toString());
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.expiration.entry.ttl.timeout", 900);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.statistics.hit-count", 202408L);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionTwo.statistics.hit-ratio", 0.82f);

@@ -26,9 +26,12 @@ import java.util.stream.Collectors;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.RegionAttributes;
+import org.apache.geode.internal.cache.LocalDataSet;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicator;
+import org.springframework.geode.boot.actuate.health.support.RegionStatisticsResolver;
+import org.springframework.util.StringUtils;
 
 /**
  * The {@link GeodeRegionsHealthIndicator} class is a Spring Boot {@link HealthIndicator} providing details about
@@ -48,7 +51,7 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 	private final BiConsumer<Region<?, ?>, Health.Builder> gemfireRegionHealthIndicatorConsumers = withRegionDetails()
 		.andThen(withPartitionRegionDetails())
 		.andThen(withRegionEvictionPolicyDetails())
-		.andThen(withRegionExpirationDetails())
+		.andThen(withRegionExpirationPolicyDetails())
 		.andThen(withRegionStatisticsDetails());
 
 	/**
@@ -125,13 +128,16 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 			Optional.ofNullable(region.getAttributes())
 				.ifPresent(regionAttributes -> builder
 					.withDetail(cacheRegionKey(regionName, "cloning-enabled"), toYesNoString(regionAttributes.getCloningEnabled()))
-					.withDetail(cacheRegionKey(regionName, "data-policy"), regionAttributes.getDataPolicy())
+					.withDetail(cacheRegionKey(regionName, "data-policy"), String.valueOf(regionAttributes.getDataPolicy()))
 					.withDetail(cacheRegionKey(regionName, "initial-capacity"), regionAttributes.getInitialCapacity())
 					.withDetail(cacheRegionKey(regionName, "load-factor"), regionAttributes.getLoadFactor())
 					.withDetail(cacheRegionKey(regionName, "key-constraint"), nullSafeClassName(regionAttributes.getKeyConstraint()))
 					.withDetail(cacheRegionKey(regionName, "off-heap"), toYesNoString(regionAttributes.getOffHeap()))
-					.withDetail(cacheRegionKey(regionName, "pool-name"), regionAttributes.getPoolName())
-					.withDetail(cacheRegionKey(regionName, "scope"), regionAttributes.getScope())
+					.withDetail(cacheRegionKey(regionName, "pool-name"), Optional.ofNullable(regionAttributes.getPoolName())
+						.filter(StringUtils::hasText)
+						.orElse(""))
+					.withDetail(cacheRegionKey(regionName, "scope"), String.valueOf(regionAttributes.getScope()))
+					.withDetail(cacheRegionKey(regionName, "statistics-enabled"), toYesNoString(regionAttributes.getStatisticsEnabled()))
 					.withDetail(cacheRegionKey(regionName, "value-constraint"), nullSafeClassName(regionAttributes.getValueConstraint())));
 		};
 
@@ -144,11 +150,13 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 			String regionName = region.getName();
 
 			Optional.of(region)
-				.filter(it -> it.getAttributes() != null)
+				.filter(this::isRegionAttributesPresent)
 				.map(Region::getAttributes)
 				.map(RegionAttributes::getPartitionAttributes)
 				.ifPresent(partitionAttributes -> builder
-					.withDetail(cachePartitionRegionKey(regionName, "collocated-with"), partitionAttributes.getColocatedWith())
+					.withDetail(cachePartitionRegionKey(regionName, "collocated-with"), Optional.ofNullable(partitionAttributes.getColocatedWith())
+						.filter(StringUtils::hasText)
+						.orElse(""))
 					.withDetail(cachePartitionRegionKey(regionName, "local-max-memory"), partitionAttributes.getLocalMaxMemory())
 					.withDetail(cachePartitionRegionKey(regionName, "redundant-copies"), partitionAttributes.getRedundantCopies())
 					.withDetail(cachePartitionRegionKey(regionName, "total-max-memory"), partitionAttributes.getTotalMaxMemory())
@@ -163,15 +171,15 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 			String regionName = region.getName();
 
 			Optional.of(region)
-				.filter(it -> it.getAttributes() != null)
+				.filter(this::isRegionAttributesPresent)
 				.map(Region::getAttributes)
 				.map(RegionAttributes::getEvictionAttributes)
 				.ifPresent(evictionAttributes -> {
 
-					builder.withDetail(cacheRegionEvictionKey(regionName, "action"), evictionAttributes.getAction())
-						.withDetail(cacheRegionEvictionKey(regionName, "algorithm"), evictionAttributes.getAlgorithm());
+					builder.withDetail(cacheRegionEvictionKey(regionName, "action"), String.valueOf(evictionAttributes.getAction()))
+						.withDetail(cacheRegionEvictionKey(regionName, "algorithm"), String.valueOf(evictionAttributes.getAlgorithm()));
 
-					// NOTE: Careful! Eviction Maximum does not apply when Algorithm is Heap LRU.
+					// NOTE: Careful! Eviction Maximum does not apply when Eviction Algorithm is Heap LRU.
 					Optional.ofNullable(evictionAttributes.getAlgorithm())
 						.filter(it -> !it.isLRUHeap())
 						.ifPresent(it -> builder
@@ -180,26 +188,26 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 		};
 	}
 
-	private BiConsumer<Region<?, ?>, Health.Builder> withRegionExpirationDetails() {
+	private BiConsumer<Region<?, ?>, Health.Builder> withRegionExpirationPolicyDetails() {
 
 		return (region, builder) -> {
 
 			String regionName = region.getName();
 
 			Optional.of(region)
-				.filter(it -> it.getAttributes() != null)
+				.filter(this::isRegionAttributesPresent)
 				.map(Region::getAttributes)
 				.map(RegionAttributes::getEntryTimeToLive)
 				.ifPresent(expirationAttributes -> builder
-					.withDetail(cacheRegionExpirationKey(regionName, "entry.ttl.action"), expirationAttributes.getAction())
+					.withDetail(cacheRegionExpirationKey(regionName, "entry.ttl.action"), String.valueOf(expirationAttributes.getAction()))
 					.withDetail(cacheRegionExpirationKey(regionName, "entry.ttl.timeout"), expirationAttributes.getTimeout()));
 
 			Optional.of(region)
-				.filter(it -> it.getAttributes() != null)
+				.filter(this::isRegionAttributesPresent)
 				.map(Region::getAttributes)
 				.map(RegionAttributes::getEntryIdleTimeout)
 				.ifPresent(expirationAttributes -> builder
-					.withDetail(cacheRegionExpirationKey(regionName, "entry.tti.action"), expirationAttributes.getAction())
+					.withDetail(cacheRegionExpirationKey(regionName, "entry.tti.action"), String.valueOf(expirationAttributes.getAction()))
 					.withDetail(cacheRegionExpirationKey(regionName, "entry.tti.timeout"), expirationAttributes.getTimeout()));
 		};
 	}
@@ -211,16 +219,40 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 			String regionName = region.getName();
 
 			Optional.of(region)
-				.filter(it -> it.getAttributes() != null)
-				.filter(it -> it.getAttributes().getStatisticsEnabled())
-				.map(Region::getStatistics)
+				.filter(this::isNotLocalDataSet)
+				.filter(this::isStatisticsEnabled)
+				.map(RegionStatisticsResolver::resolve)
 				.ifPresent(cacheStatistics -> builder
+					.withDetail(cacheRegionStatisticsKey(regionName, "cache-statistics-type"), nullSafeClassName(cacheStatistics.getClass()))
 					.withDetail(cacheRegionStatisticsKey(regionName, "hit-count"), cacheStatistics.getHitCount())
 					.withDetail(cacheRegionStatisticsKey(regionName, "hit-ratio"), cacheStatistics.getHitRatio())
 					.withDetail(cacheRegionStatisticsKey(regionName, "last-accessed-time"), cacheStatistics.getLastAccessedTime())
 					.withDetail(cacheRegionStatisticsKey(regionName, "last-modified-time"), cacheStatistics.getLastModifiedTime())
 					.withDetail(cacheRegionStatisticsKey(regionName, "miss-count"), cacheStatistics.getMissCount()));
 		};
+	}
+
+	private boolean isLocalDataSet(Region<?, ?> region) {
+		return region instanceof LocalDataSet;
+	}
+
+	private boolean isNotLocalDataSet(Region<?, ?> region) {
+		return !isLocalDataSet(region);
+	}
+
+	private boolean isRegionAttributesPresent(Region<?, ?> region) {
+
+		return Optional.ofNullable(region)
+			.map(Region::getAttributes)
+			.isPresent();
+	}
+
+	private boolean isStatisticsEnabled(Region<?, ?> region) {
+
+		return Optional.ofNullable(region)
+			.map(Region::getAttributes)
+			.filter(RegionAttributes::getStatisticsEnabled)
+			.isPresent();
 	}
 
 	private String cachePartitionRegionKey(String regionName, String suffix) {
