@@ -7,24 +7,24 @@ will even work with Pivotal Cloud Cache, which is backed by Pivotal GemFire, whe
 to Pivotal CloudFoundry (PCC).
 
 Spring Boot `HealthIndicators` provide details about the runtime operation and behavior of your Apache Geode
-or Pivotal GemFire based Spring Boot applications.  For instance, by querying the right `HealthIndicator` endpoint
-you are able to get the current hit/miss count for your Region data access operations.
+or Pivotal GemFire based Spring Boot applications.  For instance, by querying the right `HealthIndicator` endpoint,
+you would be able to get the current hit/miss count for your `Region.get(key)` data access operations.
 
 In addition to vital health information, SBDG provides basic, pre-runtime configuration meta-data about the Apache Geode
 / Pivotal GemFire components that are monitored by Spring Boot Actuator.  This makes it easier to see how
-the application was configured in one place
+the application was configured all in one place, rather than in properties files, Spring config, XML, etc.
 
 The provided Spring Boot `HealthIndicators` fall under one of three categories:
 
-* Base `HealthIndicators` that apply to all Apache Geode/Pivotal GemFire Spring Boot applications, regardless of
+* Base `HealthIndicators` that apply to all Apache Geode/Pivotal GemFire, Spring Boot applications, regardless of
 cache type, such as Regions, Indexes and DiskStores.
-* Peer `Cache` based `HealthIndicators` that are only applicable to peer `Cache` applications, such as `CacheServers`,
-`AsyncEventQueues`, `GatewayReceivers` and `GatewaySenders`.
+* Peer `Cache` based `HealthIndicators` that are only applicable to peer `Cache` applications, such as
+`AsyncEventQueues`, `CacheServers`, `GatewayReceivers` and `GatewaySenders`.
 * And finally, `ClientCache` based `HealthIndicators` that are only applicable to `ClientCache` applications, such as
 `ContinuousQueries` and connection `Pools`.
 
 The following sections give a brief overview of all the available Spring Boot `HealthIndicators` provided for
-Apache Geode/Pivotal GemFire out-of-the-box.
+Apache Geode/Pivotal GemFire, out-of-the-box.
 
 [[actuator-base-healthindicators]]
 === Base `HealthIndicators`
@@ -46,12 +46,12 @@ the underlying `DistributedSystem`, the `DistributedMember` and configuration de
 When your Spring Boot application creates an instance of a peer {apache-geode-javadoc}/org/apache/geode/cache/Cache.html[`Cache`],
 the {apache-geode-javadoc}/org/apache/geode/distributed/DistributedMember.html[`DistributedMember`] object represents
 your application as a peer member/node of the {apache-geode-javadoc}/org/apache/geode/distributed/DistributedSystem.html[`DistributedSystem`]
-formed from a collection of connected peers, to which your application also has
+formed from a collection of connected peers (i.e. the cluster), to which your application also has
 {apache-geode-javadoc}/org/apache/geode/cache/GemFireCache.html#getDistributedSystem--[access],
 indirectly via the cache instance.
 
-This is no different for a `ClientCache` even though the client is technically not part of the peer cluster, it still
-creates instances of the `DistributedSystem` and `DistributedMember` objects, respectively.
+This is no different for a `ClientCache` even though the client is technically not part of the peer/server cluster.
+But, it still creates instances of the `DistributedSystem` and `DistributedMember` objects, respectively.
 
 The following configuration meta-data and health details about each object is covered:
 
@@ -84,6 +84,7 @@ The following configuration meta-data and health details about each object is co
 |=====================================================================================================================
 | Name                                                  | Description
 
+| geode.distributed-system.member-count                 | Total number of members in the cluster (1 for clients).
 | geode.distributed-system.connected                    | Indicates whether the member is currently connected to
 the cluster.
 | geode.distributed-system.reconnecting                 | Indicates whether the member is in a reconnecting state,
@@ -116,10 +117,10 @@ configured with a Heap LRU Eviction policy.
 ==== GeodeRegionsHealthIndicator
 
 The `GeodeRegionsHealthIndicator` provides details about all the configured and known `Regions` in the cache.
-If the cache instance is a client, then details will include all LOCAL, PROXY and CACHING_PROXY `Regions`. If the cache
+If the cache is a client, then details will include all LOCAL, PROXY and CACHING_PROXY `Regions`. If the cache
 is a peer, then the details will include all LOCAL, PARTITION and REPLICATE `Regions`.
 
-While the configuration meta-data details is not exhaustive, essential details along with basic performance metrics
+While the configuration meta-data details are not exhaustive, essential details along with basic performance metrics
 are covered:
 
 .Region Details
@@ -146,7 +147,7 @@ the Regions consistency-level, as it pertains to acknowledgements for writes.
 
 |=====================================================================================================================
 
-Additionally, when the Region is a peer `Cache` PARTITION Region, then the following details are also covered:
+Additionally, when the Region is a peer `Cache` `PARTITION` Region, then the following details are also covered:
 
 .Partition Region Details
 [width="90%",cols="^3,<10",options="header"]
@@ -208,7 +209,7 @@ or the specific Map keys that were indexed.
 
 |=====================================================================================================================
 
-Additionally, when statistics are enabled (e.g. using `@EnableStatistics`,
+Additionally, when statistics are enabled (e.g. using `@EnableStatistics`;
 (see {spring-data-geode-docs-html}/#bootstrap-annotation-config-statistics[here]
 for more details), the following details are available:
 
@@ -235,10 +236,9 @@ an OQL query.
 
 The `GeodeDiskStoresHealthIndicator` provides details about the configured `DiskStores` in the system/application.
 Remember, `DiskStores` are used to overflow and persist data to disk, including type meta-data tracked by PDX
-when the values in the Region(s) have been serialized with PDX and the Region(s) are persistent.  Most of
-the tracked health information pertains to configuration.
+when the values in the Region(s) have been serialized with PDX and the Region(s) are persistent.
 
-The following details are covered:
+Most of the tracked health information pertains to configuration:
 
 .DiskStore Details
 [width="90%",cols="^3,<10",options="header"]
@@ -277,9 +277,9 @@ instance (i.e. is a cache client), which is the default.
 [[actuator-clientcache-healthindicators-cq]]
 ==== GeodeContinuousQueriesHealthIndicator
 
-The `GeodeContinuousQueriesHealthIndicator` provides details about the registered client Continuous Queries (CQ).
+The `GeodeContinuousQueriesHealthIndicator` provides details about registered client Continuous Queries (CQ).
 CQs enable client applications to receive automatic notification about events that satisfy some criteria. That criteria
-can be easily expressed using the predicate of an OQL query (e.g. "SELECT * FROM /Customers c WHERE c.age > 21").
+can be easily expressed using the predicate of an OQL query (e.g. "`SELECT * FROM /Customers c WHERE c.age > 21`").
 Anytime data of interests is inserted or updated, and matches the criteria specified in the OQL query predicate,
 an event is sent to the registered client.
 
@@ -415,8 +415,8 @@ annotated class.
 The `GeodeCacheServersHealthIndicator` provides details about the configured Apache Geode/Pivotal GemFire `CacheServers`.
 `CacheServer` instances are required to enable clients to connect to the servers in the cluster.
 
-This `HealthIndicator` captures basic configuration meta-data and runtime behavior/characteristics about
-the configured `CacheServers`.  The following details are covered:
+This `HealthIndicator` captures basic configuration meta-data and runtime behavior/characteristics of
+the configured `CacheServers`:
 
 .CacheServer Details
 [width="90%",cols="^3,<10",options="header"]
@@ -511,10 +511,9 @@ or serial.
 
 The `GeodeGatewayReceiversHealthIndicator` provide details about the configured (WAN) `GatewayReceivers`, which are
 capable of receiving events from remote clusters when using Apache Geode/Pivotal GemFire's
-{apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site WAN topology].
+{apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site, WAN topology].
 
-This `HealthIndicator` captures essential configuration meta-data along with the running state
-for each `GatewayReceiver`, as follows:
+This `HealthIndicator` captures configuration meta-data along with the running state for each `GatewayReceiver`:
 
 .GatewayReceiver Details
 [width="90%",cols="^3,<10",options="header"]
@@ -545,10 +544,9 @@ GatewayReceiver's  port will be chosen.
 
 The `GeodeGatewaySendersHealthIndicator` provides details about the configured `GatewaySenders`.  `GatewaySenders` are
 attached to Regions in order to send Region events to remote clusters in Apache Geode/Pivotal GemFire's
- {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site WAN topology].
+ {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site, WAN topology].
 
-This `HealthIndicator` captures essential configuration meta-data and runtime characteristics for eache `GatewaySender`,
-as follows:
+This `HealthIndicator` captures essential configuration meta-data and runtime characteristics for each `GatewaySender`:
 
 .GatewaySender Details
 [width="90%",cols="^3,<10",options="header"]
