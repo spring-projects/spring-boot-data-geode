@@ -1,5 +1,6 @@
 # Auto Configuration
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.geode.boot.autoconfigure.CacheNameAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.CachingProviderAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration,\
