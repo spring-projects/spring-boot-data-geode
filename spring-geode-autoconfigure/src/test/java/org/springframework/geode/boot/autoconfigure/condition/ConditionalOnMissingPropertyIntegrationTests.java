@@ -29,9 +29,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.tests.integration.SpringBootApplicationIntegrationTestsSupport;
 
 /**
- * The ConditionalOnMissingPropertyIntegrationTests class...
+ * Integration tests for {@link ConditionalOnMissingProperty} and {@link OnMissingPropertyCondition}.
  *
  * @author John Blum
+ * @see org.junit.Test
+ * @see org.springframework.boot.builder.SpringApplicationBuilder
+ * @see org.springframework.context.ApplicationContext
+ * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.data.gemfire.tests.integration.SpringBootApplicationIntegrationTestsSupport
  * @since 1.0.0
  */
 @SuppressWarnings("unused")
