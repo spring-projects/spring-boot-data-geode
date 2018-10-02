@@ -53,19 +53,19 @@ import org.springframework.core.annotation.AliasFor;
 public @interface UseMemberName {
 
 	/**
-	 * {@link String Name} used for the Apache Geode/Pivotal GemFire distributed system member.
-	 *
-	 * @see #name()
-	 */
-	@AliasFor("name")
-	String value() default "";
-
-	/**
 	 * Alias for the {@link String name} of the Apache Geode/Pivotal GemFire distributed system member.
 	 *
 	 * @see #value()
 	 */
 	@AliasFor("value")
 	String name() default "";
+
+	/**
+	 * {@link String Name} used for the Apache Geode/Pivotal GemFire distributed system member.
+	 *
+	 * @see #name()
+	 */
+	@AliasFor("name")
+	String value() default "";
 
 }
