@@ -1,0 +1,10 @@
+apply plugin: 'io.spring.convention.spring-module'
+
+description = "Spring Boot Actuator Starter for Apache Geode"
+
+dependencies {
+
+    compile project(":spring-geode-starter")
+    compile project(":spring-geode-actuator-autoconfigure")
+
+}
