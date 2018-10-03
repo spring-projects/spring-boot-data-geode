@@ -4,8 +4,7 @@ description = "Spring Geode Sample demonstrating the use of Spring Boot Actuator
 
 dependencies {
 
-	compile project(":spring-geode-starter")
-	compile project(":spring-geode-actuator-autoconfigure")
+	compile project(":spring-geode-starter-actuator")
 
 	compile ("org.springframework.boot:spring-boot-starter-web") {
 		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
