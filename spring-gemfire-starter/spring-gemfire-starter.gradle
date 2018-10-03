@@ -18,4 +18,6 @@ dependencies {
 
 	compile "org.springframework.data:spring-data-gemfire"
 
+	runtime 'org.springframework.shell:spring-shell'
+
 }

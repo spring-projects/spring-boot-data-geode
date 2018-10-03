@@ -5,11 +5,10 @@ dependencies {
 
 	compile project(':spring-geode-starter')
 
-	runtime 'org.springframework.shell:spring-shell'
-
 	testCompile "junit:junit"
 	testCompile "org.assertj:assertj-core"
 	testCompile "org.mockito:mockito-core"
+	testCompile "org.projectlombok:lombok"
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
 	testCompile "org.springframework:spring-test"
 

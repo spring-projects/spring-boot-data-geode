@@ -12,4 +12,6 @@ dependencies {
 
 	compile(project(':spring-geode-autoconfigure'))
 
+	runtime 'org.springframework.shell:spring-shell'
+
 }
