@@ -16,8 +16,9 @@
 
 package org.springframework.geode.docs.example.app.server;
 
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
@@ -32,7 +33,11 @@ import org.springframework.geode.config.annotation.UseLocators;
 public class SpringBootApacheGeodeCacheServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringBootApacheGeodeCacheServerApplication.class, args);
+
+		new SpringApplicationBuilder(SpringBootApacheGeodeCacheServerApplication.class)
+			.web(WebApplicationType.NONE)
+			.build()
+			.run(args);
 	}
 
 	@Configuration
