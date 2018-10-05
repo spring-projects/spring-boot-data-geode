@@ -67,7 +67,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	properties = "spring.session.data.gemfire.cache.client.region.shortcut=",
-	webEnvironment = SpringBootTest.WebEnvironment.NONE
+	webEnvironment = SpringBootTest.WebEnvironment.MOCK
 )
 @SuppressWarnings("unused")
 public class AutoConfiguredSessionCachingIntegrationTests extends IntegrationTestsSupport {

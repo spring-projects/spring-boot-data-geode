@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -51,6 +52,7 @@ import org.springframework.util.StringUtils;
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.session.Session
  * @see org.springframework.session.data.gemfire.config.annotation.web.http.EnableGemFireHttpSession
@@ -64,6 +66,7 @@ import org.springframework.util.StringUtils;
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemFireCache.class, GemFireHttpSessionConfiguration.class })
 @ConditionalOnMissingBean(SessionRepositoryFilter.class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @EnableGemFireHttpSession
 @SuppressWarnings("unused")
 public class SpringSessionAutoConfiguration {

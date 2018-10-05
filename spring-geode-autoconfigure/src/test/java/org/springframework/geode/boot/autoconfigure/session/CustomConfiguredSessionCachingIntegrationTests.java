@@ -44,6 +44,7 @@ import org.springframework.session.Session;
 import org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration;
 import org.springframework.session.data.gemfire.config.annotation.web.http.support.SpringSessionGemFireConfigurer;
 import org.springframework.session.data.gemfire.serialization.SessionSerializer;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
 /**
  * Integration Test for the auto-configuration of Spring Session using either Apache Geode or Pivotal GemFire
@@ -132,6 +133,11 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 
 	private String springSessionPropertyName(String propertyNameSuffix) {
 		return String.format("%1$s.%2$s", SPRING_SESSION_DATA_GEMFIRE_PROPERTY, propertyNameSuffix);
+	}
+
+	@Override
+	protected SpringApplicationBuilder contextClass(SpringApplicationBuilder builder) {
+		return builder.contextClass(GenericWebApplicationContext.class);
 	}
 
 	@Before
