@@ -6,7 +6,7 @@ os:
 jdk:
   - oraclejdk8
 
-script: ./gradlew --refresh-dependencies clean build
+script: ./gradlew --refresh-dependencies --stacktrace clean build
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
