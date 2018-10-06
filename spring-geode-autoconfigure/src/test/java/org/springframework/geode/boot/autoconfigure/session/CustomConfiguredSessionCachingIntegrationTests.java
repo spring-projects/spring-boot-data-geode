@@ -123,7 +123,8 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 
 	@Override
 	protected SpringApplicationBuilder processBeforeBuild(SpringApplicationBuilder springApplicationBuilder) {
-		return this.springApplicationBuilderFunction.apply(springApplicationBuilder);
+		return this.springApplicationBuilderFunction.apply(springApplicationBuilder)
+			.contextClass(GenericWebApplicationContext.class);
 	}
 
 	@Override
@@ -133,11 +134,6 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 
 	private String springSessionPropertyName(String propertyNameSuffix) {
 		return String.format("%1$s.%2$s", SPRING_SESSION_DATA_GEMFIRE_PROPERTY, propertyNameSuffix);
-	}
-
-	@Override
-	protected SpringApplicationBuilder contextClass(SpringApplicationBuilder builder) {
-		return builder.contextClass(GenericWebApplicationContext.class);
 	}
 
 	@Before
