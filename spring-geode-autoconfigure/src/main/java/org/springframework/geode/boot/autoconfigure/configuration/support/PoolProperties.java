@@ -50,21 +50,10 @@ public class PoolProperties {
 	private long idleTimeout = PoolFactory.DEFAULT_IDLE_TIMEOUT;
 	private long pingInterval = PoolFactory.DEFAULT_PING_INTERVAL;
 
-	private PoolProperties defaultPoolProperties;
-
 	private String serverGroup = PoolFactory.DEFAULT_SERVER_GROUP;
 
 	private String[] locators = {};
 	private String[] servers = {};
-
-	public synchronized PoolProperties getDefault() {
-
-		if (this.defaultPoolProperties == null) {
-			this.defaultPoolProperties = new PoolProperties();
-		}
-
-		return this.defaultPoolProperties;
-	}
 
 	public int getFreeConnectionTimeout() {
 		return this.freeConnectionTimeout;
