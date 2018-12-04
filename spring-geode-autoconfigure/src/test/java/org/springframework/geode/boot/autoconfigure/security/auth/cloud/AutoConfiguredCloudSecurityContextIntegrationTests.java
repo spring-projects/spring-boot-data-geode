@@ -57,12 +57,12 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
-@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes = AutoConfiguredCloudSecurityContextIntegrationTests.GemFireClientConfiguration.class,
 	webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
+@DirtiesContext
 @SuppressWarnings("unused")
 public class AutoConfiguredCloudSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
@@ -78,6 +78,7 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 		startGemFireServer(GemFireServerConfiguration.class, "-Dspring.profiles.active=security-cloud");
 
 		loadVcapApplicationProperties();
+		unsetTestAutoConfiguredPoolServersPortSystemProperty();
 
 		GemfireBeanFactoryLocator.clear();
 	}
@@ -88,6 +89,10 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 
 		vcapApplicationProperties.stringPropertyNames().forEach(property ->
 			System.setProperty(property, vcapApplicationProperties.getProperty(property)));
+	}
+
+	public static void unsetTestAutoConfiguredPoolServersPortSystemProperty() {
+		System.clearProperty(GEMFIRE_POOL_SERVERS_PROPERTY);
 	}
 
 	@AfterClass

@@ -19,6 +19,7 @@ package org.springframework.geode.boot.autoconfigure.session;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -40,10 +41,12 @@ import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockO
 import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.mock.env.MockPropertySource;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.session.Session;
 import org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration;
 import org.springframework.session.data.gemfire.config.annotation.web.http.support.SpringSessionGemFireConfigurer;
 import org.springframework.session.data.gemfire.serialization.SessionSerializer;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
 /**
@@ -75,12 +78,6 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 
 	private static final String SPRING_SESSION_DATA_GEMFIRE_PROPERTY = "spring.session.data.gemfire";
 
-	private volatile Function<ConfigurableApplicationContext, ConfigurableApplicationContext> applicationContextFunction =
-		Function.identity();
-
-	private volatile Function<SpringApplicationBuilder, SpringApplicationBuilder> springApplicationBuilderFunction =
-		Function.identity();
-
 	private static Properties singletonProperties(String propertyName, String propertyValue) {
 
 		Properties properties = new Properties();
@@ -89,6 +86,23 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 
 		return properties;
 	}
+
+	private volatile Function<ConfigurableApplicationContext, ConfigurableApplicationContext> applicationContextFunction =
+		Function.identity();
+
+	private volatile Function<ConfigurableApplicationContext, ConfigurableApplicationContext> mockServletContextFunction =
+		applicationContext -> {
+
+			Optional.ofNullable(applicationContext)
+				.filter(ConfigurableWebApplicationContext.class::isInstance)
+				.map(ConfigurableWebApplicationContext.class::cast)
+				.ifPresent(it -> it.setServletContext(new MockServletContext()));
+
+			return applicationContext;
+		};
+
+	private volatile Function<SpringApplicationBuilder, SpringApplicationBuilder> springApplicationBuilderFunction =
+		Function.identity();
 
 	private Function<SpringApplicationBuilder, SpringApplicationBuilder> newSpringBootSessionPropertiesConfigurationFunction() {
 
@@ -123,13 +137,14 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 
 	@Override
 	protected SpringApplicationBuilder processBeforeBuild(SpringApplicationBuilder springApplicationBuilder) {
+
 		return this.springApplicationBuilderFunction.apply(springApplicationBuilder)
 			.contextClass(GenericWebApplicationContext.class);
 	}
 
 	@Override
 	protected ConfigurableApplicationContext processBeforeRefresh(ConfigurableApplicationContext applicationContext) {
-		return this.applicationContextFunction.apply(applicationContext);
+		return this.mockServletContextFunction.andThen(this.applicationContextFunction).apply(applicationContext);
 	}
 
 	private String springSessionPropertyName(String propertyNameSuffix) {
