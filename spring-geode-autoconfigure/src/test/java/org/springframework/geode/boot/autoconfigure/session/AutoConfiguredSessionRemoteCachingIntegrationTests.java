@@ -66,7 +66,7 @@ import org.springframework.web.client.RestTemplate;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes =  {
-		AutoConfiguredSessionRemoteCachingIntegrationTests.GemFireSessionClientConfiguration.class,
+		AutoConfiguredSessionRemoteCachingIntegrationTests.SessionGemFireClientConfiguration.class,
 		AutoConfiguredSessionRemoteCachingIntegrationTests.TestWebApplication.class
 	},
 	properties = {
@@ -85,7 +85,7 @@ public class AutoConfiguredSessionRemoteCachingIntegrationTests extends ForkingC
 
 	@BeforeClass
 	public static void setupGemFireServer() throws IOException {
-		startGemFireServer(GemFireSessionServerConfiguration.class);
+		startGemFireServer(SessionGemFireServerConfiguration.class);
 	}
 
 	@LocalServerPort
@@ -147,7 +147,7 @@ public class AutoConfiguredSessionRemoteCachingIntegrationTests extends ForkingC
 
 	@SpringBootApplication
 	@EnableLogging(logLevel = "error")
-	static class GemFireSessionClientConfiguration {
+	static class SessionGemFireClientConfiguration {
 
 		@Bean
 		HttpSessionIdResolver headerHttpSessionIdResolver() {
@@ -191,11 +191,11 @@ public class AutoConfiguredSessionRemoteCachingIntegrationTests extends ForkingC
 
 	@CacheServerApplication(name = "AutoConfiguredSessionRemoteCachingIntegrationTests", logLevel = "error")
 	@EnableGemFireHttpSession
-	static class GemFireSessionServerConfiguration {
+	static class SessionGemFireServerConfiguration {
 
 		public static void main(String[] args) {
 
-			new SpringApplicationBuilder(GemFireSessionServerConfiguration.class)
+			new SpringApplicationBuilder(SessionGemFireServerConfiguration.class)
 				.web(WebApplicationType.NONE)
 				.build()
 				.run(args);
