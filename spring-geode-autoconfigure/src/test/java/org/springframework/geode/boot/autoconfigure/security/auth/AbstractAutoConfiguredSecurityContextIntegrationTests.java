@@ -130,11 +130,11 @@ public abstract class AbstractAutoConfiguredSecurityContextIntegrationTests
 		}
 
 		String getUsername() {
-			return username;
+			return this.username;
 		}
 
 		String getPassword() {
-			return password;
+			return this.password;
 		}
 
 		@Override
