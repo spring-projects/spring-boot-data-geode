@@ -154,8 +154,8 @@ public class VcapPropertySourceUnitTests {
 		}
 		catch (IllegalArgumentException expected) {
 
-			assertThat(expected)
-				.hasMessage("A valid EnumerablePropertySource named [vcap] with VCAP properties is required",
+			assertThat(expected).hasMessage(
+				"A valid EnumerablePropertySource named [vcap] containing VCAP properties is required",
 					mockEnvironment);
 
 			assertThat(expected).hasNoCause();
@@ -190,8 +190,8 @@ public class VcapPropertySourceUnitTests {
 		}
 		catch (IllegalArgumentException expected) {
 
-			assertThat(expected)
-				.hasMessage("A valid EnumerablePropertySource named [vcap] with VCAP properties is required",
+			assertThat(expected).hasMessage(
+				"A valid EnumerablePropertySource named [vcap] containing VCAP properties is required",
 					mockEnvironment);
 
 			assertThat(expected).hasNoCause();

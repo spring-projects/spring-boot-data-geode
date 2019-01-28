@@ -97,8 +97,9 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 	public static VcapPropertySource from(Environment environment) {
 
 		return Optional.ofNullable(environment)
-			.filter(env -> env instanceof ConfigurableEnvironment)
-			.map(env -> ((ConfigurableEnvironment) env).getPropertySources())
+			.filter(ConfigurableEnvironment.class::isInstance)
+			.map(ConfigurableEnvironment.class::cast)
+			.map(ConfigurableEnvironment::getPropertySources)
 			.map(propertySources -> propertySources.get(VCAP_PROPERTY_SOURCE_NAME))
 			.map(VcapPropertySource::from)
 			.orElseThrow(() -> newIllegalArgumentException(
@@ -119,15 +120,25 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 
 		return Optional.ofNullable(propertySource)
 			.filter(it -> VCAP_PROPERTY_SOURCE_NAME.equals(it.getName()))
-			.filter(it -> it instanceof EnumerablePropertySource)
 			.filter(VCAP_REQUIRED_PROPERTIES_PREDICATE)
-			.map(it -> (EnumerablePropertySource) it)
+			.filter(EnumerablePropertySource.class::isInstance)
+			.map(EnumerablePropertySource.class::cast)
 			.map(VcapPropertySource::new)
 			.orElseThrow(() -> newIllegalArgumentException(
-				"A valid EnumerablePropertySource named [%s] with VCAP properties is required",
+				"A valid EnumerablePropertySource named [%s] containing VCAP properties is required",
 					VCAP_PROPERTY_SOURCE_NAME));
 	}
 
+	/**
+	 * Constructs a new {@link PropertySource} from the existing, required {@link EnumerablePropertySource} instance
+	 * with the default name, {@literal boot.data.gemfire.vcap}, containing the {@literal VCAP} environment variable
+	 * configuration.
+	 *
+	 * @param propertySource existing, required {@link EnumerablePropertySource} containing the {@literal VCAP}
+	 * environment variables.
+	 * @throws IllegalArgumentException if the {@literal EnumerablePropertySource} is {@literal null}.
+	 * @see org.springframework.core.env.EnumerablePropertySource
+	 */
 	private VcapPropertySource(EnumerablePropertySource<?> propertySource) {
 		super(THIS_PROPERTY_SOURCE_NAME, propertySource);
 	}
@@ -218,7 +229,11 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 			String username = String.valueOf(getProperty(userPropertyName+".username"));
 			String password = String.valueOf(getProperty(userPropertyName+".password"));
 
-			return Optional.of(User.with(username).withPassword(password).withRole(User.Role.CLUSTER_OPERATOR));
+			User user = User.with(username)
+				.withPassword(password)
+				.withRole(User.Role.CLUSTER_OPERATOR);
+
+			return Optional.of(user);
 		}
 
 		return Optional.empty();
