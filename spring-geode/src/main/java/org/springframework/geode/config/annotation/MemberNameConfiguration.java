@@ -128,6 +128,7 @@ public class MemberNameConfiguration extends AbstractAnnotationConfigSupport imp
 	}
 
 	private void configureMemberName(Environment environment, CacheFactoryBean cacheFactoryBean) {
+
 		getMemberName()
 			.filter(memberName -> namePropertiesNotPresent(environment))
 			.ifPresent(memberName ->
@@ -135,7 +136,9 @@ public class MemberNameConfiguration extends AbstractAnnotationConfigSupport imp
 	}
 
 	private boolean namePropertiesArePresent(Environment environment) {
-		return NAME_PROPERTIES.stream().anyMatch(environment::containsProperty);
+
+		return NAME_PROPERTIES.stream()
+			.anyMatch(environment::containsProperty);
 	}
 
 	private boolean namePropertiesNotPresent(Environment environment) {
