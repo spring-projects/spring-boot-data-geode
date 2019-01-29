@@ -21,6 +21,8 @@ import java.util.Properties;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -35,14 +37,13 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer;
 import org.springframework.geode.core.env.VcapPropertySource;
 import org.springframework.geode.core.env.support.CloudCacheService;
-import org.springframework.geode.core.env.support.Service;
+import org.springframework.lang.Nullable;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Security functionality,
@@ -78,10 +79,12 @@ import org.springframework.geode.core.env.support.Service;
 @SuppressWarnings("unused")
 public class ClientSecurityAutoConfiguration {
 
-	public static final String SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY =
+	public static final String CLOUD_SECURITY_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY =
 		"spring.boot.data.gemfire.security.auth.environment.post-processor.enabled";
 
-	private static final String CLOUD_CACHE_PROPERTY_SOURCE_NAME = "cloudcache-configuration";
+	private static final Logger logger = LoggerFactory.getLogger(ClientSecurityAutoConfiguration.class);
+
+	private static final String CLOUD_CACHE_PROPERTY_SOURCE_NAME = "boot.data.gemfire.cloudcache";
 
 	private static final String MANAGEMENT_HTTP_HOST_PROPERTY = "spring.data.gemfire.management.http.host";
 	private static final String MANAGEMENT_HTTP_PORT_PROPERTY = "spring.data.gemfire.management.http.port";
@@ -109,17 +112,32 @@ public class ClientSecurityAutoConfiguration {
 		}
 
 		private boolean isCloudFoundryEnvironment(Environment environment) {
-			return Optional.ofNullable(environment).filter(CloudPlatform.CLOUD_FOUNDRY::isActive).isPresent();
+
+			return Optional.ofNullable(environment)
+				.filter(CloudPlatform.CLOUD_FOUNDRY::isActive)
+				.isPresent();
 		}
 
 		private boolean isEnabled(Environment environment) {
-			return environment.getProperty(SECURITY_CLOUD_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY,
-				Boolean.class, true);
+
+			boolean clientSecurityAutoConfigurationEnabled =
+				environment.getProperty(CLOUD_SECURITY_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY,
+					Boolean.class, true);
+
+			logger.debug("{} enabled {}", ClientSecurityAutoConfiguration.class.getSimpleName(),
+				clientSecurityAutoConfigurationEnabled);
+
+			return clientSecurityAutoConfigurationEnabled;
 		}
 
 		private boolean isSecurityPropertiesSet(Environment environment) {
-			return environment.containsProperty(SECURITY_USERNAME_PROPERTY)
+
+			boolean securityPropertiesSet = environment.containsProperty(SECURITY_USERNAME_PROPERTY)
 				&& environment.containsProperty(SECURITY_PASSWORD_PROPERTY);
+
+			logger.debug("Security Properties set {}", securityPropertiesSet);
+
+			return securityPropertiesSet;
 		}
 
 		private boolean isSecurityPropertiesNotSet(Environment environment) {
@@ -127,28 +145,30 @@ public class ClientSecurityAutoConfiguration {
 		}
 
 		private void configureAuthentication(Environment environment, Properties cloudCacheProperties,
-				VcapPropertySource propertySource, Service cloudCache) {
+				VcapPropertySource vcapPropertySource, CloudCacheService cloudCacheService) {
 
-			propertySource.findFirstUserByRoleClusterOperator(cloudCache)
+			vcapPropertySource.findFirstUserByRoleClusterOperator(cloudCacheService)
 				.filter(user -> isSecurityPropertiesNotSet(environment))
 				.ifPresent(user -> {
+
 					cloudCacheProperties.setProperty(SECURITY_USERNAME_PROPERTY, user.getName());
+
 					user.getPassword().ifPresent(password ->
 						cloudCacheProperties.setProperty(SECURITY_PASSWORD_PROPERTY, password));
 				});
 		}
 
 		private void configureLocators(Environment environment, Properties cloudCacheProperties,
-				VcapPropertySource propertySource, CloudCacheService cloudCache) {
+				VcapPropertySource vcapPropertySource, CloudCacheService cloudCacheService) {
 
-			cloudCache.getLocators().ifPresent(locators ->
+			cloudCacheService.getLocators().ifPresent(locators ->
 				cloudCacheProperties.setProperty(POOL_LOCATORS_PROPERTY, locators));
 		}
 
 		private void configureManagementRestApiAccess(Environment environment, Properties cloudCacheProperties,
-				VcapPropertySource propertySource, CloudCacheService cloudCache) {
+				VcapPropertySource vcapPropertySource, CloudCacheService cloudCacheService) {
 
-			cloudCache.getGfshUrl().ifPresent(url -> {
+			cloudCacheService.getGfshUrl().ifPresent(url -> {
 				cloudCacheProperties.setProperty(MANAGEMENT_USE_HTTP_PROPERTY, Boolean.TRUE.toString());
 				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_HOST_PROPERTY, url.getHost());
 				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_PORT_PROPERTY, String.valueOf(url.getPort()));
@@ -157,22 +177,27 @@ public class ClientSecurityAutoConfiguration {
 
 		public void configureSecurityContext(ConfigurableEnvironment environment) {
 
-			VcapPropertySource propertySource = VcapPropertySource.from(environment);
+			VcapPropertySource vcapPropertySource = toVcapPropertySource(environment);
 
 			Properties cloudCacheProperties = new Properties();
 
-			CloudCacheService cloudCache = propertySource.findFirstCloudCacheService();
+			CloudCacheService cloudCacheService = vcapPropertySource.findFirstCloudCacheService();
 
-			configureAuthentication(environment, cloudCacheProperties, propertySource, cloudCache);
-			configureLocators(environment, cloudCacheProperties, propertySource, cloudCache);
-			configureManagementRestApiAccess(environment, cloudCacheProperties, propertySource, cloudCache);
+			configureAuthentication(environment, cloudCacheProperties, vcapPropertySource, cloudCacheService);
+			configureLocators(environment, cloudCacheProperties, vcapPropertySource, cloudCacheService);
+			configureManagementRestApiAccess(environment, cloudCacheProperties, vcapPropertySource, cloudCacheService);
 
 			environment.getPropertySources()
-				.addFirst(newPropertySource(CLOUD_CACHE_PROPERTY_SOURCE_NAME, cloudCacheProperties));
+				.addLast(newPropertySource(CLOUD_CACHE_PROPERTY_SOURCE_NAME, cloudCacheProperties));
 		}
 
 		private PropertySource<?> newPropertySource(String name, Properties properties) {
-			return new PropertiesPropertySource(name, properties);
+			//return new PropertiesPropertySource(name, properties);
+			return new SpringDataGemFirePropertiesPropertySource(name, properties);
+		}
+
+		private VcapPropertySource toVcapPropertySource(Environment environment) {
+			return VcapPropertySource.from(environment);
 		}
 	}
 
@@ -197,5 +222,32 @@ public class ClientSecurityAutoConfiguration {
 		})
 		static class StandaloneApacheGeodeSecurityContextCondition { }
 
+	}
+
+	// This custom PropertySource is required to prevent Pivotal Spring Cloud Services
+	// (spring-cloud-services-starter-service-registry) from losing the GemFire/PCC Security Context credentials
+	// stored in the Environment.
+	static class SpringDataGemFirePropertiesPropertySource extends PropertySource<Properties> {
+
+		private static final String SPRING_DATA_GEMFIRE_PROPERTIES_PROPERTY_SOURCE_NAME =
+			"spring.data.gemfire.properties";
+
+		SpringDataGemFirePropertiesPropertySource(Properties springDataGemFireProperties) {
+			this(SPRING_DATA_GEMFIRE_PROPERTIES_PROPERTY_SOURCE_NAME, springDataGemFireProperties);
+		}
+
+		SpringDataGemFirePropertiesPropertySource(String name, Properties springDataGemFireProperties) {
+			super(name, springDataGemFireProperties);
+		}
+
+		@Nullable @Override @SuppressWarnings("all")
+		public Object getProperty(String name) {
+			return getSource().getProperty(name);
+		}
+
+		@Override @SuppressWarnings("all")
+		public boolean containsProperty(String name) {
+			return getSource().containsKey(name);
+		}
 	}
 }
