@@ -166,6 +166,8 @@ public class VcapPropertySourceUnitTests {
 			verify(mockEnvironment, times(1)).getPropertySources();
 			verify(propertySources, times(1)).get(eq("vcap"));
 			verify(mockPropertySource, times(1)).getName();
+			verify(mockPropertySource, times(1))
+				.containsProperty(eq("vcap.application.name"));
 			verifyNoMoreInteractions(mockPropertySource);
 		}
 	}

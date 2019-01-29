@@ -29,7 +29,7 @@ dependencies {
 	}
 
 	// Runtime Test dependency on Spring Cloud Services (SCS) to verify workaround to SCS problem!
-	testRuntime("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:2.0.3.RELEASE") {
-		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
-	}
+	// testRuntime("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:2.0.3.RELEASE") {
+	//	exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+	// }
 }

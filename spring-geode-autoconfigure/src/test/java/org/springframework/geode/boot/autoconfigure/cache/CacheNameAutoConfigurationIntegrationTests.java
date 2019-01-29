@@ -117,6 +117,9 @@ public class CacheNameAutoConfigurationIntegrationTests extends SpringBootApplic
 	@SpringBootApplication
 	@EnableGemFireMockObjects
 	@UseMemberName("MemberNameTest")
+	@ComponentScan(excludeFilters = {
+		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = AnnotationNameAttributeTestConfiguration.class)
+	})
 	static class MemberNameAttributeTestConfiguration { }
 
 }
