@@ -23,6 +23,7 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -37,13 +38,13 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer;
 import org.springframework.geode.core.env.VcapPropertySource;
 import org.springframework.geode.core.env.support.CloudCacheService;
-import org.springframework.lang.Nullable;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Security functionality,
@@ -130,25 +131,10 @@ public class ClientSecurityAutoConfiguration {
 			return clientSecurityAutoConfigurationEnabled;
 		}
 
-		private boolean isSecurityPropertiesSet(Environment environment) {
-
-			boolean securityPropertiesSet = environment.containsProperty(SECURITY_USERNAME_PROPERTY)
-				&& environment.containsProperty(SECURITY_PASSWORD_PROPERTY);
-
-			logger.debug("Security Properties set {}", securityPropertiesSet);
-
-			return securityPropertiesSet;
-		}
-
-		private boolean isSecurityPropertiesNotSet(Environment environment) {
-			return !isSecurityPropertiesSet(environment);
-		}
-
 		private void configureAuthentication(Environment environment, Properties cloudCacheProperties,
 				VcapPropertySource vcapPropertySource, CloudCacheService cloudCacheService) {
 
 			vcapPropertySource.findFirstUserByRoleClusterOperator(cloudCacheService)
-				.filter(user -> isSecurityPropertiesNotSet(environment))
 				.ifPresent(user -> {
 
 					cloudCacheProperties.setProperty(SECURITY_USERNAME_PROPERTY, user.getName());
@@ -192,8 +178,7 @@ public class ClientSecurityAutoConfiguration {
 		}
 
 		private PropertySource<?> newPropertySource(String name, Properties properties) {
-			//return new PropertiesPropertySource(name, properties);
-			return new SpringDataGemFirePropertiesPropertySource(name, properties);
+			return new PropertiesPropertySource(name, properties);
 		}
 
 		private VcapPropertySource toVcapPropertySource(Environment environment) {
@@ -224,30 +209,4 @@ public class ClientSecurityAutoConfiguration {
 
 	}
 
-	// This custom PropertySource is required to prevent Pivotal Spring Cloud Services
-	// (spring-cloud-services-starter-service-registry) from losing the GemFire/PCC Security Context credentials
-	// stored in the Environment.
-	static class SpringDataGemFirePropertiesPropertySource extends PropertySource<Properties> {
-
-		private static final String SPRING_DATA_GEMFIRE_PROPERTIES_PROPERTY_SOURCE_NAME =
-			"spring.data.gemfire.properties";
-
-		SpringDataGemFirePropertiesPropertySource(Properties springDataGemFireProperties) {
-			this(SPRING_DATA_GEMFIRE_PROPERTIES_PROPERTY_SOURCE_NAME, springDataGemFireProperties);
-		}
-
-		SpringDataGemFirePropertiesPropertySource(String name, Properties springDataGemFireProperties) {
-			super(name, springDataGemFireProperties);
-		}
-
-		@Nullable @Override @SuppressWarnings("all")
-		public Object getProperty(String name) {
-			return getSource().getProperty(name);
-		}
-
-		@Override @SuppressWarnings("all")
-		public boolean containsProperty(String name) {
-			return getSource().containsKey(name);
-		}
-	}
 }
