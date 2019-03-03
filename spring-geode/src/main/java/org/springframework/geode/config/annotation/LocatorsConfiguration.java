@@ -122,7 +122,7 @@ public class LocatorsConfiguration extends AbstractAnnotationConfigSupport imple
 
 			getLocators().ifPresent(locators -> {
 				if (logger.isWarnEnabled()) {
-					logger.warn("The '%s' property was configured [%s];"
+					logger.warn("The '{}' property was configured [{}];"
 						+ " however, this value does not have any effect for ClientCache instances",
 							LOCATORS_PROPERTY, locators);
 				}
@@ -130,7 +130,7 @@ public class LocatorsConfiguration extends AbstractAnnotationConfigSupport imple
 
 			getRemoteLocators().ifPresent(remoteLocators -> {
 				if (logger.isWarnEnabled()) {
-					logger.warn("The '%s' property was configured [%s];"
+					logger.warn("The '{}' property was configured [{}];"
 						+ " however, this value does not have any effect for ClientCache instances",
 							REMOTE_LOCATORS_PROPERTY, remoteLocators);
 				}
