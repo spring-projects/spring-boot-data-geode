@@ -11,6 +11,7 @@ org.springframework.geode.boot.autoconfigure.PdxSerializationAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.PeerSecurityAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.RepositoriesAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.SpringSessionAutoConfiguration,\
+org.springframework.geode.boot.autoconfigure.SpringSessionPropertiesAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.SslAutoConfiguration
 
 # Environment Post Processing
