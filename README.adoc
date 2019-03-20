@@ -2,33 +2,33 @@ image:https://api.travis-ci.org/spring-projects/spring-boot-data-geode.svg?branc
 
 = Spring Boot for Apache Geode & Pivotal GemFire
 
-_Spring Boot for Apache Geode & Pivotal GemFire_ extends http://projects.spring.io/spring-boot/[_Spring Boot_] with
+_Spring Boot for Apache Geode & Pivotal GemFire_ extends https://projects.spring.io/spring-boot/[_Spring Boot_] with
 _auto-configuration_ support as well as other _convention or configuration_ features to simplify the development
-of _Spring_ applications using either http://geode.apache.org/[Apache Geode] or https://pivotal.io/pivotal-gemfire[Pivotal GemFire]
+of _Spring_ applications using either https://geode.apache.org/[Apache Geode] or https://pivotal.io/pivotal-gemfire[Pivotal GemFire]
 in a _Spring_ context.
 
 This project builds on both https://github.com/spring-projects/spring-data-geode[_Spring Data for Apache Geode_]
-and http://projects.spring.io/spring-data-gemfire/[_Spring Data for Pivotal GemFire_]
+and https://projects.spring.io/spring-data-gemfire/[_Spring Data for Pivotal GemFire_]
 as well as https://spring.io/projects/spring-boot[Spring Boot].
 
 === Project Goals
 
-This project adds _Spring Boot_ **auto-configuration** support for both http://geode.apache.org/[Apache Geode]
+This project adds _Spring Boot_ **auto-configuration** support for both https://geode.apache.org/[Apache Geode]
 and https://pivotal.io/pivotal-gemfire[Pivotal GemFire].
 
-Among other things, this project builds on http://projects.spring.io/spring-boot/[_Spring Boot_]
-as well as http://projects.spring.io/spring-data-gemfire/[_Spring Data for Apache Geode & Pivotal GemFire_]
+Among other things, this project builds on https://projects.spring.io/spring-boot/[_Spring Boot_]
+as well as https://projects.spring.io/spring-data-gemfire/[_Spring Data for Apache Geode & Pivotal GemFire_]
 and additionally offers...
 
-1. _Auto-configures_ an _Apache Geode_ or _Pivotal GemFire_ http://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
+1. _Auto-configures_ an _Apache Geode_ or _Pivotal GemFire_ https://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
 instance automatically when either _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_
 are on the application's CLASSPATH.
 
-2. _Auto-configures_ either _Apache Geode_ or _Pivotal GemFire_ as a _caching provider_ in http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
+2. _Auto-configures_ either _Apache Geode_ or _Pivotal GemFire_ as a _caching provider_ in https://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
 when either _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_ are on the application's CLASSPATH.
 
 3. _Auto-configures_ _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_
-http://docs.spring.io/spring-data-gemfire/docs/current/reference/html/#gemfire-repositories[Repositories]
+https://docs.spring.io/spring-data-gemfire/docs/current/reference/html/#gemfire-repositories[Repositories]
 when _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_ are on the application's CLASSPATH
 and _Spring Boot_ detects SDG _Repositories_ in your _Spring Boot_ application.
 
@@ -59,7 +59,7 @@ in the Contacts Application Reference Implementation for _Spring Data for Apache
 == Spring Boot Project Site
 
 You can find the documentation, issue management, support, samples, and guides for using _Spring Boot_
-at http://projects.spring.io/spring-boot/
+at https://projects.spring.io/spring-boot/
 
 == Code of Conduct
 

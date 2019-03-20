@@ -434,7 +434,7 @@ public class VcapPropertySourceUnitTests {
 	@Test
 	public void findFirstCloudCacheServiceReturnsCloudCacheService() throws Exception {
 
-		URL gfshUrl = new URL("http://skullbox:7070/v1/gemfire");
+		URL gfshUrl = new URL("https://skullbox:7070/v1/gemfire");
 
 		Properties vcap = new Properties();
 
