@@ -10,13 +10,13 @@ John Blum
 :icons: font
 :hide-uri-scheme:
 :apache-geode-version: 16
-:apache-geode-docs: http://geode.apache.org/docs/guide/{apache-geode-version}
-:apache-geode-javadoc: http://geode.apache.org/releases/latest/javadoc
+:apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
+:apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :pivotal-cloudcache-version: 1-3
-:pivotal-cloudcache-docs: http://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}/developer.html
+:pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}/developer.html
 :pivotal-gemfire-version: 95
-:pivotal-gemfire-docs: http://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference/topics/gemfire_properties.html
-:pivotal-gemfire-javadoc: http://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
+:pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference/topics/gemfire_properties.html
+:pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference
 :spring-boot-docs-html: {spring-boot-docs}/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api

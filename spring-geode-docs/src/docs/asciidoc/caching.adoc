@@ -20,7 +20,7 @@ in Spring Boot's Reference Guide. Spring Boot even provides _auto-configuration_
 simple {spring-boot-docs-html}/#_supported_cache_providers[caching providers] out-of-the-box.
 
 However, if you need the proven power of an enterprise-class caching solution, with strong consistency,
-high availability and multi-site (WAN) capabilities, then you should consider http://geode.apache.org/[Apache Geode]
+high availability and multi-site (WAN) capabilities, then you should consider https://geode.apache.org/[Apache Geode]
 or https://pivotal.io/pivotal-gemfire[Pivotal GemFire].  Additionally, https://pivotal.io/[Pivotal Software, Inc.]
 offers Pivotal GemFire as a service, known as https://pivotal.io/platform/services-marketplace/data-management/pivotal-cloud-cache[Pivotal Cloud Cache (PCC)],
 when deploying and running your Spring Boot applications in https://pivotal.io/platform[Pivotal Cloud Foundry (PCF)].

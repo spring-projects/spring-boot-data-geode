@@ -24,7 +24,7 @@ short work of enabling auth in both your clients and servers.
 ==== Auth for Servers
 
 The easiest and most standard way to enable auth on your servers is to simply define 1 or more Apache Shiro
-http://shiro.apache.org/realm.html[Realms] as beans in the Spring `ApplicationContext`.
+https://shiro.apache.org/realm.html[Realms] as beans in the Spring `ApplicationContext`.
 
 For example:
 
