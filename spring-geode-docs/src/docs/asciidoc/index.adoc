@@ -20,6 +20,7 @@ John Blum
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference
 :spring-boot-docs-html: {spring-boot-docs}/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
+:spring-boot-data-geode-javadoc: https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.BUILD-SNAPSHOT/api/
 :spring-data-commons-docs: https://docs.spring.io/spring-data/commons/docs/current/reference
 :spring-data-commons-docs-html: {spring-data-commons-docs}/html
 :spring-data-commons-javadoc: https://docs.spring.io/spring-data/commons/docs/current/api
@@ -206,6 +207,7 @@ repositories {
 endif::[]
 
 include::clientcache-applications.adoc[]
+include::configuration.adoc[]
 include::caching.adoc[]
 include::repositories.adoc[]
 include::functions.adoc[]
