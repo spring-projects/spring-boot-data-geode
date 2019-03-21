@@ -45,8 +45,8 @@ import org.springframework.geode.boot.autoconfigure.configuration.GemFirePropert
  */
 @Configuration
 @ConditionalOnBean(GemFireCache.class)
-@ConditionalOnClass({ CacheFactoryBean.class, GemFireCache.class })
-@EnableConfigurationProperties(GemFireProperties.class)
+@ConditionalOnClass({ GemFireCache.class, CacheFactoryBean.class })
+@EnableConfigurationProperties({ GemFireProperties.class })
 @SuppressWarnings("unused")
 public class GemFirePropertiesAutoConfiguration {
 

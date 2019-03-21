@@ -43,7 +43,7 @@ public class SecurityProperties {
 		new SecurityPostProcessorProperties();
 
 	@NestedConfigurationProperty
-	private final SslProperties sslProperties = new SslProperties();
+	private final SslProperties ssl = new SslProperties();
 
 	private String password;
 	private String propertiesFile;
@@ -90,7 +90,7 @@ public class SecurityProperties {
 	}
 
 	public SslProperties getSsl() {
-		return this.sslProperties;
+		return this.ssl;
 	}
 
 	public String getUsername() {

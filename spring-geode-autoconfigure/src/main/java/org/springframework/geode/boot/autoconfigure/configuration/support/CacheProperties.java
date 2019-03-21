@@ -16,13 +16,22 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
+import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.control.ResourceManager;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * The CacheProperties class...
+ * Spring Boot {@link ConfigurationProperties} that apply to an Apache Geode / Pivotal GemFire peer {@link Cache}
+ * and correspond to Spring Data for Apache Geode/Pivotal GemFire's well-known, documented {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.apache.geode.cache.Cache
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
+ * @see org.springframework.boot.context.properties.NestedConfigurationProperty
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

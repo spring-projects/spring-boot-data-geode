@@ -16,6 +16,8 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration;
 
+import java.util.Properties;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.geode.boot.autoconfigure.configuration.support.CacheProperties;
@@ -32,9 +34,16 @@ import org.springframework.geode.boot.autoconfigure.configuration.support.Securi
 import org.springframework.geode.boot.autoconfigure.configuration.support.ServiceProperties;
 
 /**
- * The GemFireProperties class...
+ * Spring Boot {@link ConfigurationProperties} for well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
+ *
+ * This class assists the application developer in the auto-completion / content-assist of the well-known, documented
+ * SDG {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
+ * @see org.springframework.boot.context.properties.NestedConfigurationProperty
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

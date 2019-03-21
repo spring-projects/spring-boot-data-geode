@@ -16,6 +16,7 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.data.gemfire.config.annotation.EnableSsl;
 
 /**
@@ -35,10 +36,14 @@ public class SslProperties {
 
 	private EnableSsl.Component[] components;
 
-	private final KeyStoreProperties keystoreProperties = new KeyStoreProperties();
-	private final KeyStoreProperties truststoreProperties = new KeyStoreProperties();
+	@NestedConfigurationProperty
+	private final KeyStoreProperties keystoreConfig = new KeyStoreProperties();
 
-	private final SslCertificateProperties sslCertificateProperties = new SslCertificateProperties();
+	@NestedConfigurationProperty
+	private final KeyStoreProperties truststoreConfig = new KeyStoreProperties();
+
+	@NestedConfigurationProperty
+	private final SslCertificateProperties certificate = new SslCertificateProperties();
 
 	private String keystore;
 	private String truststore;
@@ -48,7 +53,7 @@ public class SslProperties {
 	private String[] protocols;
 
 	public SslCertificateProperties getCertificate() {
-		return this.sslCertificateProperties;
+		return this.certificate;
 	}
 
 	public String[] getCiphers() {
@@ -75,6 +80,10 @@ public class SslProperties {
 		this.keystore = keystore;
 	}
 
+	public KeyStoreProperties getKeystoreConfig() {
+		return this.keystoreConfig;
+	}
+
 	public String[] getProtocols() {
 		return this.protocols;
 	}
@@ -97,6 +106,10 @@ public class SslProperties {
 
 	public void setTruststore(String truststore) {
 		this.truststore = truststore;
+	}
+
+	public KeyStoreProperties getTruststoreConfig() {
+		return this.truststoreConfig;
 	}
 
 	public boolean isWebRequireAuthentication() {
@@ -131,38 +144,39 @@ public class SslProperties {
 
 	public static class SslCertificateProperties {
 
-		private SslCertificateAliasProperties sslCertificateAliasProperties = new SslCertificateAliasProperties();
+		@NestedConfigurationProperty
+		private SslCertificateAliasProperties alias = new SslCertificateAliasProperties();
 
 		public SslCertificateAliasProperties getAlias() {
-			return this.sslCertificateAliasProperties;
+			return this.alias;
 		}
 	}
 
 	public static class SslCertificateAliasProperties {
 
-		private String allAlias;
-		private String clusterAlias;
+		private String all;
+		private String cluster;
 		private String defaultAlias;
-		private String gatewayAlias;
-		private String jmxAlias;
-		private String locatorAlias;
-		private String serverAlias;
-		private String webAlias;
+		private String gateway;
+		private String jmx;
+		private String locator;
+		private String server;
+		private String web;
 
-		public String getAllAlias() {
-			return this.allAlias;
+		public String getAll() {
+			return this.all;
 		}
 
-		public void setAllAlias(String allAlias) {
-			this.allAlias = allAlias;
+		public void setAll(String all) {
+			this.all = all;
 		}
 
-		public String getClusterAlias() {
-			return this.clusterAlias;
+		public String getCluster() {
+			return this.cluster;
 		}
 
-		public void setClusterAlias(String clusterAlias) {
-			this.clusterAlias = clusterAlias;
+		public void setCluster(String cluster) {
+			this.cluster = cluster;
 		}
 
 		public String getDefaultAlias() {
@@ -173,44 +187,44 @@ public class SslProperties {
 			this.defaultAlias = defaultAlias;
 		}
 
-		public String getGatewayAlias() {
-			return this.gatewayAlias;
+		public String getGateway() {
+			return this.gateway;
 		}
 
-		public void setGatewayAlias(String gatewayAlias) {
-			this.gatewayAlias = gatewayAlias;
+		public void setGateway(String gateway) {
+			this.gateway = gateway;
 		}
 
-		public String getJmxAlias() {
-			return this.jmxAlias;
+		public String getJmx() {
+			return this.jmx;
 		}
 
-		public void setJmxAlias(String jmxAlias) {
-			this.jmxAlias = jmxAlias;
+		public void setJmx(String jmx) {
+			this.jmx = jmx;
 		}
 
-		public String getLocatorAlias() {
-			return this.locatorAlias;
+		public String getLocator() {
+			return this.locator;
 		}
 
-		public void setLocatorAlias(String locatorAlias) {
-			this.locatorAlias = locatorAlias;
+		public void setLocator(String locator) {
+			this.locator = locator;
 		}
 
-		public String getServerAlias() {
-			return this.serverAlias;
+		public String getServer() {
+			return this.server;
 		}
 
-		public void setServerAlias(String serverAlias) {
-			this.serverAlias = serverAlias;
+		public void setServer(String server) {
+			this.server = server;
 		}
 
-		public String getWebAlias() {
-			return this.webAlias;
+		public String getWeb() {
+			return this.web;
 		}
 
-		public void setWebAlias(String webAlias) {
-			this.webAlias = webAlias;
+		public void setWeb(String web) {
+			this.web = web;
 		}
 	}
 }
