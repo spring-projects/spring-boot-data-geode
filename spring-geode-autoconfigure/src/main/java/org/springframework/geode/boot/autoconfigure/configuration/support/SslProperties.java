@@ -16,13 +16,26 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
+import org.apache.geode.cache.Cache;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.data.gemfire.config.annotation.EnableSsl;
 
 /**
- * The SslProperties class...
+ * Spring Boot {@link ConfigurationProperties} used to configure Apache Geode / Pivotal GemFire Socket layer SSL.
+ *
+ * The SSL configuration is used to secure communications and data in motion between clients and servers
+ * as well as between peers in a cluster.
+ *
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.apache.geode.cache.Cache
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

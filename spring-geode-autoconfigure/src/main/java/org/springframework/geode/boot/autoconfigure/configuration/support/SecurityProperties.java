@@ -16,12 +16,23 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * The SecurityProperties class...
+ * Spring Boot {@link ConfigurationProperties} used to configure Apache Geode / Pivotal GemFire Security.
+ *
+ * Security configuration covers Authentication & Authorization (AUTH) as well as Secure Transport using SSL
+ * (i.e. securing data in motion).  Securing data at rest (e.g. disk based encryption) is not yet supported.
+ *
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

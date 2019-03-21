@@ -16,10 +16,20 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
- * The ManagementProperties class...
+ * Spring Boot {@link ConfigurationProperties} used to configure Apache Geode / Pivotal GemFire management services,
+ * such as HTTP.
+ *
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

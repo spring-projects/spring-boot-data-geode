@@ -16,10 +16,23 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
- * The ManagerProperties class...
+ * Spring Boot {@link ConfigurationProperties} used to configure an embedded Apache Geode / Pivotal GemFire
+ * {@literal Manager}.
+ *
+ * A {@literal Manager} allows users to manage a cluster with tools like {@literal Gfsh} or {@literal Pulse}.
+ *
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.apache.geode.distributed.Locator
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

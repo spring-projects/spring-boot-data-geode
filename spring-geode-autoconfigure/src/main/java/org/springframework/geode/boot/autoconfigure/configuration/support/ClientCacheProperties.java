@@ -16,10 +16,21 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
+import org.apache.geode.cache.client.ClientCache;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
- * The ClientCacheProperties class...
+ * Spring Boot {@link ConfigurationProperties} used to configure an Apache Geode / Pivotal GemFire {@link ClientCache}.
+ *
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

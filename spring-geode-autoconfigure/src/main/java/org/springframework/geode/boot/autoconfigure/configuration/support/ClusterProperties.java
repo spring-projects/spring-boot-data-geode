@@ -16,12 +16,24 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
+import org.apache.geode.cache.DataPolicy;
+import org.apache.geode.cache.Region;
 import org.apache.geode.cache.RegionShortcut;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * The ClusterProperties class...
+ * Spring Boot {@link ConfigurationProperties} used to configure the {@link DataPolicy} of all {@link Region Regions}
+ * in an Apache Geode / Pivotal GemFire cluster.
+ *
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.apache.geode.cache.Region
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

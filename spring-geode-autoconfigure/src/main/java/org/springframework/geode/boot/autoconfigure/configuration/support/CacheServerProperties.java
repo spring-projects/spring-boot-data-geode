@@ -16,14 +16,23 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
 import org.apache.geode.cache.server.CacheServer;
 import org.apache.geode.cache.server.ClientSubscriptionConfig;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.gemfire.server.SubscriptionEvictionPolicy;
 
 /**
- * The CacheServerProperties class...
+ * Spring Boot {@link ConfigurationProperties} used to configure an Apache Geode / Pivotal GemFire {@link CacheServer}.
+ *
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.apache.geode.cache.server.CacheServer
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

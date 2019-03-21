@@ -16,10 +16,23 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
+import org.apache.geode.cache.Region;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
- * The EntityProperties class...
+ * Spring Boot {@link ConfigurationProperties} used to configure the application base {@link Package package}
+ * containing the application entity classes.  The entity classes are then used to create and configure
+ * Apache Geode / Pivotal GemFire {@link Region Regions}.
+ *
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.apache.geode.cache.Region
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

@@ -16,10 +16,27 @@
 
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
+import java.util.Properties;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
- * The PdxProperties class...
+ * Spring Boot {@link ConfigurationProperties} used to configure Apache Geode / Pivotal GemFire
+ * {@literal PDX} serialization.
+ *
+ * PDX serialization is an alternative serialization format to Java Serialization provided by
+ * Apache Geode / Pivotal GemFire.  PDX enables interoperability with native language clients (e.g. C++),
+ * enables objects stored in GemFire/Geode to be queried without causing deserialization and is a more efficient
+ * format than Java Serialization.  While PDX is more robust in some ways, it is less robust in others.  For example,
+ * PDX does not handle cyclic references in the object graph.
+ *
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * (SDG) {@link Properties}.
  *
  * @author John Blum
+ * @see java.util.Properties
+ * @see org.apache.geode.distributed.Locator
+ * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")
