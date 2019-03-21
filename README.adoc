@@ -69,4 +69,4 @@ By participating, you  are expected to uphold this code. Please report unaccepta
 == License
 
 _Spring Boot_, _Spring Boot for Apache Geode_ and _Spring Boot for Pivotal GemFire_ is Open Source Software
-released under the http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
+released under the https://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
