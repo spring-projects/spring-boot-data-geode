@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.PdxSerializationAutoConfiguration;
@@ -50,6 +51,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.geode.boot.autoconfigure.configuration.SpringSessionProperties
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
@@ -57,7 +59,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("session-config-test")
 @SuppressWarnings("unused")
-public class SpringSessionPropertiesIntegrationTests {
+public class SpringSessionPropertiesIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private ClientCache clientCache;

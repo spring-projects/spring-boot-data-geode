@@ -27,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.config.annotation.EnableMemcachedServer;
 import org.springframework.data.gemfire.config.annotation.EnableSsl;
 import org.springframework.data.gemfire.server.SubscriptionEvictionPolicy;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.configuration.support.CacheProperties;
@@ -58,6 +59,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.GemFirePropertiesAutoConfiguration
  * @see org.springframework.geode.boot.autoconfigure.configuration.GemFireProperties
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -67,7 +69,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("gemfire-config-test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class GemFirePropertiesIntegrationTests {
+public class GemFirePropertiesIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private GemFireProperties gemfireProperties;
