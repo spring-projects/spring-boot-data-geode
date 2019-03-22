@@ -1,0 +1,1083 @@
+{
+  "groups": [
+    {
+      "name": "cache",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.CacheProperties",
+      "description": "General configuration properties for a GemFireCache."
+    },
+    {
+      "name": "cache-server",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.CacheServerProperties",
+      "description": "Configuration properties for a CacheServer."
+    },
+    {
+      "name": "client-cache",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.ClientCacheProperties",
+      "description": "Configuration properties for a ClientCache."
+    },
+    {
+      "name": "client-security",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.ClientSecurityProperties",
+      "description": "Configuration properties for client security."
+    },
+    {
+      "name": "cluster",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.ClusterProperties",
+      "description": "Configuration properties for the entire cluster."
+    },
+    {
+      "name": "disk-store",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.DiskStoreProperties",
+      "description": "Configuration properties for all DiskStores."
+    },
+    {
+      "name": "entity",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.EntityProperties",
+      "description": "Configuration properties for persistent entities."
+    },
+    {
+      "name": "locator",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.LocatorProperties",
+      "description": "Configuration properties for a Locator."
+    },
+    {
+      "name": "logging",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.LoggingProperties",
+      "description": "Configuration properties for logging."
+    },
+    {
+      "name": "management",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.ManagementProperties",
+      "description": "Configuration properties for management."
+    },
+    {
+      "name": "manager",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.ManagerProperties",
+      "description": "Configuration properties for a Manager."
+    },
+    {
+      "name": "pdx",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.PdxProperties",
+      "description": "Configuration properties for PDX serialization."
+    },
+    {
+      "name": "peer-cache",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.PeerCacheProperties",
+      "description": "Configuration properties for a (peer) Cache."
+    },
+    {
+      "name": "peer-security",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.PeerSecurityProperties",
+      "description": "Configuration properties for peer (cluster member) security."
+    },
+    {
+      "name": "pool",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.PoolProperties",
+      "description": "Configuration properties for all Pools."
+    },
+    {
+      "name": "security",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.PoolProperties",
+      "description": "General configuration properties for security."
+    },
+    {
+      "name": "service",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.ServiceProperties",
+      "description": "Configuration properties for GemFire/Geode embedded services."
+    },
+    {
+      "name": "ssl",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.SslProperties",
+      "description": "Configuration properties for SSL."
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.data.gemfire.name",
+      "type": "java.lang.String",
+      "description": "Name of the Apache Geode / Pivotal GemFire member."
+    },
+    {
+      "name": "spring.data.gemfire.locators",
+      "type": "java.lang.String",
+      "description": "Comma-delimited list of Locator endpoints formatted as: locator1[port1],...,locatorN[portN]"
+    },
+    {
+      "name": "spring.data.gemfire.use-bean-factory-locator",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Enable the SDG BeanFactoryLocator when mixing Spring config with GemFire/Geode native config (e.g. cache.xml) and you wish to configure GemFire objects declared in cache.xml with Spring."
+    },
+    {
+      "name": "spring.data.gemfire.cache.copy-on-read",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configure whether a copy of an object returned from Region.get(key) is made."
+    },
+    {
+      "name": "spring.data.gemfire.cache.critical-heap-percentage",
+      "type": "java.lang.Float",
+      "description": "Percentage of heap at or above which the cache is considered in danger of becoming inoperable."
+    },
+    {
+      "name": "spring.data.gemfire.cache.critical-off-heap-percentage",
+      "type": "java.lang.Float",
+      "description": "Percentage of off-heap at or above which the cache is considered in danger of becoming inoperable."
+    },
+    {
+      "name": "spring.data.gemfire.cache.enable-auto-region-lookup",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configure whether to lookup Regions configured in GemFire/Geode native config and declare them as Spring beans."
+    },
+    {
+      "name": "spring.data.gemfire.cache.eviction-heap-percentage",
+      "type": "java.lang.Float",
+      "description": "Percentage of heap at or above which the eviction should begin on Regions configured for HeapLRU eviction."
+    },
+    {
+      "name": "spring.data.gemfire.cache.eviction-off-heap-percentage",
+      "type": "java.lang.Float",
+      "description": "Percentage of off-heap at or above which the eviction should begin on Regions configured for HeapLRU eviction."
+    },
+    {
+      "name": "spring.data.gemfire.cache.log-level",
+      "type": "java.lang.String",
+      "default": "config",
+      "description": "Configure the log-level of an Apache Geode / Pivotal GemFire cache."
+    },
+    {
+      "name": "spring.data.gemfire.cache.name",
+      "type": "java.lang.String",
+      "description": "Alias for 'spring.data.gemfire.name'."
+    },
+    {
+      "name": "spring.data.gemfire.cache.client.durable-client-id",
+      "type": "java.lang.String",
+      "description": "Used only for clients in a client/server installation. If set, this indicates that the client is durable and identifies the client. The ID is used by servers to reestablish any messaging that was interrupted by client downtime."
+    },
+    {
+      "name": "spring.data.gemfire.cache.client.durable-client-timeout",
+      "type": "java.lang.Integer",
+      "default": 300,
+      "description": "Used only for clients in a client/server installation. Number of seconds this client can remain disconnected from its server and have the server continue to accumulate durable events for it."
+    },
+    {
+      "name": "spring.data.gemfire.cache.client.keep-alive",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configure whether the server should keep the durable client's queues alive for the timeout period."
+    },
+    {
+      "name": "spring.data.gemfire.cache.compression.bean-name",
+      "type": "java.lang.String",
+      "description": "Name of a Spring bean implementing org.apache.geode.compression.Compressor."
+    },
+    {
+      "name": "spring.data.gemfire.cache.compression.region-names",
+      "type": "java.lang.String",
+      "description": "Comma-delimited list of Region names for which compression will be configured."
+    },
+    {
+      "name": "spring.data.gemfire.cache.off-heap.memory-size",
+      "type": "java.lang.String",
+      "description": "Determines the size of off-heap memory used by GemFire/Geode in megabytes (m) or gigabytes (g); for example 120g."
+    },
+    {
+      "name": "spring.data.gemfire.cache.off-heap.region-names",
+      "type": "java.lang.String",
+      "description": "Comma-delimited list of Region names for which off-heap will be configured."
+    },
+    {
+      "name": "spring.data.gemfire.cache.peer.enable-auto-reconnect",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configure whether member (Locators & Servers) will attempt to reconnect and reinitialize the cache after it has been forced out of the cluster by a network partition event or has otherwise been shunned by other members."
+    },
+    {
+      "name": "spring.data.gemfire.cache.peer.lock-lease",
+      "type": "java.lang.Integer",
+      "default": 120,
+      "description": "Configures the length, in seconds, of distributed lock leases obtained by this cache."
+    },
+    {
+      "name": "spring.data.gemfire.cache.peer.lock-timeout",
+      "type": "java.lang.Integer",
+      "default": 60,
+      "description": "Configures the number of seconds a cache operation will wait to obtain a distributed lock lease."
+    },
+    {
+      "name": "spring.data.gemfire.cache.peer.message-sync-interval",
+      "type": "java.lang.Integer",
+      "default": 1,
+      "description": "Configures the frequency (in seconds) at which a message will be sent by the primary cache-server to all the secondary cache-server nodes to remove the events which have already been dispatched from the queue."
+    },
+    {
+      "name": "spring.data.gemfire.cache.peer.search-timeout",
+      "type": "java.lang.Integer",
+      "default": 300,
+      "description": "Configures the number of seconds a cache get operation can spend searching for a value."
+    },
+    {
+      "name": "spring.data.gemfire.cache.peer.use-cluster-configuration",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether this GemFire cache member node would pull it's configuration meta-data from the cluster-based Cluster Configuration Service."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.auto-startup",
+      "type": "java.lang.Boolean",
+      "default": true,
+      "description": "Configures whether the CacheServer should be started automatically at runtime."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.bind-address",
+      "type": "java.lang.String",
+      "description": "Configures the IP address or hostname that this cache server will listen on."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.hostname-for-clients",
+      "type": "java.lang.String",
+      "description": "Configures the IP address or hostname that server locators will tell clients that this cache server is listening on."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.load-poll-interval",
+      "type": "java.lang.Long",
+      "default": 5000,
+      "description": "Configures the frequency in milliseconds to poll the load probe on this cache server."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.max-connections",
+      "type": "java.lang.Integer",
+      "default": 800,
+      "description": "Configures the maximum client connections allowed."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.max-message-count",
+      "type": "java.lang.Integer",
+      "default": 230000,
+      "description": "Configures the maximum number of messages that can be enqueued in a client queue."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.max-threads",
+      "type": "java.lang.Integer",
+      "description": "Configures the maximum number of threads allowed in this cache server to service client requests."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.max-time-between-pings",
+      "type": "java.lang.Integer",
+      "default": 60000,
+      "description": "Configures the maximum amount of time between client pings."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.message-time-to-live",
+      "type": "java.lang.Integer",
+      "default": 180,
+      "description": "Configures the time (in seconds) after which a message in the client queue will expire."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.port",
+      "type": "java.lang.Integer",
+      "default": 40404,
+      "description": "Configures the port on which this cache server listens for clients."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.socket-buffer-size",
+      "type": "java.lang.Integer",
+      "default": 32768,
+      "description": "Configures buffer size of the socket connection to this CacheServer."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.subscription-capacity",
+      "type": "java.lang.Integer",
+      "default": 1,
+      "description": "Configures the capacity of the client queue."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.subscription-disk-store-name",
+      "type": "java.lang.String",
+      "description": "Configures the name of the DiskStore for client subscription queue overflow."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.subscription-eviction-policy",
+      "type": "org.springframework.data.gemfire.server.SubscriptionEvictionPolicy",
+      "default": "NONE",
+      "description": "Configures the eviction policy that is executed when capacity of the client subscription queue is reached."
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.tcp-no-delay",
+      "type": "java.lang.Boolean",
+      "default": true,
+      "description": "Configures the outgoing Socket connection tcp-no-delay setting."
+    },
+    {
+      "name": "spring.data.gemfire.cluster.region.type",
+      "type": "org.apache.geode.cache.RegionShortcut",
+      "default": "PARTITION",
+      "description": "Configuration setting used to specify the data management policy used when creating Regions on the servers in the cluster."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.allow-force-compaction",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether to allow DiskStore.forceCompaction() to be called on Regions using a DiskStore."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.auto-compact",
+      "type": "java.lang.Boolean",
+      "default": true,
+      "description": "Configures whether to cause the disk files to be automatically compacted."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.compaction-threshold",
+      "type": "java.lang.Integer",
+      "default": 50,
+      "description": "Configures the threshold at which an oplog will become compactable."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.directory.location",
+      "type": "java.lang.String",
+      "description": "Configures the system directory where the GemFire/Geode DiskStore (oplog) files will be stored."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.directory.size",
+      "type": "java.lang.Integer",
+      "default": 21474883647,
+      "description": "Configures the amount of disk space allowed to store DiskStore (oplog) files."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.disk-usage-critical-percentage",
+      "type": "java.lang.Float",
+      "default": 99.0,
+      "description": "Configures the critical threshold for disk usage as a percentage of the total disk volume."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.disk-usage-warning-percentage",
+      "type": "java.lang.Float",
+      "default": 90.0,
+      "description": "Configures the warning threshold for disk usage as a percentage of the total disk volume."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.max-oplog-size",
+      "type": "java.lang.Long",
+      "default": 1024,
+      "description": "Configures the maximum size in megabytes a single oplog (operation log) is allowed to be."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.queue-size",
+      "type": "java.lang.Integer",
+      "description": "Configures the maximum number of operations that can be asynchronously queued."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.time-interval",
+      "type": "java.lang.Integer",
+      "default": 1000,
+      "description": "Configures the number of milliseconds that can elapse before data written asynchronously is flushed to disk."
+    },
+    {
+      "name": "spring.data.gemfire.disk.store.write-buffer-size",
+      "type": "java.lang.Integer",
+      "default": 32768,
+      "description": "Configures the write buffer size in bytes."
+    },
+    {
+      "name": "spring.data.gemfire.entities.base-packages",
+      "type": "java.lang.String",
+      "description": "Comma-delimited list of package names indicating the start points for the entity scan."
+    },
+    {
+      "name": "spring.data.gemfire.locator.host",
+      "type": "java.lang.String",
+      "description": "Configures the IP address or hostname of the system NIC to which the embedded Locator will be bound to listen for connections."
+    },
+    {
+      "name": "spring.data.gemfire.locator.port",
+      "type": "java.lang.Integer",
+      "default": 10334,
+      "description": "Configures the network port to which the embedded Locator will listen for connections."
+    },
+    {
+      "name": "spring.data.gemfire.logging.level",
+      "type": "java.lang.String",
+      "default": "config",
+      "description": "Configures the log-level of an Apache Geode / Pivotal GemFire cache; Alias for 'spring.data.gemfire.cache.log-level'."
+    },
+    {
+      "name": "spring.data.gemfire.logging.log-disk-space-limit",
+      "type": "java.lang.Integer",
+      "description": "Configures the amount of disk space allowed to store log files."
+    },
+    {
+      "name": "spring.data.gemfire.logging.log-file",
+      "type": "java.lang.String",
+      "description": "Configures the pathname of the log file used to log messages."
+    },
+    {
+      "name": "spring.data.gemfire.logging.log-file-size",
+      "type": "java.lang.Integer",
+      "description": "Configures the maximum size of a log file before the log file is rolled."
+    },
+    {
+      "name": "spring.data.gemfire.management.use-http",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether to use the HTTP protocol to communicate with a GemFire/Geode Manager."
+    },
+    {
+      "name": "spring.data.gemfire.management.http.host",
+      "type": "java.lang.String",
+      "description": "Configures the IP address or hostname of the GemFire/Geode Manager running the HTTP service."
+    },
+    {
+      "name": "spring.data.gemfire.management.http.port",
+      "type": "java.lang.Integer",
+      "default": 7070,
+      "description": "Configures the port used by the GemFire/Geode Manager's HTTP service to listen for connections."
+    },
+    {
+      "name": "spring.data.gemfire.manager.access-file",
+      "type": "java.lang.String",
+      "default": 7070,
+      "description": "Configures the Access Control List (ACL) file used by the Manager to restrict access to the JMX MBeans by the clients."
+    },
+    {
+      "name": "spring.data.gemfire.manager.bind-address",
+      "type": "java.lang.String",
+      "description": "Configures the IP address or hostname of the system NIC used by the Manager to bind and listen for JMX client connections."
+    },
+    {
+      "name": "spring.data.gemfire.manager.hostname-for-clients",
+      "type": "java.lang.String",
+      "description": "Configures the hostname given to JMX clients to ask the Locator for the location of the Manager."
+    },
+    {
+      "name": "spring.data.gemfire.manager.password-file",
+      "type": "java.lang.String",
+      "description": "By default, the JMX Manager will allow clients without credentials to connect. If this property is set to the name of a file then only clients that connect with credentials that match an entry in this file will be allowed."
+    },
+    {
+      "name": "spring.data.gemfire.manager.port",
+      "type": "java.lang.Integer",
+      "default": 1099,
+      "description": "Configures the port used by th Manager to listen for JMX client connections."
+    },
+    {
+      "name": "spring.data.gemfire.manager.start",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether to start the Manager service at runtime."
+    },
+    {
+      "name": "spring.data.gemfire.manager.update-rate",
+      "type": "java.lang.Integer",
+      "default": 2000,
+      "description": "Configures the rate, in milliseconds, at which this member will push updates to any JMX Managers."
+    },
+    {
+      "name": "spring.data.gemfire.pdx.disk-store-name",
+      "type": "java.lang.String",
+      "description": "Configures the name of the DiskStore used to store PDX type meta-data to disk when PDX is persistent."
+    },
+    {
+      "name": "spring.data.gemfire.pdx.ignore-unread-fields",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether PDX ignores fields that were unread during deserialization."
+    },
+    {
+      "name": "spring.data.gemfire.pdx.persistent",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether PDX persists type meta-data to disk."
+    },
+    {
+      "name": "spring.data.gemfire.pdx.read-serialized",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether a Region entry is returned as a PdxInstance or deserialized back into object form on read."
+    },
+    {
+      "name": "spring.data.gemfire.pdx.serialize-bean-name",
+      "type": "java.lang.String",
+      "description": "Configures the name of a custom Spring bean implementing org.apache.geode.pdx.PdxSerializer."
+    },
+    {
+      "name": "spring.data.gemfire.pool.free-connection-timeout",
+      "type": "java.lang.Integer",
+      "default": 10000,
+      "description": "Configures the timeout used to acquire a free connection from a Pool."
+    },
+    {
+      "name": "spring.data.gemfire.pool.idle-timeout",
+      "type": "java.lang.Long",
+      "default": 5000,
+      "description": "Configures the amount of time a connection can be idle before expiring (and closing) the connection."
+    },
+    {
+      "name": "spring.data.gemfire.pool.load-conditioning-interval",
+      "type": "java.lang.Integer",
+      "default": 300000,
+      "description": "Configures the interval for how frequently the pool will check to see if a connection to a given server should be moved to a different server to improve the load balance."
+    },
+    {
+      "name": "spring.data.gemfire.pool.locators",
+      "type": "java.lang.String",
+      "description": "Comma-delimited list of Locator endpoints in the format: locator1[port1],...,locatorN[portN]"
+    },
+    {
+      "name": "spring.data.gemfire.pool.max-connections",
+      "type": "java.lang.Integer",
+      "description": "Configures the maximum number of client to server connections that a Pool will create."
+    },
+    {
+      "name": "spring.data.gemfire.pool.min-connections",
+      "type": "java.lang.Integer",
+      "default": 1,
+      "description": "Configures the minimum number of client to server connections that a Pool will maintain."
+    },
+    {
+      "name": "spring.data.gemfire.pool.multi-user-authentication",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether the created Pool can be used by multiple authenticated users."
+    },
+    {
+      "name": "spring.data.gemfire.pool.ping-interval",
+      "type": "java.lang.Long",
+      "default": 10000,
+      "description": "Configures how often to ping servers to verify that they are still alive."
+    },
+    {
+      "name": "spring.data.gemfire.pool.pr-single-hop-enabled",
+      "type": "java.lang.Boolean",
+      "default": true,
+      "description": "Configures whether to perform single-hop data access operations between the client and servers. When true the client is aware of the location of partitions on servers hosting Regions with DataPolicy.PARTITION."
+    },
+    {
+      "name": "spring.data.gemfire.pool.read-timeout",
+      "type": "java.lang.Integer",
+      "default": 10000,
+      "description": "Configures the number of milliseconds to wait for a response from a server before timing out the operation and trying another server (if any are available)."
+    },
+    {
+      "name": "spring.data.gemfire.pool.ready-for-events",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether to signal the server that the client is prepared and ready to receive events."
+    },
+    {
+      "name": "spring.data.gemfire.pool.retry-attempts",
+      "type": "java.lang.Integer",
+      "description": "Configures the number of times to retry a request after timeout/exception."
+    },
+    {
+      "name": "spring.data.gemfire.pool.server-group",
+      "type": "java.lang.String",
+      "description": "Configures the group that all servers a Pool connects to must belong to."
+    },
+    {
+      "name": "spring.data.gemfire.pool.servers",
+      "type": "java.lang.String",
+      "description": "Comma-delimited list of CacheServer endpoints in the format: server1[port1],...,serverN[portN]"
+    },
+    {
+      "name": "spring.data.gemfire.pool.socket-buffer-size",
+      "type": "java.lang.Integer",
+      "default": 32768,
+      "description": "Configures the socket buffer size for each connection made in all Pools."
+    },
+    {
+      "name": "spring.data.gemfire.pool.statistic-interval",
+      "type": "java.lang.Integer",
+      "description": "Configures how often to send client statistics to the server."
+    },
+    {
+      "name": "spring.data.gemfire.pool.subscription-ack-interval",
+      "type": "java.lang.Integer",
+      "default": 100,
+      "description": "Configures the interval in milliseconds to wait before sending acknowledgements to the CacheServer for events received from the server subscriptions."
+    },
+    {
+      "name": "spring.data.gemfire.pool.subscription-enabled",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether the created Pool will have server-to-client subscriptions enabled."
+    },
+    {
+      "name": "spring.data.gemfire.pool.subscription-message-tracking-timeout",
+      "type": "java.lang.Integer",
+      "default": 900000,
+      "description": "Configures the messageTrackingTimeout attribute which is the time-to-live period, in milliseconds, for subscription events the client has received from the server."
+    },
+    {
+      "name": "spring.data.gemfire.pool.subscription-redundancy",
+      "type": "java.lang.Integer",
+      "description": "Configures the redundancy level for all Pools server-to-client subscriptions."
+    },
+    {
+      "name": "spring.data.gemfire.pool.thread-local-connections",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures the thread local connections policy for all Pools."
+    },
+    {
+      "name": "spring.data.gemfire.security.username",
+      "type": "java.lang.String",
+      "description": "Configures the name of the user used to authenticate with the servers."
+    },
+    {
+      "name": "spring.data.gemfire.security.password",
+      "type": "java.lang.String",
+      "description": "Configures the user password used to authenticate with the servers."
+    },
+    {
+      "name": "spring.data.gemfire.security.properties-file",
+      "type": "java.lang.String",
+      "description": "Configures the system pathname to a properties file containing security credentials."
+    },
+    {
+      "name": "spring.data.gemfire.security.client.accessor",
+      "type": "java.lang.String",
+      "description": "Static creation method returning an AccessControl object, which determines authorization of client-server cache operations.",
+      "deprecation": {
+        "reason": "Used by GemFire/Geode's old Auth framework, which has now been replaced by the GemFire/Geode SecurityManager interface.",
+        "replacement": "spring.data.gemfire.security.manager"
+      }
+    },
+    {
+      "name": "spring.data.gemfire.security.client.accessor-post-processor",
+      "type": "java.lang.String",
+      "description": "The callback that should be invoked in the post-operation phase, which is when the operation has completed on the server but before the result is sent to the client.",
+      "deprecation": {
+        "reason": "Used by GemFire/Geode's old Auth framework, which has now been replaced by the GemFire/Geode SecurityManager interface.",
+        "replacement": "spring.data.gemfire.security.manager"
+      }
+    },
+    {
+      "name": "spring.data.gemfire.security.client.authentication-initializer",
+      "type": "java.lang.String",
+      "description": "Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster."
+    },
+    {
+      "name": "spring.data.gemfire.security.client.authenticator",
+      "type": "java.lang.String",
+      "description": "Static creation method returning an Authenticator object used by a cluster member (Locator, Server) to verify the credentials of a connecting client.",
+      "deprecation": {
+        "reason": "Used by GemFire/Geode's old Auth framework, which has now been replaced by the GemFire/Geode SecurityManager interface.",
+        "replacement": "spring.data.gemfire.security.manager"
+      }
+    },
+    {
+      "name": "spring.data.gemfire.security.client.diffie-hellman-algorithm",
+      "type": "java.lang.String",
+      "description": "Used for authentication. For secure transmission of sensitive credentials like passwords, you can encrypt the credentials using the Diffie-Hellman key-exchange algorithm. Do this by setting the security-client-dhalgo system property on the clients to the name of a valid, symmetric key cipher supported by the JDK.",
+      "deprecation": {
+        "replacement": "spring.data.gemfire.security.ssl.ciphers"
+      }
+    },
+    {
+      "name": "spring.data.gemfire.security.log.file",
+      "type": "java.lang.String",
+      "description": "Configures the pathname to a log file used for security log messages."
+    },
+    {
+      "name": "spring.data.gemfire.security.log.level",
+      "type": "java.lang.String",
+      "description": "Configures the log-level for security log messages."
+    },
+    {
+      "name": "spring.data.gemfire.security.manager.class-name",
+      "type": "java.lang.String",
+      "description": "Configures name of a class implementing org.apache.geode.security.SecurityManager."
+    },
+    {
+      "name": "spring.data.gemfire.security.peer.authentication-initializer",
+      "type": "java.lang.String",
+      "description": "Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster.",
+      "deprecation": {
+        "reason": "Used by GemFire/Geode's old Auth framework, which has now been replaced by the GemFire/Geode SecurityManager interface.",
+        "replacement": "spring.data.gemfire.security.manager"
+      }
+    },
+    {
+      "name": "spring.data.gemfire.security.peer.authenticator",
+      "type": "java.lang.String",
+      "description": "Static creation method returning an Authenticator object, which is used by a peer to verify the credentials of a connecting node.",
+      "deprecation": {
+        "reason": "Used by GemFire/Geode's old Auth framework, which has now been replaced by the GemFire/Geode SecurityManager interface.",
+        "replacement": "spring.data.gemfire.security.manager"
+      }
+    },
+    {
+      "name": "spring.data.gemfire.security.peer.verify-member-timeout",
+      "type": "java.lang.String",
+      "description": "Configures the timeout in milliseconds used by a peer to verify membership of an unknown authenticated peer requesting a secure connection."
+    },
+    {
+      "name": "spring.data.gemfire.security.post-processor.class-name",
+      "type": "java.lang.String",
+      "description": "Configures the name of a class implementing the org.apache.geode.security.PostProcessor interface that can be used to change the returned results of Region get operations."
+    },
+    {
+      "name": "spring.data.gemfire.security.shiro.ini-resource-path",
+      "type": "java.lang.String",
+      "description": "Configures the Apache Geode System Property referring to the location of an Apache Shiro INI file that configures the Apache Shiro Security Framework in order to secure Apache Geode."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.certificate.alias.cluster",
+      "type": "java.lang.String",
+      "description": "Configures the alias to the stored SSL certificate used by the cluster to secure communications."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.certificate.alias.default-alias",
+      "type": "java.lang.String",
+      "description": "Configures the default alias to the stored SSL certificate used to secure communications across the entire GemFire/Geode system."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.certificate.alias.gateway",
+      "type": "java.lang.String",
+      "description": "Configures the alias to the stored SSL certificate used by the WAN Gateway Senders/Receivers to secure communications."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.certificate.alias.jmx",
+      "type": "java.lang.String",
+      "description": "Configures the alias to the stored SSL certificate used by the Manager's JMX based JVM MBeanServer and JMX clients to secure communications."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.certificate.alias.locator",
+      "type": "java.lang.String",
+      "description": "Configures the alias to the stored SSL certificate used by the Locator to secure communications."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.certificate.alias.server",
+      "type": "java.lang.String",
+      "description": "Configures the alias to the stored SSL certificate used by clients and servers to secure communications."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.certificate.alias.web",
+      "type": "java.lang.String",
+      "description": "Configures the alias to the stored SSL certificate used by the embedded HTTP server to secure communications (HTTPS)."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.ciphers",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of SSL ciphers or “any”."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.components",
+      "type": "org.springframework.data.gemfire.config.annotation.EnableSsl$Component",
+      "description": "Comma-delimited list of GemFire/Geode components (e.g. WAN) to be configured for SSL communication."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.keystore",
+      "type": "java.lang.String",
+      "description": "Configures the system pathname to the Java KeyStore file storing certificates for SSL."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.keystore-config.password",
+      "type": "java.lang.String",
+      "description": "Configures the password used to access the Java KeyStore file."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.keystore-config.type",
+      "type": "java.lang.String",
+      "description": "Configures the password used to access the Java KeyStore file (e.g. JKS)."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.protocols",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of SSL protocols or “any”."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.require-authentication",
+      "type": "java.lang.Boolean",
+      "default": true,
+      "description": "Configures whether 2-way authentication is required."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.truststore",
+      "type": "java.lang.String",
+      "description": "Configures the system pathname to the trust store (Java KeyStore file) storing certificates for SSL."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.truststore-config.password",
+      "type": "java.lang.String",
+      "description": "Configures the password used to access the trust store (Java KeyStore file)."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.truststore-config.type",
+      "type": "java.lang.String",
+      "description": "Configures the password used to access the trust store (Java KeyStore file; e.g. JKS)."
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.web-require-authentication",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether 2-way HTTP authentication is required."
+    },
+    {
+      "name": "spring.data.gemfire.service.http.bind-address",
+      "type": "java.lang.String",
+      "description": "Configures the IP address or hostname of the system NIC used by the embedded HTTP server to bind and listen for HTTP(S) connections."
+    },
+    {
+      "name": "spring.data.gemfire.service.http.port",
+      "type": "java.lang.Integer",
+      "default": 7070,
+      "description": "Configures the port used by the embedded HTTP server to listen for HTTP(S) connections."
+    },
+    {
+      "name": "spring.data.gemfire.service.http.ssl-require-authentication",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether 2-way HTTP authentication is required."
+    },
+    {
+      "name": "spring.data.gemfire.service.http.dev-rest-api-start",
+      "type": "java.lang.Boolean",
+      "default": false,
+      "description": "Configures whether to start the Developer REST API web service. A full installation of Apache Geode or Pivotal GemFire is required and you must set the $GEODE environment variable."
+    },
+    {
+      "name": "spring.data.gemfire.service.memcached.port",
+      "type": "java.lang.Integer",
+      "default": 11211,
+      "description": "Configures the port of the embedded Memcached server (service)."
+    },
+    {
+      "name": "spring.data.gemfire.service.memcached.protocol",
+      "type": "org.springframework.data.gemfire.config.annotation.EnableMemcachedServer$MemcachedProtocol",
+      "default": 11211,
+      "description": "Configures the protocol used by the embedded Memcached server (service)."
+    },
+    {
+      "name": "spring.data.gemfire.service.redis.bind-address",
+      "type": "java.lang.String",
+      "description": "Configures the IP address or hostname of the system NIC used by the embedded Redis server to bind an listen for connections."
+    },
+    {
+      "name": "spring.data.gemfire.service.redis.port",
+      "type": "java.lang.Integer",
+      "default": 6379,
+      "description": "Configures the port used by the embedded Redis server to listen for connections."
+    }
+  ],
+  "hints": [
+    {
+      "name": "spring.data.gemfire.cache.log-level",
+      "values": [
+        {
+          "value": "severe",
+          "description": "This level indicates a serious failure. In general, severe messages describe events that are of considerable importance that will prevent normal program execution. You will likely need to shut down or restart at least part of your system to correct the situation."
+        },
+        {
+          "value": "error",
+          "description": "This level indicates that something is wrong in your system. You should be able to continue running, but the operation noted in the error message failed."
+        },
+        {
+          "value": "warning",
+          "description": "This level indicates a potential problem. In general, warning messages describe events that are of interest to end users or system managers, or that indicate potential problems in the program or system."
+        },
+        {
+          "value": "info",
+          "description": "This is for informational messages, typically geared to end users and system administrators."
+        },
+        {
+          "value": "config",
+          "description": "This level provides static configuration messages that are often used to debug problems associated with particular configurations."
+        },
+        {
+          "value": "fine",
+          "description": "This level provides tracing information that is generally of interest to developers. It is used for the lowest volume, most important, tracing messages."
+        }
+      ]
+    },
+    {
+      "name": "spring.data.gemfire.logging.level",
+      "values": [
+        {
+          "value": "severe",
+          "description": "This level indicates a serious failure. In general, severe messages describe events that are of considerable importance that will prevent normal program execution. You will likely need to shut down or restart at least part of your system to correct the situation."
+        },
+        {
+          "value": "error",
+          "description": "This level indicates that something is wrong in your system. You should be able to continue running, but the operation noted in the error message failed."
+        },
+        {
+          "value": "warning",
+          "description": "This level indicates a potential problem. In general, warning messages describe events that are of interest to end users or system managers, or that indicate potential problems in the program or system."
+        },
+        {
+          "value": "info",
+          "description": "This is for informational messages, typically geared to end users and system administrators."
+        },
+        {
+          "value": "config",
+          "description": "This level provides static configuration messages that are often used to debug problems associated with particular configurations."
+        },
+        {
+          "value": "fine",
+          "description": "This level provides tracing information that is generally of interest to developers. It is used for the lowest volume, most important, tracing messages."
+        }
+      ]
+    },
+    {
+      "name": "spring.data.gemfire.cache.server.subscription-eviction-policy",
+      "values": [
+        {
+          "value": "NONE",
+          "description": "Entries from the client subscription queue are not evicted to disk."
+        },
+        {
+          "value": "MEM",
+          "description": "Entries from the client subscription queue are evicted to disk when capacity (memory size) is reached."
+        },
+        {
+          "value": "MEM",
+          "description": "Entries from the client subscription queue are evicted to disk when capacity (entry count) is reached."
+        }
+      ]
+    },
+    {
+      "name": "spring.data.gemfire.cluster.region.type",
+      "values": [
+        {
+          "value": "LOCAL",
+          "description": "Local-only Region; operations are not sent to other members."
+        },
+        {
+          "value": "LOCAL_HEAP_LRU",
+          "description": "Local-only Region with heap LRU eviction; operations are not sent to other members."
+        },
+        {
+          "value": "LOCAL_OVERFLOW",
+          "description": "Local-only Region with entries overflowing to disk; operations are not sent to other members."
+        },
+        {
+          "value": "LOCAL_PERSISTENT",
+          "description": "Local-only, persistent Region with entries saved to disk; operations are not sent to other members."
+        },
+        {
+          "value": "LOCAL_PERSISTENT_OVERFLOW",
+          "description": "Local-only, persistent Region with entries overflowing and saved to disk; operations are not sent to other members."
+        },
+        {
+          "value": "PARTITION",
+          "description": "Partitioned Region (data is sharded across members in the cluster)."
+        },
+        {
+          "value": "PARTITION_HEAP_LRU",
+          "description": "Partitioned Region (data is sharded across members in the cluster) with heap LRU eviction."
+        },
+        {
+          "value": "PARTITION_OVERFLOW",
+          "description": "Partitioned Region (data is sharded across members in the cluster) with entries overflowing to disk."
+        },
+        {
+          "value": "PARTITION_PERSISTENT",
+          "description": "Partitioned persistent Region (data is sharded across members in the cluster) with entries saved to disk."
+        },
+        {
+          "value": "PARTITION_PERSISTENT_OVERFLOW",
+          "description": "Partitioned, persistent Region (data is sharded across members in the cluster) with entries overflowing and saved to disk."
+        },
+        {
+          "value": "PARTITION_PROXY",
+          "description": "Partition Proxy Region having no local state (data accessor); all operations are forwarded to peers hosting data for the Region."
+        },
+        {
+          "value": "PARTITION_PROXY_REDUNDANT",
+          "description": "Partition Proxy Region having no local state (data accessor) with a redundancy of 1; all operations are forwarded to peers hosting data for the Region."
+        },
+        {
+          "value": "PARTITION_REDUNDANT",
+          "description": "Partition Region (data is sharded across members in the cluster) with a redundancy of 1."
+        },
+        {
+          "value": "PARTITION_REDUNDANT_HEAP_LRU",
+          "description": "Partition Region (data is sharded across members in the cluster) with a redundancy of 1 and heap LRU eviction."
+        },
+        {
+          "value": "PARTITION_REDUNDANT_OVERFLOW",
+          "description": "Partition Region (data is sharded across members in the cluster) with a redundancy of 1 and entries overflowing to disk."
+        },
+        {
+          "value": "PARTITION_REDUNDANT_PERSISTENT",
+          "description": "Partition, persistent Region (data is sharded across members in the cluster) with a redundancy of 1 and entries saved to disk."
+        },
+        {
+          "value": "PARTITION_REDUNDANT_PERSISTENT_OVERFLOW",
+          "description": "Partition, persistent Region (data is sharded across members in the cluster) with a redundancy of 1 and entries overflowing and saved to disk."
+        },
+        {
+          "value": "REPLICATE",
+          "description": "Replicated Region (all data is sharded by members in the cluster)."
+        },
+        {
+          "value": "REPLICATE_HEAP_LRU",
+          "description": "Replicated Region (all data is sharded by members in the cluster) with heap LRU eviction."
+        },
+        {
+          "value": "REPLICATE_OVERFLOW",
+          "description": "Replicated Region (all data is sharded by members in the cluster) with entries overflowing to disk."
+        },
+        {
+          "value": "REPLICATE_PERSISTENT",
+          "description": "Replicated, persistent Region (all data is sharded by members in the cluster) with entries saved to disk."
+        },
+        {
+          "value": "REPLICATE_PERSISTENT_OVERFLOW",
+          "description": "Replicated, persistent Region (all data is sharded by members in the cluster) with entries overflowing and saved to disk."
+        },
+        {
+          "value": "REPLICATE_PROXY",
+          "description": "Replicated Proxy Region with no local state; all operations (except queries) are forwarded to peers hosting data for the Region."
+        }
+      ]
+    },
+    {
+      "name": "spring.data.gemfire.security.ssl.components",
+      "values": [
+        {
+          "value": "all",
+          "description": "Refers to all GemFire/Geode system components."
+        },
+        {
+          "value": "cluster",
+          "description": "Refers to the entire GemFire/Geode cluster."
+        },
+        {
+          "value": "gateway",
+          "description": "Refers to WAN Gateway Senders and Receivers."
+        },
+        {
+          "value": "jmx",
+          "description": "Refers to JMX enabled software (e.g. Gfsh, JConsole, JVisualVM) and servers (e.g. JVM MBeanServer)."
+        },
+        {
+          "value": "locator",
+          "description": "Refers to a GemFire/Geode Locator."
+        },
+        {
+          "value": "server",
+          "description": "Refers to a GemFire/Geode CacheServer."
+        },
+        {
+          "value": "web",
+          "description": "Refers to GemFire/Geode's embedded HTTP server (Jetty)."
+        }
+      ]
+    },
+    {
+      "name": "spring.data.gemfire.service.memcached.protocol",
+      "values": [
+        {
+          "value": "ASCII"
+        },
+        {
+          "value": "BINARY"
+        }
+      ]
+    }
+  ]
+}
