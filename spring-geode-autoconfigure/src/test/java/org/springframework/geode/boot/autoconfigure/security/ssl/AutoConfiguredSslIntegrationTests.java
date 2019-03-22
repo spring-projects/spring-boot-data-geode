@@ -17,10 +17,15 @@
 package org.springframework.geode.boot.autoconfigure.security.ssl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.data.gemfire.util.ArrayUtils.nullSafeArray;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.junit.After;
@@ -103,6 +108,26 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 		//System.err.printf("SSL System Properties [%s]%n", sslSystemProperties);
 
 		sslSystemProperties.forEach(System::clearProperty);
+	}
+
+	@AfterClass
+	@SuppressWarnings("all")
+	public static void deleteKeyStoreFilesInCurrentWorkingDirectory() {
+
+		Predicate<File> keystorePredicate = file -> file.getAbsolutePath().endsWith(".jks");
+
+		keystorePredicate.or(file -> file.getAbsolutePath().endsWith(".keystore"));
+		keystorePredicate.or(file -> file.getAbsolutePath().endsWith(".truststore"));
+
+		File currentWorkingDirectory = new File(System.getProperty("user.dir"));
+
+		if (currentWorkingDirectory.isDirectory()) {
+
+			Arrays.stream(nullSafeArray(currentWorkingDirectory.listFiles(keystorePredicate::test), File.class))
+				.filter(Objects::nonNull)
+				.filter(File::isFile)
+				.forEach(File::delete);
+		}
 	}
 
 	@Autowired(required = false)
