@@ -87,6 +87,11 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 	}
 
 	@AfterClass
+	public static void clearSpringProfilesActiveSystemProperty() {
+		System.clearProperty("spring.profiles.active");
+	}
+
+	@AfterClass
 	public static void clearSslSystemProperties() {
 
 		List<String> sslSystemProperties = System.getProperties().keySet().stream()
