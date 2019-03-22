@@ -11,16 +11,110 @@ When combined with the power of Spring Boot, magical things begin to happen.
 [[geode-configuration-metadata-springdata]]
 === Spring Data for Apache Geode/Pivotal GemFire Properties
 
-The following properties all have a `spring.data.gemfire.*` prefix.
+The following properties all have a `spring.data.gemfire.*` prefix.  For example, to set the cache `copy-on-read`
+property, use `spring.data.gemfire.cache.copy-on-read` in Spring Boot `application.properties`.
+
 
 .`spring.data.gemfire.*` properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| name  | Name of the Apache Geode / Pivotal GemFire member.  | SpringBasedCacheClientApplication  | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
-| locators  | Comma-delimited list of Locator endpoints formatted as: locator1[port1],...,locatorN[portN].  |  | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#locators--[PeerCacheApplication.locators]
-| use-bean-factory-locator  | Enable the SDG BeanFactoryLocator when mixing Spring config with GemFire/Geode native config (e.g. cache.xml) and you wish to configure GemFire objects declared in cache.xml with Spring.  |  false  | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#useBeanFactoryLocator--[ClientCacheApplication.useBeanFactoryLocator]
+| name  | Name of the Apache Geode / Pivotal GemFire member. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
+| locators | Comma-delimited list of Locator endpoints formatted as: locator1[port1],...,locatorN[portN]. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#locators--[PeerCacheApplication.locators]
+| use-bean-factory-locator | Enable the SDG BeanFactoryLocator when mixing Spring config with GemFire/Geode native config (e.g. cache.xml) and you wish to configure GemFire objects declared in cache.xml with Spring.  | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#useBeanFactoryLocator--[ClientCacheApplication.useBeanFactoryLocator]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` _GemFireCache_ properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| cache.copy-on-read  | Configure whether a copy of an object returned from Region.get(key) is made. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#copyOnRead--[ClientCacheApplication.copyOnRead]
+| cache.critical-heap-percentage | Percentage of heap at or above which the cache is considered in danger of becoming inoperable. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#criticalHeapPercentage--[ClientCacheApplication.criticalHeapPercentage]
+| cache.critical-off-heap-percentage | Percentage of off-heap at or above which the cache is considered in danger of becoming inoperable. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#criticalOffHeapPercentage--[ClientCacheApplication.criticalOffHeapPercentage]
+| cache.enable-auto-region-lookup | Configure whether to lookup Regions configured in GemFire/Geode native config and declare them as Spring beans. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAutoRegionLookup.html#enabled--[EnableAutoRegionLookup.enable]
+| cache.eviction-heap-percentage | Percentage of heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionHeapPercentage--[ClientCacheApplication.evictionHeapPercentage]
+| cache.eviction-off-heap-percentage | Percentage of off-heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionOffHeapPercentage--[ClientCacheApplication.evictionOffHeapPercentage]
+| cache.log-level | Configure the log-level of an Apache Geode / Pivotal GemFire cache. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#logLevel--[ClientCacheApplication.logLevel]
+| cache.name | Alias for 'spring.data.gemfire.name'. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
+| cache.compression.bean-name | Name of a Spring bean implementing org.apache.geode.compression.Compressor. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#compressorBeanName--[EnableCompression.compressorBeanName]
+| cache.compression.region-names | Comma-delimited list of Region names for which compression will be configured. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#regionNames--[EnableCompression.regionNames]
+| cache.off-heap.memory-size | Determines the size of off-heap memory used by GemFire/Geode in megabytes (m) or gigabytes (g); for example 120g. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableOffHeap.html#memorySize--[EnableOffHeap.memorySize]
+| cache.off-heap.region-names | Comma-delimited list of Region names for which off-heap will be configured. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableOffHeap.html#regionNames--[EnableOffHeap.regionNames]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` _ClientCache_ properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| cache.client.durable-client-id | Used only for clients in a client/server installation. If set, this indicates that the client is durable and identifies the client. The ID is used by servers to reestablish any messaging that was interrupted by client downtime. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#durableClientId--[ClientCacheApplication.durableClientId]
+| cache.client.durable-client-timeout | Used only for clients in a client/server installation. Number of seconds this client can remain disconnected from its server and have the server continue to accumulate durable events for it. | 300 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#durableClientTimeout--[ClientCacheApplication.durableClientTimeout]
+| cache.client.keep-alive | Configure whether the server should keep the durable client's queues alive for the timeout period. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#keepAlive--[ClientCacheApplication.keepAlive]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` peer _Cache_ properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| cache.peer.enable-auto-reconnect | Configure whether member (Locators & Servers) will attempt to reconnect and reinitialize the cache after it has been forced out of the cluster by a network partition event or has otherwise been shunned by other members. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#enableAutoReconnect--[PeerCacheApplication.enableAutoReconnect]
+| cache.peer.lock-lease | Configures the length, in seconds, of distributed lock leases obtained by this cache. | 120 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#lockLease--[PeerCacheApplication.lockLease]
+| cache.peer.lock-timeout | Configures the number of seconds a cache operation will wait to obtain a distributed lock lease. | 60 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#lockTimeout--[PeerCacheApplication.lockTimeout]
+| cache.peer.message-sync-interval | Configures the frequency (in seconds) at which a message will be sent by the primary cache-server to all the secondary cache-server nodes to remove the events which have already been dispatched from the queue. | 1 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#messageSyncInterval--[PeerCacheApplication.messageSyncInterval]
+| cache.peer.search-timeout | Configures the number of seconds a cache get operation can spend searching for a value. | 300 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#searchTimeout--[PeerCacheApplication.searchTimeout]
+| cache.peer.use-cluster-configuration | Configures whether this GemFire cache member node would pull it's configuration meta-data from the cluster-based Cluster Configuration Service. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#useClusterConfiguration--[PeerCacheApplication.useClusterConfiguration]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` _CacheServer_ properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| cache.server.auto-startup | Configures whether the CacheServer should be started automatically at runtime. | true | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#autoStartup--[CacheServerApplication.autoStartup]
+| cache.server.bind-address | Configures the IP address or hostname that this cache server will listen on. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#bindAddress--[CacheServerApplication.bindAddress]
+| cache.server.hostname-for-clients | Configures the IP address or hostname that server locators will tell clients that this cache server is listening on. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#hostnameForClients--[CacheServerApplication.hostNameForClients]
+| cache.server.load-poll-interval | Configures the frequency in milliseconds to poll the load probe on this cache server. | 5000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#loadPollInterval--[CacheServerApplication.loadPollInterval]
+| cache.server.max-connections | Configures the maximum client connections allowed. | 800 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxConnections--[CacheServerApplication.maxConnections]
+| cache.server.max-message-count | Configures the maximum number of messages that can be enqueued in a client queue. | 230000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxMessageCount--[CacheServerApplication.maxMessageCount]
+| cache.server.max-threads | Configures the maximum number of threads allowed in this cache server to service client requests. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxThreads--[CacheServerApplication.maxThreads]
+| cache.server.max-time-between-pings | Configures the maximum amount of time between client pings. | 60000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxTimeBetweenPings--[CacheServerApplication.maxTimeBetweenPings]
+| cache.server.message-time-to-live | Configures the time (in seconds) after which a message in the client queue will expire. | 180 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#messageTimeToLive--[CacheServerApplication.messageTimeToLive]
+| cache.server.port | Configures the port on which this cache server listens for clients. | 40404 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#port--[CacheServerApplication.port]
+| cache.server.socket-buffer-size | Configures buffer size of the socket connection to this CacheServer. | 32768 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#socketBufferSize--[CacheServerApplication.socketBufferSize]
+| cache.server.subscription-capacity | Configures the capacity of the client queue. | 1 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#subscriptionCapacity--[CacheServerApplication.subscriptionCapacity]
+| cache.server.subscription-disk-store-name | Configures the name of the DiskStore for client subscription queue overflow. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#subscriptionDiskStoreName--[CacheServerApplication.subscriptionDiskStoreName]
+| cache.server.subscription-eviction-policy | Configures the eviction policy that is executed when capacity of the client subscription queue is reached. | none | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#subscriptionEvictionPolicy--[CacheServerApplication.subscriptionEvictionPolicy]
+| cache.server.tcp-no-delay | Configures the outgoing Socket connection tcp-no-delay setting. | true | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#tcpNoDelay--[CacheServerApplication.tcpNoDelay]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` Cluster properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| cluster.region.type | Configuration setting used to specify the data management policy used when creating Regions on the servers in the cluster. | {apache-geode-javadoc}/org/apache/geode/cache/RegionShortcut.html#PARTITION[RegionShortcut.PARTITION] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#serverRegionShortcut--[EnableClusterConfiguration.serverRegionShortcut]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` X properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| X | X | false | [ClientCacheApplication.name]
 
 |=====================================================================================================================
 
@@ -30,6 +124,7 @@ The following properties all have a `spring.data.gemfire.*` prefix.
 
 The following properties all have a `spring.session.data.gemfire.*` prefix.  For example, to set the Session Region
 name, use `spring.session.data.gemfire.session.region.name` in Spring Boot `application.properties`.
+
 
 .`spring.session.data.gemfire.*` properties
 [width="90%",options="header"]
