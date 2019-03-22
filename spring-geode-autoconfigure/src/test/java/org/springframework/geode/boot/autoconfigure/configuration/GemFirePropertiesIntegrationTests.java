@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.config.annotation.EnableMemcachedServer;
 import org.springframework.data.gemfire.config.annotation.EnableSsl;
+import org.springframework.data.gemfire.server.SubscriptionEvictionPolicy;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.configuration.support.CacheProperties;
@@ -161,6 +162,7 @@ public class GemFirePropertiesIntegrationTests {
 		assertThat(cacheServerProperties.getSocketBufferSize()).isEqualTo(8192);
 		assertThat(cacheServerProperties.getSubscriptionCapacity()).isEqualTo(2);
 		assertThat(cacheServerProperties.getSubscriptionDiskStoreName()).isEqualTo("TestSubscriptionDiskStore");
+		assertThat(cacheServerProperties.getSubscriptionEvictionPolicy()).isEqualTo(SubscriptionEvictionPolicy.ENTRY);
 		assertThat(cacheServerProperties.isTcpNoDelay()).isFalse();
 	}
 
@@ -295,8 +297,8 @@ public class GemFirePropertiesIntegrationTests {
 		assertThat(poolProperties.isMultiUserAuthentication()).isTrue();
 		assertThat(poolProperties.getPingInterval()).isEqualTo(15000L);
 		assertThat(poolProperties.isPrSingleHopEnabled()).isFalse();
-		assertThat(poolProperties.isReadyForEvents()).isTrue();
 		assertThat(poolProperties.getReadTimeout()).isEqualTo(5000);
+		assertThat(poolProperties.isReadyForEvents()).isTrue();
 		assertThat(poolProperties.getRetryAttempts()).isEqualTo(2);
 		assertThat(poolProperties.getServerGroup()).isEqualTo("TestServerGroup");
 		assertThat(poolProperties.getServers()).containsExactly("cardboardbox[41414]");
