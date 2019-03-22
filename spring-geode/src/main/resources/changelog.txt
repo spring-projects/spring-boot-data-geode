@@ -4,6 +4,23 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.0.0.M4 (2019-03-22)
+----------------------------------------
+Add support for Spring Boot Configuration Processor.
+
+* Allows the use of `spring.application.name` to name a GemFire/Geode node.
+* Adds Spring Boot Configuration Processor and auto-configuration for @ConfigurationProperties classes to capture
+and encapsulate configuration meta-data specified in properties files.
+* Includes Spring Shell as a runtime dependency in the GemFire/Geode starters.
+* Workaround bug in Spring Cloud Commons consuming and discarding EnumerablePropertySources in the Environment.
+* Upgrades to Mockito 2.23.4.
+* Upgrades to Spring Framework 5.0.12.RELEASE.
+* Upgrades to Spring Boot 2.0.8.RELEASE.
+* Upgrades to Spring Data Release Train Kay-SR13.
+* Upgrades to Spring Session Apple-SR8.
+* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.1.RC1.
+
+
 Changes in version 1.0.0.M3 (2018-09-20)
 ----------------------------------------
 Add support for Spring Boot Actuator HealthIndicator endpoints providing details and insight into the runtime operation
