@@ -860,6 +860,46 @@
       "type": "java.lang.Integer",
       "default": 6379,
       "description": "Configures the port used by the embedded Redis server to listen for connections."
+    },
+    {
+      "name": "spring.session.data.gemfire.cache.client.pool.name",
+      "type": "java.lang.String",
+      "default": "gemfirePool",
+      "description": "Name of the Pool used to send data access operations between the client and server(s)."
+    },
+    {
+      "name": "spring.session.data.gemfire.cache.client.region.shortcut",
+      "type": "org.apache.geode.cache.client.ClientRegionShortcut",
+      "default": "PROXY",
+      "description": "Configures the DataPolicy used by the client Region to manage (HTTP) Session state."
+    },
+    {
+      "name": "spring.session.data.gemfire.cache.server.region.shortcut",
+      "type": "org.apache.geode.cache.RegionShortcut",
+      "default": "PROXY",
+      "description": "Configures the DataPolicy used by the server Region to manage (HTTP) Session state."
+    },
+    {
+      "name": "spring.session.data.gemfire.session.attributes.indexable",
+      "type": "java.lang.String",
+      "description": "Configures names of Session attributes for which an Index will be created."
+    },
+    {
+      "name": "spring.session.data.gemfire.session.expiration.max-inactive-interval-seconds",
+      "type": "java.lang.Integer",
+      "default": 1800,
+      "description": "Configures the number of seconds in which a Session can remain inactive before it expires."
+    },
+    {
+      "name": "spring.session.data.gemfire.session.region.name",
+      "type": "java.lang.String",
+      "default": "ClusteredSpringSessions",
+      "description": "Configures name of the (client/server) Region used to manage (HTTP) Session state."
+    },
+    {
+      "name": "spring.session.data.gemfire.session.serializer.bean-name",
+      "type": "java.lang.String",
+      "description": "Configures the name of a Spring bean implementing org.springframework.session.data.gemfire.serialization.SessionSerializer"
     }
   ],
   "hints": [
@@ -1076,6 +1116,144 @@
         },
         {
           "value": "BINARY"
+        }
+      ]
+    },
+    {
+      "name": "spring.session.data.gemfire.cache.client.region.shortcut",
+      "values": [
+        {
+          "value": "CACHING_PROXY",
+          "description": "A client Region with local state but can also send operations to a server."
+        },
+        {
+          "value": "CACHING_PROXY_HEAP_LRU",
+          "description": "A client Region with local state and heap LRU eviction, but can also send operations to a server."
+        },
+        {
+          "value": "CACHING_PROXY_OVERFLOW",
+          "description": "A client Region with local state and entry overflow, but can also send operations to a server."
+        },
+        {
+          "value": "LOCAL",
+          "description": "A local-only client Region; no operations are forwarded to a server."
+        },
+        {
+          "value": "LOCAL_HEAP_LRU",
+          "description": "A local-only client Region with heap LRU eviction; no operations are forwarded to a server."
+        },
+        {
+          "value": "LOCAL_OVERFLOW",
+          "description": "A local-only client Region with entry overflow; no operations are forwarded to a server."
+        },
+        {
+          "value": "LOCAL_PERSISTENT",
+          "description": "A local-only, persistent client Region with entries saved to disk; no operations are forwarded to a server."
+        },
+        {
+          "value": "LOCAL_PERSISTENT_OVERFLOW",
+          "description": "A local-only, persistent client Region with entries overflowed and saved to disk; no operations are forwarded to a server."
+        },
+        {
+          "value": "PROXY",
+          "description": "A client Region with no state; all operations are forwarded to a server."
+        }
+      ]
+    },
+    {
+      "name": "spring.session.data.gemfire.cache.server.region.shortcut",
+      "values": [
+        {
+          "value": "LOCAL",
+          "description": "Local-only Region; operations are not sent to other members."
+        },
+        {
+          "value": "LOCAL_HEAP_LRU",
+          "description": "Local-only Region with heap LRU eviction; operations are not sent to other members."
+        },
+        {
+          "value": "LOCAL_OVERFLOW",
+          "description": "Local-only Region with entries overflowing to disk; operations are not sent to other members."
+        },
+        {
+          "value": "LOCAL_PERSISTENT",
+          "description": "Local-only, persistent Region with entries saved to disk; operations are not sent to other members."
+        },
+        {
+          "value": "LOCAL_PERSISTENT_OVERFLOW",
+          "description": "Local-only, persistent Region with entries overflowing and saved to disk; operations are not sent to other members."
+        },
+        {
+          "value": "PARTITION",
+          "description": "Partitioned Region (data is sharded across members in the cluster)."
+        },
+        {
+          "value": "PARTITION_HEAP_LRU",
+          "description": "Partitioned Region (data is sharded across members in the cluster) with heap LRU eviction."
+        },
+        {
+          "value": "PARTITION_OVERFLOW",
+          "description": "Partitioned Region (data is sharded across members in the cluster) with entries overflowing to disk."
+        },
+        {
+          "value": "PARTITION_PERSISTENT",
+          "description": "Partitioned persistent Region (data is sharded across members in the cluster) with entries saved to disk."
+        },
+        {
+          "value": "PARTITION_PERSISTENT_OVERFLOW",
+          "description": "Partitioned, persistent Region (data is sharded across members in the cluster) with entries overflowing and saved to disk."
+        },
+        {
+          "value": "PARTITION_PROXY",
+          "description": "Partition Proxy Region having no local state (data accessor); all operations are forwarded to peers hosting data for the Region."
+        },
+        {
+          "value": "PARTITION_PROXY_REDUNDANT",
+          "description": "Partition Proxy Region having no local state (data accessor) with a redundancy of 1; all operations are forwarded to peers hosting data for the Region."
+        },
+        {
+          "value": "PARTITION_REDUNDANT",
+          "description": "Partition Region (data is sharded across members in the cluster) with a redundancy of 1."
+        },
+        {
+          "value": "PARTITION_REDUNDANT_HEAP_LRU",
+          "description": "Partition Region (data is sharded across members in the cluster) with a redundancy of 1 and heap LRU eviction."
+        },
+        {
+          "value": "PARTITION_REDUNDANT_OVERFLOW",
+          "description": "Partition Region (data is sharded across members in the cluster) with a redundancy of 1 and entries overflowing to disk."
+        },
+        {
+          "value": "PARTITION_REDUNDANT_PERSISTENT",
+          "description": "Partition, persistent Region (data is sharded across members in the cluster) with a redundancy of 1 and entries saved to disk."
+        },
+        {
+          "value": "PARTITION_REDUNDANT_PERSISTENT_OVERFLOW",
+          "description": "Partition, persistent Region (data is sharded across members in the cluster) with a redundancy of 1 and entries overflowing and saved to disk."
+        },
+        {
+          "value": "REPLICATE",
+          "description": "Replicated Region (all data is sharded by members in the cluster)."
+        },
+        {
+          "value": "REPLICATE_HEAP_LRU",
+          "description": "Replicated Region (all data is sharded by members in the cluster) with heap LRU eviction."
+        },
+        {
+          "value": "REPLICATE_OVERFLOW",
+          "description": "Replicated Region (all data is sharded by members in the cluster) with entries overflowing to disk."
+        },
+        {
+          "value": "REPLICATE_PERSISTENT",
+          "description": "Replicated, persistent Region (all data is sharded by members in the cluster) with entries saved to disk."
+        },
+        {
+          "value": "REPLICATE_PERSISTENT_OVERFLOW",
+          "description": "Replicated, persistent Region (all data is sharded by members in the cluster) with entries overflowing and saved to disk."
+        },
+        {
+          "value": "REPLICATE_PROXY",
+          "description": "Replicated Proxy Region with no local state; all operations (except queries) are forwarded to peers hosting data for the Region."
         }
       ]
     }
