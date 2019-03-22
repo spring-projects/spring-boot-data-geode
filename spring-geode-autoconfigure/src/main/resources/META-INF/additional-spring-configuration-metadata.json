@@ -86,6 +86,11 @@
       "description": "Configuration properties for GemFire/Geode embedded services."
     },
     {
+      "name": "session",
+      "type": "org.springframework.geode.boot.autoconfigure.configuration.support.SpringSessionProperties",
+      "description": "Configuration properties for Spring Session backed by Apache Geode or Pivotal GemFire."
+    },
+    {
       "name": "ssl",
       "type": "org.springframework.geode.boot.autoconfigure.configuration.support.SslProperties",
       "description": "Configuration properties for SSL."
