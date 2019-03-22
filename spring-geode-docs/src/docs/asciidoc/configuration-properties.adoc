@@ -1,0 +1,58 @@
+[[geode-configuration-metadata]]
+== Configuration Metadata Reference
+
+The following 2 reference sections cover documented and well-known properties recognized and processed by
+_Spring Data for Apache Geode/Pivotal GemFire_ (SDG) as well as _Spring Session for Apache Geode/Pivotal GemFire_ (SSDG).
+
+These properties maybe used in Spring Boot `application.properties` files, or as JVM System properties, to configure
+different aspects of or enable individual features of Apache Geode or Pivotal GemFire in a Spring application.
+When combined with the power of Spring Boot, magical things begin to happen.
+
+[[geode-configuration-metadata-springdata]]
+=== Spring Data for Apache Geode/Pivotal GemFire Properties
+
+The following properties all have a `spring.data.gemfire.*` prefix.
+
+.`spring.data.gemfire.*` properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| name  | Name of the Apache Geode / Pivotal GemFire member.  | SpringBasedCacheClientApplication  | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
+| locators  | Comma-delimited list of Locator endpoints formatted as: locator1[port1],...,locatorN[portN].  |  | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#locators--[PeerCacheApplication.locators]
+| use-bean-factory-locator  | Enable the SDG BeanFactoryLocator when mixing Spring config with GemFire/Geode native config (e.g. cache.xml) and you wish to configure GemFire objects declared in cache.xml with Spring.  |  false  | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#useBeanFactoryLocator--[ClientCacheApplication.useBeanFactoryLocator]
+
+|=====================================================================================================================
+
+
+[[geode-configuration-metadata-springsession]]
+=== Spring Session for Apache Geode/Pivotal GemFire Properties
+
+The following properties all have a `spring.session.data.gemfire.*` prefix.  For example, to set the Session Region
+name, use `spring.session.data.gemfire.session.region.name` in Spring Boot `application.properties`.
+
+.`spring.session.data.gemfire.*` properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| cache.client.pool.name                            | Name of the Pool used to send data access operations between the client and server(s).                                       | gemfirePool              | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#poolName--[EnableGemFireHttpSession.poolName]
+| cache.client.region.shortcut                      | Configures the DataPolicy used by the client Region to manage (HTTP) Session state.                                          | {apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html#PROXY[ClientRegionShortcut.PROXY]  | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#clientRegionShortcut--[EnableGemFireHttpSession.clientRegionShortcut]
+| cache.server.region.shortcut                      | Configures the DataPolicy used by the server Region to manage (HTTP) Session state.                                          | {apache-geode-javadoc}/org/apache/geode/cache/RegionShortcut.html#PARTITION[RegionShortcut.PARTITION] | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#serverRegionShortcut--[EnableGemFireHttpSession.serverRegionShortcut]
+| session.attributes.indexable                      | Configures names of Session attributes for which an Index will be created.                                                   | []                       | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#indexableSessionAttributes--[EnableGemFireHttpSession.indexableSessionAttributes]
+| session.expiration.max-inactive-interval-seconds  | Configures the number of seconds in which a Session can remain inactive before it expires.                                   | 1800                     | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#maxInactiveIntervalSeconds--[EnableGemFireHttpSession.maxInactiveIntervalSeconds]
+| session.region.name                               | Configures name of the (client/server) Region used to manage (HTTP) Session state.                                           | ClusteredSpringSessions  | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#regionName--[EnableGemFireHttpSession.regionName]
+| session.serializer.bean-name                      | Configures the name of a Spring bean implementing org.springframework.session.data.gemfire.serialization.SessionSerializer.  |                          | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#sessionSerializerBeanName--[EnableGemFireHttpSession.sessionSerializerBeanName]
+
+|=====================================================================================================================
+
+[[geode-configuration-metadata-apachegeode]]
+=== Apache Geode Properties
+
+While is not recommended to use Apache Geode properties directly in your Spring applications, SBDG will not prevent you
+from doing so.  A complete reference to the Apache Geode specific properties can be found
+{apache-geode-docs}/18/reference/topics/gemfire_properties.html[here].
+
+WARNING: Apache Geode (and Pivotal GemFire) are very strict about the properties that maybe specified in
+a `gemfire.properties` file.  You cannot mix Spring properties with `gemfire.*` properties in either
+a Spring Boot `application.properties` file or an Apache Geode `gemfire.properties` file.

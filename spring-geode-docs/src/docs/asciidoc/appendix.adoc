@@ -4,6 +4,8 @@
 The following appendices provide additional help while developing Spring Boot applications backed by Apache Geode
 or Pivotal GemFire.
 
+:!sectnums:
+include::configuration-properties.adoc[leveloffset=+1]
 
 [[geode-cluster-configuration-bootstrapping]]
 === Running an Apache Geode/Pivotal GemFire cluster using Spring Boot from your IDE
