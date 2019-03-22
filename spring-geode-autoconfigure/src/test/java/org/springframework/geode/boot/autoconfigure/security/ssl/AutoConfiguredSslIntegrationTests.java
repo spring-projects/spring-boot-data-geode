@@ -20,8 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,6 +34,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
@@ -96,8 +100,21 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 		sslSystemProperties.forEach(System::clearProperty);
 	}
 
+	@Autowired(required = false)
+	private Environment environment;
+
 	@Autowired
 	private GemfireTemplate echoTemplate;
+
+	@After
+	public void removeGemFireSslPropertySourceFromEnvironment() {
+
+		Optional.ofNullable(this.environment)
+			.filter(ConfigurableEnvironment.class::isInstance)
+			.map(ConfigurableEnvironment.class::cast)
+			.map(ConfigurableEnvironment::getPropertySources)
+			.ifPresent(propertySources -> propertySources.remove("gemfire-ssl"));
+	}
 
 	@Test
 	public void clientServerCommunicationsSuccessful() {
