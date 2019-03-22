@@ -16,7 +16,9 @@
 
 package org.springframework.geode.boot.autoconfigure.security.ssl;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.springframework.boot.SpringApplication;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.geode.boot.autoconfigure.SslAutoConfiguration;
@@ -65,9 +68,18 @@ public class SslAutoConfigurationUnitTests {
 	@Test
 	public void sslConfigurationIsEnabled() {
 
-		SslEnvironmentPostProcessor environmentPostProcessor = new SslEnvironmentPostProcessor();
+		SslEnvironmentPostProcessor environmentPostProcessor = spy(new SslEnvironmentPostProcessor());
+
+		doNothing().when(environmentPostProcessor)
+			.postProcessEnvironment(any(ConfigurableEnvironment.class), any(SpringApplication.class));
 
 		ConfigurableEnvironment mockEnvironment = mock(ConfigurableEnvironment.class);
+
+		when(mockEnvironment.containsProperty(eq("spring.boot.data.gemfire.security.ssl.keystore.name")))
+			.thenReturn(true);
+
+		when(mockEnvironment.getProperty("spring.boot.data.gemfire.security.ssl.keystore.name"))
+			.thenReturn("non-existing-trusted.keystore");
 
 		when(mockEnvironment.getProperty(eq(SslAutoConfiguration.SECURITY_SSL_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY),
 			eq(Boolean.class), eq(true)))
@@ -81,6 +93,15 @@ public class SslAutoConfigurationUnitTests {
 
 		verify(mockEnvironment, times(1))
 			.containsProperty(eq("spring.data.gemfire.security.ssl.keystore"));
+
+		verify(mockEnvironment, times(3))
+			.containsProperty(eq("spring.boot.data.gemfire.security.ssl.keystore.name"));
+
+		verify(mockEnvironment, times(3))
+			.getProperty(eq("spring.boot.data.gemfire.security.ssl.keystore.name"));
+
+		verify(environmentPostProcessor, never())
+			.postProcessEnvironment(eq(mockEnvironment), any(SpringApplication.class));
 	}
 
 	@Test
