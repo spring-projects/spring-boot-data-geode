@@ -98,6 +98,14 @@ property, use `spring.data.gemfire.cache.copy-on-read` in Spring Boot `applicati
 
 |=====================================================================================================================
 
+_CacheServer_ properties can be further targeted at specific CacheServer instances, using an option bean name
+of the `CacheServer` bean defined in the Spring application context.  For example:
+
+[source,properties]
+----
+spring.data.gemfire.cache.server.[<cacheServerBeanName>].bind-address=...
+----
+
 
 .`spring.data.gemfire.*` Cluster properties
 [width="90%",options="header"]
@@ -107,6 +115,51 @@ property, use `spring.data.gemfire.cache.copy-on-read` in Spring Boot `applicati
 | cluster.region.type | Configuration setting used to specify the data management policy used when creating Regions on the servers in the cluster. | {apache-geode-javadoc}/org/apache/geode/cache/RegionShortcut.html#PARTITION[RegionShortcut.PARTITION] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#serverRegionShortcut--[EnableClusterConfiguration.serverRegionShortcut]
 
 |=====================================================================================================================
+
+
+.`spring.data.gemfire.*` _DiskStore_ properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| disk.store.allow-force-compaction | Configures whether to allow DiskStore.forceCompaction() to be called on Regions using a DiskStore. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#allowForceCompaction--[EnableDiskStore.allowForceCompaction]
+| disk.store.auto-compact | Configures whether to cause the disk files to be automatically compacted. | true | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#autoCompact--[EnableDiskStore.autoCompact]
+| disk.store.compaction-threshold | Configures the threshold at which an oplog will become compactable. | 50 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#compactionThreshold--[EnableDiskStore.compactionThreshold]
+| disk.store.directory.location | Configures the system directory where the GemFire/Geode DiskStore (oplog) files will be stored. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskDirectories--[EnableDiskStore.diskDirectories.location]
+| disk.store.directory.size | Configures the amount of disk space allowed to store DiskStore (oplog) files. | 21474883647 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskDirectories--[EnableDiskStore.diskDirectories.size]
+| disk.store.disk-usage-critical-percentage | Configures the critical threshold for disk usage as a percentage of the total disk volume. | 99.0 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskUsageCriticalPercentage--[EnableDiskStore.diskUsageCriticalPercentage]
+| disk.store.disk-usage-warning-percentage | Configures the warning threshold for disk usage as a percentage of the total disk volume. | 90.0 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskUsageWarningPercentage--[EnableDiskStore.diskUsageWarningPercentage]
+| disk.store.max-oplog-size | Configures the maximum size in megabytes a single oplog (operation log) is allowed to be. | 1024 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#maxOplogSize--[EnableDiskStore.maxOplogSize]
+| disk.store.queue-size | Configures the maximum number of operations that can be asynchronously queued. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#queueSize--[EnableDiskStore.queueSize]
+| disk.store.time-interval | Configures the number of milliseconds that can elapse before data written asynchronously is flushed to disk. | 1000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#timeInterval--[EnableDiskStore.timeInterval]
+| disk.store.write-buffer-size | Configures the write buffer size in bytes. | 32768 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#writeBufferSize--[EnableDiskStore.writeBufferSize]
+
+|=====================================================================================================================
+
+_DiskStore_ properties can be further targeted at specific _DiskStores_ using the
+{apache-geode-javadoc}/org/apache/geode/cache/DiskStore.html#getName--[`DiskStore.name`].
+
+For instance, you may specify directory location of the files for a specific, named `DiskStore` using:
+
+[source,properties]
+----
+spring.data.gemfire.disk.store.Example.directory.location=/path/to/geode/disk-stores/Example/
+----
+
+The directory location and size of the _DiskStore_ files can be further divided into multiple locations and size
+using array syntax, as in:
+
+[source,properties]
+----
+spring.data.gemfire.disk.store.Example.directory[0].location=/path/to/geode/disk-stores/Example/one
+spring.data.gemfire.disk.store.Example.directory[0].size=4096000
+spring.data.gemfire.disk.store.Example.directory[1].location=/path/to/geode/disk-stores/Example/two
+spring.data.gemfire.disk.store.Example.directory[1].size=8192000
+----
+
+Both the name and array index are optional and you can use any combination of name and array index.  Without a name,
+the properties apply to all _DiskStores_.  Without array indexes, all [named] _DiskStore_ files will be stored in the
+specified location and limited to the defined size.
 
 
 .`spring.data.gemfire.*` X properties
