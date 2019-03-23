@@ -442,7 +442,6 @@
     {
       "name": "spring.data.gemfire.manager.access-file",
       "type": "java.lang.String",
-      "default": 7070,
       "description": "Configures the Access Control List (ACL) file used by the Manager to restrict access to the JMX MBeans by the clients."
     },
     {
