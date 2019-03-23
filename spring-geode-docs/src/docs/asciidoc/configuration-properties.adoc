@@ -162,6 +162,82 @@ the properties apply to all _DiskStores_.  Without array indexes, all [named] _D
 specified location and limited to the defined size.
 
 
+.`spring.data.gemfire.*` Entity properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| entities.base-packages | Comma-delimited list of package names indicating the start points for the entity scan. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableEntityDefinedRegions.html#basePackages--[EnableEntityDefinedRegions.basePackages]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` Locator properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| locator.host | Configures the IP address or hostname of the system NIC to which the embedded Locator will be bound to listen for connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLocator.html#host--[EnableLocator.host]
+| locator.port | Configures the network port to which the embedded Locator will listen for connections. | 10334 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLocator.html#port--[EnableLocator.port]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` Logging properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| logging.level | Configures the log-level of an Apache Geode / Pivotal GemFire cache; Alias for 'spring.data.gemfire.cache.log-level'. | config | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logLevel--[EnableLogging.logLevel]
+| logging.log-disk-space-limit | Configures the amount of disk space allowed to store log files. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logDiskSpaceLimit--[EnableLogging.logDiskSpaceLimit]
+| logging.log-file | Configures the pathname of the log file used to log messages. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFile--[EnableLogging.logFile]
+| logging.log-file-size | Configures the maximum size of a log file before the log file is rolled. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFileSizeLimit--[EnableLogging.logFileSize]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` Management properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| management.use-http | Configures whether to use the HTTP protocol to communicate with a GemFire/Geode Manager. | false | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#useHttp--[EnableClusterConfiguration.useHttp]
+| management.http.host | Configures the IP address or hostname of the GemFire/Geode Manager running the HTTP service. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#host-- | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#host--[EnableClusterConfiguration.host]
+| management.http.port | Configures the port used by the GemFire/Geode Manager's HTTP service to listen for connections. | 7070 | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#host-- | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#port--[EnableClusterConfiguration.port]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` Manager properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| manager.access-file | Configures the Access Control List (ACL) file used by the Manager to restrict access to the JMX MBeans by the clients. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableManager.html#accessFile--[EnableManager.accessFile]
+| manager.bind-address | Configures the IP address or hostname of the system NIC used by the Manager to bind and listen for JMX client connections. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableManager.html#bindAddress--[EnableManager.bindAddress]
+| manager.hostname-for-clients | Configures the hostname given to JMX clients to ask the Locator for the location of the Manager. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableManager.html#hostnameForClients--[EnableManager.hostNameForClients]
+| manager.password-file | By default, the JMX Manager will allow clients without credentials to connect. If this property is set to the name of a file then only clients that connect with credentials that match an entry in this file will be allowed. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableManager.html#passwordFile--[EnableManager.passwordFile]
+| manager.port | Configures the port used by th Manager to listen for JMX client connections. | 1099 | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableManager.html#port--[EnableManager.port]
+| manager.start | Configures whether to start the Manager service at runtime. | false | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableManager.html#start--[EnableManager.start]
+| manager.update-rate | Configures the rate, in milliseconds, at which this member will push updates to any JMX Managers. | 2000 | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableManager.html#updateRate--[EnableManager.updateRate]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` PDX properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| pdx.disk-store-name | Configures the name of the DiskStore used to store PDX type meta-data to disk when PDX is persistent. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnablePdx.html#diskStoreName--[EnablePdx.diskStoreName]
+| pdx.ignore-unread-fields | Configures whether PDX ignores fields that were unread during deserialization. | false | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnablePdx.html#ignoreUnreadFields--[EnablePdx.ignoreUnreadFields]
+| pdx.persistent | Configures whether PDX persists type meta-data to disk. | false | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnablePdx.html#persistent--[EnablePdx.persistent]
+| pdx.read-serialized | Configures whether a Region entry is returned as a PdxInstance or deserialized back into object form on read. | false | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnablePdx.html#readSerialized--[EnablePdx.readSerialized]
+| pdx.serialize-bean-name | Configures the name of a custom Spring bean implementing org.apache.geode.pdx.PdxSerializer. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnablePdx.html#serializerBeanName--[EnablePdx.serializerBeanName]
+
+|=====================================================================================================================
+
+
 .`spring.data.gemfire.*` X properties
 [width="90%",options="header"]
 |=====================================================================================================================
