@@ -325,17 +325,14 @@ specified location and limited to the defined size.
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| X | X | false | [ClientCacheApplication.name]
-
-|=====================================================================================================================
-
-
-.`spring.data.gemfire.*` X properties
-[width="90%",options="header"]
-|=====================================================================================================================
-| Name                                              | Description                   | Default                   | From
-
-| X | X | false | [ClientCacheApplication.name]
+| service.http.bind-address | Configures the IP address or hostname of the system NIC used by the embedded HTTP server to bind and listen for HTTP(S) connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#bindAddress--[EnableHttpService.bindAddress]
+| service.http.port | Configures the port used by the embedded HTTP server to listen for HTTP(S) connections. | 7070 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#port--[EnableHttpService.port]
+| service.http.ssl-require-authentication | Configures whether 2-way HTTP authentication is required. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#sslRequireAuthentication--[EnableHttpService.sslRequireAuthentication]
+| service.http.dev-rest-api-start | Configures whether to start the Developer REST API web service. A full installation of Apache Geode or Pivotal GemFire is required and you must set the $GEODE environment variable. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#startDeveloperRestApi--[EnableHttpService.startDeveloperRestApi]
+| service.memcached.port | Configures the port of the embedded Memcached server (service). | 11211| {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#port--[EnableMemcachedServer.port]
+| service.memcached.protocol | Configures the protocol used by the embedded Memcached server (service). | ASCII | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#protocol--[EnableMemcachedServer.protocol]
+| service.redis.bind-address | Configures the IP address or hostname of the system NIC used by the embedded Redis server to bind an listen for connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableRedisServer.html#bindAddress--[EnableRedis.bindAddress]
+| service.redis.port | Configures the port used by the embedded Redis server to listen for connections. | 6479 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableRedisServer.html#port--[EnableRedisServer.port]
 
 |=====================================================================================================================
 
