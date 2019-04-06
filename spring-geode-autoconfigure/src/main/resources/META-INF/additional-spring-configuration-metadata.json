@@ -851,7 +851,7 @@
     {
       "name": "spring.data.gemfire.service.memcached.protocol",
       "type": "org.springframework.data.gemfire.config.annotation.EnableMemcachedServer$MemcachedProtocol",
-      "default": 11211,
+      "default": "ASCII",
       "description": "Configures the protocol used by the embedded Memcached server (service)."
     },
     {
