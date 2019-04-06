@@ -273,17 +273,36 @@ specified location and limited to the defined size.
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| X | X | false | [ClientCacheApplication.name]
+| security.username | Configures the name of the user used to authenticate with the servers. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityUsername--[EnableSecurity.securityUsername]
+| security.password | Configures the user password used to authenticate with the servers. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPassword--[EnableSecurity.securityPassword]
+| security.properties-file | Configures the system pathname to a properties file containing security credentials. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityPropertiesFile--[EnableAuth.propertiesFile]
+| security.client.accessor | X | X | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessor--[EnableAuth.clientAccessor]
+| security.client.accessor-post-processor | The callback that should be invoked in the post-operation phase, which is when the operation has completed on the server but before the result is sent to the client. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessorPostProcessor--[EnableAuth.clientAccessorPostProcessor]
+| security.client.authentication-initializer | Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#clientAuthenticationInitializer--[EnableSecurity.clientAuthentiationInitializer]
+| security.client.authenticator | Static creation method returning an Authenticator object used by a cluster member (Locator, Server) to verify the credentials of a connecting client. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAuthenticator--[EnableAuth.clientAuthenticator]
+| security.client.diffie-hellman-algorithm | Used for authentication. For secure transmission of sensitive credentials like passwords, you can encrypt the credentials using the Diffie-Hellman key-exchange algorithm. Do this by setting the security-client-dhalgo system property on the clients to the name of a valid, symmetric key cipher supported by the JDK. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientDiffieHellmanAlgorithm--[EnableAuth.clientDiffieHellmanAlgorithm]
+| security.log.file | Configures the pathname to a log file used for security log messages. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogFile--[EnableAuth.securityLogFile]
+| security.log.level | Configures the log-level for security log messages. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogLevel--[EnableAuth.securityLogLevel]
+| security.manager.class-name | Configures name of a class implementing org.apache.geode.security.SecurityManager. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityManagerClassName--[EnableSecurity.securityManagerClassName]
+| security.peer.authentication-initializer | Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#peerAuthenticationInitializer--[EnableSecurity.peerAuthenticationInitializer]
+| security.peer.authenticator | Static creation method returning an Authenticator object, which is used by a peer to verify the credentials of a connecting node. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerAuthenticator--[EnableAuth.peerAuthenticator]
+| security.peer.verify-member-timeout | Configures the timeout in milliseconds used by a peer to verify membership of an unknown authenticated peer requesting a secure connection. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerVerifyMemberTimeout--[EnableAuth.peerVerifyMemberTimeout]
+| security.post-processor.class-name | Configures the name of a class implementing the org.apache.geode.security.PostProcessor interface that can be used to change the returned results of Region get operations. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPostProcessorClassName--[EnableSecurity.securityPostProcessorClassName]
+| security.shiro.ini-resource-path | Configures the Apache Geode System Property referring to the location of an Apache Shiro INI file that configures the Apache Shiro Security Framework in order to secure Apache Geode. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#shiroIniResourcePath--[EnableSecurity.shiroIniResourcePath]
 
 |=====================================================================================================================
 
 
-.`spring.data.gemfire.*` X properties
+.`spring.data.gemfire.*` SSL properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| X | X | false | [ClientCacheApplication.name]
+| security.ssl. | X | false | [EnableSsl.x]
+| security.ssl. | X | false | [EnableSsl.x]
+| security.ssl. | X | false | [EnableSsl.x]
+| security.ssl. | X | false | [EnableSsl.x]
+| security.ssl. | X | false | [EnableSsl.x]
 
 |=====================================================================================================================
 
