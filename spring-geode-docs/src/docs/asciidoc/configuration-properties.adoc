@@ -273,22 +273,22 @@ specified location and limited to the defined size.
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| security.username | Configures the name of the user used to authenticate with the servers. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityUsername--[EnableSecurity.securityUsername]
-| security.password | Configures the user password used to authenticate with the servers. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPassword--[EnableSecurity.securityPassword]
-| security.properties-file | Configures the system pathname to a properties file containing security credentials. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityPropertiesFile--[EnableAuth.propertiesFile]
-| security.client.accessor | X | X | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessor--[EnableAuth.clientAccessor]
-| security.client.accessor-post-processor | The callback that should be invoked in the post-operation phase, which is when the operation has completed on the server but before the result is sent to the client. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessorPostProcessor--[EnableAuth.clientAccessorPostProcessor]
-| security.client.authentication-initializer | Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#clientAuthenticationInitializer--[EnableSecurity.clientAuthentiationInitializer]
-| security.client.authenticator | Static creation method returning an Authenticator object used by a cluster member (Locator, Server) to verify the credentials of a connecting client. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAuthenticator--[EnableAuth.clientAuthenticator]
-| security.client.diffie-hellman-algorithm | Used for authentication. For secure transmission of sensitive credentials like passwords, you can encrypt the credentials using the Diffie-Hellman key-exchange algorithm. Do this by setting the security-client-dhalgo system property on the clients to the name of a valid, symmetric key cipher supported by the JDK. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientDiffieHellmanAlgorithm--[EnableAuth.clientDiffieHellmanAlgorithm]
-| security.log.file | Configures the pathname to a log file used for security log messages. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogFile--[EnableAuth.securityLogFile]
-| security.log.level | Configures the log-level for security log messages. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogLevel--[EnableAuth.securityLogLevel]
-| security.manager.class-name | Configures name of a class implementing org.apache.geode.security.SecurityManager. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityManagerClassName--[EnableSecurity.securityManagerClassName]
-| security.peer.authentication-initializer | Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#peerAuthenticationInitializer--[EnableSecurity.peerAuthenticationInitializer]
-| security.peer.authenticator | Static creation method returning an Authenticator object, which is used by a peer to verify the credentials of a connecting node. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerAuthenticator--[EnableAuth.peerAuthenticator]
-| security.peer.verify-member-timeout | Configures the timeout in milliseconds used by a peer to verify membership of an unknown authenticated peer requesting a secure connection. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerVerifyMemberTimeout--[EnableAuth.peerVerifyMemberTimeout]
-| security.post-processor.class-name | Configures the name of a class implementing the org.apache.geode.security.PostProcessor interface that can be used to change the returned results of Region get operations. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPostProcessorClassName--[EnableSecurity.securityPostProcessorClassName]
-| security.shiro.ini-resource-path | Configures the Apache Geode System Property referring to the location of an Apache Shiro INI file that configures the Apache Shiro Security Framework in order to secure Apache Geode. | | https://docs.spring.io/spring-data/geode/docs/current/api/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#shiroIniResourcePath--[EnableSecurity.shiroIniResourcePath]
+| security.username | Configures the name of the user used to authenticate with the servers. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityUsername--[EnableSecurity.securityUsername]
+| security.password | Configures the user password used to authenticate with the servers. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPassword--[EnableSecurity.securityPassword]
+| security.properties-file | Configures the system pathname to a properties file containing security credentials. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityPropertiesFile--[EnableAuth.propertiesFile]
+| security.client.accessor | X | X | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessor--[EnableAuth.clientAccessor]
+| security.client.accessor-post-processor | The callback that should be invoked in the post-operation phase, which is when the operation has completed on the server but before the result is sent to the client. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessorPostProcessor--[EnableAuth.clientAccessorPostProcessor]
+| security.client.authentication-initializer | Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#clientAuthenticationInitializer--[EnableSecurity.clientAuthentiationInitializer]
+| security.client.authenticator | Static creation method returning an Authenticator object used by a cluster member (Locator, Server) to verify the credentials of a connecting client. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAuthenticator--[EnableAuth.clientAuthenticator]
+| security.client.diffie-hellman-algorithm | Used for authentication. For secure transmission of sensitive credentials like passwords, you can encrypt the credentials using the Diffie-Hellman key-exchange algorithm. Do this by setting the security-client-dhalgo system property on the clients to the name of a valid, symmetric key cipher supported by the JDK. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientDiffieHellmanAlgorithm--[EnableAuth.clientDiffieHellmanAlgorithm]
+| security.log.file | Configures the pathname to a log file used for security log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogFile--[EnableAuth.securityLogFile]
+| security.log.level | Configures the log-level for security log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogLevel--[EnableAuth.securityLogLevel]
+| security.manager.class-name | Configures name of a class implementing org.apache.geode.security.SecurityManager. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityManagerClassName--[EnableSecurity.securityManagerClassName]
+| security.peer.authentication-initializer | Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#peerAuthenticationInitializer--[EnableSecurity.peerAuthenticationInitializer]
+| security.peer.authenticator | Static creation method returning an Authenticator object, which is used by a peer to verify the credentials of a connecting node. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerAuthenticator--[EnableAuth.peerAuthenticator]
+| security.peer.verify-member-timeout | Configures the timeout in milliseconds used by a peer to verify membership of an unknown authenticated peer requesting a secure connection. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerVerifyMemberTimeout--[EnableAuth.peerVerifyMemberTimeout]
+| security.post-processor.class-name | Configures the name of a class implementing the org.apache.geode.security.PostProcessor interface that can be used to change the returned results of Region get operations. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPostProcessorClassName--[EnableSecurity.securityPostProcessorClassName]
+| security.shiro.ini-resource-path | Configures the Apache Geode System Property referring to the location of an Apache Shiro INI file that configures the Apache Shiro Security Framework in order to secure Apache Geode. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#shiroIniResourcePath--[EnableSecurity.shiroIniResourcePath]
 
 |=====================================================================================================================
 
@@ -298,11 +298,44 @@ specified location and limited to the defined size.
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| security.ssl. | X | false | [EnableSsl.x]
-| security.ssl. | X | false | [EnableSsl.x]
-| security.ssl. | X | false | [EnableSsl.x]
-| security.ssl. | X | false | [EnableSsl.x]
-| security.ssl. | X | false | [EnableSsl.x]
+| security.ssl.certificate.alias.cluster | Configures the alias to the stored SSL certificate used by the cluster to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
+| security.ssl.certificate.alias.default-alias | Configures the default alias to the stored SSL certificate used to secure communications across the entire GemFire/Geode system. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#defaultCertificateAlias--[EnableSsl.defaultCertificateAlias]
+| security.ssl.certificate.alias.gateway | Configures the alias to the stored SSL certificate used by the WAN Gateway Senders/Receivers to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
+| security.ssl.certificate.alias.jmx | Configures the alias to the stored SSL certificate used by the Manager's JMX based JVM MBeanServer and JMX clients to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
+| security.ssl.certificate.alias.locator | Configures the alias to the stored SSL certificate used by the Locator to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
+| security.ssl.certificate.alias.server | Configures the alias to the stored SSL certificate used by clients and servers to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
+| security.ssl.certificate.alias.web | Configures the alias to the stored SSL certificate used by the embedded HTTP server to secure communications (HTTPS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
+| security.ssl.ciphers | Comma-separated list of SSL ciphers or “any”. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#ciphers--[EnableSsl.ciphers]
+| security.ssl.components | Comma-delimited list of GemFire/Geode components (e.g. WAN) to be configured for SSL communication. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#components--[EnableSsl.components]
+| security.ssl.keystore | Configures the system pathname to the Java KeyStore file storing certificates for SSL. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystore--[EnableSsl.keystore]
+| security.ssl.keystore.password | Configures the password used to access the Java KeyStore file. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystorePassword--[EnableSsl.keystorePassword]
+| security.ssl.keystore.type | Configures the password used to access the Java KeyStore file (e.g. JKS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystoreType--[EnableSsl.keystoreType]
+| security.ssl.protocols | Comma-separated list of SSL protocols or “any”. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#protocols--[EnableSsl.protocols]
+| security.ssl.require-authentication | Configures whether 2-way authentication is required. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#requireAuthentication--[EnableSsl.requireAuthentication]
+| security.ssl.truststore | Configures the system pathname to the trust store (Java KeyStore file) storing certificates for SSL. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#truststore--[EnableSsl.truststore]
+| security.ssl.truststore.password | Configures the password used to access the trust store (Java KeyStore file). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#truststorePassword--[EnableSsl.truststorePassword]
+| security.ssl.truststore.type | Configures the password used to access the trust store (Java KeyStore file; e.g. JKS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#truststoreType--[EnableSsl.truststoreType]
+| security.ssl.web-require-authentication | Configures whether 2-way HTTP authentication is required. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#webRequireAuthentication--[EnableSsl.webRequireAuthentication]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` Service properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| X | X | false | [ClientCacheApplication.name]
+
+|=====================================================================================================================
+
+
+.`spring.data.gemfire.*` X properties
+[width="90%",options="header"]
+|=====================================================================================================================
+| Name                                              | Description                   | Default                   | From
+
+| X | X | false | [ClientCacheApplication.name]
 
 |=====================================================================================================================
 
