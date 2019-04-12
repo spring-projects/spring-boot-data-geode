@@ -4,7 +4,7 @@
 The following 2 reference sections cover documented and well-known properties recognized and processed by
 _Spring Data for Apache Geode/Pivotal GemFire_ (SDG) as well as _Spring Session for Apache Geode/Pivotal GemFire_ (SSDG).
 
-These properties maybe used in Spring Boot `application.properties` files, or as JVM System properties, to configure
+These properties may be used in Spring Boot `application.properties` files, or as JVM System properties, to configure
 different aspects of or enable individual features of Apache Geode or Pivotal GemFire in a Spring application.
 When combined with the power of Spring Boot, magical things begin to happen.
 
