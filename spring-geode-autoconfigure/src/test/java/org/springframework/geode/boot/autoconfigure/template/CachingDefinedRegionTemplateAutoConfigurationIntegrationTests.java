@@ -35,6 +35,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
@@ -56,6 +57,7 @@ import example.library.service.LibraryService;
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.data.gemfire.GemfireTemplate
  * @see org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -64,7 +66,7 @@ import example.library.service.LibraryService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class CachingDefinedRegionTemplateAutoConfigurationIntegrationTests {
+public class CachingDefinedRegionTemplateAutoConfigurationIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private GemFireCache gemfireCache;
