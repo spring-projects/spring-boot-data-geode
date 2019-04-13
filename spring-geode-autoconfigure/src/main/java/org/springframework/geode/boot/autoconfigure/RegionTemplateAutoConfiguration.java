@@ -15,6 +15,7 @@
  */
 package org.springframework.geode.boot.autoconfigure;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.gemfire.GemfireTemplate;
+import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -90,6 +92,8 @@ public class RegionTemplateAutoConfiguration {
 
 				Optional.ofNullable(applicationContext)
 					.filter(it -> bean instanceof Region)
+					.filter(it -> !it.containsBean(regionTemplateName))
+					.filter(it -> isGemfireTemplateWithRegionNotPresent(it, (Region) bean))
 					.map(ConfigurableApplicationContext::getBeanFactory)
 					.filter(SingletonBeanRegistry.class::isInstance)
 					.map(SingletonBeanRegistry.class::cast)
@@ -116,8 +120,20 @@ public class RegionTemplateAutoConfiguration {
 				.ifPresent(rootRegions -> rootRegions.stream()
 					.filter(Objects::nonNull)
 					.filter(region -> !regionTemplateNames.contains(toRegionTemplateName(region.getName())))
+					.filter(region -> !applicationContext.containsBean(toRegionTemplateName(region.getName())))
+					.filter(region -> isGemfireTemplateWithRegionNotPresent(applicationContext, region))
 					.forEach(region -> beanFactory.registerSingleton(toRegionTemplateName(region.getName()),
 						new GemfireTemplate(region))));
 		}
+	}
+
+	private boolean isGemfireTemplateWithRegionNotPresent(ApplicationContext applicationContext, Region region) {
+
+		Map<String, GemfireTemplate> gemfireTemplateBeans =
+			applicationContext.getBeansOfType(GemfireTemplate.class, false, false);
+
+		return CollectionUtils.nullSafeMap(gemfireTemplateBeans).values().stream()
+			.map(GemfireTemplate::getRegion)
+			.noneMatch(templateRegion -> templateRegion.equals(region));
 	}
 }
