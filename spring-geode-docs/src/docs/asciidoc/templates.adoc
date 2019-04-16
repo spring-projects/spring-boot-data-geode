@@ -1,5 +1,5 @@
 [[geode-data-access-region-templates]]
-== Data Access with Region Templates
+== Data Access with GemfireTemplate
 
 There are several ways to access data stored in Apache Geode.  For instance, developers may choose to use
 the {apache-geode-javadoc}/org/apache/geode/cache/Region.html[Region API] directly. If developers are driven by
