@@ -5,6 +5,9 @@ The following appendices provide additional help while developing Spring Boot ap
 or Pivotal GemFire.
 
 :!sectnums:
+include::configuration-annotations.adoc[leveloffset=+1]
+
+:!sectnums:
 include::configuration-properties.adoc[leveloffset=+1]
 
 [[geode-cluster-configuration-bootstrapping]]
