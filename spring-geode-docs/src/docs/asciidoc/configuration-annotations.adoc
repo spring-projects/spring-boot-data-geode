@@ -164,7 +164,7 @@ in SBDG must be triggered before the ClientCache _auto-configuration_ class, whi
 (i.e. you must also explicitly declare the `@EnableSecurity` annotation in this case since you overrode the
 _auto-configuration_ of the cache, and, well, implicitly Security as well).
 
-Again, this is a GemFire/Geode limitation in how Security (Auth) and SSL meta-data is supplied to GemFire/Geode.
+Again, this is due to the way Security (Auth) and SSL meta-data must be supplied to GemFire/Geode.
 
 See the <<geode-security,Reference Guide>> for more details.
 
