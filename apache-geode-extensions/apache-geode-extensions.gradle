@@ -1,0 +1,18 @@
+apply plugin: 'io.spring.convention.spring-module'
+
+description = "Apache Geode Extensions"
+
+dependencies {
+
+    compile "org.apache.geode:geode-core:$apacheGeodeVersion"
+    compile "org.apache.geode:geode-cq:$apacheGeodeVersion"
+    compile "org.apache.geode:geode-lucene:$apacheGeodeVersion"
+    compile "org.apache.geode:geode-wan:$apacheGeodeVersion"
+
+    testCompile "org.assertj:assertj-core"
+    testCompile "junit:junit"
+    testCompile "org.mockito:mockito-core"
+    testCompile "org.projectlombok:lombok"
+    testCompile "edu.umd.cs.mtc:multithreadedtc"
+
+}
