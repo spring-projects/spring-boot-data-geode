@@ -1,0 +1,4 @@
+# Gfsh shell script to start a simple GemFire/Geode cluster
+
+start locator --name=LocatorOne --log-level=config
+start server --name=ServerOne --log-level=config

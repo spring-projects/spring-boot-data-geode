@@ -1,0 +1,19 @@
+[[geode-samples]]
+== Samples
+
+This section contains working examples demonstrating how to use Spring Boot for Apache Geode and Pivotal GemFire (SBDG)
+effectively.
+
+Some examples focus on specific Use Cases (e.g. [(HTTP) Session state] caching) while other examples demonstrate how
+SBDG works under-the-hood to give users a better understanding of what is actually happening and how to debug problems
+with their Apache Geode / Pivotal GemFire, Spring Boot applications.
+
+.Example Apache Geode Applications using Spring Boot
+|===
+| Guide | Description | Source
+
+| link:guides/boot-configuration.html[Spring Boot Auto-configuration for Apache Geode/Pivotal GemFire]
+| Explains what auto-configuration is provided by SBDG out-of-the-box and what the auto-configuration is doing.
+| {github-samples-url}/boot/configuration[Boot Auto-configuration]
+
+|===

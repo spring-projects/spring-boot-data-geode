@@ -1,0 +1,15 @@
+apply plugin: 'io.spring.convention.spring-sample-boot'
+
+description = "Spring Geode Guides demonstrating the use of Spring Boot Auto-configuration for Apache Geode."
+
+dependencies {
+
+	compile project(":spring-geode-starter")
+
+	compile "org.springframework.data:spring-data-geode-test"
+
+	compile "org.assertj:assertj-core"
+
+	compile "org.projectlombok:lombok"
+
+}

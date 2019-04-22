@@ -26,8 +26,9 @@ asciidoctor {
 	    'version-snapshot': snapshotBuild,
 		'version-milestone': milestoneBuild,
 		'version-release': releaseBuild,
-		'download-url' : "${githubBaseUrl}/archive/${githubTag}.zip",
 		'github-url': githubUrl,
+		'github-samples-url': "${githubUrl}/spring-geode-samples",
+		'download-url' : "${githubBaseUrl}/archive/${githubTag}.zip",
 		'spring-version' : versions['org.springframework:spring-core'],
 		'spring-boot-version' : "${springBootVersion}",
 		'spring-boot-data-geode-version' : project.version,
@@ -37,7 +38,8 @@ asciidoctor {
 		'spring-session-data-gemfire-version' : "${springSessionDataGeodeVersion}",
 		'spring-session-data-geode-version' : "${springSessionDataGeodeVersion}",
 		'docs-src-dir' : rootProject.projectDir.path + '/spring-geode-docs/src/main/java',
-		'examples-dir' : rootProject.projectDir.path + '/spring-geode-examples/'
+		'examples-dir' : rootProject.projectDir.path + '/spring-geode-examples/',
+		'samples-dir'  : rootProject.projectDir.path + '/spring-geode-samples/'
 }
 
 javadoc {

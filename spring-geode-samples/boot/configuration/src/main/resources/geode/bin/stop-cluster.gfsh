@@ -1,0 +1,4 @@
+# Gfsh shell script to stop the cluster
+
+stop server --name=ServerOne
+stop locator --name=LocatorOne
