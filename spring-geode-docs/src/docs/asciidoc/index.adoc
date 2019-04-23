@@ -4,7 +4,7 @@ John Blum
 :revnumber: {version}
 :doctype: book
 :toc:
-:toclevels: 3
+:toclevels: 1
 :source-highlighter: prettify
 :numbered:
 :icons: font
