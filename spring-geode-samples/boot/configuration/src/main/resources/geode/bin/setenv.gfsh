@@ -1,0 +1,4 @@
+# Gfsh shell script to set the environment
+
+set variable --name=SBDG_HOME --value=/Users/jblum/pivdev/spring-boot-data-geode
+echo --string=${SBDG_HOME}
