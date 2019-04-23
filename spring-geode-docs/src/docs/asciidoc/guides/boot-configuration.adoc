@@ -301,12 +301,12 @@ as the application is scaled out to meet demand.
 [[geode-samples-boot-configuration-clientserver]]
 == Switching to Client/Server
 
-We continue with our example by switching from local to a client/server architecture.
+We continue with our example by switching from local to a client/server topology.
 
 If you are rapidly prototyping your application and want to lift off the ground quickly, then it is useful to start
-locally and gradually migrate to a client/server topology.
+locally and gradually migrate to a client/server architecture.
 
-To switch to the client/server architecture, all you need to do is remove the `clientRegionShortcut` attribute:
+To switch to client/server, all you need to do is remove the `clientRegionShortcut` attribute:
 
 .Client/Server Topology Region Configuration
 [source,java]
@@ -315,7 +315,7 @@ To switch to the client/server architecture, all you need to do is remove the `c
 ----
 
 The default value for the `clientRegionShortcut` attribute is `ClientRegionShortcut.PROXY`.  This means no data
-is kept locally. All data is sent from the client to 1 or more servers in a cluster.
+is stored locally. All data will be sent from the client to 1 or more servers in a cluster.
 
 However, if we try to run the application, it will fail:
 
@@ -338,20 +338,21 @@ Caused by: org.apache.geode.cache.client.NoAvailableServersException
 	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:783) ~[spring-boot-2.0.9.RELEASE.jar:2.0.9.RELEASE]
 ----
 
-The client is expecting there to be a cluster of servers to communicate with and to store/access data.
+The client is expecting there to be a cluster of servers to communicate with and to store/access data. Clearly, there
+are no servers running yet.
 
-There are several ways in which to to start a cluster of GemFire/Geode servers.  For example, you may use Spring
-to configure and bootstrap the cluster, which is demonstrated <<geode-cluster-configuration-bootstrapping,here>>.
+There are several ways in which to start a cluster.  For example, you may use Spring to configure and bootstrap
+the cluster, which has been demonstrated <<geode-cluster-configuration-bootstrapping,here>>.
 
-For this sample, we are going to use the tools provided with Apache Geode or Pivotal GemFire, e.g. _Gfsh_
+Although, for this example, we are going to use the tools provided with Apache Geode, or Pivotal GemFire, i.e. _Gfsh_
 (GemFire/Geode Shell) for reasons that will become apparent later.
 
 NOTE: You need to https://geode.apache.org/releases/[download] and {apache-geode-docs}/prereq_and_install.html[install]
 a full distribution of Apache Geode to make use of the provided tools. After installation, you will need to set
-the GEODE (or GEMFIRE) environment variable to the location of your installation. Additionally, add $GEODE/bin
-to your system $PATH.
+the `GEODE` (or `GEMFIRE`) environment variable to the location of your installation. Additionally, add `$GEODE/bin`
+to your system `$PATH`.
 
-Once Apache Geode is successfully installed, you can open a command prompt (terminal) and do:
+Once Apache Geode has been successfully installed, you can open a command prompt (terminal) and do:
 
 .Running Gfsh
 [source,txt]
@@ -359,7 +360,8 @@ Once Apache Geode is successfully installed, you can open a command prompt (term
 $ echo $GEMFIRE
 /Users/jblum/pivdev/apache-geode-1.2.1
 
-jblum-mbpro-2:lab jblum$ gfsh
+
+$ gfsh
     _________________________     __
    / _____/ ______/ ______/ /____/ /
   / /  __/ /___  /_____  / _____  /
@@ -372,18 +374,18 @@ gfsh>
 
 You are set to go.
 
-For convenience, this sample provides a _Gfsh_ shell script to start the cluster:
+For your convenience, a _Gfsh_ shell script is provided to start a cluster:
 
 link:{samples-dir}/boot/configuration/src/main/resources/geode/bin/start-simple-cluster.gfsh[]
 
 Specifically, we are starting 1 Locator and 1 Server, all running with the default ports.
 
-Then you can execute the Gfsh shell script using:
+Execute the _Gfsh_ shell script using:
 
-.Run the start-simple-cluster.gfsh
+.Run Gfsh shell script
 [source,txt]
 ----
-gfsh>run --file=/Users/jblum/pivdev/spring-boot-data-geode/samples/boot/configuration/src/main/resources/geode/bin/start-simple-cluster.gfsh
+gfsh>run --file=/path/to/spring-boot-data-geode/samples/boot/configuration/src/main/resources/geode/bin/start-simple-cluster.gfsh
 1. Executing - start locator --name=LocatorOne --log-level=config
 
 Starting a Geode Locator in /Users/jblum/pivdev/lab/LocatorOne...
@@ -415,11 +417,12 @@ JVM Arguments: -Dgemfire.default.locators=10.99.199.24[10334] -Dgemfire.use-clus
 Class-Path: /Users/jblum/pivdev/apache-geode-1.2.1/lib/geode-core-1.2.1.jar:/Users/jblum/pivdev/apache-geode-1.2.1/lib/geode-dependencies.jar
 ----
 
-NOTE: You will need to change the path to spring-boot-data-geode/samples/boot/configuration directory in the
-`run --file=...` _Gfsh_ command above based on where you cloned the `spring-boot-data-geode` project on your computer.
+NOTE: You will need to change the path to the `spring-boot-data-geode/samples/boot/configuration` directory in the
+`run --file=...` _Gfsh_ command above based on where you git cloned the `spring-boot-data-geode` project
+to your computer.
 
-Now, our simple cluster with an Apache Geode Locator and (Cache) Server is running.  We can verify by
-listing and describing members:
+Now, our simple cluster with an Apache Geode Locator and (Cache) Server is running.  We can verify by listing
+and describing the members:
 
 .List and Describe Members
 [source,txt]
@@ -451,9 +454,7 @@ Running                  : true
 Client Connections       : 0
 ----
 
-What happens if we try to run our application now?
-
-It will fail:
+What happens if we try to run the application now?
 
 .RegionNotFoundException
 [source,txt]
@@ -511,7 +512,7 @@ The application fails to run because we (deliberately) did not create a correspo
 In order for a client to send data via a client `PROXY` Region (a Region with no local state) to a server in a cluster,
 at least one server in the cluster must have a matching Region by name (i.e. "Customers").
 
-Indeed, we have no Regions in the cluster:
+Indeed, there are no Regions in the cluster:
 
 .List Regions
 [source,txt]
@@ -527,12 +528,13 @@ Of course, you could have created the matching server-side, "Customers" Region u
 gfsh>create region --name=Customers --type=PARTITION
 ----
 
-But, what if you have hundreds of domain objects, which is not unreasonable in a practical enterprise application?
+But, what if you have hundreds of domain objects each requiring a Region for persistence? It is not an unusual or
+unreasonable requirement in any practical enterprise application.
 
-While it is not a "convention" in Spring Boot for Apache Geode, Spring Data for Apache Geode (SDG) comes to our rescue.
-We simply only need to enable cluster configuration from the client:
+While it is not a "convention" in Spring Boot for Apache Geode (SBDG), Spring Data for Apache Geode (SDG) comes to
+our rescue. We simply only need to enable cluster configuration from the client:
 
-.Enable Cluster Configuration from the Client
+.Enable Cluster Configuration
 [source,java]
 ----
 @SpringBootApplication
@@ -548,14 +550,14 @@ Additionally, we have set the `useHttp` attribute to `true`. This sends the conf
 to the cluster via GemFire/Geode's Management REST API.
 
 This is useful when your GemFire/Geode cluster may be running behind a firewall, such as on public cloud infrastructure.
-However, there are other benefits to using HTTP as well. As stated, the client send configuation meta-data to
+However, there are other benefits to using HTTP as well. As stated, the client sends configuration meta-data to
 GemFire/Geode's Management REST interface, which is a facade for the server-side Cluster Configuration Service. If
-another member (e.g. server) is added to the cluster as a peer, then this member will get the same configuration. If
-the entire cluster goes down, it will have the same configuration when it restarts.
+another peer (e.g. server) is added to the cluster as a member, then this member will get the same configuration. If
+the entire cluster goes down, it will have the same configuration when it is restarted.
 
-SDG is careful not to stomp on existing Regions since those Regions might have data in them. Declaring the
-`@EnableClusterConfiguration` annotation is a useful development-time utility, but it is recommended to explicitly
-define and declare your Regions in production environments, either using _Gfsh_ or Spring confg.
+SDG is careful not to stomp on existing Regions since those Regions may have data already. Declaring the
+`@EnableClusterConfiguration` annotation is a useful development-time feature, but it is recommended that you
+explicitly define and declare your Regions in production environments, either using _Gfsh_ or Spring confg.
 
 Now, we can run our application again, and this time, it works!
 
@@ -602,7 +604,9 @@ Region | size        | 1
        | data-policy | PARTITION
 ----
 
-We see that the "Customers" Region has a size of 1.  We can even query the "Customers" Region:
+We see that the "Customers" Region has a size of 1, containing "Jon Doe".
+
+We can verify this by querying the "Customers" Region:
 
 .Query for all Customers
 [source,java]
@@ -617,16 +621,21 @@ Result
 Jon Doe
 ----
 
+That was easy!
+
 [[geode-samples-boot-configuration-clientserver-autoconfig]]
 == Auto-configuration for Apache Geode, Take Two
 
 What may not be apparent in this example up to this point is how the data got from the client to the server. Certainly,
-our client did send `Jon Doe` to the server, but our `Customer` class is not `java.io.Serializable`.
+our client did send `Jon Doe` to the server, but our `Customer` class is not `java.io.Serializable`.  So, how was an
+instance of `Customer` streamed from the client to the server then (it is using a Socket)?
 
-Any object that is sent over a network, between two Java processes, or streamed to/from disk, must be serializable.
+Any object sent over a network, between two Java processes, or streamed to/from disk, must be serializable.
 
-Additionally, when we started the cluster, we also did not include any application domain classes on the classpath
-of any member in the cluster.  As further evidence, we an adjust our query slightly:
+Furthermore, when we started the cluster, we did not include any application domain classes on the classpath
+of any server in the cluster.
+
+As further evidence, we an adjust our query slightly:
 
 .Invalid Query
 [source,txt]
@@ -636,7 +645,7 @@ Message : Could not create an instance of a class example.app.crm.model.Customer
 Result  : false
 ----
 
-If we tried to perform a `get`, we would hit a similar error:
+If you tried to perform a `get`, you would hit a similar error:
 
 .Region.get(key)
 [source,txt]
@@ -653,18 +662,20 @@ Well, Apache Geode and Pivotal GemFire provide 2 proprietary serialization forma
 and {apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX], or _Portable Data Exchange_.
 
 While _Data Serialization_ is more efficient, PDX is more flexible (i.e. "portable"). PDX enables data to be queried
-in serialized form and is the format used to support both Java and native clients (C++, C#). Therefore, PDX is
-auto-configured by Spring Boot Data Geode (SBDG), by default.
+in serialized form and is the format used to support both Java and native clients (C++, C#) simultaneously. Therefore,
+PDX is auto-configured in Spring Boot Data Geode (SBDG) by default.
 
 This is convenient since you may not want to implement `java.io.Serializable` for all your application domain model
-types that you store in Apache Geode. In other cases, you may not have control over the types referred to by your
-application domain model types, such as when using a 3rd party library.
+types that you store in Apache Geode. In other cases, you may not even have control over the types referred to by your
+application domain model types to make they `Serializable`, such as when using a 3rd party library.
 
 So, SBDG auto-configures PDX and uses Spring Data Geode's `MappingPdxSerializer` as the `PdxSerializer` to de/serialize
 all application domain types.
 
-If we disable PDX _auto-configuration_, we can see the effects of trying to serialize a non-serializable type, `Customer`.
-First, let's destroy the server-side "Customers" Region:
+If we disable PDX _auto-configuration_, we will see the effects of trying to serialize a non-serializable type,
+`Customer`.
+
+First, let's back up a few steps and destroy the server-side "Customers" Region:
 
 .Destroy "Customers" Region
 [source,txt]
@@ -750,8 +761,11 @@ Region | size        | 0
        | data-policy | PARTITION
 ----
 
-So, SBDG can take care of all your serialization needs without you having to configure serialization or implement
-`java.io.Serializable` on all your application domain types, including types your application domain types refer to.
+So, SBDG takes care of all your serialization needs without you having to configure serialization or implement
+`java.io.Serializable` in all your application domain types, including types your application domain types refer to,
+which may not be possible.
+
+If you were not using SBDG, then you would need to enable PDX serialization explicitly.
 
 The PDX _auto-configuration_ provided by SBDG is equivalent to:
 
@@ -768,13 +782,14 @@ public class CustomerServiceApplication {
 }
 ----
 
-`@EnablePdx` is responsible for configuring PDX serialization and registering SDG's `MappingPdxSerializer`.
+In addition to the `@ClientCacheApplication` annotation, you would need to include the `@EnablePdx` annotation, which is
+responsible for configuring PDX serialization and registering SDG's `MappingPdxSerializer`.
 
 [[geode-samples-boot-configuration-clientserver-security]]
 == Securing the Client & Server
 
 The last bit of _auto-configuration_ provided by SBDG that we will look at in this guide involves Security,
-and specifically Authentication/Authorization (Auth) and Transport Layer Security (TLS) using SSL.
+and specifically, Authentication/Authorization (Auth) as well as Transport Layer Security (TLS) using SSL.
 
 In today's age, Security is no laughing matter and making sure your applications are secure is a first-class concern.
 This is why SBDG takes Security very seriously and attempts to make this as simple as possible. You are definitely
