@@ -2,9 +2,12 @@
 = Spring Boot Auto-configuration for Apache Geode & Pivotal GemFire
 
 This guide walks you through building a simple Customer Service, Spring Boot application using Apache Geode to manage
-Customer interactions. It is assumed that you are already familiar with Spring Boot and Apache Geode. By the end of
-this lesson, users should have a better understanding of the _auto-configuration_ support provided by
-Spring Boot Data Geode (SBDG).
+Customer interactions. It is assumed that you are already familiar with Spring Boot and Apache Geode.
+
+By the end of this lesson, users should have a better understanding of what the _auto-configuration_ support
+provided by Spring Boot Data Geode (SBDG) actually does.
+
+This guide builds on and compliments the <<geode-autoconfiguration-annotations>> chapter with concrete examples.
 
 Let's begin.
 
@@ -108,7 +111,7 @@ SBDG will auto-configure a `ClientCache` instance by default.
 
 We can make this more apparent by disabling the _auto-configuration_ of the `ClientCache` instance provided by SBDG:
 
-.Disabling ClientCache auto-configuration
+.Disabling ClientCache Auto-configuration
 [source,java]
 ----
 @SpringBootApplication(exclude = ClientCacheAutoConfiguration.class)
@@ -149,7 +152,7 @@ could not be created.  The `CustomerRepository` could not be created because the
 could not be created.  The "Customers" Region could not be created because there was no cache instance available
 (e.g. `ClientCache`).
 
-The `ClientCache` auto-configuration is equivalent to the following:
+The `ClientCache` _auto-configuration_ is equivalent to the following:
 
 .Equivalent ClientCache configuration
 [source,java]
@@ -169,7 +172,7 @@ That is, we would need to explicitly declare the `@ClientCacheApplication` annot
 We are also using the Spring Data (Geode) _Repository_ infrastructure in the Customer Service application.
 This should be evident from our definition of the application-specific `CustomerRepository` interface.
 
-If we disable the auto-configuration of the Spring Data Repository infrastructure:
+If we disable the _auto-configuration_ of the Spring Data Repository infrastructure:
 
 . Disabling Spring Data Repositories
 [source,java]
@@ -181,8 +184,8 @@ public class CustomerServiceApplication {
 }
 ----
 
-We would run into a similar error:
 
+We would run into a similar error:
 .Error resulting from no proxied CustomerRepository instance
 [source,txt]
 ----
@@ -207,7 +210,7 @@ Parameter 0 of method runner in example.app.crm.CustomerServiceApplication requi
 The Spring Data _Repository auto-configuration_ even takes care of locating our application Repository interface
 definitions for us.
 
-Without auto-configuration, you would need to:
+Without _auto-configuration_, you would need to:
 
 .Equivalent Spring Data Repositories configuration
 [source,java]
@@ -648,7 +651,7 @@ application domain model types, such as when using a 3rd party library.
 So, SBDG auto-configures PDX and uses Spring Data Geode's `MappingPdxSerializer` as the `PdxSerializer` to de/serialize
 all application domain types.
 
-If we disable PDX auto-configuration, we can see the effects of trying to serialize a non-serializable type, `Customer`.
+If we disable PDX _auto-configuration_, we can see the effects of trying to serialize a non-serializable type, `Customer`.
 First, let's destroy the server-side "Customers" Region:
 
 .Destroy "Customers" Region
@@ -755,13 +758,161 @@ public class CustomerServiceApplication {
 
 `@EnablePdx` is responsible for configuring PDX serialization and registering SDG's `MappingPdxSerializer`.
 
-[[geode-samples-boot-configuration-clientserver-secure]]
+[[geode-samples-boot-configuration-clientserver-security]]
 == Securing the Client & Server
+
+The last bit of _auto-configuration_ provided by SBDG that we will look at in this guide involves Security,
+and specifically Authentication/Authorization (Auth) and Transport Layer Security (TLS) using SSL.
+
+In today's age, Security is no laughing matter and making sure your applications are secure is a first-class concern.
+This is why SBDG takes Security very seriously and attempts to make this as simple as possible. You are definitely
+encouraged to read the relevant <<geode-security,chapter>> in this Reference Documentation on the provided Security
+_auto-configuration_ support.
+
+We will now expand on our example to secure the client and server processes, with both Auth and TLS using SSL, and then
+see how SBDG helps us properly configure these concerns, easily and reliably.
+
+[[geode-samples-boot-configuration-clientserver-security-server]]
+==== Securing the server
+
+First, we must secure the cluster.
+
+In a nutshell, when using the Apache Geode API (with no help from Spring), you must do the following:
+
+1. Implement the `org.apache.geode.security.SecurityManager` interface.
+2. Configure the `SecurityManager` using the GemFire/Geode `security-manager` property in `gemfire.properties`.
+3. Either create a `gfsecurity.properties` file and set the `security-username` and `security-password` properties, or...
+4. Implement the `org.apache.geode.security.AuthInitialize` interface and set the `security-peer-auth-init` property
+in `gemfire.properties` as described {apache-geode-docs}/managing/security/implementing_authentication.html[here].
+5. Then launch the cluster, and its members using _Gfsh_ in the proper order.
+
+That is a lot of tedious work and if you mess up any bit of the configuration, then either your servers will fail
+to start correctly, or worse, not be secure.
+
+NOTE: SBDG does provide server-side, peer Security _auto-configuration_ support. However, you must then configure
+and bootstrap your GemFire/Geode servers with Spring.
+
+[[geode-samples-boot-configuration-clientserver-security-client]]
+==== Securing the client
+
+If you were to just run the client, Customer Service application when SSL is not enabled, you would hit
+the following error on startup:
+
+.AuthenticationRequiredException
+[source,txt]
+----
+15:26:10.598 [main] ERROR o.a.g.i.c.GemFireCacheImpl - org.apache.geode.security.AuthenticationRequiredException: No security credentials are provided
+15:26:10.607 [main] ERROR o.s.b.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'runner' defined in example.app.crm.CustomerServiceApplication: Unsatisfied dependency expressed through method 'runner' parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'customerRepository': Initialization of bean failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'Customers': Cannot resolve reference to bean 'gemfireCache' while setting bean property 'cache'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'gemfireCache': FactoryBean threw exception on object creation; nested exception is java.lang.RuntimeException: Error occurred when initializing peer cache
+    ....
+    at org.springframework.boot.SpringApplication.run(SpringApplication.java:307) [spring-boot-2.0.9.RELEASE.jar:2.0.9.RELEASE]
+    at example.app.crm.CustomerServiceApplication.main(CustomerServiceApplication.java:51) [main/:?]
+....
+Caused by: org.apache.geode.security.AuthenticationRequiredException: No security credentials are provided
+    at org.apache.geode.internal.cache.tier.sockets.HandShake.readMessage(HandShake.java:1396) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.internal.cache.tier.sockets.HandShake.handshakeWithServer(HandShake.java:1251) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.cache.client.internal.ConnectionImpl.connect(ConnectionImpl.java:117) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.cache.client.internal.ConnectionFactoryImpl.createClientToServerConnection(ConnectionFactoryImpl.java:136) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.cache.client.internal.QueueManagerImpl.initializeConnections(QueueManagerImpl.java:466) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.cache.client.internal.QueueManagerImpl.start(QueueManagerImpl.java:303) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.cache.client.internal.PoolImpl.start(PoolImpl.java:343) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.cache.client.internal.PoolImpl.finishCreate(PoolImpl.java:173) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.cache.client.internal.PoolImpl.create(PoolImpl.java:159) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.internal.cache.PoolFactoryImpl.create(PoolFactoryImpl.java:321) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.internal.cache.GemFireCacheImpl.determineDefaultPool(GemFireCacheImpl.java:2922) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.internal.cache.GemFireCacheImpl.initializeDeclarativeCache(GemFireCacheImpl.java:1369) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.internal.cache.GemFireCacheImpl.initialize(GemFireCacheImpl.java:1195) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.internal.cache.GemFireCacheImpl.basicCreate(GemFireCacheImpl.java:758) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.internal.cache.GemFireCacheImpl.createClient(GemFireCacheImpl.java:731) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.cache.client.ClientCacheFactory.basicCreate(ClientCacheFactory.java:262) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.cache.client.ClientCacheFactory.create(ClientCacheFactory.java:212) ~[geode-core-1.2.1.jar:?]
+    at org.springframework.data.gemfire.client.ClientCacheFactoryBean.createCache(ClientCacheFactoryBean.java:400) ~[spring-data-geode-2.0.14.RELEASE.jar:2.0.14.RELEASE]
+	...
+----
+
+Even though SBDG provides _auto-configuration_ support for client Security, and specifically Auth in this case,
+minimally you still must specify a username and password.
+
+This is as easy as setting a username/password in Spring Boot `application.properties`:
+
+link:{samples-dir}/boot/configuration/src/main/resources/application-security.properties[]
+
+The act of setting a username and password triggers the client Security _auto-configuration_ provided by SBDG. There are
+many aspects to configuring client Security in Apache Geode/Pivotal GemFire properly. All you need worry about is
+supplying the credentials.
+
+In this example, this has been conveniently setup for you. All you need do is enable the Spring "security" profile
+when running the `CustomerServiceApplication` class.
+
+You can enable the Spring "security" profile with:
+
+.Enable Spring "security" Profile
+[source,txt]
+----
+-Dspring.profiles.active=security
+----
+
+By doing so, the `application-security.properties` file containing the configured username/password properties
+is included at application startup.
+
+However, even with the username/password properties set in Spring Boot `application.properties`, if you were to disable
+the client Security _auto-configuration_:
+
+.Disabling Client Security Auto-configuration
+[source,java]
+----
+@SpringBootApplication(exclude = ClientSecurityAutoConfiguration.class)
+@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
+@EnableClusterConfiguration(useHttp = true)
+public class CustomerServiceApplication {
+  ...
+}
+----
+
+Then, our client, Customer Service application would not be able to authenticate, and again we would receive an error,
+as shown above:
+
+.AuthenticationRequiredException
+[source,txt]
+----
+Caused by: org.apache.geode.security.AuthenticationRequiredException: No security credentials are provided
+    at org.apache.geode.internal.cache.tier.sockets.HandShake.readMessage(HandShake.java:1396) ~[geode-core-1.2.1.jar:?]
+    at org.apache.geode.internal.cache.tier.sockets.HandShake.handshakeWithServer(HandShake.java:1251) ~[geode-core-1.2.1.jar:?]
+    ....
+----
+
+Without the support of SBDG's client Security _auto-configuration_, you would need to explicitly "enable" security:
+
+.Explicitly Enable Security
+[source,java]
+----
+@SpringBootApplication
+@ClientCacheApplication
+@EnableSecurity
+@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
+@EnableClusterConfiguration(useHttp = true)
+public class CustomerServiceApplication {
+  ...
+}
+----
+
+That is, you would 1) still set the username/password properties in Spring Boot `application.properties` and 2) you
+would additionally need to explicitly declare the `@EnableSecurity` annotation.
+
+Therefore, SBDG (with the help of SDG under-the-hood) does the heavy lifting, automatically for you.
 
 
 [[geode-samples-boot-configuration-conclusion]]
 == Conclusion
 
 Hopefully this guide has now given you a better understanding of what the _auto-configuration_ support provided by
-Spring Boot for Apache Geode/Pivotal GemFire is giving you when developing Apache Geode or Pivotal GemFire applications
-with Spring.
+Spring Boot for Apache Geode/Pivotal GemFire (SBDG) is giving you when developing Apache Geode or Pivotal GemFire
+applications with Spring.
+
+This guide is by no means complete in that it does not cover all the _auto-configuration_ provided by SBDG. SBDG
+additionally provides _auto-configuration_ for Spring's Cache Abstraction, Continuous Query (CQ), Function Execution
+& Implementations, `GemfireTemplates` and Spring Session.  However, the concepts and effects are similar to what
+has been presented above.
+
+We leave it as an exercise for you to explore and understand the remaining _auto-configuration_ bits using this guide
+as a reference for your learning purposes.
