@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: 'io.spring.convention.spring-sample-boot'
 
 description = "Spring Geode Samples demonstrating the use of Spring Boot Auto-configuration for Apache Geode."
@@ -12,4 +14,12 @@ dependencies {
 
 	compile "org.projectlombok:lombok"
 
+}
+
+processResources {
+	filter ReplaceTokens, tokens: [
+		'project-dir' : rootProject.projectDir.path,
+		'project-version' : project.version,
+		'samples-dir' : rootProject.projectDir.path + '/spring-geode-samples/'
+	]
 }
