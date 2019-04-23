@@ -1,78 +1,83 @@
 [[geode-samples-boot-configuration]]
 = Spring Boot Auto-configuration for Apache Geode & Pivotal GemFire
+John Blum
+:toc:
+:toclevels: 1
 
-This guide walks you through building a simple Customer Service, Spring Boot application using Apache Geode to manage
-Customer interactions. It is assumed that you are already familiar with Spring Boot and Apache Geode.
+This guide walks you through building a simple Customer Service, Spring Boot application using Apache Geode
+to manage Customer interactions. You should already be familiar with Spring Boot and Apache Geode.
 
-By the end of this lesson, users should have a better understanding of what the _auto-configuration_ support
-provided by Spring Boot Data Geode (SBDG) actually does.
+By the end of this lesson, you should have a better understanding of what Spring Boot for Apache Geode's (SBDG)
+_auto-configuration_ support actually does.
 
-This guide builds on and compliments the <<geode-autoconfiguration-annotations>> chapter with concrete examples.
+This guide compliments the <<geode-autoconfiguration-annotations,Auto-configuration vs. Annotation-based configuration>>
+chapter with concrete examples.
 
 Let's begin.
 
 NOTE: This guide builds on the https://www.youtube.com/watch?v=OvY5wzCtOV0[_Simplifying Apache Geode with Spring Data_]
-talk presented by John Blum during the 2017 SpringOne Platform conference in San Francisco, CA.  While this example
-as well as the example presented during the talk both use Spring Boot, only this example is using Spring Boot
-for Apache Geode (SBDG). Therefore, this guide and its example is an improvement over the example in the presentation.
+presentation by John Blum during the 2017 SpringOne Platform conference.  While this example as well as the example
+presented in the talk both use Spring Boot, only this example is using Spring Boot for Apache Geode (SBDG). This guide
+improves on the example from the presentation by using SBDG.
 
 [[geode-samples-boot-configuration-app-domain-classes]]
 == Application Domain Classes
 
-==== `Customer` class
+We will build the Spring Boot, Customer Service application from the ground up.
+
+=== `Customer` class
 
 Like any sensible application development project, we begin by modeling the data our application needs to manage,
-i.e. a `Customer`.  For this example, the `Customer` class is implemented as follows:
+namely a `Customer`.  For this example, the `Customer` class is implemented as follows:
 
 link:{samples-dir}/boot/configuration/src/main/java/example/app/crm/model/Customer.java[]
 
-The `Customer` class uses https://projectlombok.org/[Project Lombok] to simplify the implementation so that we can focus
-on the important details. Lombok is useful for testing or prototyping purposes. However, using Lombok is not required
-and in most production applications, I would not recommend using it.
+The `Customer` class uses https://projectlombok.org/[Project Lombok] to simplify the implementation so we can focus on
+the important details. Lombok is useful for testing or prototyping purposes. However, using Lombok is optional
+and in most production applications, I would not recommend it.
 
 Additionally, the `Customer` class is annotated with Spring Data Geode's (SDG) `@Region` annotation.  `@Region`
-is a mapping annotation declaring the Apache Geode cache `Region` in which Customer data will be persisted.
+is a mapping annotation declaring the Apache Geode `Region` in which `Customer` data will be persisted.
 
 Finally, the `org.springframework.data.annotation.Id` annotation was used to designate the `Customer.id` field as
-the identifier for `Customer` objects. The identifier is the Key of the Entry in the Apache Geode cache `Region`.
+the identifier for `Customer` objects. The identifier is the Key used in the Entry stored in the Apache Geode `Region`.
 A `Region` is a distributed version of `java.util.Map`.
 
 NOTE: If the `@Region` annotation is not explicitly declared, then SDG uses the simple name of the class, which in this
-case would just be "Customer", to identify the `Region`.  However, there is another reason we explicitly annotated the
-`Customer` class with `@Region`, which we will cover below.
+case is "Customer", to identify the `Region`.  However, there is another reason we explicitly annotated the `Customer`
+class with `@Region`, which we will cover below.
 
-==== `CustomerRepository` interface
+=== `CustomerRepository` interface
 
-Next, we create a _Data Access Object_ (DAO), or Spring Data _Repository_ to persist `Customers` to Apache Geode:
+Next, we create a _Data Access Object_ (DAO) to persist `Customers` to Apache Geode.  We create the DAO
+using Spring Data's _Repository_ abstraction:
 
 link:{samples-dir}/boot/configuration/src/main/java/example/app/crm/repo/CustomerRepository.java[]
 
 `CustomerRepository` is a Spring Data `CrudRepository`.  `CrudRepository` provides basic CRUD (Create, Read, Update,
-Delete) data access operations along with simple queries for `Customer` objects stored in Apache Geode.
+Delete) data access operations along with the ability to define simple queries on `Customers`.
 
-Spring Data Geode is responsible for creating a proxy for your application-defined _Repository_ interfaces in order to
-implement any query methods you may have explicitly defined on the interface in addition to the data access operations
-provided by the `CrudRepository` interface extension.
+Spring Data Geode will create a proxy implementation for your application-specific _Repository_ interfaces, implementing
+any query methods you may have explicitly defined on the interface in addition to the data access operations provided in
+the `CrudRepository` interface extension.
 
 In addition to the base `CrudRepository` operations, `CustomerRepository` has additionally defined a
-`findByNameLike(:String):Customer` query method.
+`findByNameLike(:String):Customer` query method.  The Apache Geode OQL query is derived from the method declaration.
 
 NOTE: Though it is beyond the scope of this document, Spring Data's _Repository_ infrastructure is capable of generating
 data store specific queries (e.g. Apache Geode OQL) for _Repository_ interface query method declarations just by
 introspecting the method signature.  The query methods must conform to specific conventions.  Alternatively, users
-may use `@Query` to annotate query methods and specify the raw query instead (i.e. OQL for Apache Geode,
-SQL for JDBC, and so on).
+may use `@Query` to annotate query methods to specify the raw query instead (i.e. OQL for Apache Geode, SQL for JDBC,
+and so on).
 
-==== Customer Service Application (main class)
+=== Customer Service Application (main class)
 
 Now that we have created the basic domain classes of our Customer Service application, we need a main application class
-to drive the interactions with `Customers`.
-
-The end result looks like this:
+to drive the interactions with Customers:
 
 link:{samples-dir}/boot/configuration/src/main/java/example/app/crm/CustomerServiceApplication.java[]
 
-The `CustomerServiceApplication` class is annotated with `@SpringBootApplication`. Therefore, this main class is
+The `CustomerServiceApplication` class is annotated with `@SpringBootApplication`. Therefore, the main class is
 a proper Spring Boot application equipped with all the features of Spring Boot (e.g. _auto-configuration_).
 
 Additionally, we use Spring Boot's `SpringApplicationBuilder` in the `main` method to configure and bootstrap
@@ -82,8 +87,8 @@ Then, we declare a Spring Boot `ApplicationRunner` bean, which is invoked by Spr
 (i.e. `ApplicationContext`) has been properly initialized and started. Our `ApplicationRunner` defines the Customer
 interactions performed by our Customer Service application.
 
-Specifically, we create a new `Customer` object ("Jon Doe"), save him to the Apache Geode "Customers" cache Region,
-and then query for "Jon Doe" using an OQL query with the predicate: `name LIKE '%Doe'`.
+Specifically, the runner creates a new `Customer` object ("Jon Doe"), saves him to the Apache Geode "Customers" Region,
+and then queries for "Jon Doe" using an OQL query with the predicate: `name LIKE '%Doe'`.
 
 NOTE: `%` is the wildcard for OQL text searches.
 
@@ -92,24 +97,24 @@ NOTE: `%` is the wildcard for OQL text searches.
 
 "_With great power comes great responsibility._" - Uncle Ben
 
-While it is not apparent (yet), there is a lot of intrinsic power provided by Spring Boot Data Geode (SBDG)
+While it is not apparent (yet), there is a lot of hidden, intrinsic power provided by Spring Boot Data Geode (SBDG)
 in this example.
 
-==== Cache instance
+=== Cache instance
 
 First, in order to put anything into Apache Geode, you need a cache instance.  A cache instance is also required to
-create the Regions which ultimately will store the application's data (state).  Again, a `Region` is just a Key/Value
-data structure, like a `java.util.Map`, mapping a Key to an Object.  A `Region` is actually much more than a simple
-`Map` since it is distributed.  However, since `Region` implements `java.util.Map`, it can be treated as such.
+create Regions which ultimately store the application's data (state).  Again, a `Region` is just a Key/Value data
+structure, like `java.util.Map`, mapping a Key to a Value, or an Object.  A `Region` is actually much more than a
+simple `Map` since it is distributed.  However, since `Region` implements `java.util.Map`, it can be treated as such.
 
-NOTE: A complete discussion of a `Region` and it concepts are beyond the scope of this document.  You may learn more
-by reading the Apache Geode User Guide on {apache-geode-docs}/developing/region_options/chapter_overview.html[Regions].
+NOTE: A complete discussion of `Region` and it concepts are beyond the scope of this document.  You may learn more
+by reading Apache Geode's User Guide on {apache-geode-docs}/developing/region_options/chapter_overview.html[Regions].
 
 SBDG is opinionated and assumes most developer applications will be client applications in Apache Geode's
-{apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[client/server topology].  As a result,
-SBDG will auto-configure a `ClientCache` instance by default.
+{apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[client/server topology].
+Therefore, SBDG auto-configures a `ClientCache` instance by default.
 
-We can make this more apparent by disabling the _auto-configuration_ of the `ClientCache` instance provided by SBDG:
+The intrinsic `ClientCache` _auto-configuration_ provided by SBDG can be made apparent by disabling it:
 
 .Disabling ClientCache Auto-configuration
 [source,java]
@@ -121,9 +126,9 @@ public class CustomerServiceApplication {
 }
 ----
 
-Note the `exclude` on the `ClientCacheAutoConfiguration` class.
+Note the `exclude` on the `ClientCacheAutoConfiguration.class`.
 
-With the correct log level set, you will see an error message similar to:
+With the correct log-level set, you will see an error message similar to:
 
 .Error resulting from no ClientCache instance
 [source,txt]
@@ -150,7 +155,7 @@ Essentially, the `CustomerRepository` could not be injected into our `CustomerSe
 `ApplicationRunner` bean method because the `CustomerRepository`, which depends on the "Customers" Region,
 could not be created.  The `CustomerRepository` could not be created because the "Customers" Region
 could not be created.  The "Customers" Region could not be created because there was no cache instance available
-(e.g. `ClientCache`).
+(e.g. `ClientCache`) to create Regions, resulting in the trickling effect.
 
 The `ClientCache` _auto-configuration_ is equivalent to the following:
 
@@ -165,16 +170,16 @@ public class CustomerServiceApplication {
 }
 ----
 
-That is, we would need to explicitly declare the `@ClientCacheApplication` annotation if we were not using SBDG.
+That is, you would need to explicitly declare the `@ClientCacheApplication` annotation if you were not using SBDG.
 
-==== Repository instance
+=== Repository instance
 
-We are also using the Spring Data (Geode) _Repository_ infrastructure in the Customer Service application.
-This should be evident from our definition of the application-specific `CustomerRepository` interface.
+We are also using the Spring Data (Geode) _Repository_ infrastructure in the Customer Service application. This should
+be evident from our definition and declaration of the application-specific `CustomerRepository` interface.
 
-If we disable the _auto-configuration_ of the Spring Data Repository infrastructure:
+If we disable the Spring Data _Repository_ _auto-configuration_:
 
-. Disabling Spring Data Repositories
+.Disabling Spring Data Repositories Auto-configuration
 [source,java]
 ----
 @SpringBootApplication(exclude = RepositoriesAutoConfiguration.class)
@@ -184,9 +189,9 @@ public class CustomerServiceApplication {
 }
 ----
 
+The application would throw a similar error on startup:
 
-We would run into a similar error:
-.Error resulting from no proxied CustomerRepository instance
+.Error resulting from no proxied `CustomerRepository` instance
 [source,txt]
 ----
 17:31:21.231 [main] DEBUG o.s.b.d.LoggingFailureAnalysisReporter - Application failed to start due to an exception
@@ -207,10 +212,13 @@ Description:
 Parameter 0 of method runner in example.app.crm.CustomerServiceApplication required a bean of type 'example.app.crm.repo.CustomerRepository' that could not be found.
 ----
 
-The Spring Data _Repository auto-configuration_ even takes care of locating our application Repository interface
+In this case, there was simply no proxied implementation of the `CustomerRepository` interface provided by the framework
+since the _auto-configuration_ was disabled.  The `ClientCache` and "Customers" `Region` do exist in this case.
+
+The Spring Data _Repository auto-configuration_ even takes care of locating our application _Repository_ interface
 definitions for us.
 
-Without _auto-configuration_, you would need to:
+Without _auto-configuration_, you would need to explicitly:
 
 .Equivalent Spring Data Repositories configuration
 [source,java]
@@ -224,17 +232,20 @@ public class CustomerServiceApplication {
 ----
 
 That is, you would need to explicitly declare the `@EnableGemfireRepositories` annotation and set the `basePackages`
-attribute, or the equivalent, type-safe `basePackageClasses` attribute, if you were not using SBDG.
+attribute, or the equivalent, type-safe `basePackageClasses` attribute, to the package containing your application
+_Repository_ interfaces, if you were not using SBDG.
 
-==== Entity-defined Regions
+=== Entity-defined Regions
 
-The only explicit declaration of configuration in our Customer Service application is with the
-`@EnableEntityDefinedRegions` annotation. As was alluded to above, there was another reason to explicitly declare
-the `@Region` annotation on our `Customer` class.
+So far, the only explicit declaration of configuration in our Customer Service application is
+the `@EnableEntityDefinedRegions` annotation.
 
-We could, for all intents and purposes, explicitly define the client-local, "Customers" Regions as so:
+As was alluded to above, there was another reason we explicitly declared the `@Region` annotation
+on our `Customer` class.
 
-.JavaConfig Bean Defintion for the Customers Region
+We could have defined the client-local, "Customers" Region using Spring JavaConfig, explicitly:
+
+.JavaConfig Bean Defintion for the "Customers" Region
 [source,java]
 ----
 @Bean("Customers")
@@ -250,28 +261,29 @@ public ClientRegionFactoryBean<Long, Customer> customersRegion(GemFireCache gemf
 }
 ----
 
-Or, even define the "Customers" Region using XML:
+Or, even define the "Customers" Region using Spring XML, explicitly:
 
-.XML Bean Definition for the Customers Region
+.XML Bean Definition for the "Customers" Region
 [source,xml]
 ----
 <gfe:client-region id="Customers" shortcut="LOCAL"/>
 ----
 
-But, it is very convenient to scan and then define Regions (whether client or server/peer Regions) based on
-your application entity classes themselves (e.g. `Customer`):
+But, using SDG's `@EnableEntityDefinedRegions` annotation is very convenient and can scan for the Regions
+(whether client or server/peer Regions) required by your application based the entity classes themselves
+(e.g. `Customer`):
 
-.Annotation-based config for the Customers Region
+.Annotation-based config for the "Customers" Region
 [source,java]
 ----
 @EnableEntityDefinedRegions(basePackageClasses = Customer.class, clientRegionShortcut = ClientRegionShortcut.LOCAL)
 ----
 
-The `basePackageClasses` attribute is an alternative to `basePackages`, and is a more ideal, type-safe way to target
-the packages (and subpackages) containing the entity classes that your application will persist to Apache Geode. You
-need only choose 1 class in the top-level package where you want the scan to begin.  Spring Data Geode uses this class
-to determine the package to start the scan.  'basePackageClasses` accepts an array of `Class` types so that you can
-specify multiple independent top-level packages. The annotation also includes the ability to filter types.
+The `basePackageClasses` attribute is an alternative to `basePackages`, and a type-safe way to target the packages
+(and subpackages) containing the entity classes that your application will persist to Apache Geode. You need only
+choose 1 class in the top-level package from each package where you want the scan to begin.  Spring Data Geode uses
+this class to determine the package to start the scan.  'basePackageClasses` accepts an array of `Class` types so
+you can specify multiple independent top-level packages. The annotation also includes the ability to filter types.
 
 However, the `@EnableEntityDefinedRegions` annotation only works when the entity class (e.g. `Customer`) is explicitly
 annotated with the `@Region` annotation (e.g. `@Region("Customers")`), otherwise it ignores the class.
@@ -282,9 +294,9 @@ in our example. Why?
 Well, initially we wanted to get up and running as quickly as possible, without a lot of ceremony and fuss. By using a
 `LOCAL` client Region initially, we are not required to start a server for the client to be able to store data.
 
-However, while `LOCAL` client Regions can be useful for some purposes (e.g. local processing/querying), it is
-more common for a client to persist data in a cluster of servers, and for that data to be share by multiple clients,
-especially as the application is scaled out to meet demand.
+While `LOCAL` client Regions can be useful for some purposes (e.g. local processing/querying), it is more common
+for a client to persist data in a cluster of servers, and for that data to be shared by multiple clients, especially
+as the application is scaled out to meet demand.
 
 [[geode-samples-boot-configuration-clientserver]]
 == Switching to Client/Server

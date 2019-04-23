@@ -1,6 +1,6 @@
 apply plugin: 'io.spring.convention.spring-sample-boot'
 
-description = "Spring Geode Guides demonstrating the use of Spring Boot Auto-configuration for Apache Geode."
+description = "Spring Geode Samples demonstrating the use of Spring Boot Auto-configuration for Apache Geode."
 
 dependencies {
 
