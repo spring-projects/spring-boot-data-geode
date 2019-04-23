@@ -2,4 +2,3 @@
 # Connect to a secure Locator with Authentication and SSL enabled
 
 connect --security-properties-file=${SBDG_HOME}/spring-geode-samples/boot/configuration/src/main/resources/geode/config/gemfire.properties
-#connect --security-properties-file=/Users/jblum/pivdev/spring-boot-data-geode/spring-geode-samples/boot/configuration/src/main/resources/geode/config/gemfire.properties
