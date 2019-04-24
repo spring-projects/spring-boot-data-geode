@@ -17,9 +17,13 @@ dependencies {
 }
 
 processResources {
-	filter ReplaceTokens, tokens: [
-		'project-dir' : rootProject.projectDir.path,
-		'project-version' : project.version,
-		'samples-dir' : rootProject.projectDir.path + '/spring-geode-samples/'
-	]
+	eachFile { file ->
+		if (!file.name.endsWith(".jks")) {
+			file.filter ReplaceTokens, tokens: [
+				'project-dir' : rootProject.projectDir.path,
+				'project-version' : project.version,
+				'samples-dir' : rootProject.projectDir.path + '/spring-geode-samples/'
+			]
+		}
+	}
 }
