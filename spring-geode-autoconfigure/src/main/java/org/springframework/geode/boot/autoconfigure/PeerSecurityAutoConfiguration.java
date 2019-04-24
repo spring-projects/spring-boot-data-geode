@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.ApacheShiroSecurityConfiguration;
 import org.springframework.data.gemfire.config.annotation.EnableBeanFactoryLocator;
@@ -34,12 +35,14 @@ import org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurit
  * @see org.apache.geode.security.SecurityManager
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.ApacheShiroSecurityConfiguration
  * @see org.springframework.data.gemfire.config.annotation.EnableBeanFactoryLocator
  * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
  * @see org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurityConfiguration
+ * @see org.springframework.geode.boot.autoconfigure.HttpBasicAuthenticationSecurityConfiguration
  * @see org.springframework.geode.security.support.SecurityManagerProxy
  * @since 1.0.0
  */
@@ -52,6 +55,7 @@ import org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurit
 })
 @EnableBeanFactoryLocator
 @EnableSecurity(securityManagerClassName = "org.springframework.geode.security.support.SecurityManagerProxy")
+@Import(HttpBasicAuthenticationSecurityConfiguration.class)
 @SuppressWarnings("unused")
 public class PeerSecurityAutoConfiguration {
 

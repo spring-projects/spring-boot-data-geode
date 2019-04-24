@@ -35,6 +35,7 @@ import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
@@ -58,6 +59,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.boot.env.EnvironmentPostProcessor
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.context.annotation.Import
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertiesPropertySource
@@ -65,6 +67,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
  * @see org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer
  * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
+ * @see org.springframework.geode.boot.autoconfigure.HttpBasicAuthenticationSecurityConfiguration
  * @see org.springframework.geode.core.env.VcapPropertySource
  * @see org.springframework.geode.core.env.support.CloudCacheService
  * @see org.springframework.geode.core.env.support.Service
@@ -76,6 +79,7 @@ import org.springframework.lang.Nullable;
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
 @ConditionalOnMissingBean(GemFireCache.class)
 @EnableSecurity
+@Import(HttpBasicAuthenticationSecurityConfiguration.class)
 @SuppressWarnings("unused")
 public class ClientSecurityAutoConfiguration {
 
