@@ -8,14 +8,16 @@ Changes in version 1.0.0.RC1 (2019-04-24)
 -----------------------------------------
 Add support for GemfireTemplate auto-configuration for each declared Apache Geode/Pivotal GemFire Region.
 
-* Adds auto-configuration support to automatically create a GemfireTemplate for each declared Apache Geode
-or Pivotal GemFire Region (https://github.com/spring-projects/spring-boot-data-geode/issues/31).
-* Includes 'Auto-configuration vs. Annotation-based configuration' chapter in reference documentation
-(https://github.com/spring-projects/spring-boot-data-geode/issues/20).
-* Adds a sample containing a guide along with example code to explain the Spring Boot auto-configuration support
-for Apache Geode & Pivotal GemFire complimenting the 'Auto-configuration vs. Annotation-based configuration' chapter.
-* Fixes HTTP client authentication bug when a client attempts to push cluster configuration to the server and the server
-has been secured with a SecurityManager (https://github.com/spring-projects/spring-boot-data-geode/issues/16).
+* Adds auto-configuration to automatically create a GemfireTemplate for each declared Apache Geode or Pivotal GemFire
+Region (https://github.com/spring-projects/spring-boot-data-geode/issues/31).
+* Includes the 'Auto-configuration vs. Annotation-based configuration' chapter in reference documentation to explain
+the differences of each approach (https://github.com/spring-projects/spring-boot-data-geode/issues/20).
+* Adds a sample containing a guide along with example code to explain and show how the Spring Boot auto-configuration
+support for Apache Geode & Pivotal GemFire works, complimenting the 'Auto-configuration vs. Annotation-based configuration'
+chapter in the reference docs.
+* Fixes the HTTP client authentication bug when a client attempts to push cluster configuration to the server configured
+with a SecurityManager, requiring Authentication (https://github.com/spring-projects/spring-boot-data-geode/issues/16).
+* Switch reference documentation to using HTML5.
 * Adds dependency management for ByteBuddy 1.9.10.
 * Upgrades to Mockito 2.27.0
 * Upgrades to Spring Framework 5.0.13.RELEASE.
