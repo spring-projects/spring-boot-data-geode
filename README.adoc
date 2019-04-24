@@ -54,7 +54,10 @@ You can find an example of using this project in the Pivotal Cloud Cache (PCC) h
 Spring Boot, Pivotal GemFire `ClientCache` application.
 
 Another example, https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example], can be found
-in the Contacts Application Reference Implementation for _Spring Data for Apache Geode/Pivotal GemFire_.
+in the Contacts Application Reference Implementation for _Spring Data for Apache Geode/Pivotal GemFire_ (SDG).
+
+And finally, the documentation contains https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.BUILD-SNAPSHOT/reference/html5/#geode-samples[samples]
+you may use to get started with SBDG.
 
 == Spring Boot Project Site
 
