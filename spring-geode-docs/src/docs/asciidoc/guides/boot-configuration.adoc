@@ -10,7 +10,7 @@ to manage Customer interactions. You should already be familiar with Spring Boot
 By the end of this lesson, you should have a better understanding of what Spring Boot for Apache Geode's (SBDG)
 _auto-configuration_ support actually does.
 
-This guide compliments the <<geode-autoconfiguration-annotations,Auto-configuration vs. Annotation-based configuration>>
+This guide compliments the link:../configuration-annotations.html[Auto-configuration vs. Annotation-based configuration]
 chapter with concrete examples.
 
 Let's begin.
@@ -19,6 +19,8 @@ NOTE: This guide builds on the https://www.youtube.com/watch?v=OvY5wzCtOV0[_Simp
 presentation by John Blum during the 2017 SpringOne Platform conference.  While this example as well as the example
 presented in the talk both use Spring Boot, only this example is using Spring Boot for Apache Geode (SBDG). This guide
 improves on the example from the presentation by using SBDG.
+
+link:../index.html#geode-samples[Back]
 
 [[geode-samples-boot-configuration-app-domain-classes]]
 == Application Domain Classes
@@ -30,7 +32,11 @@ We will build the Spring Boot, Customer Service application from the ground up.
 Like any sensible application development project, we begin by modeling the data our application needs to manage,
 namely a `Customer`.  For this example, the `Customer` class is implemented as follows:
 
-link:{samples-dir}/boot/configuration/src/main/java/example/app/crm/model/Customer.java[]
+.Customer class
+[source,java]
+----
+include::{samples-dir}/boot/configuration/src/main/java/example/app/crm/model/Customer.java[tags=class]
+----
 
 The `Customer` class uses https://projectlombok.org/[Project Lombok] to simplify the implementation so we can focus on
 the important details. Lombok is useful for testing or prototyping purposes. However, using Lombok is optional
@@ -52,7 +58,11 @@ class with `@Region`, which we will cover below.
 Next, we create a _Data Access Object_ (DAO) to persist `Customers` to Apache Geode.  We create the DAO
 using Spring Data's _Repository_ abstraction:
 
-link:{samples-dir}/boot/configuration/src/main/java/example/app/crm/repo/CustomerRepository.java[]
+.CustomerRepository inteface
+[source,java]
+----
+include::{samples-dir}/boot/configuration/src/main/java/example/app/crm/repo/CustomerRepository.java[tags=class]
+----
 
 `CustomerRepository` is a Spring Data `CrudRepository`.  `CrudRepository` provides basic CRUD (Create, Read, Update,
 Delete) data access operations along with the ability to define simple queries on `Customers`.
@@ -75,7 +85,11 @@ and so on).
 Now that we have created the basic domain classes of our Customer Service application, we need a main application class
 to drive the interactions with Customers:
 
-link:{samples-dir}/boot/configuration/src/main/java/example/app/crm/CustomerServiceApplication.java[]
+.CustomerServiceApplication class
+[source,java]
+----
+include::{samples-dir}/boot/configuration/src/main/java/example/app/crm/CustomerServiceApplication.java[]
+----
 
 The `CustomerServiceApplication` class is annotated with `@SpringBootApplication`. Therefore, the main class is
 a proper Spring Boot application equipped with all the features of Spring Boot (e.g. _auto-configuration_).
@@ -342,12 +356,12 @@ The client is expecting there to be a cluster of servers to communicate with and
 are no servers running yet.
 
 There are several ways in which to start a cluster.  For example, you may use Spring to configure and bootstrap
-the cluster, which has been demonstrated <<geode-cluster-configuration-bootstrapping,here>>.
+the cluster, which has been demonstrated link:../appendix.html#geode-cluster-configuration-bootstrapping[here].
 
 Although, for this example, we are going to use the tools provided with Apache Geode, or Pivotal GemFire, i.e. _Gfsh_
 (GemFire/Geode Shell) for reasons that will become apparent later.
 
-NOTE: You need to https://geode.apache.org/releases/[download] and {apache-geode-docs}/prereq_and_install.html[install]
+NOTE: You need to https://geode.apache.org/releases/[download] and https://geode.apache.org/docs/guide/18/prereq_and_install.html[install]
 a full distribution of Apache Geode to make use of the provided tools. After installation, you will need to set
 the `GEODE` (or `GEMFIRE`) environment variable to the location of your installation. Additionally, add `$GEODE/bin`
 to your system `$PATH`.
@@ -1006,9 +1020,9 @@ Caused by: org.apache.geode.security.AuthenticationRequiredException: Server exp
 ----
 
 With very minimal to no configuration, SBDG can automatically configure SSL, as explained in
-<<geode-security-ssl,Transport Layer Security using SSL>> section under Security. In fact, no configuration
-is actually required if the trusted Java KeyStore file is named "trusted.keystore", is in the root of the classpath
-and the JKS file is unsecured, i.e. not protected by a password.
+link:../security.html#geode-security-ssl[Transport Layer Security using SSL] section under Security. In fact,
+no configuration is actually required if the trusted Java KeyStore file is named "trusted.keystore", is in the root
+of the classpath and the JKS file is unsecured, i.e. not protected by a password.
 
 However, if the you named your Java KeyStore (JKS) file something other than "trusted.keystore", then you can set
 the `spring-boot-data-gemfire.security.ssl.keystore.name` property:
@@ -1107,3 +1121,5 @@ and Spring Session.  However, the concepts and effects are similar to what has b
 
 We leave it as an exercise for you to explore and understand the remaining _auto-configuration_ bits using this guide
 as a reference for your learning purposes.
+
+link:../index.html#geode-samples[Back]

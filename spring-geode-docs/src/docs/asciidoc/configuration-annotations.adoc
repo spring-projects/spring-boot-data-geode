@@ -6,7 +6,7 @@ or must I use, when developing Apache Geode or Pivotal GemFire applications with
 
 This section will answer this question and more.
 
-Readers should refer to the complimentary sample, <<geode-samples-boot-configuration,Spring Boot Auto-configuration for Apache Geode & Pivotal GemFire>>,
+Readers should refer to the complimentary sample, link:guides/boot-configuration.html[Spring Boot Auto-configuration for Apache Geode & Pivotal GemFire],
 which showcases the _auto-configuration_ provided by Spring Boot for Apache Geode/Pivotal GemFire in action.
 
 [[geode-autoconfiguration-annotations-background]]
