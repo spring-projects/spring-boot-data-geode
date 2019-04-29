@@ -290,10 +290,10 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	/**
 	 * Resolves the {@link Object invocation target} for the given {@link Method}.
 	 *
-	 * If the {@link Method} is {@link Modifier#STATIC} then {@literl null} is returned,
+	 * If the {@link Method} is {@link Modifier#STATIC} then {@literal null} is returned,
 	 * otherwise {@link Object target} will be returned.
 	 *
-	 * @param <T> {@lin Class type} of the {@link Object target}.
+	 * @param <T> {@link Class type} of the {@link Object target}.
 	 * @param target {@link Object} on which the {@link Method} will be invoked.
 	 * @param method {@link Method} to invoke on the {@link Object}.
 	 * @return the resolved {@link Object invocation method}.
