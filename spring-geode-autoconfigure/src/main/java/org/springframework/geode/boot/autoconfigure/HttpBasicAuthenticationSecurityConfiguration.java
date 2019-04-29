@@ -13,14 +13,16 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure;
+
+import static org.springframework.geode.core.util.ObjectUtils.ExceptionThrowingOperation;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.geode.management.internal.security.ResourceConstants;
 import org.apache.shiro.util.Assert;
@@ -38,6 +40,7 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -54,6 +57,7 @@ import org.springframework.web.client.RestTemplate;
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.env.Environment
  * @see org.springframework.http.client.ClientHttpRequestInterceptor
+ * @see org.springframework.web.client.RestTemplate
  * @since 1.0.0
  */
 @Configuration
@@ -122,40 +126,29 @@ public class HttpBasicAuthenticationSecurityConfiguration {
 		};
 	}
 
-	private RestTemplate registerInterceptor(RestTemplate restTemplate,
-			ClientHttpRequestInterceptor clientHttpRequestInterceptor) {
-
-		restTemplate.getInterceptors().add(clientHttpRequestInterceptor);
-
-		return restTemplate;
-	}
-
 	@SuppressWarnings("unchecked")
-	private <T> T invokeMethod(Object target, String methodName) {
+	@Nullable <T> T invokeMethod(@NonNull Object target, @NonNull String methodName) {
 
-		return ObjectUtils.doOperationSafely(() -> {
+		ExceptionThrowingOperation<T> operation = () -> {
 
 			Method method = target.getClass().getDeclaredMethod(methodName);
 
 			ReflectionUtils.makeAccessible(method);
 
 			return (T) ReflectionUtils.invokeMethod(method, target);
-		});
+		};
+
+		Function<Throwable, T> exceptionHandlingFunction = cause -> null;
+
+		return ObjectUtils.doOperationSafely(operation, exceptionHandlingFunction);
 	}
 
-	private <T> T doOperationSafely(ExceptionThrowingOperation<T> operation) {
+	private RestTemplate registerInterceptor(RestTemplate restTemplate,
+			ClientHttpRequestInterceptor clientHttpRequestInterceptor) {
 
-		try {
-			return operation.doOperation();
-		}
-		catch (Exception ignore) {
-			return null;
-		}
-	}
+		restTemplate.getInterceptors().add(clientHttpRequestInterceptor);
 
-	@FunctionalInterface
-	interface ExceptionThrowingOperation<T> {
-		T doOperation() throws Exception;
+		return restTemplate;
 	}
 
 	public static class SecurityAwareClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
