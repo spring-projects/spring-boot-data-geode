@@ -16,17 +16,22 @@
 
 package org.springframework.geode.core.util;
 
+import static org.springframework.data.gemfire.util.ArrayUtils.nullSafeArray;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalArgumentException;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
@@ -119,6 +124,56 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	}
 
 	/**
+	 * Finds a {@link Method} with the given {@link Method#getName() name} on {@link Class type} which can be invoked
+	 * with the given {@link Object arguments}.
+	 *
+	 * @param type {@link Class} type to evaluate for the {@link Method}.
+	 * @param methodName {@link String} containing the name of the {@link Method} to find.
+	 * @param args {@link Object array of arguments} used when invoking the method.
+	 * @return an {@link Optional} {@link Method} on {@link Class type} potentially matching
+	 * the {@link Object arguments} of the invocation.
+	 * @see java.lang.Class
+	 * @see java.lang.reflect.Method
+	 * @see java.util.Optional
+	 */
+	public static Optional<Method> findMethod(@NonNull Class<?> type, @NonNull String methodName, Object... args) {
+
+		return Arrays.stream(nullSafeArray(type.getDeclaredMethods(), Method.class))
+			.filter(methodNameMatchesPredicate(methodName))
+			.filter(argumentsMatchParameterTypesPredicate(args))
+			.findFirst();
+	}
+
+	private static Predicate<Method> argumentsMatchParameterTypesPredicate(Object... args) {
+
+		return method -> {
+
+			Class<?>[] parameterTypes = nullSafeArray(method.getParameterTypes(), Class.class);
+
+			Object[] arguments = nullSafeArray(args, Object.class);
+
+			if (arguments.length != parameterTypes.length) {
+				return false;
+			}
+
+			for (int index = 0; index < parameterTypes.length; index++) {
+
+				Object argument = arguments[index];
+
+				if (argument != null && !parameterTypes[index].isInstance(argument)) {
+					return false;
+				}
+			}
+
+			return true;
+		};
+	}
+
+	private static Predicate<Method> methodNameMatchesPredicate(String methodName) {
+		return method -> method.getName().equals(methodName);
+	}
+
+	/**
 	 * Gets the {@link Object value} of the given {@link String named} {@link Field} on the given {@link Object}.
 	 *
 	 * @param <T> {@link Class type} of the {@link Field Field's} value.
@@ -184,17 +239,17 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 				methodName, org.springframework.util.ObjectUtils.nullSafeClassName(obj)));
 	}
 
-	private static Constructor makeAccessible(Constructor<?> constructor) {
+	public static Constructor makeAccessible(Constructor<?> constructor) {
 		ReflectionUtils.makeAccessible(constructor);
 		return constructor;
 	}
 
-	private static Field makeAccessible(Field field) {
+	public static Field makeAccessible(Field field) {
 		ReflectionUtils.makeAccessible(field);
 		return field;
 	}
 
-	private static Method makeAccessible(Method method) {
+	public static Method makeAccessible(Method method) {
 		ReflectionUtils.makeAccessible(method);
 		return method;
 	}
@@ -230,6 +285,23 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 		}
 
 		return value;
+	}
+
+	/**
+	 * Resolves the {@link Object invocation target} for the given {@link Method}.
+	 *
+	 * If the {@link Method} is {@link Modifier#STATIC} then {@literl null} is returned,
+	 * otherwise {@link Object target} will be returned.
+	 *
+	 * @param <T> {@lin Class type} of the {@link Object target}.
+	 * @param target {@link Object} on which the {@link Method} will be invoked.
+	 * @param method {@link Method} to invoke on the {@link Object}.
+	 * @return the resolved {@link Object invocation method}.
+	 * @see java.lang.Object
+	 * @see java.lang.reflect.Method
+	 */
+	public static <T> T resolveInvocationTarget(T target, Method method) {
+		return Modifier.isStatic(method.getModifiers()) ? null : target;
 	}
 
 	@FunctionalInterface

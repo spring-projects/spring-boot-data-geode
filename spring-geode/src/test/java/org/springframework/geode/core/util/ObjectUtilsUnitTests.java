@@ -20,6 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newRuntimeException;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -62,6 +64,50 @@ public class ObjectUtilsUnitTests {
 	}
 
 	@Test
+	public void findMethodUsingExactArguments() {
+
+		Optional<Method> method =
+			ObjectUtils.findMethod(TestObject.class, "exactArgumentMethod", true);
+
+		assertThat(method.orElse(null)).isNotNull();
+		assertThat(method.map(Method::getName).orElse(null)).isEqualTo("exactArgumentMethod");
+	}
+
+	@Test
+	public void findMethodUsingGenericArguments() {
+
+		Optional<Method> method =
+			ObjectUtils.findMethod(TestObject.class, "genericArgumentMethod", "test", 2L);
+
+		assertThat(method.orElse(null)).isNotNull();
+		assertThat(method.map(Method::getName).orElse(null)).isEqualTo("genericArgumentMethod");
+	}
+
+	@Test
+	public void findMethodWithTooFewArguments() {
+
+		Optional<Method> method = ObjectUtils.findMethod(TestObject.class, "exactArgumentMethod");
+
+		assertThat(method.isPresent()).isFalse();
+	}
+
+	@Test
+	public void findMethodWithTooManyArguments() {
+
+		Optional<Method> method = ObjectUtils.findMethod(TestObject.class, "testMethod", 'X');
+
+		assertThat(method.isPresent()).isFalse();
+	}
+
+	@Test
+	public void findNonExistingMethod() {
+
+		Optional<Method> method = ObjectUtils.findMethod(TestObject.class, "nonExistingMethod");
+
+		assertThat(method.isPresent()).isFalse();
+	}
+
+	@Test
 	public void getFieldValueIsSuccessful() throws Exception {
 
 		TestObject testObject = new TestObject();
@@ -74,7 +120,7 @@ public class ObjectUtilsUnitTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testGetFieldWithNullObjectThrowsIllegalArgumentException() throws Exception {
+	public void getFieldWithNullObjectThrowsIllegalArgumentException() throws Exception {
 
 		try {
 			ObjectUtils.get(null, TestObject.class.getDeclaredField("existingField"));
@@ -89,7 +135,7 @@ public class ObjectUtilsUnitTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testGetFieldWithNullFieldThrowsIllegalArgumentException() throws Exception {
+	public void getFieldWithNullFieldThrowsIllegalArgumentException() throws Exception {
 
 		try {
 			ObjectUtils.get(new TestObject(), (Field) null);
@@ -161,6 +207,22 @@ public class ObjectUtilsUnitTests {
 	}
 
 	@Test
+	public void resolveInvocationTargetOnClassMethodReturnsNull() throws Exception {
+
+		Method staticTestMethod = TestObject.class.getDeclaredMethod("staticTestMethod");
+
+		assertThat(ObjectUtils.resolveInvocationTarget(TestObject.INSTANCE, staticTestMethod)).isNull();
+	}
+
+	@Test
+	public void resolveInvocationTargetOnObjectMethodReturnsObject() throws Exception {
+
+		Method testMethod = TestObject.class.getDeclaredMethod("testMethod");
+
+		assertThat(ObjectUtils.resolveInvocationTarget(TestObject.INSTANCE, testMethod)).isEqualTo(TestObject.INSTANCE);
+	}
+
+	@Test
 	public void returnValueThrowOnNullWithNonNullValueReturnsValue() {
 		assertThat(ObjectUtils.returnValueThrowOnNull("test")).isEqualTo("test");
 	}
@@ -183,7 +245,21 @@ public class ObjectUtilsUnitTests {
 	@SuppressWarnings("unused")
 	public static class TestObject {
 
+		public static final TestObject INSTANCE = new TestObject();
+
 		private Object existingField = "MOCK";
+
+		public static Object staticTestMethod() {
+			return "STATIC";
+		}
+
+		public Object exactArgumentMethod(Boolean condition) {
+			return "exactArgumentMethod";
+		}
+
+		public Object genericArgumentMethod(String name, Number value) {
+			return "genericArgumentMethod";
+		}
 
 		public String testMethod() {
 			return "TEST";
