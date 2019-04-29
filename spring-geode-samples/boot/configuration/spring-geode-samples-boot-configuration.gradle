@@ -1,5 +1,9 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
+plugins {
+	id "io.freefair.lombok" version "3.2.1"
+}
+
 apply plugin: 'io.spring.convention.spring-sample-boot'
 
 description = "Spring Geode Samples demonstrating the use of Spring Boot Auto-configuration for Apache Geode."
