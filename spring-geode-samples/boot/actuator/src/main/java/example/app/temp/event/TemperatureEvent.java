@@ -16,10 +16,11 @@
 
 package example.app.temp.event;
 
+import lombok.Getter;
+
 import org.springframework.context.ApplicationEvent;
 
 import example.app.temp.model.TemperatureReading;
-import lombok.Getter;
 
 public class TemperatureEvent extends ApplicationEvent {
 
