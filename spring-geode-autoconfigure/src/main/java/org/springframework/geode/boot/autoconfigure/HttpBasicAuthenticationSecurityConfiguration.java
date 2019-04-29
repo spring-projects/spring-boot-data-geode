@@ -18,7 +18,6 @@ package org.springframework.geode.boot.autoconfigure;
 import static org.springframework.geode.core.util.ObjectUtils.ExceptionThrowingOperation;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Optional;
@@ -97,7 +96,7 @@ public class HttpBasicAuthenticationSecurityConfiguration {
 	}
 
 	@Bean
-	BeanPostProcessor schemaObjectInitializerPostProcessor(Environment environment) {
+	public BeanPostProcessor schemaObjectInitializerPostProcessor(Environment environment) {
 
 		return new BeanPostProcessor() {
 
@@ -107,13 +106,10 @@ public class HttpBasicAuthenticationSecurityConfiguration {
 				if (bean instanceof ClusterConfigurationConfiguration.ClusterSchemaObjectInitializer) {
 
 					Optional.of(bean)
-						.map(ClusterConfigurationConfiguration.ClusterSchemaObjectInitializer.class::cast)
 						.map(schemaObjectInitializer -> invokeMethod(schemaObjectInitializer, "getSchemaObjectContext"))
 						.filter(ClusterConfigurationConfiguration.SchemaObjectContext.class::isInstance)
-						.map(ClusterConfigurationConfiguration.SchemaObjectContext.class::cast)
 						.map(schemaObjectContext -> invokeMethod(schemaObjectContext, "getGemfireAdminOperations"))
 						.filter(RestHttpGemfireAdminTemplate.class::isInstance)
-						.map(RestHttpGemfireAdminTemplate.class::cast)
 						.map(gemfireAdminTemplate -> invokeMethod(gemfireAdminTemplate, "getRestOperations"))
 						.filter(RestTemplate.class::isInstance)
 						.map(RestTemplate.class::cast)
@@ -127,23 +123,22 @@ public class HttpBasicAuthenticationSecurityConfiguration {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Nullable <T> T invokeMethod(@NonNull Object target, @NonNull String methodName) {
+	protected @Nullable <T> T invokeMethod(@NonNull Object target, @NonNull String methodName, Object... args) {
 
-		ExceptionThrowingOperation<T> operation = () -> {
+		ExceptionThrowingOperation<T> operation = () ->
 
-			Method method = target.getClass().getDeclaredMethod(methodName);
-
-			ReflectionUtils.makeAccessible(method);
-
-			return (T) ReflectionUtils.invokeMethod(method, target);
-		};
+			ObjectUtils.findMethod(target.getClass(), methodName, args)
+				.map(ObjectUtils::makeAccessible)
+				.map(method -> (T) ReflectionUtils.invokeMethod(method,
+					ObjectUtils.resolveInvocationTarget(target, method), args))
+				.orElse(null);
 
 		Function<Throwable, T> exceptionHandlingFunction = cause -> null;
 
 		return ObjectUtils.doOperationSafely(operation, exceptionHandlingFunction);
 	}
 
-	private RestTemplate registerInterceptor(RestTemplate restTemplate,
+	protected RestTemplate registerInterceptor(RestTemplate restTemplate,
 			ClientHttpRequestInterceptor clientHttpRequestInterceptor) {
 
 		restTemplate.getInterceptors().add(clientHttpRequestInterceptor);
@@ -178,9 +173,10 @@ public class HttpBasicAuthenticationSecurityConfiguration {
 		public ClientHttpResponse intercept(HttpRequest request, byte[] body,
 				ClientHttpRequestExecution execution) throws IOException {
 
-			HttpHeaders requestHeaders = request.getHeaders();
-
 			if (isAuthenticationEnabled()) {
+
+				HttpHeaders requestHeaders = request.getHeaders();
+
 				requestHeaders.add(ResourceConstants.USER_NAME, getUsername());
 				requestHeaders.add(ResourceConstants.PASSWORD, getPassword());
 			}
