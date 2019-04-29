@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.security.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
-import org.springframework.data.gemfire.support.GemfireBeanFactoryLocator;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.core.util.ObjectUtils;
@@ -62,9 +60,7 @@ public class SecurityManagerProxyIntegrationTests extends IntegrationTestsSuppor
 
 	@BeforeClass
 	@AfterClass
-	public static void cleanUpBeanFactoryLocatorReferences() throws Exception {
-
-		GemfireBeanFactoryLocator.clear();
+	public static void cleanupSecurityManagerProxyInstance() {
 
 		ObjectUtils.doOperationSafely(() -> {
 			SecurityManagerProxy.getInstance().destroy();
