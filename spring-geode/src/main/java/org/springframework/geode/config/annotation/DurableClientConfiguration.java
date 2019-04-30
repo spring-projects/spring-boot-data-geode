@@ -108,20 +108,23 @@ public class DurableClientConfiguration extends AbstractAnnotationConfigSupport 
 
 	protected Integer getDurableClientTimeout() {
 
-		return Optional.ofNullable(this.durableClientTimeout)
-			.orElse(DEFAULT_DURABLE_CLIENT_TIMEOUT);
+		return this.durableClientTimeout != null
+			? this.durableClientTimeout
+			: DEFAULT_DURABLE_CLIENT_TIMEOUT;
 	}
 
 	protected Boolean getKeepAlive() {
 
-		return Optional.ofNullable(this.keepAlive)
-			.orElse(DEFAULT_KEEP_ALIVE);
+		return this.keepAlive != null
+			? this.keepAlive
+			: DEFAULT_KEEP_ALIVE;
 	}
 
 	protected Boolean getReadyForEvents() {
 
-		return Optional.ofNullable(this.readyForEvents)
-			.orElse(DEFAULT_READY_FOR_EVENTS);
+		return this.readyForEvents != null
+			? this.readyForEvents
+			: DEFAULT_READY_FOR_EVENTS;
 	}
 
 	protected Logger getLogger() {

@@ -129,10 +129,9 @@ public class SslAutoConfiguration {
 
 	private static String resolveTrustedKeystoreName(Environment environment) {
 
-		return Optional.ofNullable(environment)
-			.filter(it -> environment.containsProperty(TRUSTED_KEYSTORE_FILENAME_PROPERTY))
-			.map(it -> environment.getProperty(TRUSTED_KEYSTORE_FILENAME_PROPERTY))
-			.orElse(TRUSTED_KEYSTORE_FILENAME);
+		return environment != null && environment.containsProperty(TRUSTED_KEYSTORE_FILENAME_PROPERTY)
+			? environment.getProperty(TRUSTED_KEYSTORE_FILENAME_PROPERTY)
+			: TRUSTED_KEYSTORE_FILENAME;
 	}
 
 	private static Optional<String> resolveKeyStoreFromClassPathAsPathname(Environment environment) {

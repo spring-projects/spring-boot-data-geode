@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate.autoconfigure.config;
 
 import java.util.Optional;
@@ -96,9 +95,12 @@ public class PeerCacheHealthIndicatorConfiguration {
 
 					CacheServerFactoryBean cacheServerFactoryBean = (CacheServerFactoryBean) bean;
 
-					Optional.ofNullable(ObjectUtils.<ServerLoadProbe>get(bean,"serverLoadProbe"))
-						.ifPresent(serverLoadProbe ->
-							cacheServerFactoryBean.setServerLoadProbe(wrap(serverLoadProbe)));
+					ServerLoadProbe serverLoadProbe =
+						ObjectUtils.<ServerLoadProbe>get(bean, "serverLoadProbe");
+
+					if (serverLoadProbe != null) {
+						cacheServerFactoryBean.setServerLoadProbe(wrap(serverLoadProbe));
+					}
 				}
 
 				return bean;

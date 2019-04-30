@@ -90,9 +90,11 @@ public class CacheNameAutoConfiguration {
 
 	private void configureCacheName(Environment environment, CacheFactoryBean cacheFactoryBean) {
 
-		Optional.of(environment)
-			.map(this::resolveSpringApplicationName)
-			.ifPresent(springApplicationName -> setGemFireName(cacheFactoryBean, springApplicationName));
+		String springApplicationName = resolveSpringApplicationName(environment);
+
+		if (StringUtils.hasText(springApplicationName)) {
+			setGemFireName(cacheFactoryBean, springApplicationName);
+		}
 	}
 
 	private String resolveSpringApplicationName(Environment environment) {

@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import java.util.Collections;
@@ -23,11 +22,13 @@ import java.util.Optional;
 
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.query.Index;
+import org.apache.geode.cache.query.IndexStatistics;
 import org.apache.shiro.util.Assert;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicator;
+import org.springframework.util.StringUtils;
 
 /**
  * The {@link GeodeIndexesHealthIndicator} class is a Spring Boot {@link HealthIndicator} providing details about
@@ -104,23 +105,22 @@ public class GeodeIndexesHealthIndicator extends AbstractGeodeHealthIndicator {
 					builder.withDetail(indexKey(indexName, "from-clause"), index.getFromClause())
 						.withDetail(indexKey(indexName, "indexed-expression"), index.getIndexedExpression())
 						.withDetail(indexKey(indexName, "projection-attributes"), index.getProjectionAttributes())
-						.withDetail(indexKey(indexName, "region"), Optional.ofNullable(index.getRegion())
-							.map(Region::getFullPath)
-							.orElse(""))
+						.withDetail(indexKey(indexName, "region"), toRegionPath(index.getRegion()))
 						.withDetail(indexKey(indexName, "type"), String.valueOf(index.getType()));
 
-					Optional.ofNullable(index.getStatistics())
-						.ifPresent(indexStatistics -> {
+					IndexStatistics indexStatistics = index.getStatistics();
 
-							builder.withDetail(indexStatisticsKey(indexName, "number-of-bucket-indexes"), indexStatistics.getNumberOfBucketIndexes())
-								.withDetail(indexStatisticsKey(indexName, "number-of-keys"), indexStatistics.getNumberOfKeys())
-								.withDetail(indexStatisticsKey(indexName, "number-of-map-index-keys"), indexStatistics.getNumberOfMapIndexKeys())
-								.withDetail(indexStatisticsKey(indexName, "number-of-values"), indexStatistics.getNumberOfValues())
-								.withDetail(indexStatisticsKey(indexName, "number-of-updates"), indexStatistics.getNumUpdates())
-								.withDetail(indexStatisticsKey(indexName, "read-lock-count"), indexStatistics.getReadLockCount())
-								.withDetail(indexStatisticsKey(indexName, "total-update-time"), indexStatistics.getTotalUpdateTime())
-								.withDetail(indexStatisticsKey(indexName, "total-uses"), indexStatistics.getTotalUses());
-						});
+					if (indexStatistics != null) {
+
+						builder.withDetail(indexStatisticsKey(indexName, "number-of-bucket-indexes"), indexStatistics.getNumberOfBucketIndexes())
+							.withDetail(indexStatisticsKey(indexName, "number-of-keys"), indexStatistics.getNumberOfKeys())
+							.withDetail(indexStatisticsKey(indexName, "number-of-map-index-keys"), indexStatistics.getNumberOfMapIndexKeys())
+							.withDetail(indexStatisticsKey(indexName, "number-of-values"), indexStatistics.getNumberOfValues())
+							.withDetail(indexStatisticsKey(indexName, "number-of-updates"), indexStatistics.getNumUpdates())
+							.withDetail(indexStatisticsKey(indexName, "read-lock-count"), indexStatistics.getReadLockCount())
+							.withDetail(indexStatisticsKey(indexName, "total-update-time"), indexStatistics.getTotalUpdateTime())
+							.withDetail(indexStatisticsKey(indexName, "total-uses"), indexStatistics.getTotalUses());
+					}
 				});
 
 			builder.up();
@@ -131,11 +131,22 @@ public class GeodeIndexesHealthIndicator extends AbstractGeodeHealthIndicator {
 		builder.unknown();
 	}
 
+	private String emptyIfUnset(String value) {
+		return StringUtils.hasText(value) ? value : "";
+	}
+
 	private String indexKey(String indexName, String suffix) {
 		return String.format("geode.index.%1$s.%2$s", indexName, suffix);
 	}
 
 	private String indexStatisticsKey(String indexName, String suffix) {
 		return String.format("geode.index.%1$s.statistics.%2$s", indexName, suffix);
+	}
+
+	private String toRegionPath(Region region) {
+
+		String regionPath = region != null ? region.getFullPath() : null;
+
+		return emptyIfUnset(regionPath);
 	}
 }

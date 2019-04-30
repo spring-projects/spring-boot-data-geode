@@ -31,6 +31,7 @@ import org.springframework.core.type.StandardAnnotationMetadata;
 import org.springframework.data.gemfire.function.config.AbstractFunctionExecutionConfigurationSource;
 import org.springframework.data.gemfire.function.config.AnnotationFunctionExecutionConfigurationSource;
 import org.springframework.data.gemfire.function.config.FunctionExecutionBeanDefinitionRegistrar;
+import org.springframework.util.Assert;
 
 /**
  * The {@link AbstractFunctionExecutionAutoConfigurationExtension} class extends SDG's {@link FunctionExecutionBeanDefinitionRegistrar}
@@ -60,8 +61,9 @@ public abstract class AbstractFunctionExecutionAutoConfigurationExtension
 	@SuppressWarnings("all")
 	protected BeanFactory getBeanFactory() {
 
-		return Optional.ofNullable(this.beanFactory)
-			.orElseThrow(() -> newIllegalStateException("BeanFactory was not properly configured"));
+		Assert.state(this.beanFactory != null, "BeanFactory was not properly configured");
+
+		return this.beanFactory;
 	}
 
 	protected abstract Class<?> getConfiguration();

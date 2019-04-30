@@ -13,12 +13,10 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.geode.cache.Cache;
@@ -88,9 +86,7 @@ public class GeodeGatewaySendersHealthIndicator extends AbstractGeodeHealthIndic
 						.withDetail(gatewaySendersKey(gatewaySenderId, "batch-conflation-enabled"), toYesNoString(gatewaySender.isBatchConflationEnabled()))
 						.withDetail(gatewaySendersKey(gatewaySenderId, "batch-size"), gatewaySender.getBatchSize())
 						.withDetail(gatewaySendersKey(gatewaySenderId, "batch-time-interval"), gatewaySender.getBatchTimeInterval())
-						.withDetail(gatewaySendersKey(gatewaySenderId, "disk-store-name"), Optional.ofNullable(gatewaySender.getDiskStoreName())
-							.filter(StringUtils::hasText)
-							.orElse(""))
+						.withDetail(gatewaySendersKey(gatewaySenderId, "disk-store-name"), emptyIfUnset(gatewaySender.getDiskStoreName()))
 						.withDetail(gatewaySendersKey(gatewaySenderId, "disk-synchronous"), toYesNoString(gatewaySender.isDiskSynchronous()))
 						.withDetail(gatewaySendersKey(gatewaySenderId, "dispatcher-threads"), gatewaySender.getDispatcherThreads())
 						.withDetail(gatewaySendersKey(gatewaySenderId, "max-queue-memory"), gatewaySender.getMaximumQueueMemory())
@@ -111,6 +107,10 @@ public class GeodeGatewaySendersHealthIndicator extends AbstractGeodeHealthIndic
 		}
 
 		builder.unknown();
+	}
+
+	private String emptyIfUnset(String value) {
+		return StringUtils.hasText(value) ? value : "";
 	}
 
 	private String gatewaySendersKey(String id, String suffix) {

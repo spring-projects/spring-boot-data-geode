@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import java.util.Collections;
@@ -25,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.server.CacheServer;
+import org.apache.geode.cache.server.ServerLoad;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.data.gemfire.util.CacheUtils;
@@ -112,14 +112,15 @@ public class GeodeCacheServersHealthIndicator extends AbstractGeodeHealthIndicat
 								.withDetail(cacheServerMetricsKey(cacheServerIndex, "open-connection-count"), serverMetrics.getConnectionCount())
 								.withDetail(cacheServerMetricsKey(cacheServerIndex, "subscription-connection-count"), serverMetrics.getSubscriptionConnectionCount());
 
-							Optional.ofNullable(cacheServer.getLoadProbe().getLoad(serverMetrics))
-								.ifPresent(serverLoad -> {
+							ServerLoad serverLoad = cacheServer.getLoadProbe().getLoad(serverMetrics);
 
-									builder.withDetail(cacheServerLoadKey(cacheServerIndex, "connection-load"), serverLoad.getConnectionLoad())
-										.withDetail(cacheServerLoadKey(cacheServerIndex, "load-per-connection"), serverLoad.getLoadPerConnection())
-										.withDetail(cacheServerLoadKey(cacheServerIndex, "subscription-connection-load"), serverLoad.getSubscriptionConnectionLoad())
-										.withDetail(cacheServerLoadKey(cacheServerIndex, "load-per-subscription-connection"), serverLoad.getLoadPerSubscriptionConnection());
-								});
+							if (serverLoad != null) {
+
+								builder.withDetail(cacheServerLoadKey(cacheServerIndex, "connection-load"), serverLoad.getConnectionLoad())
+									.withDetail(cacheServerLoadKey(cacheServerIndex, "load-per-connection"), serverLoad.getLoadPerConnection())
+									.withDetail(cacheServerLoadKey(cacheServerIndex, "subscription-connection-load"), serverLoad.getSubscriptionConnectionLoad())
+									.withDetail(cacheServerLoadKey(cacheServerIndex, "load-per-subscription-connection"), serverLoad.getLoadPerSubscriptionConnection());
+							}
 						});
 				});
 

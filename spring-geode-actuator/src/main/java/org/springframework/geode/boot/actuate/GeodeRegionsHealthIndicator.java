@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import java.util.Collections;
@@ -23,7 +22,11 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import org.apache.geode.cache.EvictionAlgorithm;
+import org.apache.geode.cache.EvictionAttributes;
+import org.apache.geode.cache.ExpirationAttributes;
 import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.PartitionAttributes;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.RegionAttributes;
 import org.apache.geode.internal.cache.LocalDataSet;
@@ -89,7 +92,7 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 	}
 
 	@Override
-	protected void doHealthCheck(Health.Builder builder) throws Exception {
+	protected void doHealthCheck(Health.Builder builder) {
 
 		if (getGemFireCache().isPresent()) {
 
@@ -125,42 +128,42 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 
 			builder.withDetail(cacheRegionKey(regionName, "full-path"), region.getFullPath());
 
-			Optional.ofNullable(region.getAttributes())
-				.ifPresent(regionAttributes -> builder
-					.withDetail(cacheRegionKey(regionName, "cloning-enabled"), toYesNoString(regionAttributes.getCloningEnabled()))
+			if (isRegionAttributesPresent(region)) {
+
+				RegionAttributes<?, ?> regionAttributes = region.getAttributes();
+
+				builder.withDetail(cacheRegionKey(regionName, "cloning-enabled"), toYesNoString(regionAttributes.getCloningEnabled()))
 					.withDetail(cacheRegionKey(regionName, "data-policy"), String.valueOf(regionAttributes.getDataPolicy()))
 					.withDetail(cacheRegionKey(regionName, "initial-capacity"), regionAttributes.getInitialCapacity())
 					.withDetail(cacheRegionKey(regionName, "load-factor"), regionAttributes.getLoadFactor())
 					.withDetail(cacheRegionKey(regionName, "key-constraint"), nullSafeClassName(regionAttributes.getKeyConstraint()))
 					.withDetail(cacheRegionKey(regionName, "off-heap"), toYesNoString(regionAttributes.getOffHeap()))
-					.withDetail(cacheRegionKey(regionName, "pool-name"), Optional.ofNullable(regionAttributes.getPoolName())
-						.filter(StringUtils::hasText)
-						.orElse(""))
+					.withDetail(cacheRegionKey(regionName, "pool-name"), emptyIfUnset(regionAttributes.getPoolName()))
 					.withDetail(cacheRegionKey(regionName, "scope"), String.valueOf(regionAttributes.getScope()))
 					.withDetail(cacheRegionKey(regionName, "statistics-enabled"), toYesNoString(regionAttributes.getStatisticsEnabled()))
-					.withDetail(cacheRegionKey(regionName, "value-constraint"), nullSafeClassName(regionAttributes.getValueConstraint())));
+					.withDetail(cacheRegionKey(regionName, "value-constraint"), nullSafeClassName(regionAttributes.getValueConstraint()));			}
 		};
-
 	}
 
 	private BiConsumer<Region<?, ?>, Health.Builder> withPartitionRegionDetails() {
 
 		return (region, builder) -> {
 
-			String regionName = region.getName();
+			if (isRegionAttributesPresent(region)) {
 
-			Optional.of(region)
-				.filter(this::isRegionAttributesPresent)
-				.map(Region::getAttributes)
-				.map(RegionAttributes::getPartitionAttributes)
-				.ifPresent(partitionAttributes -> builder
-					.withDetail(cachePartitionRegionKey(regionName, "collocated-with"), Optional.ofNullable(partitionAttributes.getColocatedWith())
-						.filter(StringUtils::hasText)
-						.orElse(""))
-					.withDetail(cachePartitionRegionKey(regionName, "local-max-memory"), partitionAttributes.getLocalMaxMemory())
-					.withDetail(cachePartitionRegionKey(regionName, "redundant-copies"), partitionAttributes.getRedundantCopies())
-					.withDetail(cachePartitionRegionKey(regionName, "total-max-memory"), partitionAttributes.getTotalMaxMemory())
-					.withDetail(cachePartitionRegionKey(regionName, "total-number-of-buckets"), partitionAttributes.getTotalNumBuckets()));
+				PartitionAttributes<?, ?> partitionAttributes = region.getAttributes().getPartitionAttributes();
+
+				if (partitionAttributes != null) {
+
+					String regionName = region.getName();
+
+					builder.withDetail(cachePartitionRegionKey(regionName, "collocated-with"), emptyIfUnset(partitionAttributes.getColocatedWith()))
+						.withDetail(cachePartitionRegionKey(regionName, "local-max-memory"), partitionAttributes.getLocalMaxMemory())
+						.withDetail(cachePartitionRegionKey(regionName, "redundant-copies"), partitionAttributes.getRedundantCopies())
+						.withDetail(cachePartitionRegionKey(regionName, "total-max-memory"), partitionAttributes.getTotalMaxMemory())
+						.withDetail(cachePartitionRegionKey(regionName, "total-number-of-buckets"), partitionAttributes.getTotalNumBuckets());
+				}
+			}
 		};
 	}
 
@@ -168,23 +171,26 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 
 		return (region, builder) -> {
 
-			String regionName = region.getName();
+			if (isRegionAttributesPresent(region)) {
 
-			Optional.of(region)
-				.filter(this::isRegionAttributesPresent)
-				.map(Region::getAttributes)
-				.map(RegionAttributes::getEvictionAttributes)
-				.ifPresent(evictionAttributes -> {
+				EvictionAttributes evictionAttributes = region.getAttributes().getEvictionAttributes();
+
+				if (evictionAttributes != null) {
+
+					String regionName = region.getName();
 
 					builder.withDetail(cacheRegionEvictionKey(regionName, "action"), String.valueOf(evictionAttributes.getAction()))
 						.withDetail(cacheRegionEvictionKey(regionName, "algorithm"), String.valueOf(evictionAttributes.getAlgorithm()));
 
-					// NOTE: Careful! Eviction Maximum does not apply when Eviction Algorithm is Heap LRU.
-					Optional.ofNullable(evictionAttributes.getAlgorithm())
-						.filter(it -> !it.isLRUHeap())
-						.ifPresent(it -> builder
-							.withDetail(cacheRegionEvictionKey(regionName,"maximum"), evictionAttributes.getMaximum()));
-				});
+					EvictionAlgorithm evictionAlgorithm = evictionAttributes.getAlgorithm();
+
+					// NOTE: Eviction Maximum does not apply when Eviction Algorithm is Heap LRU.
+					if (evictionAlgorithm != null && !evictionAlgorithm.isLRUHeap()) {
+						builder.withDetail(cacheRegionEvictionKey(regionName,"maximum"),
+							evictionAttributes.getMaximum());
+					}
+				}
+			}
 		};
 	}
 
@@ -192,23 +198,26 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 
 		return (region, builder) -> {
 
-			String regionName = region.getName();
+			if (isRegionAttributesPresent(region)) {
 
-			Optional.of(region)
-				.filter(this::isRegionAttributesPresent)
-				.map(Region::getAttributes)
-				.map(RegionAttributes::getEntryTimeToLive)
-				.ifPresent(expirationAttributes -> builder
-					.withDetail(cacheRegionExpirationKey(regionName, "entry.ttl.action"), String.valueOf(expirationAttributes.getAction()))
-					.withDetail(cacheRegionExpirationKey(regionName, "entry.ttl.timeout"), expirationAttributes.getTimeout()));
+				String regionName = region.getName();
 
-			Optional.of(region)
-				.filter(this::isRegionAttributesPresent)
-				.map(Region::getAttributes)
-				.map(RegionAttributes::getEntryIdleTimeout)
-				.ifPresent(expirationAttributes -> builder
-					.withDetail(cacheRegionExpirationKey(regionName, "entry.tti.action"), String.valueOf(expirationAttributes.getAction()))
-					.withDetail(cacheRegionExpirationKey(regionName, "entry.tti.timeout"), expirationAttributes.getTimeout()));
+				RegionAttributes<?, ?> regionAttributes = region.getAttributes();
+
+				ExpirationAttributes entryTimeToLive = regionAttributes.getEntryTimeToLive();
+
+				if (entryTimeToLive != null) {
+					builder.withDetail(cacheRegionExpirationKey(regionName, "entry.ttl.action"), String.valueOf(entryTimeToLive.getAction()))
+						.withDetail(cacheRegionExpirationKey(regionName, "entry.ttl.timeout"), entryTimeToLive.getTimeout());
+				}
+
+				ExpirationAttributes entryIdleTimeout = regionAttributes.getEntryIdleTimeout();
+
+				if (entryIdleTimeout != null) {
+					builder.withDetail(cacheRegionExpirationKey(regionName, "entry.tti.action"), String.valueOf(entryIdleTimeout.getAction()))
+						.withDetail(cacheRegionExpirationKey(regionName, "entry.tti.timeout"), entryIdleTimeout.getTimeout());
+				}
+			}
 		};
 	}
 
@@ -241,18 +250,11 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 	}
 
 	private boolean isRegionAttributesPresent(Region<?, ?> region) {
-
-		return Optional.ofNullable(region)
-			.map(Region::getAttributes)
-			.isPresent();
+		return region != null && region.getAttributes() != null;
 	}
 
 	private boolean isStatisticsEnabled(Region<?, ?> region) {
-
-		return Optional.ofNullable(region)
-			.map(Region::getAttributes)
-			.filter(RegionAttributes::getStatisticsEnabled)
-			.isPresent();
+		return isRegionAttributesPresent(region) && region.getAttributes().getStatisticsEnabled();
 	}
 
 	private String cachePartitionRegionKey(String regionName, String suffix) {
@@ -273,5 +275,9 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 
 	private String cacheRegionStatisticsKey(String regionName, String suffix) {
 		return cacheRegionKey(regionName, String.format("statistics.%s", suffix));
+	}
+
+	private String emptyIfUnset(String value) {
+		return StringUtils.hasText(value) ? value : "";
 	}
 }

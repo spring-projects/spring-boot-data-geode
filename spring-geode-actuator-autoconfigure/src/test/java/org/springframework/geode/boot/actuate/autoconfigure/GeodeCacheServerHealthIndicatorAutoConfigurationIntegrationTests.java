@@ -21,7 +21,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.server.CacheServer;
@@ -89,8 +88,10 @@ public class GeodeCacheServerHealthIndicatorAutoConfigurationIntegrationTests ex
 
 	@SpringBootApplication
 	@EnableGemFireMockObjects
-	@PeerCacheApplication(name = "GeodeCacheServerHealthIndicatorAutoConfigurationIntegrationTests",
-		logLevel = GEODE_LOG_LEVEL)
+	@PeerCacheApplication(
+		name = "GeodeCacheServerHealthIndicatorAutoConfigurationIntegrationTests",
+		logLevel = GEODE_LOG_LEVEL
+	)
 	static class TestConfiguration {
 
 		@Bean("MockCacheServer")
@@ -126,7 +127,11 @@ public class GeodeCacheServerHealthIndicatorAutoConfigurationIntegrationTests ex
 
 				when(mockServerLoadProbe.getLoad(eq(mockServerMetrics))).thenReturn(mockServerLoad);
 
-				Optional.ofNullable(mockCacheServer.getLoadProbe()).ifPresent(it -> it.getLoad(mockServerMetrics));
+				ServerLoadProbe serverLoadProbe = mockCacheServer.getLoadProbe();
+
+				if (serverLoadProbe != null) {
+					serverLoadProbe.getLoad(mockServerMetrics);
+				}
 			};
 		}
 	}

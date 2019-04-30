@@ -13,11 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.repository.service;
-
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalArgumentException;
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,6 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.geode.boot.autoconfigure.repository.model.Customer;
 import org.springframework.geode.boot.autoconfigure.repository.repo.CustomerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * The {@link CustomerService} class is an application service for managing {@link Customer Customers}.
@@ -48,8 +45,10 @@ public class CustomerService {
 
 	public CustomerRepository getCustomerRepository() {
 
-		return Optional.ofNullable(this.customerRepository)
-			.orElseThrow(() -> newIllegalStateException("CustomerRepository was not properly configured"));
+		Assert.state(this.customerRepository != null,
+			"CustomerRepository was not properly configured");
+
+		return this.customerRepository;
 	}
 
 	public Optional<Customer> findBy(String name) {
@@ -62,15 +61,12 @@ public class CustomerService {
 
 	public Customer save(Customer customer) {
 
-		return Optional.ofNullable(customer)
-			.map(it -> {
+		Assert.state(customer != null, "Customer is required");
 
-				if (customer.isNew()) {
-					customer.identifiedBy(nextId());
-				}
+		if (customer.isNew()) {
+			customer = customer.identifiedBy(nextId());
+		}
 
-				return getCustomerRepository().save(customer);
-			})
-			.orElseThrow(() -> newIllegalArgumentException("Customer is required"));
+		return getCustomerRepository().save(customer);
 	}
 }

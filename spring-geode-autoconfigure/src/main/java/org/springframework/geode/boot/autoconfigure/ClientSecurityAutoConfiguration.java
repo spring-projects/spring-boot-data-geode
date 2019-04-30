@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure;
 
 import java.util.Optional;
@@ -116,10 +115,7 @@ public class ClientSecurityAutoConfiguration {
 		}
 
 		private boolean isCloudFoundryEnvironment(Environment environment) {
-
-			return Optional.ofNullable(environment)
-				.filter(CloudPlatform.CLOUD_FOUNDRY::isActive)
-				.isPresent();
+			return environment != null && CloudPlatform.CLOUD_FOUNDRY.isActive(environment);
 		}
 
 		private boolean isEnabled(Environment environment) {

@@ -190,11 +190,17 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 		Assert.notNull(obj, "Object is required");
 		Assert.hasText(fieldName, String.format("Field name [%s] is required", fieldName));
 
-		return Optional.ofNullable(ReflectionUtils.findField(obj.getClass(), fieldName))
-			.map(ObjectUtils::makeAccessible)
-			.map(field -> ObjectUtils.<T>get(obj, field))
-			.orElseThrow(() -> newIllegalArgumentException("No field with name [%s] exists on object of type [%s]",
-				fieldName, ObjectUtils.nullSafeClassName(obj)));
+		Field field = ReflectionUtils.findField(obj.getClass(), fieldName);
+
+		if (field != null) {
+
+			field = makeAccessible(field);
+
+			return get(obj, field);
+		}
+
+		throw newIllegalArgumentException("No field with name [%s] exists on object of type [%s]",
+			fieldName, ObjectUtils.nullSafeClassName(obj));
 	}
 
 	/**
@@ -240,17 +246,23 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	}
 
 	public static Constructor makeAccessible(Constructor<?> constructor) {
+
 		ReflectionUtils.makeAccessible(constructor);
+
 		return constructor;
 	}
 
 	public static Field makeAccessible(Field field) {
+
 		ReflectionUtils.makeAccessible(field);
+
 		return field;
 	}
 
 	public static Method makeAccessible(Method method) {
+
 		ReflectionUtils.makeAccessible(method);
+
 		return method;
 	}
 

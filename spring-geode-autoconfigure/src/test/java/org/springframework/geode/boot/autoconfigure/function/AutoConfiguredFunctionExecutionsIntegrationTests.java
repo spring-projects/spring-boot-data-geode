@@ -108,8 +108,9 @@ public class AutoConfiguredFunctionExecutionsIntegrationTests extends Integratio
 	private Object extractResult(Object result) {
 
 		return Optional.ofNullable(result)
-			.filter(it -> it instanceof Iterable)
-			.map(it -> ((Iterable) it).iterator())
+			.filter(Iterable.class::isInstance)
+			.map(Iterable.class::cast)
+			.map(Iterable::iterator)
 			.filter(Iterator::hasNext)
 			.map(Iterator::next)
 			.map(this::extractResult)

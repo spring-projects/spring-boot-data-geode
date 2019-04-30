@@ -13,12 +13,9 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import java.net.URL;
-import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.geode.CancelCriterion;
@@ -29,6 +26,7 @@ import org.apache.geode.distributed.DistributedSystem;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
+import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicator;
 import org.springframework.util.StringUtils;
 
@@ -137,23 +135,11 @@ public class GeodeCacheHealthIndicator extends AbstractGeodeHealthIndicator {
 		return healthBuilder -> getGemFireCache()
 			.map(GemFireCache::getDistributedSystem)
 			.map(distributedSystem -> healthBuilder
-				.withDetail("geode.distributed-system.member-count", Optional.of(distributedSystem)
-					.map(DistributedSystem::getAllOtherMembers)
-					.map(Collection::size)
-					.map(size -> size + 1)
-					.orElse(1))
+				.withDetail("geode.distributed-system.member-count", toMemberCount(distributedSystem))
 				.withDetail("geode.distributed-system.connection", toConnectedNoConnectedString(distributedSystem.isConnected()))
 				.withDetail("geode.distributed-system.reconnecting", toYesNoString(distributedSystem.isReconnecting()))
-				.withDetail("geode.distributed-system.properties-location",
-					Optional.ofNullable(DistributedSystem.getPropertiesFileURL())
-						.map(URL::toExternalForm)
-						.filter(StringUtils::hasText)
-						.orElse(""))
-				.withDetail("geode.distributed-system.security-properties-location",
-					Optional.ofNullable(DistributedSystem.getSecurityPropertiesFileURL())
-						.map(URL::toExternalForm)
-						.filter(StringUtils::hasText)
-						.orElse(""))
+				.withDetail("geode.distributed-system.properties-location", toString(DistributedSystem.getPropertiesFileURL()))
+				.withDetail("geode.distributed-system.security-properties-location", toString(DistributedSystem.getSecurityPropertiesFileURL()))
 			)
 			.orElse(healthBuilder);
 	}
@@ -171,7 +157,22 @@ public class GeodeCacheHealthIndicator extends AbstractGeodeHealthIndicator {
 			.orElse(healthBuilder);
 	}
 
+	private String emptyIfUnset(String value) {
+		return StringUtils.hasText(value) ? value : "";
+	}
+
 	private String toConnectedNoConnectedString(Boolean connected) {
 		return Boolean.TRUE.equals(connected) ? "Connected" : "Not Connected";
+	}
+
+	private int toMemberCount(DistributedSystem distributedSystem) {
+		return CollectionUtils.nullSafeSize(distributedSystem.getAllOtherMembers()) + 1;
+	}
+
+	private String toString(URL url) {
+
+		String urlString = url != null ? url.toExternalForm() : null;
+
+		return emptyIfUnset(urlString);
 	}
 }

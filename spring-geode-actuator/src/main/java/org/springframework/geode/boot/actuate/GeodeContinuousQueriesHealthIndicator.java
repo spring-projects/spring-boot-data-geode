@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import java.util.Arrays;
@@ -24,8 +23,10 @@ import java.util.Optional;
 
 import org.apache.geode.cache.query.CqQuery;
 import org.apache.geode.cache.query.CqState;
+import org.apache.geode.cache.query.CqStatistics;
 import org.apache.geode.cache.query.Query;
 import org.apache.geode.cache.query.QueryService;
+import org.apache.geode.cache.query.QueryStatistics;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.data.gemfire.listener.ContinuousQueryListenerContainer;
@@ -85,7 +86,7 @@ public class GeodeContinuousQueriesHealthIndicator extends AbstractGeodeHealthIn
 	}
 
 	@Override
-	protected void doHealthCheck(Health.Builder builder) throws Exception {
+	protected void doHealthCheck(Health.Builder builder) {
 
 		if (getContinuousQueryListenerContainer().isPresent()) {
 
@@ -118,28 +119,34 @@ public class GeodeContinuousQueriesHealthIndicator extends AbstractGeodeHealthIn
 
 					builder.withDetail(continuousQueryKey(continuousQueryName,"oql-query-string"), continuousQuery.getQueryString())
 						.withDetail(continuousQueryKey(continuousQueryName, "closed"), toYesNoString(continuousQuery.isClosed()))
-						.withDetail(continuousQueryKey(continuousQueryName, "closing"), Optional.ofNullable(continuousQuery.getState())
-							.map(CqState::isClosing)
-							.map(this::toYesNoString)
-							.orElse(UNKNOWN))
+						.withDetail(continuousQueryKey(continuousQueryName, "closing"), toYesNoString(continuousQuery.getState()))
 						.withDetail(continuousQueryKey(continuousQueryName, "durable"), toYesNoString(continuousQuery.isDurable()))
 						.withDetail(continuousQueryKey(continuousQueryName, "running"), toYesNoString(continuousQuery.isRunning()))
 						.withDetail(continuousQueryKey(continuousQueryName, "stopped"), toYesNoString(continuousQuery.isStopped()));
 
-					Optional.ofNullable(continuousQuery.getQuery())
-						.map(Query::getStatistics)
-						.ifPresent(queryStatistics ->
+					Query query = continuousQuery.getQuery();
+
+					if (query != null) {
+
+						QueryStatistics queryStatistics = query.getStatistics();
+
+						if (queryStatistics != null) {
 							builder.withDetail(continuousQueryQueryKey(continuousQueryName, "number-of-executions"), queryStatistics.getNumExecutions())
-								.withDetail(continuousQueryQueryKey(continuousQueryName, "total-execution-time"), queryStatistics.getTotalExecutionTime()));
+								.withDetail(continuousQueryQueryKey(continuousQueryName, "total-execution-time"), queryStatistics.getTotalExecutionTime());
+						}
+					}
 
-					Optional.ofNullable(continuousQuery.getStatistics())
-						.ifPresent(continuousQueryStatistics ->
-							builder.withDetail(continuousQueryStatisticsKey(continuousQueryName, "number-of-deletes"), continuousQueryStatistics.numDeletes())
-								.withDetail(continuousQueryStatisticsKey(continuousQueryName, "number-of-events"), continuousQueryStatistics.numEvents())
-								.withDetail(continuousQueryStatisticsKey(continuousQueryName, "number-of-inserts"), continuousQueryStatistics.numInserts())
-								.withDetail(continuousQueryStatisticsKey(continuousQueryName, "number-of-updates"), continuousQueryStatistics.numUpdates()));
+					CqStatistics continuousQueryStatistics = continuousQuery.getStatistics();
 
+					if (continuousQueryStatistics != null) {
+
+						builder.withDetail(continuousQueryStatisticsKey(continuousQueryName, "number-of-deletes"), continuousQueryStatistics.numDeletes())
+							.withDetail(continuousQueryStatisticsKey(continuousQueryName, "number-of-events"), continuousQueryStatistics.numEvents())
+							.withDetail(continuousQueryStatisticsKey(continuousQueryName, "number-of-inserts"), continuousQueryStatistics.numInserts())
+							.withDetail(continuousQueryStatisticsKey(continuousQueryName, "number-of-updates"), continuousQueryStatistics.numUpdates());
+					}
 				});
+
 			builder.up();
 
 			return;
@@ -158,5 +165,9 @@ public class GeodeContinuousQueriesHealthIndicator extends AbstractGeodeHealthIn
 
 	private String continuousQueryStatisticsKey(String continuousQueryName, String suffix) {
 		return String.format("geode.continuous-query.%1$s.statistics.%2$s", continuousQueryName, suffix);
+	}
+
+	private String toYesNoString(CqState continuousQueryState) {
+		return continuousQueryState != null ? toYesNoString(continuousQueryState.isClosing()) : UNKNOWN;
 	}
 }

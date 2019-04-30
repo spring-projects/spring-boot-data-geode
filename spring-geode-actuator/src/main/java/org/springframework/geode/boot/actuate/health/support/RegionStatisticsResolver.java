@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate.health.support;
 
 import java.util.Collections;
@@ -49,11 +48,11 @@ public class RegionStatisticsResolver {
 
 	public static CacheStatistics resolve(Region<?, ?> region) {
 
-		return Optional.ofNullable(region)
-			.map(it -> PartitionRegionHelper.isPartitionedRegion(it)
+		return region != null
+			? PartitionRegionHelper.isPartitionedRegion(region)
 				? new PartitionRegionCacheStatistics(region)
-				: it.getStatistics())
-			.orElse(null);
+				: region.getStatistics()
+			: null;
 	}
 
 	protected static class PartitionRegionCacheStatistics implements CacheStatistics {

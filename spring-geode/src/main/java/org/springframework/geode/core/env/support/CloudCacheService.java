@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.core.env.support;
 
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalArgumentException;
@@ -256,8 +255,8 @@ public class CloudCacheService extends Service {
 			int index = String.valueOf(value).trim().indexOf("[");
 
 			return index > 0 ? value.trim().substring(0, index).trim()
-				: (index != 0 && StringUtils.hasText(value) ? value.trim()
-				: DEFAULT_LOCATOR_HOST);
+				: index != 0 && StringUtils.hasText(value) ? value.trim()
+				: DEFAULT_LOCATOR_HOST;
 		}
 
 		private static int parsePort(String value) {
@@ -281,6 +280,7 @@ public class CloudCacheService extends Service {
 		 * @param port {@link Integer} specifying the port number on which this {@link Locator} is listening.
 		 */
 		private Locator(String host, Integer port) {
+
 			this.host = host;
 			this.port = port;
 		}
@@ -293,10 +293,7 @@ public class CloudCacheService extends Service {
 		 * @return the {@link String name} of the host on which this {@link Locator} is running.
 		 */
 		public String getHost() {
-
-			return Optional.ofNullable(this.host)
-				.filter(StringUtils::hasText)
-				.orElse(DEFAULT_LOCATOR_HOST);
+			return StringUtils.hasText(this.host) ? this.host : DEFAULT_LOCATOR_HOST;
 		}
 
 		/**
@@ -307,9 +304,7 @@ public class CloudCacheService extends Service {
 		 * @return the {@link Integer port} on which this {@link Locator} is listening.
 		 */
 		public int getPort() {
-
-			return Optional.ofNullable(this.port)
-				.orElse(DEFAULT_LOCATOR_PORT);
+			return this.port != null ? this.port : DEFAULT_LOCATOR_PORT;
 		}
 
 		@Override

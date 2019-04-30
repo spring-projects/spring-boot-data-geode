@@ -13,11 +13,9 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure;
 
 import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +39,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.data.gemfire.cache.GemfireCacheManager;
 import org.springframework.data.gemfire.cache.config.EnableGemfireCaching;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -90,8 +89,10 @@ public class CachingProviderAutoConfiguration {
 	}
 
 	GemfireCacheManager getCacheManager() {
-		return Optional.ofNullable(this.cacheManager)
-			.orElseThrow(() -> newIllegalStateException("GemfireCacheManager was not properly configured"));
+
+		Assert.state(this.cacheManager != null, "GemfireCacheManager was not properly configured");
+
+		return this.cacheManager;
 	}
 
 	Optional<CacheManagerCustomizers> getCacheManagerCustomizers() {
@@ -115,10 +116,7 @@ public class CachingProviderAutoConfiguration {
 
 			String springCacheType = context.getEnvironment().getProperty(SPRING_CACHE_TYPE_PROPERTY);
 
-			return Optional.ofNullable(springCacheType)
-				.filter(StringUtils::hasText)
-				.map(it -> SPRING_CACHE_TYPES.contains(it.trim().toLowerCase()))
-				.orElse(true);
+			return !StringUtils.hasText(springCacheType) || SPRING_CACHE_TYPES.contains(springCacheType);
 		}
 	}
 }

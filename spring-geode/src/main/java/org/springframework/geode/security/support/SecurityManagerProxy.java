@@ -13,12 +13,8 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.security.support;
 
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
-
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -84,8 +80,11 @@ public class SecurityManagerProxy extends LazyWiringDeclarableSupport
 	 */
 	public static SecurityManagerProxy getInstance() {
 
-		return Optional.ofNullable(INSTANCE.get())
-			.orElseThrow(() -> newIllegalStateException("SecurityManagerProxy was not configured"));
+		SecurityManagerProxy securityManagerProxy = INSTANCE.get();
+
+		Assert.state(securityManagerProxy != null, "SecurityManagerProxy was not configured");
+
+		return securityManagerProxy;
 	}
 
 	/**

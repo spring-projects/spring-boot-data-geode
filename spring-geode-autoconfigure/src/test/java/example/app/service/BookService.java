@@ -13,16 +13,13 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.service;
 
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
-
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import example.app.model.Author;
 import example.app.model.Book;
@@ -52,8 +49,9 @@ public class BookService {
 
 	protected BookRepository getBookRepository() {
 
-		return Optional.ofNullable(this.bookRepository)
-			.orElseThrow(() -> newIllegalStateException("BookRepository was not properly configured"));
+		Assert.state(this.bookRepository != null, "BookRepository was not properly configured");
+
+		return this.bookRepository;
 	}
 
 	public List<Book> findByAuthor(Author author) {

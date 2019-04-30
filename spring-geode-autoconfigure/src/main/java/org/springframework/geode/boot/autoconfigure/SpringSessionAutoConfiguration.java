@@ -13,12 +13,10 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure;
 
 import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
 
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -128,10 +126,8 @@ public class SpringSessionAutoConfiguration {
 			String springSessionStoreTypeValue =
 				context.getEnvironment().getProperty(SPRING_SESSION_STORE_TYPE_PROPERTY);
 
-			return Optional.ofNullable(springSessionStoreTypeValue)
-				.filter(StringUtils::hasText)
-				.map(it -> SPRING_SESSION_STORE_TYPES.contains(it.trim().toLowerCase()))
-				.orElse(true);
+			return !StringUtils.hasText(springSessionStoreTypeValue)
+				|| SPRING_SESSION_STORE_TYPES.contains(springSessionStoreTypeValue.trim().toLowerCase());
 		}
 	}
 }
