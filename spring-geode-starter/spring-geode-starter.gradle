@@ -12,6 +12,8 @@ dependencies {
 
 	compile(project(':spring-geode-autoconfigure'))
 
+	runtime 'javax.cache:cache-api'
+
 	runtime 'org.springframework.shell:spring-shell'
 
 }
