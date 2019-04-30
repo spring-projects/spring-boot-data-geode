@@ -7,7 +7,7 @@ dependencies {
     compile project(":spring-geode")
 
     compile ("org.springframework.boot:spring-boot-starter-actuator") {
-        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+        exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
     }
 
     testCompile "org.assertj:assertj-core"
@@ -17,7 +17,7 @@ dependencies {
     testCompile "edu.umd.cs.mtc:multithreadedtc"
 
     testCompile("org.springframework.boot:spring-boot-starter-test") {
-        exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+        exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
     }
 
     testCompile "org.springframework.data:spring-data-geode-test"

@@ -24,7 +24,7 @@ dependencies {
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
-		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
 
 	testCompile "org.springframework.data:spring-data-geode-test"
@@ -32,17 +32,17 @@ dependencies {
 	testRuntime "javax.cache:cache-api"
 
 	testRuntime("org.springframework.boot:spring-boot-starter-web") {
-		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
 
 	testRuntime("org.springframework.boot:spring-boot-starter-jetty") {
-		exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
 
 	testRuntime "org.springframework.shell:spring-shell:$springShellVersion"
 
 	// Runtime Test dependency on Spring Cloud Services (SCS) to verify workaround to SCS problem!
 	// testRuntime("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:2.0.3.RELEASE") {
-	//	exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+	//	exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	// }
 }
