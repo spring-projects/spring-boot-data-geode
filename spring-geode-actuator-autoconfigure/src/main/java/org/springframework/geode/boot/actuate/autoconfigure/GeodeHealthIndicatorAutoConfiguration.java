@@ -53,7 +53,7 @@ import org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @AutoConfigureBefore(HealthIndicatorAutoConfiguration.class)
 @ConditionalOnBean(GemFireCache.class)
-@ConditionalOnClass({ GemFireCache.class, CacheFactoryBean.class })
+@ConditionalOnClass(CacheFactoryBean.class)
 @ConditionalOnEnabledHealthIndicator("geode")
 @Import({
 	BaseGeodeHealthIndicatorConfiguration.class,
