@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.temp.event;
 
 import lombok.Getter;
@@ -22,6 +21,7 @@ import org.springframework.context.ApplicationEvent;
 
 import example.app.temp.model.TemperatureReading;
 
+// tag::class[]
 public class TemperatureEvent extends ApplicationEvent {
 
 	@Getter
@@ -34,3 +34,4 @@ public class TemperatureEvent extends ApplicationEvent {
 		this.temperatureReading = temperatureReading;
 	}
 }
+// end::class[]

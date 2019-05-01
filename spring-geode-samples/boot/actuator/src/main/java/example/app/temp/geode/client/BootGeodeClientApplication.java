@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.temp.geode.client;
 
 import org.springframework.boot.WebApplicationType;
@@ -32,6 +31,7 @@ import example.app.temp.event.TemperatureEvent;
 import example.app.temp.model.TemperatureReading;
 import example.app.temp.service.TemperatureMonitor;
 
+// tag::class[]
 @SpringBootApplication
 @EnableEntityDefinedRegions(basePackageClasses = TemperatureReading.class)
 @UseGroups("TemperatureMonitors")
@@ -60,3 +60,4 @@ public class BootGeodeClientApplication {
 				temperatureEvent.getTemperatureReading());
 	}
 }
+// end::class[]

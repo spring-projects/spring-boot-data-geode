@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.temp.model;
 
 import lombok.Data;
@@ -24,6 +23,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
+// tag::class[]
 @Data
 @Region("TemperatureReadings")
 @RequiredArgsConstructor(staticName = "newTemperatureReading")
@@ -65,3 +65,4 @@ public class TemperatureReading {
 		return String.format("%d °F", getTemperature());
 	}
 }
+// end::class[]

@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.temp.repo;
 
 import java.util.List;
@@ -24,6 +23,7 @@ import org.springframework.data.repository.CrudRepository;
 import example.app.temp.model.TemperatureReading;
 
 @SuppressWarnings("unused")
+// tag::class[]
 public interface TemperatureReadingRepository extends CrudRepository<TemperatureReading, Long> {
 
 	List<TemperatureReading> findByTimestampGreaterThanAndTimestampLessThan(Long timestampLowerBound,
@@ -36,3 +36,4 @@ public interface TemperatureReadingRepository extends CrudRepository<Temperature
 	Integer countFreezingTemperatureReadings();
 
 }
+// end::class[]

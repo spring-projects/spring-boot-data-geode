@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.temp.service;
 
 import java.util.Optional;
@@ -28,6 +27,7 @@ import example.app.temp.event.BoilingTemperatureEvent;
 import example.app.temp.event.FreezingTemperatureEvent;
 import example.app.temp.model.TemperatureReading;
 
+// tag::class[]
 @Service
 @SuppressWarnings("unused")
 public class TemperatureMonitor {
@@ -65,3 +65,4 @@ public class TemperatureMonitor {
 			.ifPresent(this.applicationEventPublisher::publishEvent);
 	}
 }
+// end::class[]

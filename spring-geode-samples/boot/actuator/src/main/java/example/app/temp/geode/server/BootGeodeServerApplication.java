@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.temp.geode.server;
 
 import java.util.Optional;
@@ -38,6 +37,7 @@ import example.app.temp.model.TemperatureReading;
 import example.app.temp.repo.TemperatureReadingRepository;
 import example.app.temp.service.TemperatureSensor;
 
+// tag::class[]
 @SpringBootApplication
 @CacheServerApplication(name = "TemperatureServiceServer")
 @EnableEntityDefinedRegions(basePackageClasses = TemperatureReading.class)
@@ -104,3 +104,4 @@ public class BootGeodeServerApplication {
 		return temperatureTimestampIndex;
 	}
 }
+// end::class[]
