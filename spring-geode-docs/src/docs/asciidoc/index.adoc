@@ -207,6 +207,7 @@ If you are using _Gradle_, include the following `repository` declaration in you
 repositories {
     maven { url: 'https://repo.spring.io/libs-milestone' }
 }
+----
 endif::[]
 
 include::clientcache-applications.adoc[]
