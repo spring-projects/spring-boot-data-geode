@@ -26,8 +26,8 @@ import example.app.temp.model.TemperatureReading;
 // tag::class[]
 public interface TemperatureReadingRepository extends CrudRepository<TemperatureReading, Long> {
 
-	List<TemperatureReading> findByTimestampGreaterThanAndTimestampLessThan(Long timestampLowerBound,
-		Long timestampUpperBound);
+	List<TemperatureReading> findByTimestampGreaterThanAndTimestampLessThan(
+		Long timestampLowerBound, Long timestampUpperBound);
 
 	@Query("SELECT count(*) FROM /TemperatureReadings WHERE temperature >= 212")
 	Integer countBoilingTemperatureReadings();

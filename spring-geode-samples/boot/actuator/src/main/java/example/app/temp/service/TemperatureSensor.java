@@ -31,8 +31,10 @@ import example.app.temp.repo.TemperatureReadingRepository;
 @SuppressWarnings("unused")
 public class TemperatureSensor {
 
-	private final PrimitiveIterator.OfInt temperatureStream = new Random(System.currentTimeMillis())
-		.ints(-100, 400).iterator();
+	private final PrimitiveIterator.OfInt temperatureStream =
+		new Random(System.currentTimeMillis())
+			.ints(-100, 400)
+			.iterator();
 
 	private final TemperatureReadingRepository repository;
 
@@ -45,7 +47,11 @@ public class TemperatureSensor {
 
 	@Scheduled(fixedRateString = "${example.app.temp.sensor.reading.schedule.rate:1000}")
 	public void readTemperature() {
-		this.repository.save(log(TemperatureReading.newTemperatureReading(temperatureStream.nextInt())));
+
+		TemperatureReading temperatureReading =
+			TemperatureReading.newTemperatureReading(temperatureStream.nextInt());
+
+		this.repository.save(log(temperatureReading));
 	}
 
 	private TemperatureReading log(TemperatureReading temperatureReading) {
