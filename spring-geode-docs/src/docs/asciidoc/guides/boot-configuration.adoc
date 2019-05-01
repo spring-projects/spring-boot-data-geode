@@ -1,8 +1,10 @@
 [[geode-samples-boot-configuration]]
 = Spring Boot Auto-configuration for Apache Geode & Pivotal GemFire
 John Blum
+:apache-geode-version: 16
+:apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :toc:
-:toclevels: 1
+:toclevels: 2
 
 This guide walks you through building a simple Customer Service, Spring Boot application using Apache Geode
 to manage Customer interactions. You should already be familiar with Spring Boot and Apache Geode.
@@ -88,7 +90,7 @@ to drive the interactions with Customers:
 .CustomerServiceApplication class
 [source,java]
 ----
-include::{samples-dir}boot/configuration/src/main/java/example/app/crm/CustomerServiceApplication.java[]
+include::{samples-dir}boot/configuration/src/main/java/example/app/crm/CustomerServiceApplication.java[tags=class]
 ----
 
 The `CustomerServiceApplication` class is annotated with `@SpringBootApplication`. Therefore, the main class is
@@ -390,7 +392,11 @@ You are set to go.
 
 For your convenience, a _Gfsh_ shell script is provided to start a cluster:
 
-link:{samples-dir}/boot/configuration/src/main/resources/geode/bin/start-simple-cluster.gfsh[]
+.Gfsh shell script
+[source,txt]
+----
+include::{samples-dir}/boot/configuration/src/main/resources/geode/bin/start-simple-cluster.gfsh[]
+----
 
 Specifically, we are starting 1 Locator and 1 Server, all running with the default ports.
 
@@ -841,7 +847,11 @@ to start correctly, or worse, they will not be secure.
 
 Fortunately, this sample provides _Gfsh_ shell scripts to get you going:
 
-link:{samples-dir}/boot/configuration/src/main/resources/geode/bin/start-secure-cluster.gfsh[]
+.Gfsh shell script to start a secure cluster
+[source,txt]
+----
+include::{samples-dir}/boot/configuration/src/main/resources/geode/bin/start-secure-cluster.gfsh[]
+----
 
 NOTE: SBDG does provide server-side, peer Security _auto-configuration_ support. However, you must then configure
 and bootstrap your GemFire/Geode servers with Spring. Again, an example of configuring/bootstrapping GemFire/Geode
@@ -893,7 +903,11 @@ you still must supply a username and password, minimally.
 This is as easy as setting a username/password in Spring Boot `application.properties` using Spring Data Geode's (SDG)
 well-known and documented properties:
 
-link:{samples-dir}/boot/configuration/src/main/resources/application-security.properties[]
+.Application security configuration properties
+[source,properties]
+----
+include::{samples-dir}/boot/configuration/src/main/resources/application-security.properties[]
+----
 
 The act of setting a username and password triggers the client Security _auto-configuration_ provided by SBDG. There are
 many steps to configuring client Security in Apache Geode/Pivotal GemFire properly, as there was on the server. All you
