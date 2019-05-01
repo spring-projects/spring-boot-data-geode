@@ -16,4 +16,8 @@ with their Apache Geode / Pivotal GemFire, Spring Boot applications.
 | Explains what auto-configuration is provided by SBDG out-of-the-box and what the auto-configuration is doing.
 | {github-samples-url}/boot/configuration[Boot Auto-configuration]
 
+| link:guides/boot-actuator.html[Spring Boot Actuator for Apache Geode/Pivotal GemFire]
+| Explains how to use Spring Boot Actuator for Apache Geode and how it works.
+| {github-samples-url}/boot/actuator[Boot Actuator]
+
 |===
