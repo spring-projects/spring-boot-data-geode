@@ -17,6 +17,8 @@ for your application.  In the future, SBDG will provide dedicated support for ht
 
 This guide assumes you are already familiar with Spring Boot and Apache Geode (or Pivotal GemFire).
 
+link:../index.html#geode-samples[Back]
+
 [[geode-samples-boot-actuator-example]]
 == Example Application
 
@@ -350,3 +352,5 @@ You are encouraged to read more about {spring-boot-docs}/production-ready.html[S
 
 Additonally, you can find out more about Apache Geode Statistics
 in the {apache-geode-docs}/managing/statistics/chapter_overview.html[User Guide].
+
+link:../index.html#geode-samples[Back]
