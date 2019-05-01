@@ -4,6 +4,21 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.0.0.RC2 (2019-04-30)
+-----------------------------------------
+Adds additional tests and includes a sample of using Spring Boot Actuator with Apache Geode and Pivotal GemFire.
+
+* Adds a sample containing a guide along with example code to show how to use Spring Boot Actuator
+with Apache Geode or Pivotal GemFire.
+* Adds the 'org.springframework.boot:spring-boot-autoconfigure-processor' dependency to 'spring-geode-autoconfigure'.
+* Includes documentation edits.
+* Includes the JCache API as runtime dependency in both the 'spring-geode-starter' as well as the 'spring-gemfire-starter'.
+* Removes exclusion on 'org.springframework.boot:spring-boot-starter-logging' and adds the exclusion on
+'org.apache.logging.log4j:log4j-to-slf4j'.
+* Removes unnecessary use of java.util.Optional in the codebase.
+* Upgrades to Gradle 5.4.1.
+
+
 Changes in version 1.0.0.RC1 (2019-04-24)
 -----------------------------------------
 Add support for GemfireTemplate auto-configuration for each declared Apache Geode/Pivotal GemFire Region.
@@ -24,6 +39,7 @@ with a SecurityManager, requiring Authentication (https://github.com/spring-proj
 * Upgrades to Spring Boot 2.0.9.RELEASE.
 * Upgrades to Spring Data Release Train Kay-SR14.
 * Upgrades to Spring Session Apple-SR9.
+
 
 Changes in version 1.0.0.M4 (2019-03-22)
 ----------------------------------------
