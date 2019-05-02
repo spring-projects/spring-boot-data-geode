@@ -2,6 +2,7 @@
 = Spring Boot Actuator for Apache Geode & Pivotal GemFire
 :apache-geode-version: 16
 :apache-geode-docs:https://geode.apache.org/docs/guide/{apache-geode-version}
+:imagesdir: {github-url}/spring-geode-docs/src/docs/images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
 
@@ -284,15 +285,15 @@ To navigate to the client applications Actuator Health endpoints, open a Web Bro
 
 This will output a JSON document similar to:
 
-image::{docs-dir}/src/docs/asciidoc/guides/client-actuator-health-endpoint.png[]
+image::{imagesdir}/client-actuator-health-endpoint.png[]
 
 We can see details on our client "TemperatureReadings" Region:
 
-image::{docs-dir}/src/docs/asciidoc/guides/client-actuator-health-region-endpoint.png[]
+image::{imagesdir}/client-actuator-health-region-endpoint.png[]
 
 As well as our CQs:
 
-image::{docs-dir}/src/docs/asciidoc/guides/client-actuator-health-cq-endpoint.png[]
+image::{imagesdir}/client-actuator-health-cq-endpoint.png[]
 
 When you hit refresh, the metrics will update.
 
@@ -305,19 +306,19 @@ To navigate to the server applications Actuator Health endpoint, open a Web Brow
 
 This will output a JSON document similar to:
 
-image::{docs-dir}/src/docs/asciidoc/guides/server-actuator-health-endpoint.png[]
+image::{imagesdir}/server-actuator-health-endpoints.png[]
 
 We can see details of the server "TemperatureReadings" Region:
 
-image::{docs-dir}/src/docs/asciidoc/guides/server-actuator-health-region-endpoint.png[]
+image::{imagesdir}/server-actuator-health-region-endpoint.png[]
 
 As well as our Indexes:
 
-image::{docs-dir}/src/docs/asciidoc/guides/server-actuator-health-indexes-endpoint.png[]
+image::{imagesdir}/server-actuator-health-indexes-endpoint.png[]
 
 And our CacheServer serving clients:
 
-image::{docs-dir}/src/docs/asciidoc/guides/server-actuator-health-cacheserver-endpoint.png[]
+image::{imagesdir}/server-actuator-health-cacheserver-endpoint.png[]
 
 When you hit refresh, the metrics will update.
 
