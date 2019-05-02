@@ -44,7 +44,7 @@ However in this case, we simply model the `TemperatureReading` as:
 .TemperatureReading class
 [source,java]
 ----
-include::{samples-dir}boot/actuator/src/main/java/example/app/temp/model/TemperatureReading.java[tags=class]
+include::{samples-dir}/boot/actuator/src/main/java/example/app/temp/model/TemperatureReading.java[tags=class]
 ----
 
 The `TemperatureReading` class is annotated with SDG's `@Region` mapping annotation to declare the Apache Geode Region
@@ -61,7 +61,7 @@ For that, we introduce the simple `TemperatureEvent` base class:
 .TemperatureEvent class
 [source,java]
 ----
-include::{samples-dir}boot/actuator/src/main/java/example/app/temp/event/TemperatureEvent.java[tags=class]
+include::{samples-dir}/boot/actuator/src/main/java/example/app/temp/event/TemperatureEvent.java[tags=class]
 ----
 
 `TemperatureEvent` is a Spring `ApplicationEvent` capable of being published to to Spring `@EventListeners` registered
@@ -79,7 +79,7 @@ a Spring Data _Repository_:
 .TemperatureReadingRepository interface
 [source,java]
 ----
-include::{samples-dir}boot/actuator/src/main/java/example/app/temp/repo/TemperatureReadingRepository.java[tags=class]
+include::{samples-dir}/boot/actuator/src/main/java/example/app/temp/repo/TemperatureReadingRepository.java[tags=class]
 ----
 
 The _Repository_ showcases a an example, derived query methods, `findByTimestampGreaterThanAndTimestampLessThan(..)`
@@ -101,7 +101,7 @@ or drops below freezing (32 °F):
 .TemperatureMonitor class
 [source,java]
 ----
-include::{samples-dir}boot/actuator/src/main/java/example/app/temp/service/TemperatureMonitor.java[tags=class]
+include::{samples-dir}/boot/actuator/src/main/java/example/app/temp/service/TemperatureMonitor.java[tags=class]
 ----
 
 When the temperature changes, triggering our queries, we receive an event and publish an appropriate `TemperatureEvent`
@@ -120,7 +120,7 @@ For that we have the `TemperatureSensor` class:
 .TemperatureSensor class
 [source,java]
 ----
-include::{samples-dir}boot/actuator/src/main/java/example/app/temp/service/TemperatureSensor.java[tags=class]
+include::{samples-dir}/boot/actuator/src/main/java/example/app/temp/service/TemperatureSensor.java[tags=class]
 ----
 
 To generate a stream of temperatures, we use Spring's {spring-framework-docs}/integration.html#scheduling[Scheduling Service]
@@ -150,7 +150,7 @@ using the `TemperatureSensor` class:
 .BootGeodeServerApplication main class
 [source,java]
 ----
-include::{samples-dir}boot/actuator/src/main/java/example/app/temp/geode/server/BootGeodeServerApplication.java[tags=class]
+include::{samples-dir}/boot/actuator/src/main/java/example/app/temp/geode/server/BootGeodeServerApplication.java[tags=class]
 ----
 
 This class is annotated with `@SpringBootApplication` making it a proper Spring Boot application. It uses Spring Boot's
@@ -186,7 +186,7 @@ Next, we need a client functioning as the "monitor" in our Temperature Service a
 .BootGeodeClientApplication main class
 [source,java]
 ----
-include::{samples-dir}boot/actuator/src/main/java/example/app/temp/geode/client/BootGeodeClientApplication.java[tags=class]
+include::{samples-dir}/boot/actuator/src/main/java/example/app/temp/geode/client/BootGeodeClientApplication.java[tags=class]
 ----
 
 Again, this class is also annotated with `@SpringBootApplication` making it a proper Spring Boot application.  It too

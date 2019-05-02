@@ -37,7 +37,7 @@ namely a `Customer`.  For this example, the `Customer` class is implemented as f
 .Customer class
 [source,java]
 ----
-include::{samples-dir}boot/configuration/src/main/java/example/app/crm/model/Customer.java[tags=class]
+include::{samples-dir}/boot/configuration/src/main/java/example/app/crm/model/Customer.java[tags=class]
 ----
 
 The `Customer` class uses https://projectlombok.org/[Project Lombok] to simplify the implementation so we can focus on
@@ -63,7 +63,7 @@ using Spring Data's _Repository_ abstraction:
 .CustomerRepository inteface
 [source,java]
 ----
-include::{samples-dir}boot/configuration/src/main/java/example/app/crm/repo/CustomerRepository.java[tags=class]
+include::{samples-dir}/boot/configuration/src/main/java/example/app/crm/repo/CustomerRepository.java[tags=class]
 ----
 
 `CustomerRepository` is a Spring Data `CrudRepository`.  `CrudRepository` provides basic CRUD (Create, Read, Update,
@@ -90,7 +90,7 @@ to drive the interactions with Customers:
 .CustomerServiceApplication class
 [source,java]
 ----
-include::{samples-dir}boot/configuration/src/main/java/example/app/crm/CustomerServiceApplication.java[tags=class]
+include::{samples-dir}/boot/configuration/src/main/java/example/app/crm/CustomerServiceApplication.java[tags=class]
 ----
 
 The `CustomerServiceApplication` class is annotated with `@SpringBootApplication`. Therefore, the main class is

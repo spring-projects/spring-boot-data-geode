@@ -26,7 +26,7 @@ processResources {
 			file.filter ReplaceTokens, tokens: [
 				'project-dir' : rootProject.projectDir.path,
 				'project-version' : project.version,
-				'samples-dir' : rootProject.projectDir.path + '/spring-geode-samples/'
+				'samples-dir' : rootProject.projectDir.path + '/spring-geode-samples'
 			]
 		}
 	}
