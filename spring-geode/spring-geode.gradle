@@ -20,6 +20,7 @@ dependencies {
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
 		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+		exclude group: "org.skyscreamer", module: "jsonassert"
 	}
 
 	testCompile "org.springframework.data:spring-data-geode-test"
