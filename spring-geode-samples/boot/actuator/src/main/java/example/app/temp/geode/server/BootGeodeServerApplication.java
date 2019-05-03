@@ -24,7 +24,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.gemfire.IndexFactoryBean;
-import org.springframework.data.gemfire.RegionFactoryBean;
+import org.springframework.data.gemfire.PeerRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.config.annotation.EnableStatistics;
@@ -67,7 +67,7 @@ public class BootGeodeServerApplication {
 		return new RegionConfigurer() {
 
 			@Override
-			public void configure(String beanName, RegionFactoryBean<?, ?> regionBean) {
+			public void configure(String beanName, PeerRegionFactoryBean<?, ?> regionBean) {
 
 				Optional.ofNullable(beanName)
 					.filter("TemperatureReadings"::equals)
