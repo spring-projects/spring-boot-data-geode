@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.session;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +34,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.PropertySource;
+import org.springframework.data.gemfire.client.PoolFactoryBean;
 import org.springframework.data.gemfire.tests.integration.SpringBootApplicationIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
@@ -267,6 +267,21 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 		@SuppressWarnings("unchecked")
 		SessionSerializer<Session, ?, ?> mockSessionSerializer() {
 			return mock(SessionSerializer.class);
+		}
+
+		@Bean
+		PoolFactoryBean gemfirePool() {
+			return new PoolFactoryBean();
+		}
+
+		@Bean("MockPool")
+		PoolFactoryBean mockPool() {
+			return new PoolFactoryBean();
+		}
+
+		@Bean("TestPool")
+		PoolFactoryBean testPool() {
+			return new PoolFactoryBean();
 		}
 	}
 

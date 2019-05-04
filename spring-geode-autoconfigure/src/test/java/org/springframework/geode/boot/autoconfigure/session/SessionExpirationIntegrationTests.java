@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.session;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +30,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.session.Session;
@@ -59,11 +59,14 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
+	"spring.session.data.gemfire.cache.client.pool.name=DEFAULT",
 	"spring.session.data.gemfire.cache.client.region.shortcut=LOCAL",
 	"spring.session.timeout=1",
 }, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @SuppressWarnings("unused")
 public class SessionExpirationIntegrationTests extends IntegrationTestsSupport {
+
+	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Resource(name = GemFireHttpSessionConfiguration.DEFAULT_SESSION_REGION_NAME)
 	private Region<Object, Session> sessionRegion;
@@ -138,6 +141,7 @@ public class SessionExpirationIntegrationTests extends IntegrationTestsSupport {
 	}
 
 	@SpringBootApplication(exclude = ContinuousQueryAutoConfiguration.class)
+	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class TestConfiguration {
 
 		@Bean

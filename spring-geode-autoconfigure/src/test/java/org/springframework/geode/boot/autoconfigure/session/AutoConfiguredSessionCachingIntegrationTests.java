@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.session;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,7 +65,10 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-	properties = "spring.session.data.gemfire.cache.client.region.shortcut=",
+	properties = {
+		"spring.session.data.gemfire.cache.client.pool.name=DEFAULT",
+		"spring.session.data.gemfire.cache.client.region.shortcut="
+	},
 	webEnvironment = SpringBootTest.WebEnvironment.MOCK
 )
 @SuppressWarnings("unused")
