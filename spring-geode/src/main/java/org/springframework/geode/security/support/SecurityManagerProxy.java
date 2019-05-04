@@ -15,11 +15,15 @@
  */
 package org.springframework.geode.security.support;
 
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.geode.security.AuthenticationFailedException;
 import org.apache.geode.security.ResourcePermission;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.gemfire.support.LazyWiringDeclarableSupport;
@@ -60,15 +64,20 @@ import org.springframework.util.Assert;
  * @author John Blum
  * @see org.apache.geode.security.ResourcePermission
  * @see org.apache.geode.security.SecurityManager
+ * @see org.springframework.beans.factory.BeanFactory
+ * @see org.springframework.beans.factory.BeanFactoryAware
+ * @see org.springframework.beans.factory.DisposableBean
  * @see org.springframework.beans.factory.annotation.Autowired
  * @see org.springframework.data.gemfire.support.LazyWiringDeclarableSupport
  * @since 1.0.0
  */
 @SuppressWarnings("unused")
 public class SecurityManagerProxy extends LazyWiringDeclarableSupport
-		implements org.apache.geode.security.SecurityManager, DisposableBean {
+		implements org.apache.geode.security.SecurityManager, DisposableBean, BeanFactoryAware {
 
 	private static final AtomicReference<SecurityManagerProxy> INSTANCE = new AtomicReference<>();
+
+	private BeanFactory beanFactory;
 
 	private org.apache.geode.security.SecurityManager securityManager;
 
@@ -92,16 +101,19 @@ public class SecurityManagerProxy extends LazyWiringDeclarableSupport
 	 * security operations to a Spring managed {@link org.apache.geode.security.SecurityManager} bean.
 	 */
 	public SecurityManagerProxy() {
-
-		// TODO remove init() call when GEODE-2083 (https://issues.apache.org/jira/browse/GEODE-2083) is resolved!
-		// NOTE: the init(:Properties) call in the constructor is less than ideal since...
-		// 1) it allows the *this* reference to escape, and...
-		// 2) it is Geode's responsibility to identify Geode Declarable objects and invoke their init(:Properties) method
-		// However, the init(:Properties) method invocation in the constructor is necessary to enable this Proxy to be
-		// identified and auto-wired in a Spring context.
-
 		INSTANCE.compareAndSet(null, this);
-		init(new Properties());
+	}
+
+	/**
+	 * Configures a reference to the current Spring {@link BeanFactory}.
+	 *
+	 * @param beanFactory reference to the current Spring {@link BeanFactory}.
+	 * @throws BeansException if this operation fails to configure the reference to the {@link BeanFactory}.
+	 * @see org.springframework.beans.factory.BeanFactory
+	 */
+	@Override
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		this.beanFactory = beanFactory;
 	}
 
 	/**
@@ -158,5 +170,12 @@ public class SecurityManagerProxy extends LazyWiringDeclarableSupport
 	public void destroy() throws Exception {
 		super.destroy();
 		INSTANCE.set(null);
+	}
+
+	@Override
+	protected BeanFactory locateBeanFactory() {
+
+		return Optional.ofNullable(this.beanFactory)
+			.orElseGet(() -> super.locateBeanFactory());
 	}
 }
