@@ -25,10 +25,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.geode.config.annotation.EnableSecurityManagerProxy;
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -77,8 +77,8 @@ public class SecurityManagerProxyIntegrationTests extends IntegrationTestsSuppor
 	}
 
 	@EnableGemFireMockObjects
-	@PeerCacheApplication(logLevel = GEMFIRE_LOG_LEVEL, useBeanFactoryLocator = true)
-	@EnableSecurity(securityManagerClassName = "org.springframework.geode.security.support.SecurityManagerProxy")
+	@EnableSecurityManagerProxy
+	@PeerCacheApplication(logLevel = GEMFIRE_LOG_LEVEL)
 	static class TestConfiguration {
 
 		@Bean
