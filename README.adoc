@@ -1,5 +1,6 @@
 image:https://api.travis-ci.org/spring-projects/spring-boot-data-geode.svg?branch=master["Build Status", link="https://travis-ci.org/spring-projects/spring-boot-data-geode"]
 
+[[about]]
 = Spring Boot for Apache Geode & Pivotal GemFire
 
 _Spring Boot for Apache Geode & Pivotal GemFire_ extends https://projects.spring.io/spring-boot/[_Spring Boot_] with
@@ -11,6 +12,7 @@ This project builds on both https://github.com/spring-projects/spring-data-geode
 and https://projects.spring.io/spring-data-gemfire/[_Spring Data for Pivotal GemFire_]
 as well as https://spring.io/projects/spring-boot[Spring Boot].
 
+[[project-goals]]
 === Project Goals
 
 This project adds _Spring Boot_ **auto-configuration** support for both https://geode.apache.org/[Apache Geode]
@@ -20,11 +22,13 @@ Among other things, this project builds on https://projects.spring.io/spring-boo
 as well as https://projects.spring.io/spring-data-gemfire/[_Spring Data for Apache Geode & Pivotal GemFire_]
 and additionally offers...
 
-1. _Auto-configures_ an _Apache Geode_ or _Pivotal GemFire_ https://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
+1. _Auto-configures_ an _Apache Geode_ or _Pivotal GemFire_ (PCC)
+https://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
 instance automatically when either _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_
 are on the application's CLASSPATH.
 
-2. _Auto-configures_ either _Apache Geode_ or _Pivotal GemFire_ as a _caching provider_ in https://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
+2. _Auto-configures_ either _Apache Geode_ or _Pivotal GemFire_ (PCC) as a _caching provider_ in
+https://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
 when either _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_ are on the application's CLASSPATH.
 
 3. _Auto-configures_ _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_
@@ -33,25 +37,29 @@ when _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_ are on 
 and _Spring Boot_ detects SDG _Repositories_ in your _Spring Boot_ application.
 
 4. Provides additional support for _Spring Boot_/_Spring Data for Apache Geode_/_Pivotal GemFire_ applications
-deployed to PCF using either the Pivotal Cloud Cache (PCC) or Session State Caching (SSC) services.
-Also, when using SSC, you can also take advantage of
+deployed to PCF using Pivotal Cloud Cache (PCC).  Additionally, if your application requires (HTTP) Session State
+Caching services, you can also take advantage of
 https://github.com/spring-projects/spring-session-data-geode[_Spring Session for Apache Geode/Pivotal GemFire_].
 
-5. As an added benefit, _Spring Boot for Pivotal GemFire_ will automatically authenticate your _Spring Boot_, _Pivotal GemFire_ based application
-when deployed to PCF and the application is granted access to a secure PCC instance for all of its caching concerns.
+This, along with many other benefits, are provided by this project.
 
-This, along with many other things will be provided in and by this project.
-
+[[documentation]]
 === Documentation
 
-You can find the documentation for this project
-https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.BUILD-SNAPSHOT/reference/html5/[here],
-and API is https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.BUILD-SNAPSHOT/api/[here].
+.Example Apache Geode Applications using Spring Boot
+|===
+| Version | Reference Documentation | Javadoc | Samples
 
+| 1.0.0.RELEASE | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.RELEASE/reference/html5/[Ref Docs] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.RELEASE/api/[Javadoc] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.RELEASE/reference/html5/#geode-samples[Samples]
+| 1.0.1.BUILD-SNAPSHOT| https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.BUILD-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.BUILD-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.BUILD-SNAPSHOT/reference/html5/#geode-samples[Samples]
+
+|===
+
+[[examples]]
 === Examples
 
 You can find an example of using this project in the Pivotal Cloud Cache (PCC) https://github.com/pivotal-cf/PCC-Sample-App-PizzaStore[Pizza Store],
-Spring Boot, Pivotal GemFire `ClientCache` application.
+repository, which contains a Spring Boot, PCC `ClientCache` application.
 
 Another example, https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example], can be found
 in the Contacts Application Reference Implementation for _Spring Data for Apache Geode/Pivotal GemFire_ (SDG).
@@ -59,16 +67,19 @@ in the Contacts Application Reference Implementation for _Spring Data for Apache
 And finally, the documentation contains https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.BUILD-SNAPSHOT/reference/html5/#geode-samples[samples]
 you may use to get started with SBDG.
 
+[[spring-boot-project-site]]
 == Spring Boot Project Site
 
 You can find the documentation, issue management, support, samples, and guides for using _Spring Boot_
 at https://projects.spring.io/spring-boot/
 
+[[code-of-conduct]]
 == Code of Conduct
 
 This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code of conduct].
 By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
 
+[[license]]
 == License
 
 _Spring Boot_, _Spring Boot for Apache Geode_ and _Spring Boot for Pivotal GemFire_ is Open Source Software
