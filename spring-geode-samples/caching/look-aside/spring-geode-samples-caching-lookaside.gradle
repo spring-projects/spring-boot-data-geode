@@ -1,0 +1,24 @@
+apply plugin: 'io.spring.convention.spring-sample-boot'
+
+description = "Spring Geode Sample demonstrating Spring's Cache Abstraction using Apache Geode as the caching provider."
+
+dependencies {
+
+	compile project(":spring-geode-starter")
+
+	compile ("org.springframework.boot:spring-boot-starter-web") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+	runtime "javax.cache.cache-api"
+	runtime "org.springframework.shell:spring-shell"
+
+	runtime ("org.springframework.boot:spring-boot-starter-jetty") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+}
+
+bootJar {
+	mainClassName = 'example.app.temp.geode.client.BootGeodeClientApplication'
+}
