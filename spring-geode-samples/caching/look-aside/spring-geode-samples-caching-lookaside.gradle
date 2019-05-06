@@ -10,7 +10,7 @@ dependencies {
 		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
 
-	runtime "javax.cache.cache-api"
+	runtime "javax.cache:cache-api"
 	runtime "org.springframework.shell:spring-shell"
 
 	runtime ("org.springframework.boot:spring-boot-starter-jetty") {
