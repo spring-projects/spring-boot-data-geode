@@ -11,6 +11,7 @@ Edits documentation and adds Sample with Guide and Example Application code for 
 * Fix release (milestone, release candidate, and GA) version of the reference documentation.
 * Fix image links in reference docs.
 * Add Sample with Guide and Example Application code covering the Look-Aside Caching pattern.
+* Upgrade to Spring Data for Apache Geode/Pivotal GemFire Test 0.0.1.RELEASE.
 
 
 Changes in version 1.0.0.RC2 (2019-04-30)
