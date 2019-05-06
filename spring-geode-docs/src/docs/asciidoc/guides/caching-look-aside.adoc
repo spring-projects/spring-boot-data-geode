@@ -15,8 +15,8 @@ This guide walks through building a simple Spring Boot application using
 {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]
 backed with Apache Geode as the caching provider.
 
-It is assumed that user is familiar with the Spring programming model.  No prior knowledge of Spring's Cache Abstraction
-or Apache Geode is required to utilize caching in your Spring Boot applications.
+It is assumed that the reader is familiar with the Spring _programming model_.  No prior knowledge of Spring's
+_Cache Abstraction_ or Apache Geode is required to utilize caching in your Spring Boot applications.
 
 Let's begin.
 
@@ -25,24 +25,27 @@ link:../index.html#geode-samples[Back]
 [[geode-samples-caching-lookaside-background]]
 == Background
 
-Caching is a very effective software pattern for reducing the resource consumption used by your application
+Caching is an effective software pattern for reducing the resource consumption used by your application
 as well as to improve efficiency by increasing throughput and reducing latency.
 
-The fundamental premise of caching is, given the same arguments, if a service yields the same results, then it is a
-prime candidate for caching.  Indeed, if I am searching for a customer record by account number, and it will always
-produce the same customer, then adding caching to the search operation will improve the overall experience.  After all,
-the account number may be a form of customer identity. We can save compute resources by keeping the customer's
-information in a cache.
+The fundamental premise of caching is, given the same arguments, if a service call yields the same results, then it is
+a prime candidate for caching.
 
-While there are different patterns of caching, the caching pattern most often used is called _**Look-Aside Caching**_.
+Indeed, if I am searching for a customer record by account number and the search will always produce the same customer
+for a given account number, then adding caching to the search operation will improve the overall user experience.
+After all, the account number may be a form of customer identity. We can save compute resources by caching
+the customer's information, which is especially useful if the customer's information is used in multiple workflows.
+
+While there are different patterns of caching, the _**Look-Aside Caching**_ pattern is the most frequently used.
 
 _Look-Aside Caching_ is a pattern of caching where the input of the cacheable operation is used as the key to lookup
-the results of the cacheable operation's computation on subsequent invocations using the same input.  With _Look-Aside,
-the cache is consulted first when the cacheable operation is invoked, and if the computation with the given input
-has already been performed, then the value from the cache is returned. Otherwise, if no value has been cached with
-the given input, the cacheable operation is invoked and the result is cached using the input as the key.
+the cached results of the cacheable operation's computation on subsequent invocations, given the same input.  With
+_Look-Aside_, the cache is consulted first when the cacheable operation is invoked, and if the computation for the
+given input has already been performed, then the value from the cache is returned. Otherwise, if no value has been
+cached for the given input, the cacheable operation is invoked and the result of the operation is cached using the
+input as the key.
 
-For example, I may have a `CustomerService` class that looks up a `Customer` by `AccountNumber`, as so:
+For example, I may have a `CustomerService` class that looks up a `Customer` by `AccountNumber`:
 
 .Cacheable CustomerService class
 [source,java]
@@ -58,51 +61,51 @@ class CustomerService {
 ----
 
 If I have already looked up a `Customer` (e.g. "Jon Doe") with a given `AccountNumber` (e.g. "abc123"), then when
-the `findBy(..)` method is called with the same `AccountNumber` (i.e. "abc123"), we would expect the same result
-(i.e. `Customer` "Jon Doe").
+the `findBy(..)` method is called with the same `AccountNumber` (i.e. "abc123") again, we would expect the same result
+(i.e. `Customer` "Jon Doe") to be returned.
 
 The _Look-Aside Caching_ pattern can be represented in the following diagram:
 
 image::../images/Look-Aside-Caching-Pattern.png[]
 
-In the diagram above, we see that first the caching provider (e.g. Apache Geode) is consulted in #1.  If the result
-of the cacheable operation for given input has already been computed and stored in the cache, then the result is
-simply returned in #2.
+In the diagram above, we see that the caching provider (e.g. Apache Geode) is consulted in #1 first.  If the result
+of the cacheable operation for the given input has already been computed and stored in the cache, then the result
+is simply returned, #2 (_cache hit_).
 
 However, if the cacheable operation has never been invoked with the given input, or the previous computation of
-the operation expired, or was evicted, then the cacheable operation is invoked (#3).  This cacheable operation may
-access some external data source to perform its computation. After the operation completes, it returns the result,
-but not before the caching infrastructure stores the result along with the input in the cache (#4). After the result
-is cached, the value is returned to the caller (#5). Any subsequent invocation of the cacheable operation with
-the same input, should yield the same result, stored in the cache, providing the cache entry (input->result) has not
-expire or been evicted.
+the operation expired, or was evicted, then the cacheable operation is invoked, #3 (_cache miss_).  This cacheable
+operation may access some external data source to perform its computation. After the operation completes, it returns
+the result, but not before the caching infrastructure stores the result along with the input in the cache, #4. After
+the result is cached, the value is returned to the caller. Any subsequent invocation of the cacheable operation with
+the same input should yield the same result as stored in the cache, providing the cache entry (input->result) has not
+expired or been evicted.
 
 Spring's {spring-framework-docs}/integration.html#cache[Cache Abstraction] is just that, a very elegant implementation
-of the _Look-Aside Caching_ pattern.  Details of how Spring's Cache Abstraction works under-the-hood is beyond the
-scope of this document.  In a nutshell, it relies on Spring AOP and proxying and is not unlike Spring Transaction
-Management demarcation.
+of the _Look-Aside Caching_ pattern.  Details of how Spring's _Cache Abstraction_ works under-the-hood is beyond the
+scope of this document.  In a nutshell, it relies on Spring AOP and proxying and is not unlike Spring's Transaction
+Management.
 
 Different caching providers have different capabilities. You should choose the caching provider that gives you
-what you require to handle your Use Case and caching needs correctly.
+what you require to handle your application needs and use cases correctly.
 
 If used appropriately, caching can greatly improve your application's end-user experience.
 
-NOTE: Instead of using {spring-framework-javadoc}/org/springframework/cache/annotation/package-summary.html[Spring's Cache Annotations],
+TIP: Instead of using {spring-framework-javadoc}/org/springframework/cache/annotation/package-summary.html[Spring's Cache Annotations],
 you may instead use JSR-107, JCache API Annotations, which is {spring-framework-docs}/integration.html#cache-jsr-107[supported]
-by Spring's Caching Abstraction.
+by Spring's _Caching Abstraction_.
 
-TIP: See Spring Boot's documentation for a complete list of
+NOTE: See Spring Boot's documentation for a complete list of
 {spring-boot-docs}/boot-features-caching.html#boot-features-caching-provider[supported caching providers].
 
 [[geode-samples-caching-lookaside-example]]
 == Example (with additional background)
 
-To make the effects of Spring's Cache Abstraction using Apache Geode as the cache provider apparent in your application,
-we show how to enable and use caching with your application in a very small, simple example.
+To make the effects of Spring's _Cache Abstraction_ using Apache Geode as the cache provider apparent in
+your application, we show how to enable and use caching with your application in a very small, simple example.
 
 The example Spring Boot application implements a Counter Service, which simply maintains a collection of named counters.
 The application provides a REST-ful Web interface to increment a counter, get the current cached count for a named
-counter, and the ability to reset a named counter back to 0.
+counter, and the ability to reset a named counter to 0.
 
 Typically, caching is used to offset the costs associated with expensive operations, such as disk or network I/O.
 Indeed, both an operation's throughput and latency is bound by an I/O operation since compute is many orders
@@ -112,13 +115,13 @@ While developers have been quick to throw more Threads at the problem, trying to
 the door to a whole new set of problems (concurrency), usually at the expense of using more resources, which does not
 always yield the desired results.
 
-Opportunities for caching, though very simplistic, is often overlooked yet is very effective minimizing the over
-utilization of resources through reuse.  In an every increasing Microservices based world, caching will become even
-more important.
+Opportunities for caching is often overlooked yet is a very effective at minimizing the over utilization of resources
+by leveraging reuse.  In an every increasing Microservices based world, caching will become even more important.
 
 Of course, you still must tune your cache.  Most caches keep information in memory, and since memory is finite,
-you must utilize strategies to manage memory effectively, such as eviction, expiration, or even off-heap for JVM-based
-caches.  For example, eviction/expiring entries based on use (Least Recently Used, LRU) is 1 such strategy.
+you must utilize strategies to manage memory effectively, such as eviction, expiration, or even Off-Heap
+(i.e. native memory) for JVM-based caches.  For example, evicting/expiring entries based on use (_Least Recently Used_,
+or LRU) is 1 of many effective strategies.
 
 Each caching provider is different in this regard.
 
@@ -127,7 +130,7 @@ Each caching provider is different in this regard.
 
 Let's have a look at the Counter Service application.
 
-We start with a simple, Spring Boot, Servlet-based Web application:
+We start with a simple, Spring Boot, Servlet-based, Web application:
 
 .SpringBootApplication
 [source,java]
@@ -147,13 +150,13 @@ With the `org.springframework.geode:spring-geode-starter` dependency on your app
 ----
 
 And the `BootGeodeLookAsideCachingApplication` class annotated with `@SpringBootApplication`, you have everything you
-need to begin using Spring's _Cache Abstraction_ in your application using Apache Geode as the caching provider.
+need to begin using Spring's _Cache Abstraction_ in your application with Apache Geode as the caching provider.
 
 TIP: You can switch from open source Apache Geode to Pivotal GemFire (PCC) very easily simply by changing
 the artifactId from `spring-geode-starter` to `spring-gemfire-starter`.  No configuration or code changes
 are necessary.
 
-As an application developer, all you need do is focus on where in your application caching would be useful.
+As an application developer, all you need do is focus on where in your application caching would be most beneficial.
 
 Let's do that.
 
@@ -169,19 +172,22 @@ include::{samples-dir}/caching/look-aside/src/main/java/example/app/caching/look
 ----
 
 The primary function of the `CounterService` is to maintain a collection of named counters, incrementing the count
-each time a named counter is accessed, return the current (cached) count and reset a named counter.
+each time a named counter is accessed, and returning the current (cached) count. There is an additional operation
+to reset a named counter to 0.
 
-All operations perform a cache function.  The `@Cacheable` `getCachedCount(:String)` method is our _**look-aside cache**_
-operation. That is, the "Counters" cache is consulted for the named counter before the method is invoked. If a count
-has already been established for the named counter, then the cached count is returned and the method is not invoked.
-Otherwise the `getCachedCount(:String)` method is invoked and proceeds to call the `getCount(:String)` method.
+All `CounterService` operations perform a cache function.
+
+The `@Cacheable` `getCachedCount(:String)` method is our _**look-aside cache**_ operation. That is, the "Counters" cache
+is consulted for the named counter before the method is invoked. If a count has already been established for the named
+counter, then the cached count is returned and the method will not be invoked. Otherwise the `getCachedCount(:String)`
+method is invoked and proceeds to call the `getCount(:String)` method.
 
 The `@CachePut` annotated `getCount(:String)` method is always invoked, but the result is cached. If a cache entry
 already exists, then it is updated (or in this case, replaced). This method always has the effect of incrementing
-the counter.
+the named counter.
 
-Finally, we have a `@CacheEvict` annotated `resetCache(:String)` method, which will reset the named counter back to 0
-and evict the cache entry, starting fresh.
+Finally, we have a `@CacheEvict` annotated `resetCache(:String)` method, which will reset the named counter to 0
+and evict the cache entry for the named counter.
 
 TIP: Each of the Spring's Cache annotations can be replaced with the corresponding JSR-107 - JCache API annotations
 as {spring-framework-docs}/integration.html#cache-jsr-107[documented here], and the application will work just the same.
@@ -214,21 +220,22 @@ endpoints, accessible by URL using HTTP:
 The base URL is `http://localhost:8080`.
 
 After running the `BootGeodeLookAsideCachingApplication` class, if you open a Web browser and navigate to
-`http://localhost:8080/ping`, you should see the content "PONG".
+`http://localhost:8080/ping`, you should see the content "**PONG**".
 
 [[geode-samples-caching-lookaside-example-counterservice-configuration]]
 === Counter Service Configuration
 
 While Spring Boot for Apache Geode/Pivotal GemFire (PCC), SBDG, takes care of enabling Spring's caching infrastructure
-for you, and configuring Apache Geode/Pivotal GemFire (PCC) as a caching provider in the caching infrastructure,
-you still must define and declare your individual caches.
+for you, configuring Apache Geode/Pivotal GemFire (PCC) as a caching provider, you still must define and declare
+your individual caches.
 
 No Spring caching provider is fully configured by Spring or Spring Boot for that matter.  Part of the reason for this
-is that their are many different ways to configure the caches.
+is that there are many different ways to configure the caches.
 
-Remember, earlier we mentioned tuning a cache with eviction or expiration policies, perhaps using Off-Heap memory. You
-may overflow entries to disk. The caches may be persistent. You might be using a client/server or even a WAN topology
-and you might need to configure things like conflation, filters, compression, security (e.g. SSL), and so on.
+Remember earlier we mentioned tuning a cache with eviction or expiration policies, perhaps using Off-Heap memory,
+overflowing entries to disk, making caches persistent, are few of the ways to tune or configure a cache. You might be
+using a client/server or even a WAN topology and you might need to configure things like conflation, filters,
+compression, security (e.g. SSL), and so on.
 
 However, this is a lot to think about and you may just simply want to get up and running as quickly as possible. While
 SBDG is not opinionated about this out-of-the-box, we do provide assistance to make this task easy:
@@ -239,16 +246,43 @@ SBDG is not opinionated about this out-of-the-box, we do provide assistance to m
 include::{samples-dir}/caching/look-aside/src/main/java/example/app/caching/lookaside/config/GeodeConfiguration.java[tags=class]
 ----
 
-The only thing of real importance here is the `@EnableCachingDefinedRegions` annotation. This Spring Data
+The only thing of real significance here is the `@EnableCachingDefinedRegions` annotation. This Spring Data
 for Apache Geode/Pivotal GemFire (PCC), SDG, annotation is responsible for introspecting our Spring Boot application
 on Spring container startup, identifying all the caching annotations (both Spring Cache annotations as wells JSR-107,
 JCache annotations) used in our application components, and creating the appropriate caches.
 
+If you were not using SDG's `@EnablingCachingDefinedRegions` annotation, then you would need to define the Region
+using the equivalent _JavaConfig_:
+
+."Counters" Region definition using JavaConfig
+[source,java]
+----
+@Bean("Counters")
+public ClientRegionFactoryBean<Object, Object> countersRegion(GemFireCache gemfireCache) {
+
+    ClientRegionFactoryBean<Object, Object> countersRegion = new ClientRegionFactoryBean<>();
+
+    countersRegion.setCache(gemfireCache);
+    countersRegion.setClose(false);
+    countersRegion.setShortcut(ClientRegionShortcut.LOCAL);
+
+    return countersRegion;
+}
+----
+
+Or using XML:
+
+."Counters" Region definiton using XML
+[source,xml]
+----
+<gfe:client-region id="Counters" shortcut="LOCAL"/>
+----
+
 In Apache Geode terminology, each cache identified in 1 of the caching annotations by name, will have an Apache Geode
 Region created for it.
 
-In our case, SBDG provides us a `ClientCache` instance by default, so we are creating client `LOCAL`-only Region. The
-client "Counters" Region is `LOCAL` since we do not have a server backend running.
+In our case, SBDG provides us a `ClientCache` instance by default, so we will be creating client `LOCAL`-only Regions.
+The client "Counters" Region is `LOCAL` since we do not (yet) have a server backend running.
 
 However, it would be very simple to convert this application into using a client/server topology.
 
@@ -260,7 +294,8 @@ To use the client/server topology, essentially you only need to remove the `shor
 using _Gfsh_ and create the "Counters" Region on the server.
 
 Of course, you technically do not even need to create the "Counters" Region on the server.  You can also leverage
-SDG's `@EnableClusterConfiguration(..)` annotation, which will create the server-side, "Counters" Region for you.
+SDG's `@EnableClusterConfiguration(..)` annotation, which will create the necessary server-side, "Counters" Region
+for you.
 
 After starting a Locator/Server using _Gfsh_:
 
@@ -307,7 +342,7 @@ You only need to modify your application configuration as follows:
 public class GeodeConfiguration { }
 ----
 
-After starting the application, we will see that the "Counters" Region on the server was created:
+After (re-)starting the application, we will see that the "Counters" Region on the server has been created:
 
 ."Counters" Region
 [source,txt]
@@ -346,7 +381,7 @@ Refer to SDG's documentation to learn more about
 Now, it is time to run the example.
 
 If you are just running in local mode (provided configuration), then start the `BootGeodeLookAsideCachingApplication`
-from your IDE, or from the command-line, as is to get started:
+from your IDE, or from the command-line, as is:
 
 .Run `BootGeodeLookAsideCachingApplication` class
 [source,txt]
@@ -399,7 +434,7 @@ After that, we can create and increment counters, for example:
 **1**
 
 If you constantly hit the refresh button, you will see 2, 3, 4, 5, ... and so on.  While the named counter's (i.e. "A")
-new count is be cached, we are not returning the cached value.
+new count is being cached, we are not returning the cached value.
 
 If you navigate to:
 
@@ -411,7 +446,9 @@ You can begin a new named counter (e.g. "B") without affecting the exiting named
 
 `http://localhost:8080/counter/B`
 
-And refreshing the page multiple times:
+**1**
+
+And again, after refreshing the page multiple times:
 
 **3**
 
@@ -421,8 +458,8 @@ If you navigate to:
 
 **0**
 
-This resets the count of the counter "B". However, this does not affect the count of counter "A", which we can reassess
-by navigating to:
+This resets the count of counter "B" to 0. However, this does not affect the count of counter "A", which we can
+reevaluate by navigating to:
 
 `http://localhost:8080/counter/A/cached`
 
@@ -431,10 +468,10 @@ by navigating to:
 This is an extremely simple application, but shows the effects of caching.
 
 [[geode-samples-caching-lookaside-example-run-clientserver]]
-==== Running the Example using Client/Server
+=== Running the Example using Client/Server
 
-If you are using the client/server topology, the effect are no different. However, after running the example application
-you can evaluate the state of the "Counters" Region using _Gfsh_, like so:
+If you are using the client/server topology, the effects of caching are no different. However, after running the example
+application you can evaluate the state of the "Counters" Region using _Gfsh_, like so:
 
 .Describing and Querying the "Counters" Region on the Server
 [source,txt]
@@ -467,13 +504,15 @@ B   | 2
 [[geode-samples-caching-lookaside-conclusion]]
 == Conclusion
 
-As you have learned, Spring making enabling and using caching in your application really easy.  With SBDG, using
-either Apache Geode or Pivotal GemFire (PCC) as your caching provider in Spring's _Cache Abstraction_ is as easy
-as making sure `org.springframework.geode:spring-geode-starter` is on your application's classpath.
+As you have learned, Spring makes enabling and using caching in your application really easy.
 
-You now have successfully used _**Look-Aside Caching**_ pattern in your Spring Boot application.
+With SBDG, using either Apache Geode or Pivotal GemFire (PCC) as your caching provider in Spring's _Cache Abstraction_
+is as easy as making sure `org.springframework.geode:spring-geode-starter` is on your application's classpath. You just
+need to focus on areas of your application that would benefit from caching.
 
-Later we will cover more advanced forms of the _Look-Aside Caching_ pattern (e.g. using Eviction/Expiration policies,
-etc) as well as take a look at the other caching patterns, like _Inline Caching_ and _Near Caching_.
+You now have successfully used the _**Look-Aside Caching**_ pattern in your Spring Boot application.
+
+Later we will cover more advanced forms of the _Look-Aside Caching_ pattern (e.g. using Eviction/Expiration policies)
+as well as take a look at other caching patterns, like _Inline Caching_ and _Near Caching_.
 
 link:../index.html#geode-samples[Back]
