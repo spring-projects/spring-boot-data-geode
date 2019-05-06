@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.caching.lookaside;
 
 import org.springframework.boot.WebApplicationType;
@@ -21,9 +20,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 /**
- * The BootGeodeLookAsideCachingApplication class...
+ * {@link SpringBootApplication} to configure and bootstrap the example application using the Look-Aside Caching pattern,
+ * and specifically Spring's Cache Abstraction with Apache Geode as the caching provider.
  *
  * @author John Blum
+ * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @since 1.0.0
  */
 @SpringBootApplication

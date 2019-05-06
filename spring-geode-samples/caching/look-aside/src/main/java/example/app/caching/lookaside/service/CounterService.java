@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.caching.lookaside.service;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,9 +25,14 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 /**
- * The CounterService class...
+ * A Spring Cacheable {@link Service} class used to maintain a collection of named counters and provide counter
+ * operations to increment the count, access the current, cached count and rest the count.
  *
  * @author John Blum
+ * @see org.springframework.cache.annotation.CacheEvict
+ * @see org.springframework.cache.annotation.CachePut
+ * @see org.springframework.cache.annotation.Cacheable
+ * @see org.springframework.stereotype.Service
  * @since 1.0.0
  */
 // tag::class[]

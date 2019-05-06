@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.caching.lookaside.config;
 
 import org.apache.geode.cache.client.ClientRegionShortcut;
@@ -22,9 +21,13 @@ import org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRe
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 
 /**
- * The GeodeConfiguration class...
+ * Spring {@link Configuration} class used to configure Apache Geode.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.client.ClientRegionShortcut
+ * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions
+ * @see org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration
  * @since 1.0.0
  */
 @SuppressWarnings("unused")

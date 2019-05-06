@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.caching.lookaside.contoller;
 
 import org.springframework.util.Assert;
@@ -24,9 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 import example.app.caching.lookaside.service.CounterService;
 
 /**
- * The CounterController class...
+ * A Spring Web MVC {@link RestController} used to expose the {@link CounterService} operations via HTTP
+ * in a REST-ful interface.
  *
  * @author John Blum
+ * @see org.springframework.web.bind.annotation.GetMapping
+ * @see org.springframework.web.bind.annotation.RestController
  * @since 1.0.0
  */
 @SuppressWarnings("unused")
