@@ -28,6 +28,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @since 1.0.0
  */
+// tag::class[]
 @SpringBootApplication
 public class BootGeodeLookAsideCachingApplication {
 
@@ -39,3 +40,4 @@ public class BootGeodeLookAsideCachingApplication {
 			.run(args);
 	}
 }
+// end::class[]
