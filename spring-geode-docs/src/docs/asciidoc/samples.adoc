@@ -20,4 +20,8 @@ with their Apache Geode / Pivotal GemFire, Spring Boot applications.
 | Explains how to use Spring Boot Actuator for Apache Geode and how it works.
 | {github-samples-url}/boot/actuator[Boot Actuator]
 
+| link:guides/caching-look-aside.html[Look-Aside Caching with Spring's Cache Abstraction and Apache Geode]
+| Explains how to enable and use the Spring Cache Abstraction with Apache Geode as the caching provider in Look-Aside Caching.
+| {github-samples-url}/caching/look-aside[Look-Aside Caching]
+
 |===
