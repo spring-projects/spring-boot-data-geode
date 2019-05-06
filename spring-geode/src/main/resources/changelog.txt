@@ -4,6 +4,15 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.0.0.RELEASE (2019-05-06)
+---------------------------------------------
+Edits documentation and adds Sample with Guide and Example Application code for the Look-Aside Caching pattern.
+
+* Fix release (milestone, release candidate, and GA) version of the reference documentation.
+* Fix image links in reference docs.
+* Add Sample with Guide and Example Application code covering the Look-Aside Caching pattern.
+
+
 Changes in version 1.0.0.RC2 (2019-04-30)
 -----------------------------------------
 Adds additional tests and includes a sample of using Spring Boot Actuator with Apache Geode and Pivotal GemFire.
