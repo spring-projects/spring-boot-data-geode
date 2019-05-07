@@ -4,6 +4,23 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.1.0.M1 (2019-05-07)
+----------------------------------------
+Rebases SBDG on Spring Framework 5.1, Spring Boot 2.1, Spring Data Lovelace (2.1) and Spring Session 2.1.
+
+* Adds the @EnableSecurityManager annotation and associated configuration class to configure Apache Geode/Pivotal GemFire Security (Auth) using the CacheFactory API.
+* Adds the @EnableSecurityManagerProxy annotation and associated configuration class to configure Apache Geode/Pivotal GemFire Security (Auth) using the security-manager property with proxying.
+* Upgrades to Apache Geode 1.6.0.
+* Upgrades to the Apache Geode Management REST API 1.6.0 for testing cluster configuration and Auth.
+* Upgrades to Pivotal GemFire 9.5.3.
+* Upgrades to Spring Framework 5.1.6.RELEASE.
+* Upgrades to Spring Boot 2.1.4.RELEASE.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.1.6.RELEASE.
+* Upgrades to Spring Data Release Train Lovelace-SR6.
+* Upgrades to Spring Session BOM Bean-SR4.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.1.3.RELEASE.
+
+
 Changes in version 1.0.0.RELEASE (2019-05-06)
 ---------------------------------------------
 Edits documentation and adds Sample with Guide and Example Application code for the Look-Aside Caching pattern.
