@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -23,9 +22,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.ApacheShiroSecurityConfiguration;
-import org.springframework.data.gemfire.config.annotation.EnableBeanFactoryLocator;
-import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurityConfiguration;
+import org.springframework.geode.config.annotation.EnableSecurityManagerProxy;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Security functionality,
@@ -39,10 +37,9 @@ import org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurit
  * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.ApacheShiroSecurityConfiguration
- * @see org.springframework.data.gemfire.config.annotation.EnableBeanFactoryLocator
- * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
  * @see org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurityConfiguration
  * @see org.springframework.geode.boot.autoconfigure.HttpBasicAuthenticationSecurityConfiguration
+ * @see org.springframework.geode.config.annotation.EnableSecurityManagerProxy
  * @see org.springframework.geode.security.support.SecurityManagerProxy
  * @since 1.0.0
  */
@@ -53,8 +50,7 @@ import org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurit
 	ApacheShiroSecurityConfiguration.class,
 	GeodeIntegratedSecurityConfiguration.class
 })
-@EnableBeanFactoryLocator
-@EnableSecurity(securityManagerClassName = "org.springframework.geode.security.support.SecurityManagerProxy")
+@EnableSecurityManagerProxy
 @Import(HttpBasicAuthenticationSecurityConfiguration.class)
 @SuppressWarnings("unused")
 public class PeerSecurityAutoConfiguration {
