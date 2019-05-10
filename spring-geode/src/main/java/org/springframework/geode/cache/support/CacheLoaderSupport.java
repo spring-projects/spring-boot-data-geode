@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.cache.support;
 
 import org.apache.geode.cache.CacheLoader;
@@ -23,6 +22,7 @@ import org.apache.geode.cache.CacheLoader;
  * useful in Lambda expressions.
  *
  * @author John Blum
+ * @see java.lang.FunctionalInterface
  * @see org.apache.geode.cache.CacheLoader
  * @since 1.0.0
  */
