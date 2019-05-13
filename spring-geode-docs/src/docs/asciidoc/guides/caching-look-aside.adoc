@@ -286,7 +286,7 @@ The client "Counters" Region is `LOCAL` since we do not (yet) have a server back
 
 However, it would be very simple to convert this application into using a client/server topology.
 
-[[geode-samples-caching-lookaside-example-counterservice-configuration]]
+[[geode-samples-caching-lookaside-example-counterservice-configuration-clientserver]]
 ==== Client/Server Configuration
 
 To use the client/server topology, essentially you only need to remove the `shortcut` attribute from the
