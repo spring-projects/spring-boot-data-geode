@@ -27,7 +27,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
-import org.springframework.data.gemfire.support.GemfireBeanFactoryLocator;
 import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
 import org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests;
 import org.springframework.test.annotation.DirtiesContext;
@@ -72,9 +71,6 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
-
-		GemfireBeanFactoryLocator.clear();
-
 		startGemFireServer(GemFireServerConfiguration.class,
 			"-Dspring.profiles.active=security-local-server");
 	}

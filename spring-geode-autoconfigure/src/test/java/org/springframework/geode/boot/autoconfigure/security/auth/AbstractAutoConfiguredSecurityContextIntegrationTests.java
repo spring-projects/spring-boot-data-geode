@@ -29,6 +29,12 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
 import org.apache.geode.security.AuthenticationFailedException;
 import org.apache.geode.security.ResourcePermission;
 import org.junit.Test;
@@ -45,11 +51,6 @@ import org.springframework.util.StringUtils;
 
 import example.echo.config.EchoClientConfiguration;
 import example.echo.config.EchoServerConfiguration;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 
 /**
  * The {@link AbstractAutoConfiguredSecurityContextIntegrationTests} class is an abstract security context integration test class
@@ -68,8 +69,8 @@ import lombok.ToString;
 public abstract class AbstractAutoConfiguredSecurityContextIntegrationTests
 		extends ForkingClientServerIntegrationTestsSupport {
 
-	private static final String SECURITY_CONTEXT_USERNAME_PROPERTY = "security.context.username.property";
-	private static final String SECURITY_CONTEXT_PASSWORD_PROPERTY = "security.context.password.property";
+	private static final String SECURITY_CONTEXT_USERNAME_PROPERTY = "test.security.context.username";
+	private static final String SECURITY_CONTEXT_PASSWORD_PROPERTY = "test.security.context.password";
 
 	@Autowired
 	private GemfireTemplate echoTemplate;
