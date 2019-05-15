@@ -30,7 +30,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLocator;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
-import org.springframework.data.gemfire.support.GemfireBeanFactoryLocator;
 import org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -57,12 +56,12 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes = AutoConfiguredCloudSecurityContextIntegrationTests.GemFireClientConfiguration.class,
 	webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
-@DirtiesContext
 @SuppressWarnings("unused")
 public class AutoConfiguredCloudSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
@@ -76,11 +75,8 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 	public static void startGemFireServer() throws IOException {
 
 		startGemFireServer(GemFireServerConfiguration.class, "-Dspring.profiles.active=security-cloud");
-
 		loadVcapApplicationProperties();
 		unsetTestAutoConfiguredPoolServersPortSystemProperty();
-
-		GemfireBeanFactoryLocator.clear();
 	}
 
 	public static void loadVcapApplicationProperties() throws IOException {
@@ -110,6 +106,7 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {
+
 			new SpringApplicationBuilder(GemFireServerConfiguration.class)
 				.web(WebApplicationType.NONE)
 				.build()
