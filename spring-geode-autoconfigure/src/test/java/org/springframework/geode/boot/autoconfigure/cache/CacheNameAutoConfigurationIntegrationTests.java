@@ -13,20 +13,23 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.cache;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.function.Function;
 
-import org.apache.geode.cache.GemFireCache;
 import org.junit.Test;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.client.Pool;
+
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.SpringBootApplicationIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
@@ -106,20 +109,22 @@ public class CacheNameAutoConfigurationIntegrationTests extends SpringBootApplic
 			.getBean(GemFireCache.class), "SpringDataGemFireNameTest");
 	}
 
-	@SpringBootApplication
+	@Configuration
+	@EnableAutoConfiguration
 	@EnableGemFireMockObjects
 	@PeerCacheApplication(name = "AnnotationNameTest")
-	@ComponentScan(excludeFilters = {
-		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = MemberNameAttributeTestConfiguration.class)
-	})
 	static class AnnotationNameAttributeTestConfiguration { }
 
-	@SpringBootApplication
+	@Configuration
+	@EnableAutoConfiguration
 	@EnableGemFireMockObjects
 	@UseMemberName("MemberNameTest")
-	@ComponentScan(excludeFilters = {
-		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = AnnotationNameAttributeTestConfiguration.class)
-	})
-	static class MemberNameAttributeTestConfiguration { }
+	@SuppressWarnings("unused")
+	static class MemberNameAttributeTestConfiguration {
 
+		@Bean("DEFAULT")
+		Pool defaultPool() {
+			return mock(Pool.class);
+		}
+	}
 }
