@@ -1,9 +1,9 @@
-def projectProperties = [
-	[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '5']],
-	pipelineTriggers([cron('@daily')])
-]
-
-properties(projectProperties)
+properties([
+	buildDiscarder(logRotator(numToKeepStr: '10')),
+	pipelineTriggers([
+		cron('@daily')
+	]),
+])
 
 def SUCCESS = hudson.model.Result.SUCCESS.toString()
 
@@ -13,7 +13,7 @@ try {
 	parallel check: {
 		stage('Check') {
 			timeout(time: 10, unit: 'MINUTES') {
-				node {
+				node('linux') {
 					checkout scm
 					try {
 						withEnv(["JAVA_HOME=${tool 'jdk8'}"]) {
