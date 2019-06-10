@@ -15,7 +15,7 @@ group = 'org.springframework.geode'
 description = 'Spring Boot for Apache Geode & Pivotal GemFire'
 
 //ext['spring.version'] = "$springVersion"
-//ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
+ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
 
 ext.snapshotBuild = version.endsWith('SNAPSHOT')
 ext.releaseBuild = version.endsWith('RELEASE')
