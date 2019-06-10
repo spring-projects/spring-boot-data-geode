@@ -59,6 +59,7 @@ import org.springframework.web.client.RestTemplate;
  * @see org.springframework.web.client.RestTemplate
  * @since 1.0.0
  */
+@Deprecated
 @Configuration
 @SuppressWarnings("unused")
 public class HttpBasicAuthenticationSecurityConfiguration {

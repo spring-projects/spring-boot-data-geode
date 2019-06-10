@@ -33,7 +33,6 @@ import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
@@ -80,7 +79,7 @@ import org.slf4j.LoggerFactory;
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })
 @ConditionalOnMissingBean(GemFireCache.class)
 @EnableSecurity
-@Import(HttpBasicAuthenticationSecurityConfiguration.class)
+//@Import(HttpBasicAuthenticationSecurityConfiguration.class)
 @SuppressWarnings("unused")
 public class ClientSecurityAutoConfiguration {
 
