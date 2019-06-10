@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.configuration;
 
 import java.util.Properties;
@@ -44,6 +43,18 @@ import org.springframework.geode.boot.autoconfigure.configuration.support.Servic
  * @see java.util.Properties
  * @see org.springframework.boot.context.properties.ConfigurationProperties
  * @see org.springframework.boot.context.properties.NestedConfigurationProperty
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.CacheProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.ClusterProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.DiskStoreProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.EntityProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.LocatorProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.LoggingProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.ManagementProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.ManagerProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.PdxProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.PoolProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.SecurityProperties
+ * @see org.springframework.geode.boot.autoconfigure.configuration.support.ServiceProperties
  * @since 1.0.0
  */
 @SuppressWarnings("unused")
