@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.cluster;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,13 +22,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.Region;
-import org.apache.geode.distributed.internal.DistributionConfig;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.Region;
+import org.apache.geode.distributed.internal.DistributionConfig;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationRunner;
@@ -72,6 +73,7 @@ import example.app.model.ISBN;
 	classes = ClusterConfigurationWithAuthenticationIntegrationTests.GeodeClientConfiguration.class,
 	webEnvironment = SpringBootTest.WebEnvironment.NONE,
 	properties = {
+		"spring.data.gemfire.management.require-https=false",
 		"spring.data.gemfire.security.username=test",
 		"spring.data.gemfire.security.password=test"
 	}
@@ -79,7 +81,7 @@ import example.app.model.ISBN;
 @SuppressWarnings("unused")
 public class ClusterConfigurationWithAuthenticationIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
-	private static final String GEMFIRE_LOG_LEVEL = "error";
+	private static final String GEMFIRE_LOG_LEVEL = "off";
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
