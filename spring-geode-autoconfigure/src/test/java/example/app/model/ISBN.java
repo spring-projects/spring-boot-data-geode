@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.model;
 
 import java.util.UUID;
@@ -48,7 +47,7 @@ public class ISBN implements Comparable<ISBN> {
 	}
 
 	public String getNumber() {
-		return number;
+		return this.number;
 	}
 
 	@Override

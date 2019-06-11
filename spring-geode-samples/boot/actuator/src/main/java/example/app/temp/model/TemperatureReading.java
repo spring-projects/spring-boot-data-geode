@@ -15,13 +15,13 @@
  */
 package example.app.temp.model;
 
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.gemfire.mapping.annotation.Region;
+
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 // tag::class[]
 @Data
@@ -37,7 +37,7 @@ public class TemperatureReading {
 	private Long timestamp = System.currentTimeMillis();
 
 	@NonNull
-	private Integer temperature;
+	private final Integer temperature;
 
 	@Transient
 	public boolean isBoiling() {
@@ -48,16 +48,16 @@ public class TemperatureReading {
 	}
 
 	@Transient
-	public boolean isNormal() {
-		return !(isBoiling() || isFreezing());
-	}
-
-	@Transient
 	public boolean isFreezing() {
 
 		Integer temperature = getTemperature();
 
 		return temperature != null && temperature <= FREEZING_TEMPERATURE;
+	}
+
+	@Transient
+	public boolean isNormal() {
+		return !(isBoiling() || isFreezing());
 	}
 
 	@Override

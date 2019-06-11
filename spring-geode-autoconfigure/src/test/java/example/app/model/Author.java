@@ -41,7 +41,7 @@ public class Author {
 	private Long id;
 
 	@NonNull
-	private String name;
+	private final String name;
 
 	public boolean isNew() {
 		return getId() == null;

@@ -17,13 +17,13 @@ package example.app.model;
 
 import java.time.LocalDate;
 
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.gemfire.mapping.annotation.Region;
+
+import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * The {@link Book} class is an Abstract Data Type (ADT) modeling a book.
@@ -49,7 +49,7 @@ public class Book {
 	private LocalDate publishedDate;
 
 	@NonNull
-	private String title;
+	private final String title;
 
 	@Transient
 	public boolean isNew() {
