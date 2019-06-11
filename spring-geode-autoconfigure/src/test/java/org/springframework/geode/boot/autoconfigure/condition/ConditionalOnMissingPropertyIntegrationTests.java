@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.condition;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +21,7 @@ import java.util.Collections;
 import java.util.function.Function;
 
 import org.junit.Test;
+
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;

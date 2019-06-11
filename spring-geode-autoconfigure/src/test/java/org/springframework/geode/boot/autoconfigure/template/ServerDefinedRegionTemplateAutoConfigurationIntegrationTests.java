@@ -17,11 +17,13 @@ package org.springframework.geode.boot.autoconfigure.template;
 
 import java.io.IOException;
 
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.Region;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.Region;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

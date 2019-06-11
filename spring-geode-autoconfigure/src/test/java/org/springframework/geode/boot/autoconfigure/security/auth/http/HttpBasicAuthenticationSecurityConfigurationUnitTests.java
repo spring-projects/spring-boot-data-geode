@@ -34,10 +34,12 @@ import java.net.InetAddress;
 import java.net.PasswordAuthentication;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.junit.Test;
+
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.management.internal.security.ResourceConstants;
-import org.junit.Test;
+
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.config.admin.remote.RestHttpGemfireAdminTemplate;

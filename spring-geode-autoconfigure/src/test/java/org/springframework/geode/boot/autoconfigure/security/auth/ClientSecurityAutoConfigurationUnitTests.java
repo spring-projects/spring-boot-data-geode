@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.security.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +30,7 @@ import static org.mockito.Mockito.when;
 import java.util.Properties;
 
 import org.junit.Test;
+
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
