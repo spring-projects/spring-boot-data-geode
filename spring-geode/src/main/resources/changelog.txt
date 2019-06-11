@@ -4,6 +4,28 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.1.0.M2 (2019-06-14)
+----------------------------------------
+Adds support for the Inline Caching Use Case (UC) along with Spring Boot Starters for Spring Session
+and Spring Test for Apache Geode/Pivotal GemFire (STDG).
+
+* Adds the RepositoryCacheLoader and RepositoryCacheWriter to support Inline Caching.
+* Adds the spring-geode-starter-session and spring-gemfire-starter-session modules to help users get started with
+(HTTP) Session Caching using either Apache Geode or Pivotal GemFire as the provider.
+* Adds the spring-geode-starter-test and spring-gemfire-starter-test modules, which automatically pulls in
+spring-boot-starter-test and Spring Test for Apache Geode/Pivotal GemFire (STDG) to help users test their Apache Geode
+or Pivotal GemFire applications in a Spring context.
+* Includes early support for @LocatorApplication annotated Spring Boot applications enabling users to configure
+and bootstrap a GemFire/Geode Locator using Spring Boot.
+* Includes additional integration tests for customizing the auto-configuration of GemFire/Geode Pools using SDG Configurers.
+* Upgrades to Spring Framework 5.1.7.RELEASE.
+* Upgrades to Spring Data for Apache Geode/Pivotal GemFire 2.1.9.RELEASE.
+* Upgrades to Spring Data Release Train Lovelace-SR9.
+* Upgrades to Spring Session for Apache Geode/Pivotal GemFire 2.1.4.RELEASE.
+* Upgrades to Spring Session BOM Bean-SR5.
+* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.3.RELEASE.
+
+
 Changes in version 1.1.0.M1 (2019-05-07)
 ----------------------------------------
 Rebases SBDG on Spring Framework 5.1, Spring Boot 2.1, Spring Data Lovelace (2.1) and Spring Session 2.1.
@@ -48,7 +70,7 @@ with Apache Geode or Pivotal GemFire.
 
 Changes in version 1.0.0.RC1 (2019-04-24)
 -----------------------------------------
-Add support for GemfireTemplate auto-configuration for each declared Apache Geode/Pivotal GemFire Region.
+Adds support for GemfireTemplate auto-configuration for each declared Apache Geode/Pivotal GemFire Region.
 
 * Adds auto-configuration to automatically create a GemfireTemplate for each declared Apache Geode or Pivotal GemFire
 Region (https://github.com/spring-projects/spring-boot-data-geode/issues/31).
@@ -70,7 +92,7 @@ with a SecurityManager, requiring Authentication (https://github.com/spring-proj
 
 Changes in version 1.0.0.M4 (2019-03-22)
 ----------------------------------------
-Add support for Spring Boot Configuration Processor.
+Adds support for Spring Boot Configuration Processor.
 
 * Allows the use of `spring.application.name` to name a GemFire/Geode node.
 * Adds Spring Boot Configuration Processor and auto-configuration for @ConfigurationProperties classes to capture
@@ -87,7 +109,7 @@ and encapsulate configuration meta-data specified in properties files.
 
 Changes in version 1.0.0.M3 (2018-09-20)
 ----------------------------------------
-Add support for Spring Boot Actuator HealthIndicator endpoints providing details and insight into the runtime operation
+Adds support for Spring Boot Actuator HealthIndicator endpoints providing details and insight into the runtime operation
 of either Apache Geode or Pivotal GemFire.
 
 Partly resolves (https://github.com/spring-projects/spring-boot-data-geode/issues/4).
@@ -112,7 +134,7 @@ the DistributedSystem, the DistributedMember and the ResourceManager.
 
 Changes in version 1.0.0.M2 (2018-08-29)
 ----------------------------------------
-Add support to auto-configure Spring Session using Apache Geode or Pivotal GemFire as the Session state
+Adds support to auto-configure Spring Session using Apache Geode or Pivotal GemFire as the Session state
 management provider.
 
 * Adds support to auto-configure Spring Session for Apache Geode or Pivotal GemFire as the Spring Session provider
