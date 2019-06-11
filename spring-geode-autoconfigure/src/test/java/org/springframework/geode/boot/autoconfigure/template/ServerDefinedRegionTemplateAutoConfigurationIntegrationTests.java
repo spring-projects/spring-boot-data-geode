@@ -15,21 +15,29 @@
  */
 package org.springframework.geode.boot.autoconfigure.template;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.IOException;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.LocalRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
+import org.springframework.data.gemfire.config.annotation.EnableClusterDefinedRegions;
+import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -40,34 +48,66 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  * @author John Blum
  * @see org.junit.Test
+ * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.context.ApplicationContext
+ * @see org.springframework.context.annotation.Bean
  * @see org.springframework.data.gemfire.GemfireTemplate
- * @see org.springframework.data.gemfire.config.annotation.EnableServerDefinedRegions
+ * @see org.springframework.data.gemfire.LocalRegionFactoryBean
+ * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
+ * @see org.springframework.data.gemfire.config.annotation.EnableClusterDefinedRegions
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.1.0
  */
-@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
 	classes = ServerDefinedRegionTemplateAutoConfigurationIntegrationTests.GemFireClientConfiguration.class)
-// TODO enable and complete test class when SBDG is rebased on SD Lovelace
+@SuppressWarnings("unused")
 public class ServerDefinedRegionTemplateAutoConfigurationIntegrationTests
 		extends ForkingClientServerIntegrationTestsSupport {
+
+	private static final String GEMFIRE_LOG_LEVEL = "off";
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
 		startGemFireServer(GemFireServerConfiguration.class);
 	}
 
+	@Autowired
+	private ApplicationContext applicationContext;
+
+	@Autowired
+	private GemfireTemplate exampleServerRegionTemplate;
+
+	@Test
+	public void exampleServerRegionExistsAsClientRegion() {
+
+		Region<?, ?> exampleServerRegion = this.applicationContext.getBean("ExampleServerRegion", Region.class);
+
+		assertThat(exampleServerRegion).isNotNull();
+		assertThat(exampleServerRegion.getName()).isEqualTo("ExampleServerRegion");
+		assertThat(exampleServerRegion.getAttributes()).isNotNull();
+		assertThat(exampleServerRegion.getAttributes().getDataPolicy()).isEqualTo(DataPolicy.EMPTY);
+	}
+
+	@Test
+	public void exampleServerRegionTemplateIsPresent() {
+
+		assertThat(this.exampleServerRegionTemplate).isNotNull();
+		assertThat(this.exampleServerRegionTemplate.getRegion()).isNotNull();
+		assertThat(this.exampleServerRegionTemplate.getRegion().getName()).isEqualTo("ExampleServerRegion");
+	}
+
 	@SpringBootApplication
-	//@EnableServerDefinedRegions
+	@EnableClusterDefinedRegions
+	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class GemFireClientConfiguration { }
 
-	@CacheServerApplication
+	@CacheServerApplication(logLevel = GEMFIRE_LOG_LEVEL)
 	static class GemFireServerConfiguration {
 
 		public static void main(String[] args) {
