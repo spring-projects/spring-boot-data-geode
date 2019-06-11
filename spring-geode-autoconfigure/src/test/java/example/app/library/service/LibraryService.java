@@ -13,8 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
-package example.library.service;
+package example.app.library.service;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,13 +21,17 @@ import java.util.List;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import example.app.model.Author;
-import example.app.model.Book;
+import example.app.books.model.Author;
+import example.app.books.model.Book;
 
 /**
- * The LibraryService class...
+ * The {@link LibraryService} class models a Library.
  *
  * @author John Blum
+ * @see org.springframework.cache.annotation.Cacheable
+ * @see org.springframework.stereotype.Service
+ * @see example.app.books.model.Author
+ * @see example.app.books.model.Book
  * @since 1.0.0
  */
 @Service

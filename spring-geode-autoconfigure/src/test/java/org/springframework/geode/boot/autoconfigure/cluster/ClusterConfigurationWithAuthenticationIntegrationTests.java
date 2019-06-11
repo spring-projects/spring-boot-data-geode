@@ -53,8 +53,8 @@ import org.springframework.data.gemfire.tests.integration.ForkingClientServerInt
 import org.springframework.geode.security.TestSecurityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import example.app.model.Book;
-import example.app.model.ISBN;
+import example.app.books.model.Book;
+import example.app.books.model.ISBN;
 
 /**
  * Integration tests testing the SDG {@link EnableClusterConfiguration} annotation functionality

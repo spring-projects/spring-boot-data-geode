@@ -22,7 +22,7 @@ annotation:
 .`Customer` entity class
 [source,java]
 ----
-package example.app.model;
+package example.app.books.model;
 
 import ...;
 @Region("Customers")
@@ -42,7 +42,7 @@ Declare your _Repository_ (a.k.a. {wikipedia-docs}/Data_access_object[Data Acces
 .`CustomerRepository` for peristing and accessing `Customers`
 [source,java]
 ----
-package example.app.repo;
+package example.app.books.repo;
 
 import ...;
 

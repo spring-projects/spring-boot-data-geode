@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.model;
+package example.app.books.model;
 
 import java.time.LocalDate;
 
@@ -32,8 +32,8 @@ import lombok.RequiredArgsConstructor;
  * @see lombok
  * @see org.springframework.data.annotation.Id
  * @see org.springframework.data.gemfire.mapping.annotation.Region
- * @see example.app.model.Author
- * @see example.app.model.ISBN
+ * @see example.app.books.model.Author
+ * @see example.app.books.model.ISBN
  * @since 1.0.0
  */
 @Data

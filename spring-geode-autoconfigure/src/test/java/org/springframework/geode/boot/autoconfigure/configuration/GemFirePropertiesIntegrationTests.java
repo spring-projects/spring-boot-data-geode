@@ -13,14 +13,15 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.apache.geode.cache.RegionShortcut;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.RegionShortcut;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -219,7 +220,7 @@ public class GemFirePropertiesIntegrationTests extends IntegrationTestsSupport {
 		EntityProperties entityProperties = this.gemfireProperties.getEntities();
 
 		assertThat(entityProperties).isNotNull();
-		assertThat(entityProperties.getBasePackages()).isEqualTo("example.app.model");
+		assertThat(entityProperties.getBasePackages()).isEqualTo("example.app.books.model");
 	}
 
 	@Test

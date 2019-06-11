@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.model;
+package example.app.books.model;
 
 import lombok.Data;
 import lombok.NonNull;

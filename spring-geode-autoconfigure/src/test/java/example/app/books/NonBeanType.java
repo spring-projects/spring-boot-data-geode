@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-package example.app;
+package example.app.books;
 
 /**
  * The {@link NonBeanType} class is a non-Spring bean, placeholder reference type for classpath component scanning.

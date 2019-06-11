@@ -35,9 +35,9 @@ import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfigura
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import example.app.model.Author;
-import example.app.model.Book;
-import example.app.model.ISBN;
+import example.app.books.model.Author;
+import example.app.books.model.Book;
+import example.app.books.model.ISBN;
 
 /**
  * Integration tests for {@link RegionTemplateAutoConfiguration} using SDG's {@link EnableEntityDefinedRegions}

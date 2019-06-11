@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-package example.app.service.support;
+package example.app.books.service.support;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -22,20 +22,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import example.app.model.Book;
-import example.app.model.ISBN;
-import example.app.repo.BookRepository;
-import example.app.service.BookService;
+import example.app.books.model.Book;
+import example.app.books.model.ISBN;
+import example.app.books.repo.BookRepository;
+import example.app.books.service.BookService;
 
 /**
  * The {@link CachingBookService} class is an implementation and extension of {@link BookService}
  * with caching capabilities.
  *
  * @author John Blum
- * @see example.app.model.Book
- * @see example.app.model.ISBN
- * @see example.app.repo.BookRepository
- * @see example.app.service.BookService
+ * @see example.app.books.model.Book
+ * @see example.app.books.model.ISBN
+ * @see example.app.books.repo.BookRepository
+ * @see example.app.books.service.BookService
  * @see org.springframework.cache.annotation.Cacheable
  * @see org.springframework.stereotype.Service
  * @since 1.0.0

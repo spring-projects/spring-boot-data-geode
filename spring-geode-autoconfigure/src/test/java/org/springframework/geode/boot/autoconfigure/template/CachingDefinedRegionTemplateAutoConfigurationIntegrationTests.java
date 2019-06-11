@@ -41,10 +41,10 @@ import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfigura
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import example.app.NonBeanType;
-import example.app.model.Author;
-import example.app.model.Book;
-import example.library.service.LibraryService;
+import example.app.books.NonBeanType;
+import example.app.books.model.Author;
+import example.app.books.model.Book;
+import example.app.library.service.LibraryService;
 
 /**
  * Integration tests for {@link RegionTemplateAutoConfiguration} using SDG's {@link EnableCachingDefinedRegions}
