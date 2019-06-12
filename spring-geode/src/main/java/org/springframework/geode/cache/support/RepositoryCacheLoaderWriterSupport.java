@@ -81,7 +81,7 @@ public abstract class RepositoryCacheLoaderWriterSupport<T, ID>
 		return Optional.ofNullable(this.environment);
 	}
 
-	protected @NonNull CrudRepository<T, ID> getRepository() {
+	public @NonNull CrudRepository<T, ID> getRepository() {
 		return this.repository;
 	}
 
