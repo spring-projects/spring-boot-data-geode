@@ -23,6 +23,16 @@ dependencies {
 		exclude group: "org.skyscreamer", module: "jsonassert"
 	}
 
+	testCompile("org.springframework.boot:spring-boot-starter-data-jpa") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+	testCompile("org.springframework.boot:spring-boot-starter-data-cassandra") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
 	testCompile "org.springframework.data:spring-data-geode-test"
+
+	testRuntime "org.hsqldb:hsqldb"
 
 }
