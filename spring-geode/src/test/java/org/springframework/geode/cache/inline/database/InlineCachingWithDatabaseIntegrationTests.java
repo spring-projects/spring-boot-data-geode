@@ -15,18 +15,13 @@
  */
 package org.springframework.geode.cache.inline.database;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.function.Predicate;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.cassandra.CassandraDataAutoConfiguration;
@@ -37,9 +32,9 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
-import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.geode.cache.InlineCachingRegionConfigurer;
+import org.springframework.geode.cache.inline.AbstractInlineCachingWithExternalDataSourceIntegrationTests;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -59,9 +54,9 @@ import example.app.crm.repo.CustomerRepository;
  * @see org.springframework.data.gemfire.GemfireTemplate
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions
- * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.jpa.repository.config.EnableJpaRepositories
  * @see org.springframework.geode.cache.InlineCachingRegionConfigurer
+ * @see org.springframework.geode.cache.inline.AbstractInlineCachingWithExternalDataSourceIntegrationTests
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.1.0
  */
@@ -69,63 +64,8 @@ import example.app.crm.repo.CustomerRepository;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("inline-caching-database")
 @SuppressWarnings("unused")
-public class InlineCachingWithDatabaseIntegrationTests extends IntegrationTestsSupport {
-
-	private static final String GEMFIRE_LOG_LEVEL = "off";
-
-	@Autowired
-	private CustomerRepository customerRepository;
-
-	@Autowired
-	private GemfireTemplate customersTemplate;
-
-	@Before
-	public void setup() {
-
-		assertThat(this.customerRepository).isNotNull();
-		assertThat(this.customerRepository.count()).isEqualTo(1);
-		assertThat(this.customerRepository.existsById(16L)).isTrue();
-
-		Customer pieDoe = this.customerRepository.findByName("Pie Doe");
-
-		assertThat(pieDoe).isNotNull();
-		assertThat(pieDoe.getId()).isEqualTo(16L);
-		assertThat(pieDoe.getName()).isEqualTo("Pie Doe");
-	}
-
-	@Test
-	public void cacheLoadsFromDatabase() {
-
-		assertThat(this.customersTemplate.containsKey(16L)).isFalse();
-
-		Customer pieDoe = this.customersTemplate.get(16L);
-
-		assertThat(pieDoe).isNotNull();
-		assertThat(pieDoe.getId()).isEqualTo(16L);
-		assertThat(pieDoe.getName()).isEqualTo("Pie Doe");
-
-		assertThat(this.customersTemplate.containsKey(16L)).isTrue();
-	}
-
-	@Test
-	public void cacheWritesToDatabase() {
-
-		Customer jonDoe = Customer.newCustomer(2L, "Jon Doe");
-
-		assertThat(this.customerRepository.existsById(jonDoe.getId())).isFalse();
-		assertThat(this.customerRepository.findByName(jonDoe.getName())).isNull();
-		assertThat(this.customersTemplate.containsKey(jonDoe.getId())).isFalse();
-
-		this.customersTemplate.put(jonDoe.getId(), jonDoe);
-
-		assertThat(this.customersTemplate.containsKey(jonDoe.getId())).isTrue();
-		assertThat(this.customerRepository.existsById(jonDoe.getId())).isTrue();
-
-		Customer jonDoeLoaded = this.customerRepository.findByName(jonDoe.getName());
-
-		assertThat(jonDoeLoaded).isNotNull();
-		assertThat(jonDoeLoaded).isEqualTo(jonDoe);
-	}
+public class InlineCachingWithDatabaseIntegrationTests
+		extends AbstractInlineCachingWithExternalDataSourceIntegrationTests {
 
 	@SpringBootApplication(exclude = { CassandraAutoConfiguration.class, CassandraDataAutoConfiguration.class })
 	@ClientCacheApplication(logLevel = GEMFIRE_LOG_LEVEL)
