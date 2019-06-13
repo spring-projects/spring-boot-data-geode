@@ -39,7 +39,7 @@ import example.app.crm.repo.CustomerRepository;
  * @since 1.1.0
  */
 @SuppressWarnings("unused")
-public class AbstractInlineCachingWithExternalDataSourceIntegrationTests extends IntegrationTestsSupport {
+public abstract class AbstractInlineCachingWithExternalDataSourceIntegrationTests extends IntegrationTestsSupport {
 
 	public static final String GEMFIRE_LOG_LEVEL = "off";
 
