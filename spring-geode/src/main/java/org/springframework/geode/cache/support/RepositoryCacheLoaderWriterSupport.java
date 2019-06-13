@@ -59,7 +59,7 @@ public abstract class RepositoryCacheLoaderWriterSupport<T, ID>
 
 	private Environment environment;
 
-	protected RepositoryCacheLoaderWriterSupport(CrudRepository<T, ID> repository) {
+	protected RepositoryCacheLoaderWriterSupport(@NonNull CrudRepository<T, ID> repository) {
 
 		Assert.notNull(repository, "Repository is required");
 

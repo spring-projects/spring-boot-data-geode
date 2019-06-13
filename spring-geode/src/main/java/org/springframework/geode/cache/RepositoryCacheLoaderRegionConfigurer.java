@@ -24,6 +24,8 @@ import org.springframework.data.gemfire.PeerRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.RegionConfigurer;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
@@ -61,8 +63,8 @@ public class RepositoryCacheLoaderRegionConfigurer<T, ID> implements RegionConfi
 	 * @see java.util.function.Predicate
 	 * @see #RepositoryCacheLoaderRegionConfigurer(CrudRepository, Predicate)
 	 */
-	public static <T, ID> RepositoryCacheLoaderRegionConfigurer<T, ID> create(CrudRepository<T, ID> repository,
-			Predicate<String> regionBeanName) {
+	public static <T, ID> RepositoryCacheLoaderRegionConfigurer<T, ID> create(@NonNull CrudRepository<T, ID> repository,
+			@Nullable Predicate<String> regionBeanName) {
 
 		return new RepositoryCacheLoaderRegionConfigurer<>(repository, regionBeanName);
 	}
@@ -84,8 +86,8 @@ public class RepositoryCacheLoaderRegionConfigurer<T, ID> implements RegionConfi
 	 * @see java.lang.String
 	 * @see #create(CrudRepository, Predicate)
 	 */
-	public static <T, ID> RepositoryCacheLoaderRegionConfigurer<T, ID> create(CrudRepository<T, ID> repository,
-			String regionBeanName) {
+	public static <T, ID> RepositoryCacheLoaderRegionConfigurer<T, ID> create(@NonNull CrudRepository<T, ID> repository,
+			@Nullable String regionBeanName) {
 
 		return create(repository, Predicate.isEqual(regionBeanName));
 	}
@@ -107,15 +109,13 @@ public class RepositoryCacheLoaderRegionConfigurer<T, ID> implements RegionConfi
 	 * @see org.springframework.data.repository.CrudRepository
 	 * @see java.util.function.Predicate
 	 */
-	public RepositoryCacheLoaderRegionConfigurer(CrudRepository<T, ID> repository, Predicate<String> regionBeanName) {
+	public RepositoryCacheLoaderRegionConfigurer(@NonNull CrudRepository<T, ID> repository,
+			@Nullable Predicate<String> regionBeanName) {
 
 		Assert.notNull(repository, "CrudRepository is required");
 
 		this.repository = repository;
-
-		this.regionBeanName = regionBeanName != null
-			? regionBeanName
-			: beanName -> false;
+		this.regionBeanName = regionBeanName != null ? regionBeanName : beanName -> false;
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class RepositoryCacheLoaderRegionConfigurer<T, ID> implements RegionConfi
 	 * targeted for the {@link CacheLoader} registration.
 	 * @see java.util.function.Predicate
 	 */
-	protected Predicate<String> getRegionBeanName() {
+	protected @NonNull Predicate<String> getRegionBeanName() {
 		return this.regionBeanName;
 	}
 
@@ -137,7 +137,7 @@ public class RepositoryCacheLoaderRegionConfigurer<T, ID> implements RegionConfi
 	 * @return the configured {@link CrudRepository} used to load {@link Region} values on cache misses.
 	 * @see org.springframework.data.repository.CrudRepository
 	 */
-	protected CrudRepository<T, ID> getRepository() {
+	protected @NonNull CrudRepository<T, ID> getRepository() {
 		return this.repository;
 	}
 

@@ -24,26 +24,68 @@ import org.springframework.data.gemfire.PeerRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.RegionConfigurer;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
- * The RepositoryCacheWriterRegionConfigurer class...
+ * Spring Data {@link RegionConfigurer} implementation used to adapt and register a Spring Data {@link CrudRepository}
+ * as a {@link CacheWriter} for a targeted {@link Region}.
  *
  * @author John Blum
- * @since 1.0.0
+ * @param <T> {@link Class type} of the persistent entity.
+ * @param <ID> {@link Class type} of the persistent entity identifier (ID).
+ * @see java.util.function.Predicate
+ * @see org.apache.geode.cache.CacheWriter
+ * @see org.apache.geode.cache.Region
+ * @see org.springframework.data.gemfire.PeerRegionFactoryBean
+ * @see org.springframework.data.gemfire.client.ClientRegionFactoryBean
+ * @see org.springframework.data.gemfire.config.annotation.RegionConfigurer
+ * @see org.springframework.data.repository.CrudRepository
+ * @since 1.1.0
  */
 public class RepositoryCacheWriterRegionConfigurer<T, ID> implements RegionConfigurer {
 
-	public static <T, ID> RepositoryCacheWriterRegionConfigurer<T, ID> create(CrudRepository<T, ID> repository,
-			Predicate<String> regionBeanName) {
+	/**
+	 * Factory method used to construct a new instance of {@link RepositoryCacheWriterRegionConfigurer} initialized with
+	 * the given Spring Data {@link CrudRepository} used to write {@link Region} values to a backend data source
+	 * /data store along with a given {@link Predicate} to identify/qualify the {@link Region} on which
+	 * the {@link CrudRepository} will be registered and used as a {@link CacheWriter}.
+	 *
+	 * @param repository {@link CrudRepository} used to write {@link Region} values to a backend data source.
+	 * @param regionBeanName {@link Predicate} used to identify/qualify the {@link Region} on which
+	 * the {@link CrudRepository} will be registered and used as a {@link CacheWriter}.
+	 * @return a new instance of {@link RepositoryCacheWriterRegionConfigurer}.
+	 * @throws IllegalArgumentException if {@link CrudRepository} is {@literal null}.
+	 * @see org.springframework.data.repository.CrudRepository
+	 * @see java.util.function.Predicate
+	 * @see #RepositoryCacheWriterRegionConfigurer(CrudRepository, Predicate)
+	 */
+	public static <T, ID> RepositoryCacheWriterRegionConfigurer<T, ID> create(@NonNull CrudRepository<T, ID> repository,
+			@Nullable Predicate<String> regionBeanName) {
 
 		return new RepositoryCacheWriterRegionConfigurer<>(repository, regionBeanName);
 	}
 
-	public static <T, ID> RepositoryCacheWriterRegionConfigurer<T, ID> create(CrudRepository<T, ID> repository,
-			String regionBeanName) {
+	/**
+	 * Factory method used to construct a new instance of {@link RepositoryCacheWriterRegionConfigurer} initialized with
+	 * the given Spring Data {@link CrudRepository} used to write {@link Region} values to a backend data source
+	 * /data store along with a given {@link Predicate} to identify/qualify the {@link Region} on which
+	 * the {@link CrudRepository} will be registered and used as a {@link CacheWriter}.
+	 *
+	 * @param repository {@link CrudRepository} used to write {@link Region} values to a backend data source.
+	 * @param regionBeanName {@link String} containing the bean name identifying/qualifying the {@link Region}
+	 * on which the {@link CrudRepository} will be registered and used as a {@link CacheWriter}.
+	 * @return a new instance of {@link RepositoryCacheWriterRegionConfigurer}.
+	 * @throws IllegalArgumentException if {@link CrudRepository} is {@literal null}.
+	 * @see org.springframework.data.repository.CrudRepository
+	 * @see java.lang.String
+	 * @see #create(CrudRepository, Predicate)
+	 */
+	public static <T, ID> RepositoryCacheWriterRegionConfigurer<T, ID> create(@NonNull CrudRepository<T, ID> repository,
+			@Nullable String regionBeanName) {
 
-		return new RepositoryCacheWriterRegionConfigurer<>(repository, Predicate.isEqual(regionBeanName));
+		return create(repository, Predicate.isEqual(regionBeanName));
 	}
 
 	private final CrudRepository<T, ID> repository;
@@ -63,15 +105,13 @@ public class RepositoryCacheWriterRegionConfigurer<T, ID> implements RegionConfi
 	 * @see org.springframework.data.repository.CrudRepository
 	 * @see java.util.function.Predicate
 	 */
-	public RepositoryCacheWriterRegionConfigurer(CrudRepository<T, ID> repository, Predicate<String> regionBeanName) {
+	public RepositoryCacheWriterRegionConfigurer(@NonNull CrudRepository<T, ID> repository,
+			@Nullable Predicate<String> regionBeanName) {
 
 		Assert.notNull(repository, "CrudRepository is required");
 
 		this.repository = repository;
-
-		this.regionBeanName = regionBeanName != null
-			? regionBeanName
-			: beanName -> false;
+		this.regionBeanName = regionBeanName != null ? regionBeanName : beanName -> false;
 	}
 
 	/**
@@ -82,7 +122,7 @@ public class RepositoryCacheWriterRegionConfigurer<T, ID> implements RegionConfi
 	 * targeted for the {@link CacheWriter} registration.
 	 * @see java.util.function.Predicate
 	 */
-	protected Predicate<String> getRegionBeanName() {
+	protected @NonNull Predicate<String> getRegionBeanName() {
 		return regionBeanName;
 	}
 
@@ -93,7 +133,7 @@ public class RepositoryCacheWriterRegionConfigurer<T, ID> implements RegionConfi
 	 * @return the configured {@link CrudRepository} used to write {@link Region} values to a backend data source.
 	 * @see org.springframework.data.repository.CrudRepository
 	 */
-	protected CrudRepository<T, ID> getRepository() {
+	protected @NonNull CrudRepository<T, ID> getRepository() {
 		return this.repository;
 	}
 
