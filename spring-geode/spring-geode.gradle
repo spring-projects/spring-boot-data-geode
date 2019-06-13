@@ -16,6 +16,7 @@ dependencies {
 	testCompile "junit:junit"
 	testCompile "org.mockito:mockito-core"
 	testCompile "org.projectlombok:lombok"
+	testCompile "org.testcontainers:testcontainers"
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
