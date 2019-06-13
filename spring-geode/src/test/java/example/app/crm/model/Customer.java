@@ -19,6 +19,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.cassandra.core.mapping.Indexed;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
 import lombok.AccessLevel;
@@ -27,7 +29,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The {@link Customer} class is an Abstract Data Type (ADT) modeling a a customer.
+ * The {@link Customer} class is an Abstract Data Type (ADT) modeling a customer.
  *
  * @author John Blum
  * @see lombok
@@ -39,14 +41,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Region("Customers")
 @Table(name = "Customers")
+@org.springframework.data.cassandra.core.mapping.Table("Customers")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(staticName = "newCustomer")
 public class Customer {
 
 	@Id
 	@javax.persistence.Id
+	@PrimaryKey
 	private Long id;
 
+	@Indexed
 	private String name;
 
 }
