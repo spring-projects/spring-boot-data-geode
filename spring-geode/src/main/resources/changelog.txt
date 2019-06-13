@@ -4,6 +4,17 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.0.1.RELEASE (2019-06-13)
+---------------------------------------------
+Provides support for configuring and bootstrapping Spring Boot, Apache Geode Locator-based applications.
+
+* Adds support to configure and bootstrap Apache Geode Locator-based applications using Spring Boot.
+* Adds the a @EnableSecurityManagerProxy annotation for conveniently locating and configuring an Apache Geode
+SecurityManager implementation declared and registered as a bean in the Spring application context.
+* Upgrades to Spring Framework 5.0.14.RELEASE.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.2.RELEASE.
+
+
 Changes in version 1.0.0.RELEASE (2019-05-06)
 ---------------------------------------------
 Edits documentation and adds Sample with Guide and Example Application code for the Look-Aside Caching pattern.
