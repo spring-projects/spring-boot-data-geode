@@ -1,39 +1,50 @@
 [[geode-caching-provider]]
 == Caching using Apache Geode or Pivotal GemFire
 
-One of the quickest and easiest ways to get started using Apache Geode or Pivotal GemFire in your Spring Boot applications
-is to use either Apache Geode or Pivotal GemFire as a {spring-framework-docs}/integration.html#cache-store-configuration[_caching provider_]
+One of the quickest, easiest and least invasive ways to get started using Apache Geode or Pivotal GemFire in
+your Spring Boot applications is to use either Apache Geode or Pivotal GemFire as a
+{spring-framework-docs}/integration.html#cache-store-configuration[_caching provider_]
 in {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction].  SDG
 {spring-framework-docs}/integration.html#cache-store-configuration-gemfire[enables]
-Apache Geode/Pivotal GemFire as a _caching provider_ in Spring's Cache Abstraction.
+Apache Geode/Pivotal GemFire to serve as a _caching provider_ in Spring's Cache Abstraction.
 
 TIP: See the _Spring Data for Apache Geode Reference Guide_ for more details on the
 {spring-data-geode-docs-html}/#apis:spring-cache-abstraction[support] and {spring-data-geode-docs-html}/#bootstrap-annotation-config-caching[configuration]
 of Apache Geode or Pivotal GemFire as a _caching provider_ in Spring's Cache Abstraction.
 
-Indeed, caching can be an effective software design pattern to avoid the cost of invoking a potentially expensive operation
-when, given the same input, the operation yields the same output every time.  Make sure you fully understanding the
-{spring-framework-docs}/integration.html#cache-strategies[concepts] behind Spring's Cache Abstraction before you continue.
+TIP: Make sure you thoroughly understanding the {spring-framework-docs}/integration.html#cache-strategies[concepts]
+behind Spring's Cache Abstraction before you continue.
 
-You can also refer to the relevant section on {spring-boot-docs-html}/\#boot-features-caching[Caching]
-in Spring Boot's Reference Guide. Spring Boot even provides _auto-configuration_ support for a few,
+TIP: You can also refer to the relevant section on {spring-boot-docs-html}/#boot-features-caching[Caching]
+in _Spring Boot's Reference Guide_. _Spring Boot_ even provides _auto-configuration_ support for a few,
 simple {spring-boot-docs-html}/#_supported_cache_providers[caching providers] out-of-the-box.
 
-However, if you need the proven power of an enterprise-class caching solution, with strong consistency,
-high availability and multi-site (WAN) capabilities, then you should consider https://geode.apache.org/[Apache Geode]
-or https://pivotal.io/pivotal-gemfire[Pivotal GemFire].  Additionally, https://pivotal.io/[Pivotal Software, Inc.]
+Indeed, _caching_ can be a very effective _software design pattern_ to avoid the cost of invoking a potentially expensive
+operation when, given the same input, the operation yields the same output every time.
+
+Some classic examples of caching include, but are not limited to: looking up a customer by name or account number,
+looking up a book by ISBN, geocoding a physical address, caching the calculation of a person's credit score
+when the person applies for a financial loan.
+
+If you need the proven power of an enterprise-class caching solution, with strong consistency, high availability
+and multi-site (WAN) capabilities, then you should consider https://geode.apache.org/[Apache Geode], or alternatively
+https://pivotal.io/pivotal-gemfire[Pivotal GemFire].  Additionally, https://pivotal.io/[Pivotal Software, Inc.]
 offers Pivotal GemFire as a service, known as https://pivotal.io/platform/services-marketplace/data-management/pivotal-cloud-cache[Pivotal Cloud Cache (PCC)],
 when deploying and running your Spring Boot applications in https://pivotal.io/platform[Pivotal Cloud Foundry (PCF)].
 
-Spring's {spring-framework-docs}/integration.html#cache-annotations[declarative, annotation-based caching] makes it easy
-to get started with caching, which is as simple as annotating your application service components with
-the appropriate annotation.
+Spring's {spring-framework-docs}/integration.html#cache-annotations[declarative, annotation-based caching] makes it
+extremely simple to get started with caching, which is as easy as annotating your application service components with
+the appropriate Spring cache annotation.
 
 TIP: Spring's declarative, annotation-based caching also {spring-framework-docs}/integration.html#cache-jsr-107[supports]
 JCache (JSR-107) annotations.
 
-For example, suppose you want to cache the result for determining a person's eligibility when applying for
-a financial loan:
+For example, suppose you want to cache the results of determining a person's eligibility when applying for
+a financial loan.  A person's financial status is not likely to change in the time that the computer runs the algorithms
+to compute a person's eligibility after all the financial information for the person has been collected and submitted
+for review and processing.
+
+Our application might consist of a financial loan service to process a person's eligibility over a given period of time:
 
 [source,java]
 ----
@@ -47,23 +58,30 @@ class FinancialLoanApplicationService {
 }
 ----
 
+Notice the `@Cacheable` annotation on the `processEligibility(:Person, :Timespan)` method of our service class.
+
 When the `FinancialLoanApplicationService.processEligibility(..)` method is called, Spring's caching infrastructure
 first consults the "`EligibilityDecisions`" cache to determine if a decision has already been computed for the given
-`Person` within the given span of time.  If eligibility has already been determined, the the existing decision is
-returned from the cache, otherwise the `processEligibility(..)` method is invoked and the result is cached
-when the invocation returns.
+person within the given span of time.  If the person's eligibility in the given time frame has already been determined,
+then the existing decision is returned from the cache.  Otherwise, the `processEligibility(..)` method will be invoked
+and the result of the method will be cached when the method returns, before returning the value to the caller.
 
 Spring Boot for Apache Geode/Pivotal GemFire _auto-configures_ Apache Geode or Pivotal GemFire as the _caching provider_
 when either one is declared on the application classpath, and when no other _caching provider_ (e.g. Redis)
 has been configured.
 
 If Spring Boot for Apache Geode/Pivotal GemFire detects that another _cache provider_ has already been configured,
-then neither Apache Geode nor Pivotal GemFire will serve as the _caching provider_.  This allows users to configure,
-e.g. Redis, or another store, as the _caching provider_, and to use Apache Geode or Pivotal GemFire
-as your application's persistent store.
+then neither Apache Geode nor Pivotal GemFire will function as the _caching provider_.  This allows users to configure,
+another store, e.g. Redis, as the _caching provider_ and use Apache Geode or Pivotal GemFire as your application's
+persistent store, perhaps.
 
-To configure the necessary cache Regions to back the caches declared in Spring cache annotations, this is as simple as
-using Spring Data for Apache Geode/Pivotal GemFire's
+The only other requirement to enable caching in a Spring Boot application is for the declared caches (as specified
+in Spring's or JSR-107's caching annotations) to have been created and already exist, especially before the operation,
+on which caching has been applied, is invoked. This means the backend data store must provide the data structure
+serving as the "_cache_".  For Apache Geode or Pivotal GemFire, this means a `Region`.
+
+To configure the necessary Regions backing the caches declared in Spring's cache annotations, this is as simple as
+using Spring Data for Apache Geode or Pivotal GemFire's
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCachingDefinedRegions.html[`@EnableCachingDefinedRegions`] annotation.
 
 The complete Spring Boot application looks like this:
@@ -87,44 +105,88 @@ class FinancialLoanApplication {
 TIP: The `FinancialLoanApplicationService` is picked up by Spring's classpath component scan since this class
 is annotated with Spring's `@Service` stereotype annotation.
 
-[[geode-caching-provider-look-aside-near-inline]]
-=== Look-Aside Caching, Near Caching and Inline Caching
+TIP: You can set the `DataPolicy` of the Region created through the `@EnableCachingDefinedRegions` annotation by
+setting the `clientRegionShortcut` to a valid enumerated value.
 
-Three different types of caching strategies can be enabled with Spring when using Apace Geode or Pivotal GemFire
-for your application caching needs.
-
-NOTE: Spring Boot for Apache Geode/Pivotal GemFire does not recognize and apply the `spring.cache.cache-names` property.
+NOTE: Spring Boot for Apache Geode/Pivotal GemFire does not recognize nor apply the `spring.cache.cache-names` property.
 Instead, you should use SDG's `@EnableCachingDefinedRegions` on an appropriate Spring Boot application
 `@Configuration` class.
 
-[[geode-caching-provider-look-aside]]
+[[geode-caching-provider-look-aside-near-inline]]
+=== Look-Aside Caching, Near Caching and Inline Caching
+
+Three different types of caching patterns can be applied with Spring when using Apace Geode or Pivotal GemFire
+for your application caching needs.
+
+The 3 primary caching patterns include:
+
+* _Look-Aside Caching_
+* _Near Caching_
+* _Inline Caching_
+
+[[geode-caching-provider-look-aside-caching]]
 ==== Look-Aside Caching
 
-The caching pattern we demonstrated in the example above is a form of
-https://content.pivotal.io/blog/an-introduction-to-look-aside-vs-inline-caching-patterns[Look-Aside Caching].
+The caching pattern demonstrated in the example above is a form of
+https://content.pivotal.io/blog/an-introduction-to-look-aside-vs-inline-caching-patterns[_Look-Aside Caching_].
 
-Essentially, the item of interests is searched for in the cache first, before calling a potentially expensive
-operation, such a IO or network bound request resulting in either a blocking, or latency intensive operation.
-If the item can be found in the cache (usually, in-memory) then the item is returned without invoking
-the expensive operation.  If the item cannot be found in the cache, then the operation must be invoked.  However,
-the result of the operation is cached for subsequent requests when the the same input is provided.
+Essentially, the data of interest is searched for in the cache first, before calling a potentially expensive
+operation, e.g. like an operation that makes an IO or network bound request resulting in either a blocking,
+or a latency sensitive computation.
 
-[[geode-caching-provider-near]]
+If the data can be found in the cache (stored in-memory to reduce latency) then the data is returned without ever
+invoking the expensive operation.  If the data cannot be found in the cache, then the operation must be invoked.
+However, before returning, the result of the operation is cached for subsequent requests when the the same input
+is requested again, by another caller resulting in much improved response times.
+
+Again, typical _Look-Aside Caching_ pattern applied in your application code looks similar to the following:
+
+.Look-Aside Caching Pattern Applied
+[source,java]
+----
+@Service
+class CustomerService {
+
+  private final CustomerRepository customerRepository;
+
+  @Cacheable("Customers")
+  Customer findByAcccount(Account account) {
+
+    // pre-processing logic here
+
+    Customer customer = customerRepository.findByAccoundNumber(account.getNumber());
+
+    // post-processing logic here
+
+    return customer;
+  }
+}
+----
+
+In this design, the `CustomerRepository` is perhaps a JDBC or JPA/Hibernate backed implementation accessing
+the external data source (i.e. RDBMS) directly.  The `@Cacheable` annotation wraps, or "decorates",
+the `findByAccount(:Account):Customer` operation to provide caching facilities.
+
+NOTE: This operation may be expensive because it might validate the Customer's Account before looking up the Customer,
+pull multiple bits of information to retrieve the Customer record, and so on, hence the need for caching.
+
+[[geode-caching-provider-near-caching]]
 ==== Near Caching
 
-_Near Caching_ is another form of caching where the cache is collocated with the application.  This is useful when
-the cache is configured using a client/server arrangement.
+_Near Caching_ is another pattern of caching where the cache is collocated with the application.  This is useful when
+the caching technology is configured using a client/server arrangement.
 
 We already mentioned that Spring Boot for Apache Geode & Pivotal GemFire <<clientcache-applications.adoc#geode-clientcache-applications, provides>>
-an _auto-configured_, `ClientCache` instance out-of-the-box, by default.  The `ClientCache` instance is most effective
-when the data access operations, including cache access, is distributed to the servers in a cluster accessed
-by the client.  This enables other cache client applications to access the same data.  However, this also means that
-the application incurs a network hop penalty to evaluate the presence of the item in the cache.
+an _auto-configured_, `ClientCache` instance, out-of-the-box, by default.  The `ClientCache` instance is most effective
+when the data access operations, including cache access, is distributed to the servers in a cluster accessible by
+the client, and in most cases, multiple clients.  This allows other cache client applications to access the same data.
+However, this also means the application will incur a network hop penalty to evaluate the presence of the data
+in the cache.
 
-To help avoid this network cost in a client/server topology, then a local application cache can be established
-to maintain a subset of the data in the corresponding server-side cache (known as a cache Region in GemFire/Geode),
-which contains only the data of interests to the application.  This "local" cache is consulted before forwarding
-the lookup request to the server.
+To help avoid the cost of this network hop in a client/server topology, a local cache can be established, which
+maintains a subset of the data in the corresponding server-side cache (i.e. Region).  Therefore, the client cache
+only contains the data of interests to the application.  This "local" cache (i.e. client-side Region) is consulted
+before forwarding the lookup request to the server.
 
 To enable _Near Caching_ when using either Apache Geode or Pivotal GemFire, simply change the Region's (i.e. the `Cache`
 in Spring's Cache Abstraction) data management policy from `PROXY` (the default) to `CACHING_PROXY`, like so:
@@ -145,27 +207,79 @@ TIP: The default, client Region data management policy is
 {apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html#PROXY[`ClientRegionShortcut.PROXY`].
 As such, all data access operations are immediately forwarded to the server.
 
-[[geode-caching-provider-inline]]
+TIP: Also see the Apache Geode documentation concerning
+{apache-geode-docs}/developing/events/how_client_server_distribution_works.html[Client/Server Event Distribution]
+and specifically, "_Client Interest Registration on the Server_" when using local, client CACHING_PROXY Regions
+to manage state in addition to the corresponding server-side Region.  This is necessary to receive updates on entries
+in the Region that might have been changed by other clients accessing the same data.
+
+[[geode-caching-provider-inline-caching]]
 ==== Inline Caching
 
-The final form of caching is _Inline Caching_.
+The final pattern of caching we'll discuss is _Inline Caching_.
 
 When employing _Inline Caching_ and a cache miss occurs, the application service method may still not be invoked
-since the cache (Region) can be configured to invoke a loader to load the missing entry.
+since the a Region can be configured to invoke a loader to load the missing entry from an external data source.
 
-With Apache Geode and Pivotal GemFire, the cache, or in GemFire/Geode terminology, Region, can be configured with
-a {apache-geode-javadoc}/org/apache/geode/cache/CacheLoader.html[CacheLoader].  This `CacheLoader` is implemented
-to retrieve the missing value from some external data source, which could be a RDBMS or any other type of data source.
+With Apache Geode and Pivotal GemFire, the cache, or using Apache Geode/Pivotal GemFire terminology, the Region, can be
+configured with a {apache-geode-javadoc}/org/apache/geode/cache/CacheLoader.html[CacheLoader].  This `CacheLoader` is
+implemented to retrieve missing values from some external data source, which could be an RDBMS or any other type of
+data store (e.g. another NoSQL store like Apache Cassandra, MongoDB or Neo4j).
 
 TIP: See the Apache Geode User Guide on {apache-geode-docs}/developing/outside_data_sources/how_data_loaders_work.html[Data Loaders]
 for more details.
 
-You can use Spring to configure a `CacheLoader` as a bean in the Spring `ApplicationContext` and then wire it to
-the cache Region.  Given the `CacheLoader` is a Spring bean, you can inject any `DataSource` you like into
-the `CacheLoader`.
+Likewise, an Apache Geode or Pivotal Gemfire Region can be configured with a
+{apache-geode-javadoc}/org/apache/geode/cache/CacheWriter.html[CacheWriter].  A `CacheWriter` is responsible for
+writing any entry put into the Region to the backend data store, such as an RDBMS. This is referred to as a
+"_write-through_" operations because it is synchronous. If the backend data store fails to be written to then the entry
+will not be stored in the Region. This helps to ensure some level of consistency between the backing data store
+and the Apache Geode or Pivotal GemFire Region.
 
-While you can configure client Regions with `CacheLoaders`, it is more common to configure the corresponding
-server-side Region; for example:
+TIP: It is also possible to implement Inline-Caching using an _asynchronous_, _write-behind_ operation by registering
+an {apache-geode-javadoc}/org/apache/geode/cache/asyncqueue/AsyncEventListener.html[AsyncEventListener]
+on an {apache-geode-javadoc}/org/apache/geode/cache/asyncqueue/AsyncEventQueue.html[AEQ] tied to a server-side Region.
+You should consult the Apache Geode User Guide for more
+{apache-geode-docs}/developing/events/implementing_write_behind_event_handler.html[details].
+
+NOTE: Since SBDG is currently focused on the client-side, _async_, _write-behind_ behavior is not currently covered with
+extensive, convenient support, although, it is still very much possible to do.
+
+The typical pattern of _Inline Caching_ when applied to application code looks like the following:
+
+.Inline Caching Pattern Applied
+[source,java]
+----
+@Service
+class CustomerService {
+
+  private CustomerRepository customerRepository;
+
+  Customer findByAccount(Account account) {
+
+      // pre-processing logic here
+
+      Customer customer = customerRepository.findByAccountNumber(account.getNumber());
+
+      // post-processing locic here.
+
+      return customer;
+  }
+}
+----
+
+The main difference is, there are no Spring or JSR-107 caching annotations applied to the service methods
+and the `CustomerRepository` is accessing Apache Geode or Pivotal GemFire directly and NOT the RDBMS.
+
+[[geode-caching-provider-inline-caching-cacheloader-cachewriter]]
+===== Implementing CacheLoaders, CacheWriters for Inline Caching
+
+You can use Spring to configure a `CacheLoader` or `CacheWriter` as a bean in the Spring `ApplicationContext`
+and then wire it to a Region.  Given the `CacheLoader` or `CacheWriter` is a Spring bean like any other bean
+in the Spring `ApplicationContext`, you can inject any `DataSource` you like into the Loader/Writer.
+
+While you can configure client Regions with `CacheLoaders` and `CacheWriters`, it is typically more common to
+configure the corresponding server-side Region; for example:
 
 [source,java]
 ----
@@ -178,14 +292,16 @@ class FinancialLoanApplicationServer {
     }
 
 	@Bean("EligibilityDecisions")
-	public PartitionedRegionFactoryBean<Object, Object> eligibilityDecisionsRegion(
-            GemFireCache gemfireCache, CacheLoader decisionManagementSystemLoader) {
+	PartitionedRegionFactoryBean<Object, Object> eligibilityDecisionsRegion(
+            GemFireCache gemfireCache, CacheLoader decisionManagementSystemLoader,
+            CacheWriter decisionManagemenSystemWriter) {
 
         PartitionedRegionFactoryBean<?, EligibilityDecision> eligibilityDecisionsRegion =
             new PartitionedRegionFactoryBean<>();
 
         eligibilityDecisionsRegion.setCache(gemfireCache);
         eligibilityDecisionsRegion.setCacheLoader(decisionManagementSystemLoader);
+        eligibilityDecisionsRegion.setCacheWriter(decisionManagementSystemWriter);
         eligibilityDecisionsRegion.setClose(false);
         eligibilityDecisionsRegion.setPersistent(false);
 
@@ -194,16 +310,166 @@ class FinancialLoanApplicationServer {
 
 
     @Bean
-    public CacheLoader<?, EligibilityDecision> decisionManagementSystemLoader(
+    CacheLoader<?, EligibilityDecision> decisionManagementSystemLoader(
             DataSource dataSource) {
 
         return new DecisionManagementSystemLoader(dataSource);
     }
+
+    @Bean
+    CacheWriter<?, EligibilityDecision> decisionManagementSystemWriter(
+            DataSource dataSource) {
+
+        return new DecisionManagementSystemWriter(dataSource);
+    }
+
+    @Bean
+    DataSource dataSource(..) {
+      ...
+    }
 }
 ----
 
-If the configured `CacheLoader` still cannot resolve the value, the the cache lookup operation results in a miss
-and the application service method will then be invoked.
+Then, you would implement the {apache-geode-javadoc}/org/apache/geode/cache/CacheLoader.html[`CacheLoader`]
+and {apache-geode-javadoc}/org/apache/geode/cache/CacheWriter.html[`CacheWriter`] interfaces as appropriate:
+
+.DecisionManagementSystemLoader
+[source,java]
+----
+class DecisionManagementSystemLoader implements CacheLoader<?, EligibilityDecision> {
+
+  private final DataSource dataSource;
+
+  DecisionManagementSystemLoader(DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
+
+  public EligibilityDecision load(LoadHelper<?, EligibilityDecision> helper) {
+
+     Object key = helper.getKey();
+
+     // Use the configured DataSource to load the value from an external data store.
+
+     return ...
+   }
+}
+----
+
+TIP: SBDG provides the `org.springframework.geode.cache.support.CacheLoaderSupport` `@FunctionalInterface` to
+conveniently implement application `CacheLoaders`.
+
+If the configured `CacheLoader` still cannot resolve the value, then the cache lookup operation results in a miss
+and the application service method will then be invoked to compute the value.
+
+.DecisionManagementSystemWriter
+[source,java]
+----
+class DecisionManagementSystemWriter implements CacheWriter<?, EligibilityDecision> {
+
+  private final DataSource dataSource;
+
+  DecisionManagementSystemWriter(DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
+
+  public void beforeCreate(EntryEvent<?, EligiblityDecision> entryEvent) {
+    // Use configured DataSource to save (e.g. INSERT) the entry to the backend data store
+  }
+
+  public void beforeUpdate(EntryEvent<?, EligiblityDecision> entryEvent) {
+    // Use the configured DataSource to save (e.g. UPDATE or UPSERT) the entry in the backend data store
+  }
+
+  public void beforeDestroy(EntryEvent<?, EligiblityDecision> entryEvent) {
+    // Use the configured DataSource to delete (i.e. DELETE) the entry from the backend data store
+  }
+
+  ...
+}
+----
+
+TIP: SBDG provides the `org.springframework.geode.cache.support.CacheWriterSupport` interface to
+conveniently implement application `CacheWriters`.
+
+NOTE: Of course, your `CacheWriter` implementation can use any data access technology to interface with
+your backend data store (e.g. JDBC, Spring's `JdbcTemplate`, JPA/Hibernate, etc).  It is not limited to only using
+a `javax.sql.DataSource`.  In fact, we will present another, more useful and convenient approach to implementing
+_Inline Caching_ in the next section.
+
+[[geode-caching-provider-inline-caching-using-spring-data-repositories]]
+===== Inline Caching using Spring Data Repositories.
+
+Spring Boot for Apache Geode & Pivotal GemFire (SBDG) now offers dedicated support and configuration of _Inline Caching_
+using Spring Data Repositories.
+
+This is very powerful because it allows you to:
+
+1. Access any backend data store supported by Spring Data (e.g. Redis for Key/Value or other data structures,
+MongoDB for Documents, Neo4j for Graphs, Elasticsearch for Search, and so on).
+
+2. Use complex mapping strategies (e.g. ORM provided by JPA/Hibernate).
+
+It is our belief that users should be putting data where it is most easily accessible.  If you are accessing
+and processing Documents, then most likely MongoDB (or Couchbase or another document store) might be
+the most logical choice to manage your application's Documents.
+
+However, that does not mean you have to give up Apache Geode or Pivotal GemFire in your application/system architecture.
+You can leverage each data store for what it is good at.  While MongoDB is good at Document handling, Apache Geode
+is a highly valuable choice for consistency, high availability, multi-site, low-latency/high-throughput scale-out
+Use Cases.
+
+As such, using Apache Geode and Pivotal GemFire's `CacheLoader/CacheWriter` mechanism provides a integration point
+between itself and other data stores to best serve your Use Case and application requirements/needs.
+
+And now, SBDG just made this even easier.
+
+EXAMPLE
+
+Let's say you are using JPA/Hibernate to access (store and retrieve) data in a Oracle Database.
+
+Then, you can configure Apache Geode to read/write-through to the backend Oracle Database when performing cache (Region)
+operations by delegating to a Spring Data (JPA) Repository.
+
+The configuration might look something like:
+
+.Inline Caching configuration using SBDG
+[source,java]
+----
+@SpringBootApplication
+@EntityScan(basePackageClasses = Customer.class)
+@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
+@EnableJpaRepositories(basePackageClasses = CustomerRepository.class)
+class SpringBootOracleDatabaseApacheGeodeApplication {
+
+  @Bean
+  InlineCachingRegionConfigurer<Customer, Long> inlineCachingForCustomersRegionConfigurer(
+      CustomerRepository customerRepository) {
+
+    return new InlineCachingRegionConfigurer<>(customerRepository, Predicate.isEqual("Customers"));
+  }
+}
+----
+
+Out-of-the-box, SBDG provides the `InlineCachingRegionConfigurer<ENTITY, ID>` interface.
+
+Given a `Predicate` to express and match the target Region by name along with a Spring Data `CrudRepository`,
+the `InlineCachingRegionConfigurer` will configure and adapt the Spring Data `CrudRepository` as a `CacheLoader`
+and `CacheWriter` for the Region (e.g. "Customers"), i.e. it enables the Region to use _Inline Caching_.
+
+You simply only need to declare `InlineCachingRegionConfigurer` as a bean in the Spring application context
+and make the association between the Region (by name) and the appropriate Spring Data `CrudRepository`.
+
+In this example, we used JPA and Spring Data JPA to store/retrieve the data in the cache (Region) to/from a backend
+database.  But, you can inject any Spring Data Repository for any data store (e.g. Redis, MongoDB, etc) that supports
+the Spring Data Repository abstraction.
+
+TIP: If you only want to support oneway data access operations when using _Inline Caching_, then you can use either
+the `RepositoryCacheLoaderRegionConfigurer` for reads or the `RepositoryCacheWriterRegionConfigurer` for writes,
+instead of the `InlineCachingRegionConfigurer`, which supports both reads and writes.
+
+TIP: To see a similar implementation of _Inline Caching_ using a Database (In-Memory, HSQLDB Database) in action, have a
+look at this https://github.com/spring-projects/spring-boot-data-geode/blob/master/spring-geode/src/test/java/org/springframework/geode/cache/inline/database/InlineCachingWithDatabaseIntegrationTests.java[test class]
+from the SBDG test suite. A dedicated sample will be provided in a future release.
 
 [[geode-caching-provider-advanced-configuration]]
 === Advanced Caching Configuration
@@ -211,7 +477,7 @@ and the application service method will then be invoked.
 Both Apache Geode and Pivotal GemFire support additional caching capabilities to manage the entries stored in the cache.
 
 As you can imagine, given the cache entries are stored in-memory, it becomes important to monitor and manage the
-available memory wisely.  After all, by default, both Apache Geode and Pivotal GemFire store data on the JVM Heap.
+available memory wisely.  After all, by default, both Apache Geode and Pivotal GemFire store data in the JVM Heap.
 
 Several techniques can be employed to more effectively manage memory, such as using
 {apache-geode-docs}/developing/eviction/chapter_overview.html[Eviction], possibly
