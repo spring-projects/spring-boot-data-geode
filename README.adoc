@@ -50,8 +50,8 @@ This, along with many other benefits, are provided by this project.
 |===
 | Version | Reference Documentation | Javadoc | Samples
 
-| `1.0.0.RELEASE` | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.RELEASE/reference/html5/[Ref Docs] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.RELEASE/api/[Javadoc] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.RELEASE/reference/html5/#geode-samples[Samples]
-| `1.0.1.BUILD-SNAPSHOT`| https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.BUILD-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.BUILD-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.BUILD-SNAPSHOT/reference/html5/#geode-samples[Samples]
+| `1.0.1.RELEASE` | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.RELEASE/reference/html5/[Ref Docs] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.RELEASE/api/[Javadoc] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.RELEASE/reference/html5/#geode-samples[Samples]
+| `1.0.2.BUILD-SNAPSHOT`| https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.2.BUILD-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.2.BUILD-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.2.BUILD-SNAPSHOT/reference/html5/#geode-samples[Samples]
 | `1.1.0.M1` | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.1.0.M1/reference/html5/[Ref Docs] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.1.0.M1/api/[Javadoc] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.1.0.M1/reference/html5/#geode-samples[Samples]
 | `1.1.0.BUILD-SNAPSHOT`| https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.1.0.BUILD-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.1.0.BUILD-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.1.0.BUILD-SNAPSHOT/reference/html5/#geode-samples[Samples]
 
@@ -68,7 +68,7 @@ in the Contacts Application Reference Implementation for _Spring Data for Apache
 
 Yet another example, https://github.com/jxblum/temperature-service/tree/using-spring-boot[Temperature Service].
 
-And finally, the documentation contains https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.1.BUILD-SNAPSHOT/reference/html5/#geode-samples[samples]
+And finally, the documentation contains https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.1.0.BUILD-SNAPSHOT/reference/html5/#geode-samples[samples]
 you may use to get started with SBDG.
 
 [[spring-boot-project-site]]
