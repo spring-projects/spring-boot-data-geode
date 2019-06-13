@@ -9,7 +9,9 @@ Changes in version 1.1.0.M2 (2019-06-14)
 Adds support for the Inline Caching Use Case (UC) along with Spring Boot Starters for Spring Session
 and Spring Test for Apache Geode/Pivotal GemFire (STDG).
 
-* Adds the RepositoryCacheLoader and RepositoryCacheWriter to support Inline Caching.
+* Adds the InlineCachingRegionConfigurer, RepositoryCacheLoader and RepositoryCacheWriter to support Inline Caching.
+* Adds the a @EnableSecurityManagerProxy annotation for conveniently locating and configuring an Apache Geode
+SecurityManager implementation declared and registered as a bean in the Spring application context.
 * Adds the spring-geode-starter-session and spring-gemfire-starter-session modules to help users get started with
 (HTTP) Session Caching using either Apache Geode or Pivotal GemFire as the provider.
 * Adds the spring-geode-starter-test and spring-gemfire-starter-test modules, which automatically pulls in
@@ -24,6 +26,17 @@ and bootstrap a GemFire/Geode Locator using Spring Boot.
 * Upgrades to Spring Session for Apache Geode/Pivotal GemFire 2.1.4.RELEASE.
 * Upgrades to Spring Session BOM Bean-SR5.
 * Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.3.RELEASE.
+
+
+Changes in version 1.0.1.RELEASE (2019-06-13)
+---------------------------------------------
+Provides support for configuring and bootstrapping Spring Boot, Apache Geode Locator-based applications.
+
+* Adds support to configure and bootstrap Apache Geode Locator-based applications using Spring Boot.
+* Adds the a @EnableSecurityManagerProxy annotation for conveniently locating and configuring an Apache Geode
+SecurityManager implementation declared and registered as a bean in the Spring application context.
+* Upgrades to Spring Framework 5.0.14.RELEASE.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.2.RELEASE.
 
 
 Changes in version 1.1.0.M1 (2019-05-07)
