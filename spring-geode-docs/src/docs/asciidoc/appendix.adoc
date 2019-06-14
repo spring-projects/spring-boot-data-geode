@@ -4,6 +4,17 @@
 The following appendices provide additional help while developing Spring Boot applications backed by Apache Geode
 or Pivotal GemFire.
 
+_Table of Contents_
+
+1. <<geode-autoconfiguration-annotations>>
+2. <<geode-configuration-metadata>>
+3. <<geode-cluster-configuration-bootstrapping>>
+4. <<geode-auto-configuration-disable>>
+5. <<geode-testing>>
+6. <<geode-examples>>
+7. <<references>>
+
+
 :!sectnums:
 include::configuration-annotations.adoc[leveloffset=+1]
 
