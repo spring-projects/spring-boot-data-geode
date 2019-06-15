@@ -25,7 +25,7 @@ and bootstrap a GemFire/Geode Locator using Spring Boot.
 * Upgrades to Spring Data Release Train Lovelace-SR9.
 * Upgrades to Spring Session for Apache Geode/Pivotal GemFire 2.1.4.RELEASE.
 * Upgrades to Spring Session BOM Bean-SR5.
-* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.3.RELEASE.
+* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.4.RELEASE.
 
 
 Changes in version 1.0.1.RELEASE (2019-06-13)
