@@ -20,7 +20,7 @@ or Pivotal GemFire applications in a Spring context.
 * Includes early support for @LocatorApplication annotated Spring Boot applications enabling users to configure
 and bootstrap a GemFire/Geode Locator using Spring Boot.
 * Includes additional integration tests for customizing the auto-configuration of GemFire/Geode Pools using SDG Configurers.
-* Upgrades to Spring Framework 5.1.7.RELEASE.
+* Upgrades to Spring Framework 5.1.8.RELEASE.
 * Upgrades to Spring Data for Apache Geode/Pivotal GemFire 2.1.9.RELEASE.
 * Upgrades to Spring Data Release Train Lovelace-SR9.
 * Upgrades to Spring Session for Apache Geode/Pivotal GemFire 2.1.4.RELEASE.
