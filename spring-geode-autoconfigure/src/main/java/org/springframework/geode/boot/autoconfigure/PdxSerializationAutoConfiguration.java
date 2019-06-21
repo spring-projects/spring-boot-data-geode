@@ -13,12 +13,12 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
+
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,8 +40,10 @@ import org.springframework.data.gemfire.config.annotation.EnablePdx;
  */
 @Configuration
 @ConditionalOnBean(GemFireCache.class)
-@ConditionalOnMissingBean(name = { "clientCachePdxConfigurer", "peerCachePdxConfigurer" },
-	type = "org.springframework.data.gemfire.config.support.PdxDiskStoreAwareBeanFactoryPostProcessor")
+@ConditionalOnMissingBean(
+	name = { "clientCachePdxConfigurer", "peerCachePdxConfigurer" },
+	type = "org.springframework.data.gemfire.config.support.PdxDiskStoreAwareBeanFactoryPostProcessor"
+)
 @EnablePdx
 public class PdxSerializationAutoConfiguration {
 
