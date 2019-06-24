@@ -19,7 +19,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.ApacheShiroSecurityConfiguration;
 import org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurityConfiguration;
@@ -50,7 +49,7 @@ import org.springframework.geode.config.annotation.EnableSecurityManager;
 	GeodeIntegratedSecurityConfiguration.class
 })
 @EnableSecurityManager
-@Import(HttpBasicAuthenticationSecurityConfiguration.class)
+//@Import(HttpBasicAuthenticationSecurityConfiguration.class)
 @SuppressWarnings("unused")
 public class PeerSecurityAutoConfiguration {
 
