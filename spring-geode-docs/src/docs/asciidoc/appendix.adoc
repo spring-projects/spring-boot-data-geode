@@ -6,7 +6,7 @@ or Pivotal GemFire.
 
 _Table of Contents_
 
-1. <<geode-autoconfiguration-annotations>>
+1. <<geode-auto-configuration-annotations>>
 2. <<geode-configuration-metadata>>
 3. <<geode-cluster-configuration-bootstrapping>>
 4. <<geode-auto-configuration-disable>>

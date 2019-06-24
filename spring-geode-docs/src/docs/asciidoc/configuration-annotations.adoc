@@ -1,4 +1,4 @@
-[[geode-autoconfiguration-annotations]]
+[[geode-auto-configuration-annotations]]
 == Auto-configuration vs. Annotation-based configuration
 
 The question most often asked is, "_What Spring Data for Apache Geode/Pivotal GemFire annotations can I use,
