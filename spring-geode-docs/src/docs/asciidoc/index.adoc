@@ -38,6 +38,7 @@ John Blum
 :spring-session-data-gemfire-docs: https://docs.spring.io/autorepo/docs/spring-session-data-geode-build/{spring-session-data-gemfire-version}/reference/html5
 :spring-session-data-gemfire-javadoc: https://docs.spring.io/autorepo/docs/spring-session-data-geode-build/{spring-session-data-gemfire-version}/api
 :spring-session-data-gemfire-website: https://github.com/spring-projects/spring-session-data-geode/blob/master/README.adoc
+:spring-test-data-gemfire-website: https://github.com/spring-projects/spring-test-data-geode#spring-test-framework-for-apache-geode--pivotal-gemfire
 :wikipedia-docs: https://en.wikipedia.org/wiki
 
 

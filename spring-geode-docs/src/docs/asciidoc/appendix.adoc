@@ -431,13 +431,22 @@ Later on, this reference guide will include and dedicate an entire chapter on te
 [[geode-examples]]
 === Examples
 
+The definitive source of truth on how to best use Spring Boot for Apache Geode & Pivotal GemFire (or Pivotal Cloud Cache
+(PCC)) is to refer to the <<geode-samples,Samples>>.
+
 Refer to the Pivotal Cloud Cache (PCC), https://github.com/pivotal-cf/PCC-Sample-App-PizzaStore[Pizza Store],
-Spring Boot application for an example of using Spring Boot for Pivotal GemFire in a Pivotal GemFire `ClientCache`
+Spring Boot application for an example of how to use Spring Boot for Pivotal GemFire (SBDG) in a `ClientCache`
 application interfacing with PCC.
 
+Additionally, you may refer to the https://github.com/jxblum/temperature-service[Temperature Service], Spring Boot
+application, which implements a Temperature Sensor and Monitoring, Internet of Things (IOT) example. The example uses
+SBDG to showcase Apache Geode CQ, Function Implementations/Executions and positions Apache Geode as a _caching provider_
+in Spring's Cache Abstraction.  It is a working, sophisticated and complete example, and is highly recommended
+as a good starting point for real-world use cases.
+
 You may also refer to the https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example]
-from the _Contact Application_ Reference Implementation for Spring Data for Apache Geode/Pivotal GemFire
-as another example.
+from the _Contact Application_ Reference Implementation (RI) for Spring Data for Apache Geode & Pivotal GemFire
+(SDG) as yet another example.
 
 
 [[references]]
@@ -448,5 +457,6 @@ as another example.
 3. Spring Data Commons {spring-data-commons-docs-html}[Reference Guide] | {spring-data-commons-javadoc}[Javadoc]
 4. Spring Data for Apache Geode {spring-data-geode-docs-html}[Reference Guide] | {spring-data-geode-javadoc}[Javadoc]
 5. Spring Session for Apache Geode {spring-session-data-gemfire-docs}[Reference Guide] | {spring-session-data-gemfire-javadoc}[Javadoc]
-6. Apache Geode {apache-geode-docs}[User Guide] | {apache-geode-javadoc}[Javadoc]
-7. Pivotal GemFire {pivotal-gemfire-docs}[User Guide] | {pivotal-gemfire-javadoc}[Javadoc]
+6. Spring Test for Apache Geode {spring-test-data-gemfire-website}[README]
+7. Apache Geode {apache-geode-docs}[User Guide] | {apache-geode-javadoc}[Javadoc]
+8. Pivotal GemFire {pivotal-gemfire-docs}[User Guide] | {pivotal-gemfire-javadoc}[Javadoc]
