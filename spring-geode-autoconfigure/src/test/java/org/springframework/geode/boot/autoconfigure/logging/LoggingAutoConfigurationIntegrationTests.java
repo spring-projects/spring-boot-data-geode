@@ -28,15 +28,25 @@ import org.apache.geode.distributed.internal.DistributionConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * The LoggingAutoConfigurationIntegrationTests class...
+ * Integration Tests asserting the configuration and behavior of Apache Geode & Pivotal GemFire logging
+ * when configured with Spring Boot auto-configuration.
  *
  * @author John Blum
- * @since 1.0.0
+ * @see java.util.Properties
+ * @see org.junit.Test
+ * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.distributed.internal.DistributionConfig
+ * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.test.context.junit4.SpringRunner
+ * @since 1.1.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -49,7 +59,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 	webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
 @SuppressWarnings("unused")
-public class LoggingAutoConfigurationIntegrationTests {
+public class LoggingAutoConfigurationIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private GemFireCache gemfireCache;
