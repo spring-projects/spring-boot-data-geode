@@ -47,6 +47,7 @@ Currently, SBDG provides _auto-configuration_ for the following features:
 * Caching with Spring's Cache Abstraction
 * Continuous Query
 * Function Execution & Implementation
+* Logging
 * PDX
 * `GemfireTemplate`
 * Spring Data Repositories
@@ -60,6 +61,7 @@ Technically, this means the following SDG Annotations are not required to use th
 * `@EnableContinuousQueries`
 * `@EnableGemfireFunctionExecutions`
 * `@EnableGemfireFunctions`
+* `@EnableLogging`
 * `@EnablePdx`
 * `@EnableGemfireRepositories`
 * `@EnableSecurity`
