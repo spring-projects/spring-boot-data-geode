@@ -9,10 +9,11 @@ _Table of Contents_
 1. <<geode-auto-configuration-annotations>>
 2. <<geode-configuration-metadata>>
 3. <<geode-auto-configuration-disable>>
-4. <<geode-cluster-configuration-bootstrapping>>
-5. <<geode-testing>>
-6. <<geode-examples>>
-7. <<references>>
+4. <<geode-gemfire-switch>>
+5. <<geode-cluster-configuration-bootstrapping>>
+6. <<geode-testing>>
+7. <<geode-examples>>
+8. <<references>>
 
 
 :!sectnums:
@@ -72,6 +73,88 @@ The current set of auto-configuration classes in Spring Boot for Apache Geode & 
 * `SpringSessionAutoConfiguration`
 * `SpringSessionAutoPropertiesConfiguration`
 * `SslAutoConfiguration`
+
+
+[[geode-gemfire-switch]]
+=== Switch from Apache Geode to Pivotal Cloud Cache (a.k.a. Pivotal GemFire)
+
+First, understand that {pivotal-gemfire-website}[Pivotal GemFire] is being replaced by
+{pivotal-cloudcache-website}[Pivotal Cloud Cache] (PCC).  Therefore, all references to "`gemfire`" also implies for
+Pivotal Cloud Cache as well.
+
+When it comes to Spring's support, whether you are developing with Open Source Software (OSS)
+{apache-geode-website}[Apache Geode] or developing for Pivotal Cloud Cache, Spring has you covered.
+
+At a strategic-level, this means:
+
+1. From Open Source Software (e.g. Apache Geode) to Commercial (e.g. Pivotal Cloud Cache)
+2. From Non-Managed (e.g. Standalone) to Managed Environments (e.g. Pivotal CloudFoundry)
+3. With little to no code or configuration changes necessary.  It just works!
+
+You may also go back and migrate your Spring Boot applications away from Pivotal CloudFoundry when using the commercial
+software offering Pivotal Cloud Cache and switch back to Apache Geode running in a standalone environment.  SBDG will
+not (ever) lock you in.  It is your choice.
+
+Technically, this means to go from Apache Geode to Pivotal Cloud Cache, you only need to change the SBDG dependency
+from:
+
+.Maven POM with Spring Boot for Apache Geode
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>org.springframework.geode</groupId>
+    <artifactId>spring-geode-starter</artifactId>
+    <version>{revnumber}</version>
+</dependency>
+----
+
+.Gradle build file with Spring Boot for Apache Geode
+[source,java]
+[subs="verbatim,attributes"]
+----
+dependencies {
+    compile 'org.springframework.geode:spring-geode-starter:{revnumber}'
+}
+----
+
+To:
+
+.Maven POM with Spring Boot for Pivotal GemFire
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>org.springframework.geode</groupId>
+    <artifactId>spring-gemfire-starter</artifactId>
+    <version>{revnumber}</version>
+</dependency>
+----
+
+.Gradle build file with Spring Boot for Pivotal GemFire
+[source,java]
+[subs="verbatim,attributes"]
+----
+dependencies {
+    compile 'org.springframework.geode:spring-gemfire-starter:{revnumber}'
+}
+----
+
+To go back, simple change `spring-gemfire-starter` back to `spring-geode-starter`.  Done!
+
+It should just work without any code or configuration changes and if that is not the case, for whatever situation,
+then we will work to correct it, short of any feature differences between Pivotal Cloud Cache that cannot be
+accomplished with Apache Geode by itself.
+
+Spring Boot's auto-configuration and _convention over configuration_ approach tries to detect the runtime environment
+in order to handle infrastructure logistics so you will not have to.  This is true inside or outside of a managed
+environment so that we can provide users with a consistent and reliable experience without all the hassle and issues
+that arise by switching environments.  Switching environments is especially common as you migrate your Spring Boot
+applications from DEV to TEST, into STAGING, and finally, to PRODUCTION.
+
+Of course, it will nearly always be easier to "run" Apache Geode as a "managed" service inside Pivotal CloudFoundry
+using Pivotal Cloud Cache, especially if your Use Case requires maximum performance and high availability.  We highly
+recommend this approach when and where possible.
 
 
 [[geode-cluster-configuration-bootstrapping]]
