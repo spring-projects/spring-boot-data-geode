@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.core.env;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,10 +29,12 @@ import static org.mockito.Mockito.when;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
 import org.junit.Test;
+
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
@@ -70,8 +71,8 @@ public class VcapPropertySourceUnitTests {
 
 		when(mockEnvironment.getPropertySources()).thenReturn(propertySources);
 		doReturn(mockVcapPropertySource).when(propertySources).get(eq("vcap"));
-		when(mockVcapPropertySource.getName()).thenReturn("vcap");
 		when(mockVcapPropertySource.containsProperty(anyString())).thenReturn(true);
+		when(mockVcapPropertySource.getName()).thenReturn("vcap");
 
 		VcapPropertySource propertySource = VcapPropertySource.from(mockEnvironment);
 
@@ -131,6 +132,7 @@ public class VcapPropertySourceUnitTests {
 			throw expected;
 		}
 		finally {
+
 			verify(mockEnvironment, times(1)).getPropertySources();
 			verify(propertySources, times(1)).get(eq("vcap"));
 		}
@@ -154,8 +156,8 @@ public class VcapPropertySourceUnitTests {
 		}
 		catch (IllegalArgumentException expected) {
 
-			assertThat(expected).hasMessage(
-				"A valid EnumerablePropertySource named [vcap] containing VCAP properties is required",
+			assertThat(expected)
+				.hasMessage("An EnumerablePropertySource named [vcap] containing VCAP properties is required",
 					mockEnvironment);
 
 			assertThat(expected).hasNoCause();
@@ -163,6 +165,7 @@ public class VcapPropertySourceUnitTests {
 			throw expected;
 		}
 		finally {
+
 			verify(mockEnvironment, times(1)).getPropertySources();
 			verify(propertySources, times(1)).get(eq("vcap"));
 			verify(mockPropertySource, times(1)).getName();
@@ -183,9 +186,9 @@ public class VcapPropertySourceUnitTests {
 
 		when(mockEnvironment.getPropertySources()).thenReturn(propertySources);
 		doReturn(mockPropertySource).when(propertySources).get(eq("vcap"));
-		when(mockPropertySource.getName()).thenReturn("vcap");
 		when(mockPropertySource.containsProperty(eq("vcap.application.name"))).thenReturn(true);
 		when(mockPropertySource.containsProperty(eq("vcap.application.uris"))).thenReturn(false);
+		when(mockPropertySource.getName()).thenReturn("vcap");
 
 		try {
 			VcapPropertySource.from(mockEnvironment);
@@ -193,7 +196,7 @@ public class VcapPropertySourceUnitTests {
 		catch (IllegalArgumentException expected) {
 
 			assertThat(expected).hasMessage(
-				"A valid EnumerablePropertySource named [vcap] containing VCAP properties is required",
+				"An EnumerablePropertySource named [vcap] containing VCAP properties is required",
 					mockEnvironment);
 
 			assertThat(expected).hasNoCause();
@@ -201,6 +204,7 @@ public class VcapPropertySourceUnitTests {
 			throw expected;
 		}
 		finally {
+
 			verify(mockEnvironment, times(1)).getPropertySources();
 			verify(propertySources, times(1)).get(eq("vcap"));
 			verify(mockPropertySource, times(1)).getName();
@@ -216,16 +220,15 @@ public class VcapPropertySourceUnitTests {
 
 		Properties vcap = new Properties();
 
-		vcap.setProperty("vcap.application.name", "testApp");
-		vcap.setProperty("vcap.application.uris", "boot-app.apps.cloud.net");
-
+		vcap.setProperty("vcap.application.name", "TestApp");
+		vcap.setProperty("vcap.application.uris", "test-app.boot-app.apps.cloud.net");
 
 		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
 
 		assertThat(propertySource).isNotNull();
 		assertThat(propertySource.getSource()).isInstanceOf(PropertiesPropertySource.class);
-		assertThat(propertySource.getProperty("vcap.application.name")).isEqualTo("testApp");
-		assertThat(propertySource.getProperty("vcap.application.uris")).isEqualTo("boot-app.apps.cloud.net");
+		assertThat(propertySource.getProperty("vcap.application.name")).isEqualTo("TestApp");
+		assertThat(propertySource.getProperty("vcap.application.uris")).isEqualTo("test-app.boot-app.apps.cloud.net");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -276,11 +279,10 @@ public class VcapPropertySourceUnitTests {
 			"vcap.services.jblum-pcc.tags"
 		};
 
-		when(mockPropertySource.getName()).thenReturn("vcap");
-
 		when(mockPropertySource.containsProperty(anyString())).thenAnswer(invocation ->
 			Arrays.asList(propertyNames).contains(invocation.<String>getArgument(0)));
 
+		when(mockPropertySource.getName()).thenReturn("vcap");
 		when(mockPropertySource.getPropertyNames()).thenReturn(propertyNames);
 
 		VcapPropertySource propertySource = VcapPropertySource.from(mockPropertySource);
@@ -322,11 +324,10 @@ public class VcapPropertySourceUnitTests {
 			"vcap.services.jblum-pcc.tags"
 		};
 
-		when(mockPropertySource.getName()).thenReturn("vcap");
-
 		when(mockPropertySource.containsProperty(anyString())).thenAnswer(invocation ->
 			Arrays.asList(propertyNames).contains(invocation.<String>getArgument(0)));
 
+		when(mockPropertySource.getName()).thenReturn("vcap");
 		when(mockPropertySource.getPropertyNames()).thenReturn(propertyNames);
 
 		VcapPropertySource propertySource = VcapPropertySource.from(mockPropertySource);
@@ -334,11 +335,11 @@ public class VcapPropertySourceUnitTests {
 		assertThat(propertySource).isNotNull();
 		assertThat(propertySource.getSource()).isEqualTo(mockPropertySource);
 
-		Set<String> vcapApplicationProperties = propertySource.findAllVcapServicesProperties();
+		Set<String> vcapServicesProperties = propertySource.findAllVcapServicesProperties();
 
-		assertThat(vcapApplicationProperties).isNotNull();
-		assertThat(vcapApplicationProperties).hasSize(5);
-		assertThat(vcapApplicationProperties)
+		assertThat(vcapServicesProperties).isNotNull();
+		assertThat(vcapServicesProperties).hasSize(5);
+		assertThat(vcapServicesProperties)
 			.containsExactlyInAnyOrder("vcap.services.jblum-pcc.credentials.locators",
 				"vcap.services.jblum-pcc.credentials.users", "vcap.services.jblum-pcc.name",
 					"vcap.services.jblum-pcc.plan", "vcap.services.jblum-pcc.tags");
@@ -352,7 +353,7 @@ public class VcapPropertySourceUnitTests {
 	}
 
 	@Test
-	public void findFirstCloudCacheServiceNameReturnsServiceName() {
+	public void findFirstCloudCacheServiceNameReturnsOptionalOfServiceName() {
 
 		Properties vcap = new Properties();
 
@@ -362,65 +363,83 @@ public class VcapPropertySourceUnitTests {
 		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal,database,cloudcache,gemfire");
 		vcap.setProperty("vcap.application.space_name", "outerspace");
 		vcap.setProperty("vcap.services.jblum-pcc.name", "jblum-pcc");
-		vcap.setProperty("vcap.services.jblum-pcc.plan", "small");
+		vcap.setProperty("vcap.services.jblum-pcc.plan", "medium");
 		vcap.setProperty("vcap.services.jblum-pcc.tags", "cloudcache,database,gemfire,pivotal");
 		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+		vcap.setProperty("vcap.services.mock-pcc.name", "mock-pcc");
+		vcap.setProperty("vcap.services.mock-pcc.plan", "large");
+		vcap.setProperty("vcap.services.mock-pcc.tags", "pivotal,cloudcache,database");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+		assertThat(propertySource.findFirstCloudCacheServiceName().orElse(null)).isEqualTo("jblum-pcc");
+	}
+
+	@Test
+	public void findFirstCloudCacheServiceNameReturnsEmptyOptional() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
 		vcap.setProperty("vcap.services.a-pcc.name", "a-pcc");
-		vcap.setProperty("vcap.services.a-pcc.plan", "huge");
+		vcap.setProperty("vcap.services.a-pcc.plan", "large");
 		vcap.setProperty("vcap.services.a-pcc.tags", "pivotal,cloudcache,database");
+		vcap.setProperty("vcap.services.b-pcc.name", "b-pcc");
+		vcap.setProperty("vcap.services.b-pcc.plan", "small");
+		vcap.setProperty("vcap.services.b-pcc.tags", "pivotal,database,gemfire");
 
 		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
 
 		assertThat(propertySource).isNotNull();
-		assertThat(propertySource.findFirstCloudCacheServiceName()).isEqualTo("jblum-pcc");
+		assertThat(propertySource.findFirstCloudCacheServiceName().isPresent()).isFalse();
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void findFirstCloudCacheServiceNameWithInvalidTagsThrowsIllegalStateException() {
+	@Test
+	public void requireFirstCloudCacheServiceNameReturnsServiceName() {
 
 		Properties vcap = new Properties();
 
 		vcap.setProperty("vcap.application.name", "boot-example");
-		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
-		vcap.setProperty("vcap.services.test-pcc.plan", "small");
-		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal,gemfire,database");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+		vcap.setProperty("vcap.services.a-pcc.name", "a-pcc");
+		vcap.setProperty("vcap.services.a-pcc.plan", "large");
+		vcap.setProperty("vcap.services.a-pcc.tags", "pivotal,cloudcache,database");
+		vcap.setProperty("vcap.services.b-pcc.name", "b-pcc");
+		vcap.setProperty("vcap.services.b-pcc.plan", "small");
+		vcap.setProperty("vcap.services.b-pcc.tags", "pivotal,database,gemfire");
+		vcap.setProperty("vcap.services.c-pcc.name", "c-pcc");
+		vcap.setProperty("vcap.services.c-pcc.plan", "medium");
+		vcap.setProperty("vcap.services.c-pcc.tags", "pivotal,cloudcache,database,gemfire");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+		assertThat(propertySource.findFirstCloudCacheServiceName().orElse(null)).isEqualTo("c-pcc");
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void requireFirstCloudCacheServiceNameWithInvalidTagsThrowsIllegalStateException() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.services.c-pcc.name", "c-pcc");
+		vcap.setProperty("vcap.services.c-pcc.plan", "small");
+		vcap.setProperty("vcap.services.c-pcc.tags", "pivotal,database,gemfire");
 		vcap.setProperty("vcap.application.space_name", "outerspace");
 		vcap.setProperty("vcap.services.a-pcc.tags", "pivotal,cloudcache,database");
 		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+		vcap.setProperty("vcap.services.b-pcc.name", "b-pcc");
+		vcap.setProperty("vcap.services.b-pcc.plan", "large");
 
 		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
 
 		assertThat(propertySource).isNotNull();
 
 		try {
-			propertySource.findFirstCloudCacheServiceName();
-		}
-		catch (IllegalStateException expected) {
-
-			assertThat(expected).hasMessage("No service with tags [cloudcache, gemfire] was found");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void findFirstCloudCacheServiceNameWithNoTagsThrowsIllegalStateException() {
-
-		Properties vcap = new Properties();
-
-		vcap.setProperty("vcap.application.name", "boot-example");
-		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
-		vcap.setProperty("vcap.services.test-pcc.plan", "small");
-		vcap.setProperty("vcap.application.space_name", "outerspace");
-		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
-
-		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
-
-		assertThat(propertySource).isNotNull();
-
-		try {
-			propertySource.findFirstCloudCacheServiceName();
+			propertySource.requireFirstCloudCacheServiceName();
 		}
 		catch (IllegalStateException expected) {
 
@@ -432,7 +451,48 @@ public class VcapPropertySourceUnitTests {
 	}
 
 	@Test
-	public void findFirstCloudCacheServiceReturnsCloudCacheService() throws Exception {
+	public void findFirstCloudCacheServiceReturnsOptionalOfCloudCacheService() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal,cloudcache,database,gemfire,junk");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+
+		Optional<CloudCacheService> cloudCacheService = propertySource.findFirstCloudCacheService();
+
+		assertThat(cloudCacheService).isNotNull();
+		assertThat(cloudCacheService.isPresent()).isTrue();
+		assertThat(cloudCacheService.map(CloudCacheService::getName).orElse(null)).isEqualTo("test-pcc");
+		assertThat(cloudCacheService.flatMap(CloudCacheService::getLocators).isPresent()).isFalse();
+		assertThat(cloudCacheService.flatMap(CloudCacheService::getGfshUrl).isPresent()).isFalse();
+	}
+
+	@Test
+	public void findFirstCloudCacheServiceReturnsEmptyOptional() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.services.test-postresql.name", "TestPostreSQLDatabase");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.services.test-postresql.tags", "pivotal, database, postresql");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+		assertThat(propertySource.findFirstCloudCacheService().isPresent()).isFalse();
+	}
+
+	@Test
+	public void requireFirstCloudCacheServiceReturnsCloudCacheService() throws Exception {
 
 		URL gfshUrl = new URL("https://skullbox:7070/v1/gemfire");
 
@@ -451,15 +511,43 @@ public class VcapPropertySourceUnitTests {
 
 		assertThat(propertySource).isNotNull();
 
-		CloudCacheService cloudCacheService = propertySource.findFirstCloudCacheService();
+		CloudCacheService cloudCacheService = propertySource.requireFirstCloudCacheService();
 
 		assertThat(cloudCacheService).isNotNull();
+		assertThat(cloudCacheService.getName()).isEqualTo("test-pcc");
 		assertThat(cloudCacheService.getGfshUrl().orElse(null)).isEqualTo(gfshUrl);
 		assertThat(cloudCacheService.getLocatorList()).containsExactly(
 			CloudCacheService.Locator.newLocator("sandbox", 1234),
 			CloudCacheService.Locator.newLocator("toolbox", 10334),
 			CloudCacheService.Locator.newLocator("xbox", 6789)
 		);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void requireFirstCloudCacheServiceWhenNotFoundThrowsIllegalStateException() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.services.test-postresql.name", "TestPostreSQLDatabase");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.services.test-postresql.tags", "pivotal, database, postresql");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+
+		try {
+			propertySource.requireFirstCloudCacheService();
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("Unable to resolve a CloudCache Service Instance");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
 	}
 
 	@Test
@@ -505,13 +593,13 @@ public class VcapPropertySourceUnitTests {
 		assertThat(root).isNotNull();
 		assertThat(root.getName()).isEqualTo("root");
 		assertThat(root.getPassword().orElse(null)).isEqualTo("p@55w0rd");
-		assertThat(root.getRole().orElse(null).isClusterOperator()).isTrue();
+		assertThat(root.getRole().map(User.Role::isClusterOperator).orElse(false)).isTrue();
 
 		User majorTom = propertySource.findFirstUserByRoleClusterOperator(Service.with("jblum-pcc")).orElse(null);
 
 		assertThat(majorTom).isNotNull();
 		assertThat(majorTom.getName()).isEqualTo("majorTom");
 		assertThat(majorTom.getPassword().orElse(null)).isEqualTo("s3cUr3");
-		assertThat(majorTom.getRole().orElse(null).isClusterOperator()).isTrue();
+		assertThat(majorTom.getRole().map(User.Role::isClusterOperator).orElse(false)).isTrue();
 	}
 }

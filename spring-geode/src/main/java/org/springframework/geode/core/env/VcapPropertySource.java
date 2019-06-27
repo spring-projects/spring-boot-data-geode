@@ -70,9 +70,9 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 	private static final String VCAP_APPLICATION_URIS_PROPERTY = VCAP_APPLICATION_PROPERTY + "uris";
 	private static final String VCAP_PROPERTY_SOURCE_NAME = "vcap";
 	private static final String VCAP_SERVICES_PROPERTY = "vcap.services.";
-	private static final String VCAP_SERVICES_SERVICE_NAME_GFSH_URL_PROPERTY = "vcap.services.%s.credentials.urls.gfsh";
-	private static final String VCAP_SERVICES_SERVICE_NAME_LOCATORS_PROPERTY = "vcap.services.%s.credentials.locators";
-	private static final String VCAP_SERVICES_SERVICE_NAME_USERS_PROPERTY = "vcap.services.%s.credentials.users[%d]";
+	private static final String VCAP_SERVICES_SERVICE_NAME_GFSH_URL_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.urls.gfsh";
+	private static final String VCAP_SERVICES_SERVICE_NAME_LOCATORS_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.locators";
+	private static final String VCAP_SERVICES_SERVICE_NAME_USERS_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.users[%d]";
 
 	private static final Predicate<Object> CLOUD_CACHE_SERVICE_PREDICATE =
 		propertyValue -> String.valueOf(propertyValue).toLowerCase().contains(CLOUD_CACHE_TAG_NAME);
@@ -124,9 +124,11 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 			.map(EnumerablePropertySource.class::cast)
 			.map(VcapPropertySource::new)
 			.orElseThrow(() -> newIllegalArgumentException(
-				"A valid EnumerablePropertySource named [%s] containing VCAP properties is required",
+				"An EnumerablePropertySource named [%s] containing VCAP properties is required",
 					VCAP_PROPERTY_SOURCE_NAME));
 	}
+
+	private Predicate<Object> vcapServicePredicate;
 
 	/**
 	 * Constructs a new {@link PropertySource} from the existing, required {@link EnumerablePropertySource} instance
@@ -172,39 +174,58 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 		return findAllPropertiesByNameMatching(VCAP_SERVICES_PROPERTIES_PREDICATE);
 	}
 
-	public CloudCacheService findFirstCloudCacheService() {
+	public Optional<CloudCacheService> findFirstCloudCacheService() {
 
-		String serviceName = findFirstCloudCacheServiceName();
+		return findFirstCloudCacheServiceName()
+			.map(serviceName -> {
 
-		CloudCacheService service = CloudCacheService.with(serviceName);
+				CloudCacheService service = CloudCacheService.with(serviceName);
 
-		Optional.ofNullable(getProperty(String.format(VCAP_SERVICES_SERVICE_NAME_LOCATORS_PROPERTY, serviceName)))
-			.map(String::valueOf)
-			.ifPresent(service::withLocators);
+				Object locators = getProperty(String.format(VCAP_SERVICES_SERVICE_NAME_LOCATORS_PROPERTY, service));
 
-		Optional.ofNullable(getProperty(String.format(VCAP_SERVICES_SERVICE_NAME_GFSH_URL_PROPERTY, service)))
-			.map(String::valueOf)
-			.map(urlString -> ObjectUtils.doOperationSafely(() -> new URL(urlString)))
-			.ifPresent(service::withGfshUrl);
+				Optional.ofNullable(locators)
+					.map(String::valueOf)
+					.filter(StringUtils::hasText)
+					.ifPresent(service::withLocators);
 
-		return service;
+				Object gfshUrl = getProperty(String.format(VCAP_SERVICES_SERVICE_NAME_GFSH_URL_PROPERTY, service));
+
+				Optional.ofNullable(gfshUrl)
+					.map(String::valueOf)
+					.filter(StringUtils::hasText)
+					.map(urlString -> ObjectUtils.doOperationSafely(() -> new URL(urlString)))
+					.ifPresent(service::withGfshUrl);
+
+				return service;
+			});
 	}
 
-	public String findFirstCloudCacheServiceName() {
+	public CloudCacheService requireFirstCloudCacheService() {
+
+		return findFirstCloudCacheService().orElseThrow(() ->
+			newIllegalStateException("Unable to resolve a CloudCache Service Instance"));
+	}
+
+	public Optional<String> findFirstCloudCacheServiceName() {
 
 		Iterable<String> vcapServicesProperties = findAllVcapServicesProperties();
 
-		return findAllPropertiesByValueMatching(vcapServicesProperties, CLOUD_CACHE_AND_GEMFIRE_SERVICE_PREDICATE)
-			.stream()
+		Predicate<Object> vcapServicePredicate = resolveVcapServicePredicate();
+
+		return findAllPropertiesByValueMatching(vcapServicesProperties, vcapServicePredicate).stream()
 			.filter(propertyName -> propertyName.endsWith(".tags"))
 			.map(propertyName -> propertyName.substring(VCAP_SERVICES_PROPERTY.length()))
 			.map(propertyName -> propertyName.substring(0, propertyName.indexOf(".")))
 			.filter(StringUtils::hasText)
-			.sorted(String.CASE_INSENSITIVE_ORDER)
-			.findFirst()
-			.orElseThrow(() ->
-				newIllegalStateException("No service with tags [%1$s, %2$s] was found",
-					CLOUD_CACHE_TAG_NAME, GEMFIRE_TAG_NAME));
+			.min(String.CASE_INSENSITIVE_ORDER);
+	}
+
+	public String requireFirstCloudCacheServiceName() {
+
+		String tags = String.format("%1$s, %2$s", CLOUD_CACHE_TAG_NAME, GEMFIRE_TAG_NAME);
+
+		return findFirstCloudCacheServiceName()
+			.orElseThrow(() -> newIllegalStateException("No service with tags [%s] was found", tags));
 	}
 
 	public Optional<User> findFirstUserByRoleClusterOperator(Service service) {
@@ -238,9 +259,15 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 		return Optional.empty();
 	}
 
+	protected Predicate<Object> resolveVcapServicePredicate() {
+
+		return this.vcapServicePredicate != null
+			? this.vcapServicePredicate
+			: CLOUD_CACHE_AND_GEMFIRE_SERVICE_PREDICATE;
+	}
+
 	@Nullable
 	@Override
-	@SuppressWarnings("all")
 	public Object getProperty(String name) {
 		return getSource().getProperty(name);
 	}
@@ -249,5 +276,12 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 	@SuppressWarnings("all")
 	public Iterator<String> iterator() {
 		return Collections.unmodifiableList(Arrays.asList(getSource().getPropertyNames())).iterator();
+	}
+
+	public VcapPropertySource withVcapServicePredicate(Predicate<Object> vcapServicePredicate) {
+
+		this.vcapServicePredicate = vcapServicePredicate;
+
+		return this;
 	}
 }
