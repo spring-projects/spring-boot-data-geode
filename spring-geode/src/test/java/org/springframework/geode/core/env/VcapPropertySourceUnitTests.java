@@ -16,6 +16,7 @@
 package org.springframework.geode.core.env;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 
@@ -353,6 +355,62 @@ public class VcapPropertySourceUnitTests {
 	}
 
 	@Test
+	public void findTargetVcapApplicationPropertiesIsSuccessful() {
+
+		EnumerablePropertySource mockPropertySource = mock(EnumerablePropertySource.class);
+
+		String[] propertyNames = {
+			"vcap.services.jblum-pcc.credentials.locators",
+			"vcap.services.jblum-pcc.credentials.users",
+			"vcap.application.host",
+			"vcap.services.test-pcc.credentials.locators",
+			"vcap.services.test-pcc.credentials.users",
+			"vcap.application.name",
+			"vcap.services.jblum-pcc.name",
+			"vcap.services.test-pcc.name",
+			"vcap.application.port",
+			"vcap.services.jblum-pcc.plan",
+			"vcap.application.space_name",
+			"vcap.services.test-pcc.plan",
+			"vcap.application.uris",
+			"vcap.services.jblum-pcc.tags",
+			"vcap.services.test-pcc.tags"
+		};
+
+		when(mockPropertySource.containsProperty(anyString())).thenAnswer(invocation ->
+			Arrays.asList(propertyNames).contains(invocation.getArgument(0, String.class)));
+
+		when(mockPropertySource.getName()).thenReturn("vcap");
+		when(mockPropertySource.getPropertyNames()).thenReturn(propertyNames);
+
+		VcapPropertySource propertySource = VcapPropertySource.from(mockPropertySource);
+
+		assertThat(propertySource).isNotNull();
+		assertThat(propertySource.getSource()).isEqualTo(mockPropertySource);
+
+		Predicate<String> testPccServicePredicate = propertyName -> propertyName.contains("test-pcc");
+
+		Set<String> testPccServicePropertyNames =
+			propertySource.findTargetVcapServiceProperties(testPccServicePredicate);
+
+		assertThat(testPccServicePropertyNames).isNotNull();
+
+		assertThat(testPccServicePropertyNames)
+			.describedAs("PCC Service Properties [%s]", testPccServicePropertyNames)
+			.hasSize(5);
+
+		assertThat(testPccServicePropertyNames)
+			.containsExactlyInAnyOrder("vcap.services.test-pcc.credentials.locators",
+				"vcap.services.test-pcc.credentials.users", "vcap.services.test-pcc.name",
+					"vcap.services.test-pcc.plan", "vcap.services.test-pcc.tags");
+
+		verify(mockPropertySource, times(1)).getName();
+		verify(mockPropertySource, times(1)).containsProperty(eq("vcap.application.name"));
+		verify(mockPropertySource, times(1)).containsProperty(eq("vcap.application.uris"));
+		verify(mockPropertySource, times(1)).getPropertyNames();
+	}
+
+	@Test
 	public void findFirstCloudCacheServiceNameReturnsOptionalOfServiceName() {
 
 		Properties vcap = new Properties();
@@ -601,5 +659,96 @@ public class VcapPropertySourceUnitTests {
 		assertThat(majorTom.getName()).isEqualTo("majorTom");
 		assertThat(majorTom.getPassword().orElse(null)).isEqualTo("s3cUr3");
 		assertThat(majorTom.getRole().map(User.Role::isClusterOperator).orElse(false)).isTrue();
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void withMockVcapServicePredicateConfiguresVcapServicePredicateReturnsThis() {
+
+		Properties properties = new Properties();
+
+		properties.setProperty("vcap.application.name", "withVcapServicePredicateConfiguresVcapServicePredicateReturnsThis");
+		properties.setProperty("vcap.application.uris", "{}");
+
+		Predicate<String> mockVcapServicePredicate = mock(Predicate.class);
+
+		VcapPropertySource propertySource = VcapPropertySource.from(properties);
+
+		assertThat(propertySource).isNotNull();
+		assertThat(propertySource.getVcapServicePredicate()).isNotEqualTo(mockVcapServicePredicate);
+		assertThat(propertySource.withVcapServicePredicate(mockVcapServicePredicate)).isEqualTo(propertySource);
+		assertThat(propertySource.getVcapServicePredicate()).isEqualTo(mockVcapServicePredicate);
+	}
+
+	@Test
+	public void withNullVcapServicePredicateAllowsAndSetsNullReturnsThis() {
+
+		Properties properties = new Properties();
+
+		properties.setProperty("vcap.application.name", "withNullVcapServicePredicateAllowsAndSetsNullReturnsThis");
+		properties.setProperty("vcap.application.uris", "{}");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(properties);
+
+		assertThat(propertySource).isNotNull();
+		assertThat(propertySource.getVcapServicePredicate()).isNotNull();
+		assertThat(propertySource.withVcapServicePredicate(null)).isEqualTo(propertySource);
+		assertThat(propertySource.getVcapServicePredicate()).isNotNull();
+	}
+
+	private void testWithInvalidVcapServiceName(String serviceName) {
+
+		Properties properties = new Properties();
+
+		properties.setProperty("vcap.application.name", "testWithInvalidVcapServiceName");
+		properties.setProperty("vcap.application.uris", "{}");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(properties);
+
+		assertThat(propertySource).isNotNull();
+
+		propertySource.withVcapServiceName(serviceName);
+
+		fail("Expected VcapPropertySource.withServiceName(%s) to fail", serviceName);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void withBlankVcapServiceNameThrowsIllegalArgumentException() {
+		testWithInvalidVcapServiceName("    ");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void withEmptyVcapServiceNameThrowsIllegalArgumentException() {
+		testWithInvalidVcapServiceName("");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void withNullVcapServiceNameThrowsIllegalArgumentException() {
+		testWithInvalidVcapServiceName(null);
+	}
+
+	@Test
+	public void withValidVcapSeviceNameConfiguresVcapServicePredicateReturnsThis() {
+
+		Properties properties = new Properties();
+
+		properties.setProperty("vcap.application.name", "withValidVcapSeviceNameConfiguresVcapServicePredicateReturnsThis");
+		properties.setProperty("vcap.application.uris", "{}");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(properties);
+
+		assertThat(propertySource).isNotNull();
+		assertThat(propertySource.withVcapServiceName("test-pcc")).isEqualTo(propertySource);
+
+		Predicate<String> vcapServicePredicate = propertySource.getVcapServicePredicate();
+
+		assertThat(vcapServicePredicate).isNotNull();
+		assertThat(vcapServicePredicate.test("vcap.services.test-pcc.name")).isTrue();
+		assertThat(vcapServicePredicate.test("vcap.services.test-pcc.tags")).isTrue();
+		assertThat(vcapServicePredicate.test("vcap.application.test-pcc.name")).isFalse();
+		assertThat(vcapServicePredicate.test("vcap.test-pcc.name")).isFalse();
+		assertThat(vcapServicePredicate.test("test-pcc.name")).isFalse();
+		assertThat(vcapServicePredicate.test("test-pcc")).isFalse();
+		assertThat(vcapServicePredicate.test("vcap.services.junk-pcc.name")).isFalse();
 	}
 }

@@ -38,7 +38,9 @@ import org.springframework.geode.core.env.support.CloudCacheService;
 import org.springframework.geode.core.env.support.Service;
 import org.springframework.geode.core.env.support.User;
 import org.springframework.geode.core.util.ObjectUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**
@@ -128,7 +130,7 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 					VCAP_PROPERTY_SOURCE_NAME));
 	}
 
-	private Predicate<Object> vcapServicePredicate;
+	private Predicate<String> vcapServicePredicate;
 
 	/**
 	 * Constructs a new {@link PropertySource} from the existing, required {@link EnumerablePropertySource} instance
@@ -171,7 +173,24 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 	}
 
 	public Set<String> findAllVcapServicesProperties() {
-		return findAllPropertiesByNameMatching(VCAP_SERVICES_PROPERTIES_PREDICATE);
+		return findTargetVcapServiceProperties(VCAP_SERVICES_PROPERTIES_PREDICATE);
+	}
+
+	public Set<String> findTargetVcapServiceProperties(Predicate<String> vcapServicePropertiesPredicate) {
+		return findAllPropertiesByNameMatching(filterByVcapServicePropertiesPredicate(vcapServicePropertiesPredicate));
+	}
+
+	private Predicate<String> filterByVcapServicePropertiesPredicate(Predicate<String> vcapServicePropertiesPredicate) {
+
+		return isValid(vcapServicePropertiesPredicate)
+			? VCAP_SERVICES_PROPERTIES_PREDICATE.and(vcapServicePropertiesPredicate)
+			: VCAP_SERVICES_PROPERTIES_PREDICATE;
+	}
+
+	private boolean isValid(Predicate<String> vcapServicePropertiesPredicate) {
+
+		return vcapServicePropertiesPredicate != null
+			&& vcapServicePropertiesPredicate != VCAP_SERVICES_PROPERTIES_PREDICATE;
 	}
 
 	public Optional<CloudCacheService> findFirstCloudCacheService() {
@@ -208,11 +227,10 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 
 	public Optional<String> findFirstCloudCacheServiceName() {
 
-		Iterable<String> vcapServicesProperties = findAllVcapServicesProperties();
+		Iterable<String> vcapServicesProperties = findTargetVcapServiceProperties(getVcapServicePredicate());
 
-		Predicate<Object> vcapServicePredicate = resolveVcapServicePredicate();
-
-		return findAllPropertiesByValueMatching(vcapServicesProperties, vcapServicePredicate).stream()
+		return findAllPropertiesByValueMatching(vcapServicesProperties, CLOUD_CACHE_AND_GEMFIRE_SERVICE_PREDICATE)
+			.stream()
 			.filter(propertyName -> propertyName.endsWith(".tags"))
 			.map(propertyName -> propertyName.substring(VCAP_SERVICES_PROPERTY.length()))
 			.map(propertyName -> propertyName.substring(0, propertyName.indexOf(".")))
@@ -259,17 +277,18 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 		return Optional.empty();
 	}
 
-	protected Predicate<Object> resolveVcapServicePredicate() {
-
-		return this.vcapServicePredicate != null
-			? this.vcapServicePredicate
-			: CLOUD_CACHE_AND_GEMFIRE_SERVICE_PREDICATE;
-	}
-
 	@Nullable
 	@Override
 	public Object getProperty(String name) {
 		return getSource().getProperty(name);
+	}
+
+	@NonNull
+	protected Predicate<String> getVcapServicePredicate() {
+
+		return this.vcapServicePredicate != null
+			? this.vcapServicePredicate
+			: propertyName -> true;
 	}
 
 	@Override
@@ -278,7 +297,21 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 		return Collections.unmodifiableList(Arrays.asList(getSource().getPropertyNames())).iterator();
 	}
 
-	public VcapPropertySource withVcapServicePredicate(Predicate<Object> vcapServicePredicate) {
+	@NonNull
+	public VcapPropertySource withVcapServiceName(@NonNull String serviceName) {
+
+		Assert.hasText(serviceName, "Service name is required");
+
+		String resolvedServiceName = StringUtils.trimAllWhitespace(serviceName);
+
+		Predicate<String> vcapServiceNamePredicate = propertyName ->
+			propertyName.startsWith(String.format("%1$s%2$s.", VCAP_SERVICES_PROPERTY, resolvedServiceName));
+
+		return withVcapServicePredicate(vcapServiceNamePredicate);
+	}
+
+	@NonNull
+	public VcapPropertySource withVcapServicePredicate(@Nullable Predicate<String> vcapServicePredicate) {
 
 		this.vcapServicePredicate = vcapServicePredicate;
 
