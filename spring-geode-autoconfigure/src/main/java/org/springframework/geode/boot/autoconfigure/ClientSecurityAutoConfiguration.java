@@ -15,6 +15,8 @@
  */
 package org.springframework.geode.boot.autoconfigure;
 
+import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
+
 import java.util.Optional;
 import java.util.Properties;
 
@@ -42,6 +44,7 @@ import org.springframework.data.gemfire.config.annotation.support.AutoConfigured
 import org.springframework.geode.core.env.VcapPropertySource;
 import org.springframework.geode.core.env.support.CloudCacheService;
 import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,18 +59,18 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform
  * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.boot.env.EnvironmentPostProcessor
+ * @see org.springframework.context.annotation.Conditional
  * @see org.springframework.context.annotation.Configuration
- * @see org.springframework.context.annotation.Import
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
- * @see org.springframework.core.env.PropertiesPropertySource
+ * @see org.springframework.core.env.PropertySource
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
  * @see org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer
  * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
- * @see org.springframework.geode.boot.autoconfigure.HttpBasicAuthenticationSecurityConfiguration
  * @see org.springframework.geode.core.env.VcapPropertySource
  * @see org.springframework.geode.core.env.support.CloudCacheService
  * @see org.springframework.geode.core.env.support.Service
@@ -82,6 +85,9 @@ import org.slf4j.LoggerFactory;
 //@Import(HttpBasicAuthenticationSecurityConfiguration.class)
 @SuppressWarnings("unused")
 public class ClientSecurityAutoConfiguration {
+
+	public static final String CLOUD_CACHE_SERVICE_INSTANCE_NAME_PROPERTY =
+		"spring.boot.data.gemfire.cloud.cloudfoundry.service.cloudcache.name";
 
 	public static final String CLOUD_SECURITY_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY =
 		"spring.boot.data.gemfire.security.auth.environment.post-processor.enabled";
@@ -116,7 +122,7 @@ public class ClientSecurityAutoConfiguration {
 		}
 
 		private boolean isCloudFoundryEnvironment(Environment environment) {
-			return environment != null && CloudPlatform.CLOUD_FOUNDRY.isActive(environment);
+			return CloudPlatform.CLOUD_FOUNDRY.isActive(environment);
 		}
 
 		private boolean isEnabled(Environment environment) {
@@ -145,8 +151,8 @@ public class ClientSecurityAutoConfiguration {
 			return !isSecurityPropertiesSet(environment);
 		}
 
-		private void configureAuthentication(Environment environment, Properties cloudCacheProperties,
-				VcapPropertySource vcapPropertySource, CloudCacheService cloudCacheService) {
+		private void configureAuthentication(Environment environment, VcapPropertySource vcapPropertySource,
+				CloudCacheService cloudCacheService, Properties cloudCacheProperties) {
 
 			vcapPropertySource.findFirstUserByRoleClusterOperator(cloudCacheService)
 				.filter(user -> isSecurityPropertiesNotSet(environment))
@@ -159,15 +165,15 @@ public class ClientSecurityAutoConfiguration {
 				});
 		}
 
-		private void configureLocators(Environment environment, Properties cloudCacheProperties,
-				VcapPropertySource vcapPropertySource, CloudCacheService cloudCacheService) {
+		private void configureLocators(Environment environment, VcapPropertySource vcapPropertySource,
+				CloudCacheService cloudCacheService, Properties cloudCacheProperties) {
 
 			cloudCacheService.getLocators().ifPresent(locators ->
 				cloudCacheProperties.setProperty(POOL_LOCATORS_PROPERTY, locators));
 		}
 
-		private void configureManagementRestApiAccess(Environment environment, Properties cloudCacheProperties,
-				VcapPropertySource vcapPropertySource, CloudCacheService cloudCacheService) {
+		private void configureManagementRestApiAccess(Environment environment, VcapPropertySource vcapPropertySource,
+				CloudCacheService cloudCacheService, Properties cloudCacheProperties) {
 
 			cloudCacheService.getGfshUrl().ifPresent(url -> {
 				cloudCacheProperties.setProperty(MANAGEMENT_USE_HTTP_PROPERTY, Boolean.TRUE.toString());
@@ -178,22 +184,41 @@ public class ClientSecurityAutoConfiguration {
 
 		public void configureSecurityContext(ConfigurableEnvironment environment) {
 
-			VcapPropertySource vcapPropertySource = toVcapPropertySource(environment);
+			String cloudcacheServiceInstanceName = environment.getProperty(CLOUD_CACHE_SERVICE_INSTANCE_NAME_PROPERTY);
 
-			Properties cloudCacheProperties = new Properties();
+			VcapPropertySource vcapPropertySource = StringUtils.hasText(cloudcacheServiceInstanceName)
+				? toVcapPropertySource(environment).withVcapServiceName(cloudcacheServiceInstanceName)
+				: toVcapPropertySource(environment);
 
-			CloudCacheService cloudCacheService = vcapPropertySource.findFirstCloudCacheService();
+			vcapPropertySource.findFirstCloudCacheService()
+				.map(cloudCacheService -> {
 
-			configureAuthentication(environment, cloudCacheProperties, vcapPropertySource, cloudCacheService);
-			configureLocators(environment, cloudCacheProperties, vcapPropertySource, cloudCacheService);
-			configureManagementRestApiAccess(environment, cloudCacheProperties, vcapPropertySource, cloudCacheService);
+					Properties cloudCacheProperties = new Properties();
 
-			environment.getPropertySources()
-				.addLast(newPropertySource(CLOUD_CACHE_PROPERTY_SOURCE_NAME, cloudCacheProperties));
+					configureAuthentication(environment, vcapPropertySource, cloudCacheService, cloudCacheProperties);
+					configureLocators(environment, vcapPropertySource, cloudCacheService, cloudCacheProperties);
+					configureManagementRestApiAccess(environment, vcapPropertySource, cloudCacheService, cloudCacheProperties);
+
+					environment.getPropertySources()
+						.addLast(newPropertySource(CLOUD_CACHE_PROPERTY_SOURCE_NAME, cloudCacheProperties));
+
+					return cloudCacheService;
+				})
+				.orElseGet(() -> {
+
+					if (StringUtils.hasText(cloudcacheServiceInstanceName)) {
+						throw newIllegalStateException("No CloudCache Service Instance with name [%s] was found",
+							cloudcacheServiceInstanceName);
+					}
+					else {
+						logger.warn("No CloudCache Service Instance was found");
+					}
+
+					return null;
+				});
 		}
 
 		private PropertySource<?> newPropertySource(String name, Properties properties) {
-			//return new PropertiesPropertySource(name, properties);
 			return new SpringDataGemFirePropertiesPropertySource(name, properties);
 		}
 
@@ -241,12 +266,12 @@ public class ClientSecurityAutoConfiguration {
 			super(name, springDataGemFireProperties);
 		}
 
-		@Nullable @Override @SuppressWarnings("all")
+		@Nullable @Override
 		public Object getProperty(String name) {
 			return getSource().getProperty(name);
 		}
 
-		@Override @SuppressWarnings("all")
+		@Override
 		public boolean containsProperty(String name) {
 			return getSource().containsKey(name);
 		}

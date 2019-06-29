@@ -17,6 +17,7 @@ package org.springframework.geode.boot.autoconfigure.security.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -35,6 +36,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.data.gemfire.tests.logging.slf4j.logback.TestAppender;
 import org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration.AutoConfiguredCloudSecurityEnvironmentPostProcessor;
 import org.springframework.mock.env.MockEnvironment;
@@ -43,10 +45,16 @@ import org.springframework.mock.env.MockEnvironment;
  * Unit Tests for {@link ClientSecurityAutoConfiguration}.
  *
  * @author John Blum
+ * @see java.util.Properties
  * @see org.junit.Test
  * @see org.mockito.Mockito
  * @see org.springframework.core.env.ConfigurableEnvironment
+ * @see org.springframework.core.env.MutablePropertySources
+ * @see org.springframework.core.env.PropertiesPropertySource
+ * @see org.springframework.core.env.PropertySource
+ * @see org.springframework.data.gemfire.tests.logging.slf4j.logback.TestAppender
  * @see org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration
+ * @see org.springframework.mock.env.MockEnvironment
  * @since 1.0.0
  */
 public class ClientSecurityAutoConfigurationUnitTests {
@@ -159,7 +167,6 @@ public class ClientSecurityAutoConfigurationUnitTests {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void configuresSecurityContext() {
 
 		ConfigurableEnvironment mockEnvironment = mock(ConfigurableEnvironment.class);
@@ -210,7 +217,6 @@ public class ClientSecurityAutoConfigurationUnitTests {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void configuresSecurityContextWithLocatorsOnly() {
 
 		ConfigurableEnvironment mockEnvironment = mock(ConfigurableEnvironment.class);
@@ -260,5 +266,87 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.use-http")).isFalse();
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.http.host")).isFalse();
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.http.port")).isFalse();
+	}
+
+	@Test
+	public void configureSecurityContextWhenNoCloudCacheServiceInstanceIsFoundLogsWarning() {
+
+		ConfigurableEnvironment mockEnvironment = mock(ConfigurableEnvironment.class);
+
+		MutablePropertySources propertySources = spy(new MutablePropertySources());
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "TestApp");
+		vcap.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
+
+		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcap);
+
+		propertySources.addFirst(vcapPropertySource);
+
+		when(mockEnvironment.getPropertySources()).thenReturn(propertySources);
+		when(mockEnvironment.getProperty(anyString())).thenReturn(null);
+
+		AutoConfiguredCloudSecurityEnvironmentPostProcessor environmentPostProcessor =
+			new AutoConfiguredCloudSecurityEnvironmentPostProcessor();
+
+		try {
+
+			environmentPostProcessor.configureSecurityContext(mockEnvironment);
+
+			TestAppender testAppender = TestAppender.getInstance();
+
+			assertThat(testAppender).isNotNull();
+			assertThat(testAppender.lastLogMessage()).isEqualTo("No CloudCache Service Instance was found");
+		}
+		finally {
+
+			verify(mockEnvironment, times(1))
+				.getProperty(eq(ClientSecurityAutoConfiguration.CLOUD_CACHE_SERVICE_INSTANCE_NAME_PROPERTY));
+			verify(mockEnvironment, times(1)).getPropertySources();
+			verify(propertySources, never()).addLast(any(PropertySource.class));
+		}
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void configureSecurityContextWhenTargetCloudCacheServiceInstanceIsNotFoundThrowsIllegalStateException() {
+
+		ConfigurableEnvironment mockEnvironment = mock(ConfigurableEnvironment.class);
+
+		MutablePropertySources propertySources = spy(new MutablePropertySources());
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "TestApp");
+		vcap.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
+
+		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcap);
+
+		propertySources.addFirst(vcapPropertySource);
+
+		when(mockEnvironment.getPropertySources()).thenReturn(propertySources);
+		when(mockEnvironment.getProperty(ClientSecurityAutoConfiguration.CLOUD_CACHE_SERVICE_INSTANCE_NAME_PROPERTY))
+			.thenReturn("test-pcc");
+
+		AutoConfiguredCloudSecurityEnvironmentPostProcessor environmentPostProcessor =
+			new AutoConfiguredCloudSecurityEnvironmentPostProcessor();
+
+		try {
+			environmentPostProcessor.configureSecurityContext(mockEnvironment);
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("No CloudCache Service Instance with name [test-pcc] was found");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+
+			verify(mockEnvironment, times(1))
+				.getProperty(eq(ClientSecurityAutoConfiguration.CLOUD_CACHE_SERVICE_INSTANCE_NAME_PROPERTY));
+			verify(mockEnvironment, times(1)).getPropertySources();
+			verify(propertySources, never()).addLast(any(PropertySource.class));
+		}
 	}
 }
