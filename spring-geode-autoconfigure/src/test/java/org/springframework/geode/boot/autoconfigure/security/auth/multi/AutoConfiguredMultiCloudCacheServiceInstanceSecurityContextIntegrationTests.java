@@ -18,6 +18,7 @@ package org.springframework.geode.boot.autoconfigure.security.auth.multi;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
@@ -86,6 +87,11 @@ public class AutoConfiguredMultiCloudCacheServiceInstanceSecurityContextIntegrat
 
 	public static void unsetTestAutoConfiguredPoolServersPortSystemProperty() {
 		System.clearProperty(GEMFIRE_POOL_SERVERS_PROPERTY);
+	}
+
+	@AfterClass
+	public static void cleanUpUsedResources() {
+		vcapApplicationProperties.stringPropertyNames().forEach(System::clearProperty);
 	}
 
 	@SpringBootApplication
