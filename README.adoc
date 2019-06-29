@@ -71,11 +71,20 @@ You can find an example of using SBDG in the Pivotal Cloud Cache (PCC) https://g
 repository, which is a Spring Boot `ClientCache` application that talks to PCC when the app is deploy to PCF.
 
 The https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example] found in the
-Contacts Application Reference Implementation for _Spring Data for Apache Geode & Pivotal GemFire_ (SDG) uses SBDG
+_Contacts Application Reference Implementation_ for _Spring Data for Apache Geode & Pivotal GemFire_ (SDG) uses SBDG
 to manage Books in a _System of Record_ Use Case.
 
-Then, the https://github.com/jxblum/temperature-service/tree/using-spring-boot[Temperature Service] example is
-an _Internet of Things_ (IoT) and _Event Stream Processing_ (ESP) Use Case that manages Temperature Sensors and Monitors.
+Then, there is a series of examples that walks a user though a series of steps starting with building a simple,
+Spring Boot client application using the Apache Geode API only.  Next, the app is rebuilt using Spring Data
+for Apache Geode (SDG) to show the simplifications that SDG affords you as a developer.  Finally, the app rebuilt
+once more using SBDG to demonstrate the power of Apache Geode when combined with Spring Boot.  The example can found
+in the https://github.com/kohlmu-pivotal/PCCDemo[PCCDemo] GitHub repository.  Each app can be deployed to PCF
+and bound to a Pivotal Cloud Cache service.  With SBDG, little or no code or configuration changes are necessary
+to run the app locally and then later deploy the same app artifact to a managed environment like PCF.  It just works!
+
+Finally, the https://github.com/jxblum/temperature-service/tree/using-spring-boot[Temperature Service] example is
+an _Internet of Things_ (IoT) and _Event Stream Processing_ (ESP) Use Case that manages Temperature Sensors and Monitors
+and uses SBDG to make the application configuration and implementation as simple as can be.
 
 Overtime, we will be adding even more relevant and practical examples, so please keep checking back.
 
