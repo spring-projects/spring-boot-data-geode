@@ -58,9 +58,14 @@ import lombok.ToString;
  *
  * @author John Blum
  * @see java.security.Principal
+ * @see java.util.Properties
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.security.ResourcePermission
+ * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.context.annotation.Import
  * @see org.springframework.core.env.Environment
+ * @see org.springframework.core.io.ClassPathResource
  * @see org.springframework.data.gemfire.GemfireTemplate
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @since 1.0.0
