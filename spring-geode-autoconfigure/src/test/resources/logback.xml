@@ -9,11 +9,17 @@
 		</encoder>
 	</appender>
 
+	<appender name="testAppender" class="org.springframework.data.gemfire.tests.logging.slf4j.logback.TestAppender"/>
+
 	<logger name="ch.qos.logback" level="${logback.log.level:-ERROR}"/>
 
 	<logger name="org.apache" level="${logback.log.level:-ERROR}"/>
 
 	<logger name="org.springframework" level="${logback.log.level:-ERROR}"/>
+
+	<logger name="org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration" level="WARN">
+		<appender-ref ref="testAppender"/>
+	</logger>
 
 	<root level="${logback.log.level:-ERROR}">
 		<appender-ref ref="console"/>
