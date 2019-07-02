@@ -1,0 +1,5 @@
+{
+	"locators": [ "<hostname>[<port>]" ],
+	"urls": { "gfsh": "https://<hostname>/gemfire/v1" },
+	"users": [{ "password": "<password>", "roles": [ "cluster_operator" ], "username": "<username>" }]
+}
