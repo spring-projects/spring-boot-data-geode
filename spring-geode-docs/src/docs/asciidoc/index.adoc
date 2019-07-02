@@ -16,8 +16,11 @@ John Blum
 :pivotal-cloudcache-version: 1-8
 :pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}/index.html
 :pivotal-cloudcache-website: https://pivotal.io/pivotal-cloud-cache
+:pivotal-cloudfoundry-version: 2-6
+:pivotal-cloudfoundry-docs: https://docs.pivotal.io/pivotalcf/{pivotal-cloudfoundry-version}
+:pivotal-cloudfoundry-website: https://pivotal.io/platform
 :pivotal-gemfire-version: 95
-:pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference/topics/gemfire_properties.html
+:pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference
 :pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
 :pivotal-gemfire-website: https://pivotal.io/pivotal-gemfire
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference
@@ -230,5 +233,6 @@ include::data-serialization.adoc[]
 include::security.adoc[]
 include::actuator.adoc[]
 include::session.adoc[]
+include::cloudfoundry.adoc[]
 include::samples.adoc[]
 include::appendix.adoc[]

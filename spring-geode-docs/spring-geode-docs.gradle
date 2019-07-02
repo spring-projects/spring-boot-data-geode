@@ -41,6 +41,7 @@ asciidoctor {
 		'spring-session-data-geode-version' : "${springSessionDataGeodeVersion}",
 		'docs-dir' : rootProject.projectDir.path + '/spring-geode-docs',
 		'docs-src-dir' : rootProject.projectDir.path + '/spring-geode-docs/src/main/java',
+		'docs-resources-dir' : rootProject.projectDir.path + '/spring-geode-docs/src/main/resources',
 		'examples-dir' : rootProject.projectDir.path + '/spring-geode-examples',
 		'samples-dir'  : rootProject.projectDir.path + '/spring-geode-samples'
 }
