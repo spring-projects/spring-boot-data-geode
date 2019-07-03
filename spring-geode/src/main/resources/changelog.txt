@@ -4,10 +4,27 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.1.0.M3 (2019-07-03)
+----------------------------------------
+Adds support for deploying Spring Boot, ClientCache applications to Pivotal CloudFoundry (PCF) connected to an external,
+standalone Apache Geode or Pivotal GemFire cluster.
+
+* Adds support for hybrid cloud deployments, pushing Spring Boot, ClientCache applications to PCF connected to
+an external, standalone Apache Geode or Pivotal GemFire cluster.
+* Adds support to target a specific Pivotal Cloud Cache (PCC) service instance when multiple PCC service instances
+are bound to a Spring Boot, ClientCache application in Pivotal CloudFoundry (PCF).
+* Adds auto-configuration for Apache Geode & Pivotal GemFire logging.
+* Adds a new section in the Appendix describing how to switch between open source Apache Geode & Pivotal Cloud Cache,
+or alternatively, Pivotal GemFire.
+* Upgrades to Spring Boot 2.1.6.RELEASE.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.5.RELEASE.
+* Upgrades to Spring Session BOM Bean-SR6.
+
+
 Changes in version 1.1.0.M2 (2019-06-14)
 ----------------------------------------
 Adds support for the Inline Caching Use Case (UC) along with Spring Boot Starters for Spring Session
-and Spring Test for Apache Geode/Pivotal GemFire (STDG).
+and Spring Test for Apache Geode & Pivotal GemFire (STDG).
 
 * Adds the InlineCachingRegionConfigurer, RepositoryCacheLoader and RepositoryCacheWriter to support Inline Caching.
 * Adds the a @EnableSecurityManagerProxy annotation for conveniently locating and configuring an Apache Geode
@@ -15,17 +32,17 @@ SecurityManager implementation declared and registered as a bean in the Spring a
 * Adds the spring-geode-starter-session and spring-gemfire-starter-session modules to help users get started with
 (HTTP) Session Caching using either Apache Geode or Pivotal GemFire as the provider.
 * Adds the spring-geode-starter-test and spring-gemfire-starter-test modules, which automatically pulls in
-spring-boot-starter-test and Spring Test for Apache Geode/Pivotal GemFire (STDG) to help users test their Apache Geode
+spring-boot-starter-test and Spring Test for Apache Geode & Pivotal GemFire (STDG) to help users test their Apache Geode
 or Pivotal GemFire applications in a Spring context.
 * Includes early support for @LocatorApplication annotated Spring Boot applications enabling users to configure
 and bootstrap a GemFire/Geode Locator using Spring Boot.
 * Includes additional integration tests for customizing the auto-configuration of GemFire/Geode Pools using SDG Configurers.
 * Upgrades to Spring Framework 5.1.8.RELEASE.
-* Upgrades to Spring Data for Apache Geode/Pivotal GemFire 2.1.9.RELEASE.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.1.9.RELEASE.
 * Upgrades to Spring Data Release Train Lovelace-SR9.
-* Upgrades to Spring Session for Apache Geode/Pivotal GemFire 2.1.4.RELEASE.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.1.4.RELEASE.
 * Upgrades to Spring Session BOM Bean-SR5.
-* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.4.RELEASE.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.4.RELEASE.
 
 
 Changes in version 1.0.1.RELEASE (2019-06-13)
@@ -43,8 +60,8 @@ Changes in version 1.1.0.M1 (2019-05-07)
 ----------------------------------------
 Rebases SBDG on Spring Framework 5.1, Spring Boot 2.1, Spring Data Lovelace (2.1) and Spring Session 2.1.
 
-* Adds the @EnableSecurityManager annotation and associated configuration class to configure Apache Geode/Pivotal GemFire Security (Auth) using the CacheFactory API.
-* Adds the @EnableSecurityManagerProxy annotation and associated configuration class to configure Apache Geode/Pivotal GemFire Security (Auth) using the security-manager property with proxying.
+* Adds the @EnableSecurityManager annotation and associated configuration class to configure Apache Geode & Pivotal GemFire Security (Auth) using the CacheFactory API.
+* Adds the @EnableSecurityManagerProxy annotation and associated configuration class to configure Apache Geode & Pivotal GemFire Security (Auth) using the security-manager property with proxying.
 * Upgrades to Apache Geode 1.6.0.
 * Upgrades to the Apache Geode Management REST API 1.6.0 for testing cluster configuration and Auth.
 * Upgrades to Pivotal GemFire 9.5.3.
@@ -63,7 +80,7 @@ Edits documentation and adds Sample with Guide and Example Application code for 
 * Fix release (milestone, release candidate, and GA) version of the reference documentation.
 * Fix image links in reference docs.
 * Add Sample with Guide and Example Application code covering the Look-Aside Caching pattern.
-* Upgrade to Spring Data for Apache Geode/Pivotal GemFire Test 0.0.1.RELEASE.
+* Upgrade to Spring Data for Apache Geode & Pivotal GemFire Test 0.0.1.RELEASE.
 
 
 Changes in version 1.0.0.RC2 (2019-04-30)
@@ -83,7 +100,7 @@ with Apache Geode or Pivotal GemFire.
 
 Changes in version 1.0.0.RC1 (2019-04-24)
 -----------------------------------------
-Adds support for GemfireTemplate auto-configuration for each declared Apache Geode/Pivotal GemFire Region.
+Adds support for GemfireTemplate auto-configuration for each declared Apache Geode & Pivotal GemFire Region.
 
 * Adds auto-configuration to automatically create a GemfireTemplate for each declared Apache Geode or Pivotal GemFire
 Region (https://github.com/spring-projects/spring-boot-data-geode/issues/31).
@@ -117,7 +134,7 @@ and encapsulate configuration meta-data specified in properties files.
 * Upgrades to Spring Boot 2.0.8.RELEASE.
 * Upgrades to Spring Data Release Train Kay-SR13.
 * Upgrades to Spring Session Apple-SR8.
-* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.1.RC1.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.1.RC1.
 
 
 Changes in version 1.0.0.M3 (2018-09-20)
@@ -127,22 +144,22 @@ of either Apache Geode or Pivotal GemFire.
 
 Partly resolves (https://github.com/spring-projects/spring-boot-data-geode/issues/4).
 
-* Adds Spring Boot Actuator HealthIndicators for the Apache Geode/Pivotal GemFire peer Cache and ClientCache instances,
+* Adds Spring Boot Actuator HealthIndicators for the Apache Geode & Pivotal GemFire peer Cache and ClientCache instances,
 the DistributedSystem, the DistributedMember and the ResourceManager.
-* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire Regions.
-* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire Indexes.
-* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire DiskStores.
-* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire ContinuousQueries.
-* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire Pools.
-* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire CacheServers.
-* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire GatewaySenders.
-* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire GatewayReceivers.
-* Adds Spring Boot Actuator HealthIndicators for Apache Geode/Pivotal GemFire AsyncEventQueues.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode & Pivotal GemFire Regions.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode & Pivotal GemFire Indexes.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode & Pivotal GemFire DiskStores.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode & Pivotal GemFire ContinuousQueries.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode & Pivotal GemFire Pools.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode & Pivotal GemFire CacheServers.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode & Pivotal GemFire GatewaySenders.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode & Pivotal GemFire GatewayReceivers.
+* Adds Spring Boot Actuator HealthIndicators for Apache Geode & Pivotal GemFire AsyncEventQueues.
 * Upgrades to Mockito 2.22.0.
 * Upgrades to Spring Framework 5.0.9.RELEASE.
 * Upgrades to Spring Boot 2.0.5.RELEASE.
 * Upgrades to Spring Data Release Train Kay-SR10.
-* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.1.M4.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.1.M4.
 
 
 Changes in version 1.0.0.M2 (2018-08-29)
@@ -159,7 +176,7 @@ when Spring Session for Apache Geode or Pivotal GemFire is on the classpath
 * Upgrades to Spring Framework 5.0.8.RELEASE.
 * Upgrades to Spring Boot 2.0.4.RELEASE.
 * Upgrades to Spring Data Release Train Kay-SR9.
-* Upgrades to Spring Test for Apache Geode/Pivotal GemFire 0.0.1.M3.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.1.M3.
 
 
 Changes in version 1.0.0.M1 (2018-06-25)
@@ -169,13 +186,13 @@ Inception of the Spring Boot for Apache Geode & Pivotal GemFire project.
 * Adds the spring-geode module containing the core bits and functionality for this project.
 * Adds the spring-geode-autoconfigure module building on Spring Boot's auto-configuration functionality.
 ** Includes auto-configuration for a ClientCache instance.
-** Includes auto-configuration for using Apache Geode/Pivotal GemFire as a caching provider in Spring's Cache Abstraction.
+** Includes auto-configuration for using Apache Geode & Pivotal GemFire as a caching provider in Spring's Cache Abstraction.
 ** Includes auto-configuration for Spring Data Repositories.
-** Includes auto-configuration for Apache Geode/Pivotal GemFire Function Execution framework.
-** Includes auto-configuration for Apache Geode/Pivotal GemFire CQ.
-** Includes auto-configuration for Apache Geode/Pivotal GemFire PDX serialization.
-** Includes auto-configuration for Apache Geode/Pivotal GemFire Security (Authentication/Authorization).
-** Includes auto-configuration for Apache Geode/Pivotal GemFire Security (TLS using SSL).
+** Includes auto-configuration for Apache Geode & Pivotal GemFire Function Execution framework.
+** Includes auto-configuration for Apache Geode & Pivotal GemFire CQ.
+** Includes auto-configuration for Apache Geode & Pivotal GemFire PDX serialization.
+** Includes auto-configuration for Apache Geode & Pivotal GemFire Security (Authentication/Authorization).
+** Includes auto-configuration for Apache Geode & Pivotal GemFire Security (TLS using SSL).
 * Adds the spring-geode-docs modules containing the project documentation and reference guide.
 * Adds the spring-geode-starter module to get started building Spring Boot applications with Apache Geode.
 * Adds the spring-gemfire-starter module to get started building Spring Boot applications with Pivotal GemFire.
