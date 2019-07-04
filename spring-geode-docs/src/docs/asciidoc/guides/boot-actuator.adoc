@@ -14,7 +14,7 @@ Spring Boot applications using Apache Geode or Pivotal GemFire in a production e
 
 In particular, SBDG's integration with Spring Boot Actuator currently focuses on enabling
 {spring-boot-docs}/production-ready-endpoints.html#production-ready-health[Health Information]
-for your application.  In the future, SBDG will provide dedicated support for http://micrometer.io/[Micrometer] metrics.
+for your application.  In the future, SBDG will provide dedicated support for https://micrometer.io/[Micrometer] metrics.
 
 This guide assumes you are already familiar with Spring Boot and Apache Geode (or Pivotal GemFire).
 
