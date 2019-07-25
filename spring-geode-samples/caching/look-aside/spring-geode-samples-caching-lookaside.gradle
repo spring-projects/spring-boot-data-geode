@@ -1,6 +1,6 @@
 apply plugin: 'io.spring.convention.spring-sample-boot'
 
-description = "Spring Geode Sample demonstrating Spring's Cache Abstraction using Apache Geode as the caching provider."
+description = "Spring Geode Sample demonstrating Spring's Cache Abstraction using Apache Geode as the caching provider in Look-Aside Caching."
 
 dependencies {
 
