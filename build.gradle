@@ -20,3 +20,5 @@ description = 'Spring Boot for Apache Geode & Pivotal GemFire'
 ext.snapshotBuild = version.endsWith('SNAPSHOT')
 ext.releaseBuild = version.endsWith('RELEASE')
 ext.milestoneBuild = !(releaseBuild || snapshotBuild)
+
+ext.MAVEN_POM_EDITOR_GRADLE = "$rootDir/gradle/maven-pom-editor.gradle"

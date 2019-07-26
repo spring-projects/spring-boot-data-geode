@@ -1,0 +1,32 @@
+
+def customizePom(gradleProject, pom) {
+
+	pom.whenConfigured { generatedPom ->
+		generatedPom.project {
+			developers {
+				developer {
+					id = 'jxblum'
+					name = "John Blum"
+					email = "jblum@pivotal.io"
+				}
+			}
+			scm {
+				connection = 'scm:git:git@github.com:spring-projects/spring-boot-data-geode.git'
+				developerConnection = 'scm:git:git@github.com:spring-projects/spring-boot-data-geode.git'
+				url = 'https://github.com/spring-projects/spring-boot-data-geode'
+			}
+		}
+	}
+}
+
+project.install {
+	repositories.mavenInstaller {
+		customizePom(project, pom)
+	}
+}
+
+project.uploadArchives {
+	repositories.mavenDeployer {
+		customizePom(project, pom)
+	}
+}
