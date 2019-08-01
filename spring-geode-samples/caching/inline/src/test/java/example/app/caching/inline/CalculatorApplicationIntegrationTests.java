@@ -51,6 +51,7 @@ import example.app.caching.inline.service.CalculatorService;
  * @see example.app.caching.inline.service.CalculatorService
  * @since 1.1.0
  */
+// tag::class[]
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CalculatorApplicationIntegrationTests extends IntegrationTestsSupport {
@@ -131,3 +132,4 @@ public class CalculatorApplicationIntegrationTests extends IntegrationTestsSuppo
 		assertThat(this.calculatorService.isCacheMiss()).isTrue();
 	}
 }
+// end::class[]
