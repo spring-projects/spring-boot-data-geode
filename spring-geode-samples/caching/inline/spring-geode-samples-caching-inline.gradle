@@ -1,0 +1,37 @@
+apply plugin: 'io.spring.convention.spring-sample-boot'
+
+description = "Spring Geode Sample demonstrating Spring's Cache Abstraction using Apache Geode as the caching provider with Inline Caching."
+
+dependencies {
+
+	compile project(":spring-geode-starter")
+
+	compile ("org.springframework.boot:spring-boot-starter-data-jpa") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+	compile ("org.springframework.boot:spring-boot-starter-web") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+	compile "org.projectlombok:lombok"
+
+	runtime "javax.cache:cache-api"
+	runtime "org.hsqldb:hsqldb"
+	runtime "org.springframework.shell:spring-shell"
+
+	runtime ("org.springframework.boot:spring-boot-starter-jetty") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+	testCompile("org.springframework.boot:spring-boot-starter-test") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+	testCompile "org.springframework.data:spring-data-geode-test"
+
+}
+
+bootJar {
+	mainClassName = 'example.app.caching.inline.BootGeodeInlineCachingApplication'
+}
