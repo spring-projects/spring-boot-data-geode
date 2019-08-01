@@ -1,26 +1,26 @@
 [[geode-caching-provider]]
 == Caching using Apache Geode or Pivotal GemFire
 
-One of the quickest, easiest and least invasive ways to get started using Apache Geode or Pivotal GemFire in
-your Spring Boot applications is to use either Apache Geode or Pivotal GemFire as a
+One of the quickest, easiest and least invasive ways to get started using Apache Geode or Pivotal GemFire in your
+Spring Boot applications is to use either Apache Geode or Pivotal GemFire as a
 {spring-framework-docs}/integration.html#cache-store-configuration[_caching provider_]
 in {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction].  SDG
 {spring-framework-docs}/integration.html#cache-store-configuration-gemfire[enables]
-Apache Geode/Pivotal GemFire to serve as a _caching provider_ in Spring's Cache Abstraction.
+Apache Geode or Pivotal GemFire to function as a _caching provider_ in Spring's Cache Abstraction.
 
 TIP: See the _Spring Data for Apache Geode Reference Guide_ for more details on the
 {spring-data-geode-docs-html}/#apis:spring-cache-abstraction[support] and {spring-data-geode-docs-html}/#bootstrap-annotation-config-caching[configuration]
 of Apache Geode or Pivotal GemFire as a _caching provider_ in Spring's Cache Abstraction.
 
-TIP: Make sure you thoroughly understanding the {spring-framework-docs}/integration.html#cache-strategies[concepts]
+TIP: Make sure you thoroughly understand the {spring-framework-docs}/integration.html#cache-strategies[concepts]
 behind Spring's Cache Abstraction before you continue.
 
 TIP: You can also refer to the relevant section on {spring-boot-docs-html}/#boot-features-caching[Caching]
 in _Spring Boot's Reference Guide_. _Spring Boot_ even provides _auto-configuration_ support for a few,
 simple {spring-boot-docs-html}/#_supported_cache_providers[caching providers] out-of-the-box.
 
-Indeed, _caching_ can be a very effective _software design pattern_ to avoid the cost of invoking a potentially expensive
-operation when, given the same input, the operation yields the same output every time.
+Indeed, _caching_ can be a very effective _software design pattern_ to avoid the cost of invoking
+a potentially expensive operation when, given the same input, the operation yields the same output every time.
 
 Some classic examples of caching include, but are not limited to: looking up a customer by name or account number,
 looking up a book by ISBN, geocoding a physical address, caching the calculation of a person's credit score
@@ -34,7 +34,7 @@ when deploying and running your Spring Boot applications in https://pivotal.io/p
 
 Spring's {spring-framework-docs}/integration.html#cache-annotations[declarative, annotation-based caching] makes it
 extremely simple to get started with caching, which is as easy as annotating your application service components with
-the appropriate Spring cache annotation.
+the appropriate Spring cache annotations.
 
 TIP: Spring's declarative, annotation-based caching also {spring-framework-docs}/integration.html#cache-jsr-107[supports]
 JCache (JSR-107) annotations.
