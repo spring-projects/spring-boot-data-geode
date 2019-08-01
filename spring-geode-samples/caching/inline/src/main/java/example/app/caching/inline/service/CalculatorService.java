@@ -57,13 +57,14 @@ public class CalculatorService extends AbstractCacheableService {
 			return ResultHolder.of(number, Operator.FACTORIAL, number == 2 ? 2 : 1);
 		}
 
+		int operand = number;
 		int result = number;
 
 		while (--number > 1) {
 			result *= number;
 		}
 
-		return ResultHolder.of(number, Operator.FACTORIAL, result);
+		return ResultHolder.of(operand, Operator.FACTORIAL, result);
 	}
 
 	@Cacheable(value = "SquareRoots", keyGenerator = "resultKeyGenerator")
