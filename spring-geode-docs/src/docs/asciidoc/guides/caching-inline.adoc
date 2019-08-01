@@ -477,6 +477,14 @@ image::../images/factorial-of-five-after.png[]
 
 You can play around with the _square root_ operation as well and see the same effects.
 
+[[geode-samples-caching-inline-example-test]]
+== Tests
+
+The Calculator application includes an Integration Test class with tests asserting the behavior demonstrated above
+in the example.  The test class is available here:
+
+{samples-dir}/caching/inline/src/test/java/example/app/caching/inlineCalculatorApplicationIntegrationTests.java
+
 [[geode-samples-caching-inline-summary]]
 == Summary
 
