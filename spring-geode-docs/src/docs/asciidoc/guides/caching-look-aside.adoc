@@ -11,9 +11,9 @@
 :spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
 :spring-framework-javadoc: https://docs.spring.io/spring/docs/current/javadoc-api
 
-This guide walks through building a simple Spring Boot application using
-{spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]
-backed with Apache Geode as the caching provider.
+This guide walks you through building a simple Spring Boot application
+using {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]
+backed by Apache Geode as the caching provider in a Look-Aside Caching use case.
 
 It is assumed that the reader is familiar with the Spring _programming model_.  No prior knowledge of Spring's
 _Cache Abstraction_ or Apache Geode is required to utilize caching in your Spring Boot applications.
@@ -39,11 +39,11 @@ the customer's information, which is especially useful if the customer's informa
 While there are different patterns of caching, the _**Look-Aside Caching**_ pattern is the most frequently used.
 
 _Look-Aside Caching_ is a pattern of caching where the input of the cacheable operation is used as the key to lookup
-the cached results of the cacheable operation's computation on subsequent invocations, given the same input.  With
-_Look-Aside_, the cache is consulted first when the cacheable operation is invoked, and if the computation for the
-given input has already been performed, then the value from the cache is returned. Otherwise, if no value has been
-cached for the given input, the cacheable operation is invoked and the result of the operation is cached using the
-input as the key.
+the cached results of the cacheable operation's computation on subsequent invocations when given the same input.  In
+_Look-Aside_ caching, the cache is consulted first when the cacheable operation is invoked, and if the computation
+for the given input has already been computed, then the value from the cache is returned. Otherwise, if no value
+has been cached for the given input, the cacheable operation is invoked and the result of the operation is cached
+using the input as the key.
 
 For example, I may have a `CustomerService` class that looks up a `Customer` by `AccountNumber`:
 
@@ -64,26 +64,25 @@ If I have already looked up a `Customer` (e.g. "Jon Doe") with a given `AccountN
 the `findBy(..)` method is called with the same `AccountNumber` (i.e. "abc123") again, we would expect the same result
 (i.e. `Customer` "Jon Doe") to be returned.
 
-The _Look-Aside Caching_ pattern can be represented in the following diagram:
+The _Look-Aside Caching_ pattern can be depicted in the following diagram:
 
 image::../images/Look-Aside-Caching-Pattern.png[]
 
-In the diagram above, we see that the caching provider (e.g. Apache Geode) is consulted in #1 first.  If the result
-of the cacheable operation for the given input has already been computed and stored in the cache, then the result
-is simply returned, #2 (_cache hit_).
+In the diagram above, we see that the caching provider (e.g. Apache Geode) is consulted first, #2, after the client
+initiated the request, #1.  If the result of the cacheable operation for the given input has already been computed
+and stored in the cache (a _cache hit_), then the result is simply returned, #3, and passed back to the caller, #6.
 
 However, if the cacheable operation has never been invoked with the given input, or the previous computation of
-the operation expired, or was evicted, then the cacheable operation is invoked, #3 (_cache miss_).  This cacheable
-operation may access some external data source to perform its computation. After the operation completes, it returns
-the result, but not before the caching infrastructure stores the result along with the input in the cache, #4. After
-the result is cached, the value is returned to the caller. Any subsequent invocation of the cacheable operation with
-the same input should yield the same result as stored in the cache, providing the cache entry (input->result) has not
-expired or been evicted.
+the operation for the given input expired, or was evicted, then the cacheable operation is invoked (_cache miss_).
+This cacheable operation may access some external data source to perform its computation, #3 (red). After the operation
+completes, it returns the result, but not before the caching infrastructure stores the result along with the input
+in the cache, #4 & #5. After the result is cached, the value is returned to the caller, #3 (green). Any subsequent
+invocation of the cacheable operation with the same input should yield the same result as stored in the cache,
+providing the cache entry (input->result) has not expired or been evicted.
 
 Spring's {spring-framework-docs}/integration.html#cache[Cache Abstraction] is just that, a very elegant implementation
 of the _Look-Aside Caching_ pattern.  Details of how Spring's _Cache Abstraction_ works under-the-hood is beyond the
-scope of this document.  In a nutshell, it relies on Spring AOP and proxying and is not unlike Spring's Transaction
-Management.
+scope of this document.  In a nutshell, it relies on Spring AOP and is not unlike Spring's Transaction Management.
 
 Different caching providers have different capabilities. You should choose the caching provider that gives you
 what you require to handle your application needs and use cases correctly.
@@ -115,15 +114,18 @@ While developers have been quick to throw more Threads at the problem, trying to
 the door to a whole new set of problems (concurrency), usually at the expense of using more resources, which does not
 always yield the desired results.
 
-Opportunities for caching is often overlooked yet is a very effective at minimizing the over utilization of resources
-by leveraging reuse.  In an every increasing Microservices based world, caching will become even more important.
+Opportunities for caching are often overlooked, yet is very effective at minimizing the over utilization of resources
+by leveraging reuse.  In an ever increasing Microservices based world, caching will become even more important
+as it serves a very important role in the applications architecture, not the least of which is, resiliency.
 
 Of course, you still must tune your cache.  Most caches keep information in memory, and since memory is finite,
 you must utilize strategies to manage memory effectively, such as eviction, expiration, or even Off-Heap
 (i.e. native memory) for JVM-based caches.  For example, evicting/expiring entries based on use (_Least Recently Used_,
 or LRU) is 1 of many effective strategies.
 
-Each caching provider is different in this regard.
+Each caching provider's capabilities are different in this regard.  The choice should not only be based on
+what capabilities you need now, but capabilities (e.g. distributed compute, streaming) you may need in the future.
+So, choose wisely.
 
 [[geode-samples-caching-lookaside-example-counterservice-application]]
 === Counter Service Application
@@ -161,7 +163,7 @@ As an application developer, all you need do is focus on where in your applicati
 Let's do that.
 
 [[geode-samples-caching-lookaside-example-counterservice-cacheableservice]]
-=== Cacheable CounterService
+=== Caching-enabled CounterService
 
 Next, we define the operations our `CounterService` and add caching:
 
