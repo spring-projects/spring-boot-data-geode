@@ -1,3 +1,4 @@
+[[spring-boot-data-geode]]
 = Spring Boot for Apache Geode & Pivotal GemFire Reference Guide
 John Blum
 :revdate: {localdate}
