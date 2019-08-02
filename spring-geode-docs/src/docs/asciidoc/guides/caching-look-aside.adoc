@@ -13,7 +13,7 @@
 
 This guide walks you through building a simple Spring Boot application
 using {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]
-backed by Apache Geode as the caching provider in a Look-Aside Caching use case.
+backed by Apache Geode as the caching provider for Look-Aside Caching.
 
 It is assumed that the reader is familiar with the Spring _programming model_.  No prior knowledge of Spring's
 _Cache Abstraction_ or Apache Geode is required to utilize caching in your Spring Boot applications.
