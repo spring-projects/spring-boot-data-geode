@@ -11,33 +11,29 @@ dependencies {
 
 	compile "org.springframework:spring-context-support"
 	compile "org.springframework:spring-jcl"
-	compile "org.springframework.data:spring-data-geode"
+	compile "org.springframework.boot:spring-boot-starter"
 
-	compile("org.springframework.boot:spring-boot-starter") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	compile("org.springframework.data:spring-data-geode") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
 
-	testCompile "org.assertj:assertj-core"
 	testCompile "junit:junit"
+	testCompile "org.assertj:assertj-core"
 	testCompile "org.mockito:mockito-core"
 	testCompile "org.projectlombok:lombok"
 	testCompile "org.testcontainers:testcontainers"
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 		exclude group: "org.skyscreamer", module: "jsonassert"
 	}
 
-	testCompile("org.springframework.boot:spring-boot-starter-data-jpa") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
-	}
+	testCompile "org.springframework.boot:spring-boot-starter-data-jpa"
+	testCompile "org.springframework.boot:spring-boot-starter-data-cassandra"
 
-	testCompile("org.springframework.boot:spring-boot-starter-data-cassandra") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	testCompile("org.springframework.data:spring-data-geode-test") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
-
-	testCompile "org.springframework.data:spring-data-geode-test"
 
 	testRuntime "org.hsqldb:hsqldb"
 

@@ -4,10 +4,21 @@ description = "Apache Geode Extensions"
 
 dependencies {
 
-    compile "org.apache.geode:geode-core:$apacheGeodeVersion"
-    compile "org.apache.geode:geode-cq:$apacheGeodeVersion"
-    compile "org.apache.geode:geode-lucene:$apacheGeodeVersion"
-    compile "org.apache.geode:geode-wan:$apacheGeodeVersion"
+    compile("org.apache.geode:geode-core:$apacheGeodeVersion") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+    }
+
+    compile("org.apache.geode:geode-cq:$apacheGeodeVersion") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+    }
+
+    compile("org.apache.geode:geode-lucene:$apacheGeodeVersion") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+    }
+
+    compile("org.apache.geode:geode-wan:$apacheGeodeVersion") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+    }
 
     testCompile "org.assertj:assertj-core"
     testCompile "junit:junit"

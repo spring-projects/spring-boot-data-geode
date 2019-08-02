@@ -8,16 +8,15 @@ dependencies {
     compile project(":spring-geode-actuator")
     compile project(":spring-geode-autoconfigure")
 
-    testCompile "org.assertj:assertj-core"
     testCompile "junit:junit"
+    testCompile "org.assertj:assertj-core"
     testCompile "org.mockito:mockito-core"
     testCompile "org.projectlombok:lombok"
+    testCompile "org.springframework.boot:spring-boot-starter-test"
     testCompile "edu.umd.cs.mtc:multithreadedtc"
 
-    testCompile("org.springframework.boot:spring-boot-starter-test") {
-        exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+    testCompile("org.springframework.data:spring-data-geode-test") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
     }
-
-    testCompile "org.springframework.data:spring-data-geode-test"
 
 }

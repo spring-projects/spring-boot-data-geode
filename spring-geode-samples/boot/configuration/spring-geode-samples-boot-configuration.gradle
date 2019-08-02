@@ -12,6 +12,10 @@ dependencies {
 
 	compile project(":spring-geode-starter")
 
+	compile("org.springframework.data:spring-data-geode-test") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-core"
+	}
+
 	compile "org.assertj:assertj-core"
 	compile "org.projectlombok:lombok"
 	compile "org.springframework.data:spring-data-geode-test"
