@@ -6,17 +6,19 @@ plugins {
 
 apply plugin: 'io.spring.convention.spring-sample-boot'
 
-description = "Spring Geode Samples demonstrating the use of Spring Boot Auto-configuration for Apache Geode."
+description = "Spring Geode Sample demonstrating the use of Spring Boot Auto-Configuration for Apache Geode."
 
 dependencies {
 
 	compile project(":spring-geode-starter")
 
+	compile "org.assertj:assertj-core"
+	compile "org.projectlombok:lombok"
 	compile "org.springframework.data:spring-data-geode-test"
 
-	compile "org.assertj:assertj-core"
-
-	compile "org.projectlombok:lombok"
+	testCompile("org.springframework.boot:spring-boot-starter-test") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
 
 }
 
