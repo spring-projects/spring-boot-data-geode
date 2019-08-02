@@ -16,6 +16,7 @@
 package example.app.caching.inline.config;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
@@ -59,8 +60,10 @@ public class CalculatorConfiguration {
 	InlineCachingRegionConfigurer<ResultHolder, ResultHolder.ResultKey> inlineCachingForCalculatorApplicationRegionsConfigurer(
 			CalculatorRepository calculatorRepository) {
 
-		return new InlineCachingRegionConfigurer<>(calculatorRepository,
-			regionBeanName -> Arrays.asList("Factorials", "SquareRoots").contains(regionBeanName));
+		Predicate<String> regionBeanNamePredicate = regionBeanName ->
+			Arrays.asList("Factorials", "SquareRoots").contains(regionBeanName);
+
+		return new InlineCachingRegionConfigurer<>(calculatorRepository, regionBeanNamePredicate);
 	}
 
 	// tag::key-generator[]
@@ -71,7 +74,9 @@ public class CalculatorConfiguration {
 
 			int operand = Integer.valueOf(String.valueOf(arguments[0]));
 
-			Operator operator = "sqrt".equals(method.getName()) ? Operator.SQUARE_ROOT : Operator.FACTORIAL;
+			Operator operator = "sqrt".equals(method.getName())
+				? Operator.SQUARE_ROOT
+				: Operator.FACTORIAL;
 
 			return ResultHolder.ResultKey.of(operand, operator);
 		};

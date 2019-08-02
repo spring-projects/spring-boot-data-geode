@@ -33,7 +33,8 @@ import example.app.caching.inline.model.ResultHolder;
  */
 @SuppressWarnings("unused")
 // tag::class[]
-public interface CalculatorRepository extends CrudRepository<ResultHolder, ResultHolder.ResultKey> {
+public interface CalculatorRepository
+		extends CrudRepository<ResultHolder, ResultHolder.ResultKey> {
 
 	Optional<ResultHolder> findByOperandEqualsAndOperatorEquals(Number operand, Operator operator);
 

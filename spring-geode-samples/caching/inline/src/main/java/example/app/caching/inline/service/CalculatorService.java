@@ -72,11 +72,14 @@ public class CalculatorService extends AbstractCacheableService {
 
 		this.cacheMiss.set(true);
 
-		Assert.isTrue(number >= 0, String.format("Number [%d] must be greater than equal to 0", number));
+		Assert.isTrue(number >= 0,
+			String.format("Number [%d] must be greater than equal to 0", number));
 
 		simulateLatency();
 
-		return ResultHolder.of(number, Operator.SQUARE_ROOT, Double.valueOf(Math.sqrt(number)).intValue());
+		int result = Double.valueOf(Math.sqrt(number)).intValue();
+
+		return ResultHolder.of(number, Operator.SQUARE_ROOT, result);
 	}
 }
 // end::class[]
