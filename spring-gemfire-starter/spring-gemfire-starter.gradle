@@ -5,9 +5,7 @@ description = "Spring Boot Starter for Pivotal GemFire"
 
 dependencies {
 
-	compile("org.springframework.boot:spring-boot-starter") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
-	}
+	compile "org.springframework.boot:spring-boot-starter"
 
 	compile(project(':spring-geode')) {
 		exclude group: "org.springframework.data", module: "spring-data-geode"
@@ -17,10 +15,11 @@ dependencies {
 		exclude group: "org.springframework.data", module: "spring-data-geode"
 	}
 
-	compile "org.springframework.data:spring-data-gemfire"
+	compile("org.springframework.data:spring-data-gemfire") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-core"
+	}
 
 	runtime 'javax.cache:cache-api'
-
 	runtime 'org.springframework.shell:spring-shell'
 
 }

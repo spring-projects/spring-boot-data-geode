@@ -7,6 +7,8 @@ dependencies {
 
     compile(project(':spring-gemfire-starter'))
 
-    compile 'org.springframework.session:spring-session-data-gemfire'
+    compile('org.springframework.session:spring-session-data-gemfire') {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+    }
 
 }
