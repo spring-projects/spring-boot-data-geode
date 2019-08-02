@@ -4,6 +4,18 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.1.0.RC1 (2019-08-02)
+-----------------------------------------
+Adds a new Sample with Guide and Code on Inline Caching.
+
+* Adds a new Sample with Guide and Example Spring Boot application showcasing Inline Caching.
+* Refactors and cleans up the SBDG Maven POM generation.
+* Upgrades to Mockito 3.0.0.
+* Upgrades to Pivotal GemFire 9.5.4.
+* Upgrades to Spring Build Conventions Gradle Plugin 0.0.26.RELEASE.
+* Cleans up all uses of HTTP URLs, switching to HTTPS.
+
+
 Changes in version 1.1.0.M3 (2019-07-03)
 ----------------------------------------
 Adds support for deploying Spring Boot, ClientCache applications to Pivotal CloudFoundry (PCF) connected to an external,
