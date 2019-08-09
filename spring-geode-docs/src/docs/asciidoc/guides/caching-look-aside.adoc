@@ -25,25 +25,31 @@ link:../index.html#geode-samples[Back]
 [[geode-samples-caching-lookaside-background]]
 == Background
 
-Caching is an effective software pattern for reducing the resource consumption used by your application
-as well as to improve efficiency by increasing throughput and reducing latency.
+Caching is an effective software design pattern for reducing the resource consumption used by your application
+as well as improving efficiency by increasing throughput and reducing latency.
 
-The fundamental premise of caching is, given the same arguments, if a service call yields the same results, then it is
-a prime candidate for caching.
+The fundamental premise of caching is, when given the same arguments, if a service call yields the same results
+every time, then it is a good candidate for caching.
 
-Indeed, if I am searching for a customer record by account number and the search will always produce the same customer
+Indeed, if I am searching for a customer record by account number and the search always yields the same customer
 for a given account number, then adding caching to the search operation will improve the overall user experience.
 After all, the account number may be a form of customer identity. We can save compute resources by caching
-the customer's information, which is especially useful if the customer's information is used in multiple workflows.
+the customer's information, which is especially useful if the customer's information is used in multiple workflows
+of the application during the interactions with the customer.
 
 While there are different patterns of caching, the _**Look-Aside Caching**_ pattern is the most frequently used.
 
-_Look-Aside Caching_ is a pattern of caching where the input of the cacheable operation is used as the key to lookup
-the cached results of the cacheable operation's computation on subsequent invocations when given the same input.  In
-_Look-Aside_ caching, the cache is consulted first when the cacheable operation is invoked, and if the computation
-for the given input has already been computed, then the value from the cache is returned. Otherwise, if no value
-has been cached for the given input, the cacheable operation is invoked and the result of the operation is cached
-using the input as the key.
+_Look-Aside Caching_ is a pattern of caching where the input of a cacheable operation is used as the key for looking up
+any cached results from a prior invocation of the operation when given the same input.  In _Look-Aside Caching_, the
+cache is consulted first, before the operation is invoked, and if a computation for the given input has already been
+computed and cached, then the value from the cache is returned. Otherwise, if no value has been cached for the given
+input, or the previous cache result expired, or was evicted, then the operation will be invoked and the result of
+the operation is cached using the input as the key and the result as a value.
+
+It should be apparent that the data structure of a cache is a key/value store, or a `Map`.  Indeed it is quite common
+for most cache implementations to even implement the `java.util.Map` interface.  However, many cache implementations
+are quite a bit more sophisticated, providing distribution (to scale-out), replication (HA) and even persistence
+along with other capabilities.
 
 For example, I may have a `CustomerService` class that looks up a `Customer` by `AccountNumber`:
 
