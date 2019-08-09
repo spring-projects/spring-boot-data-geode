@@ -19,7 +19,7 @@ backed by Apache Geode as the caching provider for Inline Caching.
 It is assumed that the reader is familiar with the Spring _programming model_.  No prior knowledge of Spring's
 _Cache Abstraction_ or Apache Geode is required to utilize caching in your Spring Boot applications.
 
-Additionally, this example builds on the concepts from the link:caching-look-aside.html[Look-Aside Caching with Spring]
+Additionally, this Sample builds on the concepts from the link:caching-look-aside.html[Look-Aside Caching with Spring]
 guide.  Therefore, it would be helpful to have read that guide before proceeding through this guide.
 
 Let's begin.
