@@ -21,17 +21,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import example.app.caching.near.client.service.YellowPagesService;
 import example.app.caching.near.client.model.Person;
+import example.app.caching.near.client.service.YellowPagesService;
 
 /**
  * Spring {@link RestController} class for implementing the UI to the Yellow Pages application.
  *
  * @author John Blum
  * @see org.springframework.web.bind.annotation.GetMapping
+ * @see org.springframework.web.bind.annotation.PathVariable
+ * @see org.springframework.web.bind.annotation.RequestParam
  * @see org.springframework.web.bind.annotation.RestController
- * @see Person
- * @see YellowPagesService
+ * @see example.app.caching.near.client.model.Person
+ * @see example.app.caching.near.client.service.YellowPagesService
  * @since 1.1.0
  */
 // tag::class[]
@@ -67,8 +69,8 @@ public class YellowPagesController {
 
 	@GetMapping("/yellow-pages/{name}/update")
 	public String update(@PathVariable("name") String name,
-		@RequestParam(name = "email", required = false) String email,
-		@RequestParam(name = "phoneNumber", required = false) String phoneNumber) {
+			@RequestParam(name = "email", required = false) String email,
+			@RequestParam(name = "phoneNumber", required = false) String phoneNumber) {
 
 		Person person = this.yellowPages.save(this.yellowPages.find(name), email, phoneNumber);
 

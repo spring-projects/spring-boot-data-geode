@@ -99,7 +99,8 @@ public class GeodeConfiguration {
 			@SuppressWarnings("unchecked")
 			public void configure(String beanName, ClientRegionFactoryBean<?, ?> clientRegion) {
 
-				CacheListener subscriptionCacheListener = new AbstractCommonEventProcessingCacheListener() {
+				CacheListener subscriptionCacheListener =
+						new AbstractCommonEventProcessingCacheListener() {
 
 					@Override
 					protected void processEntryEvent(EntryEvent event, EntryEventType eventType) {

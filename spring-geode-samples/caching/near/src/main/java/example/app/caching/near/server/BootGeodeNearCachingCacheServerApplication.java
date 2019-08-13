@@ -44,9 +44,15 @@ import example.app.caching.near.client.model.Person;
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.Region
  * @see org.apache.geode.cache.server.CacheServer
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.builder.SpringApplicationBuilder
+ * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.context.annotation.Profile
+ * @see org.springframework.data.gemfire.RegionAttributesFactoryBean
+ * @see org.springframework.data.gemfire.ReplicatedRegionFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableLocator
  * @see org.springframework.data.gemfire.config.annotation.EnableManager
@@ -68,15 +74,15 @@ public class BootGeodeNearCachingCacheServerApplication {
 
 	// tag::application-runner[]
 	@Bean
-	ApplicationRunner runner(@Qualifier("YellowPages") Region<String, Person> yellowPagesRegion) {
+	ApplicationRunner runner(@Qualifier("YellowPages") Region<String, Person> yellowPages) {
 
 		return args -> {
 
-			assertThat(yellowPagesRegion).isNotNull();
-			assertThat(yellowPagesRegion.getName()).isEqualTo("YellowPages");
-			assertThat(yellowPagesRegion.getAttributes()).isNotNull();
-			assertThat(yellowPagesRegion.getAttributes().getDataPolicy()).isEqualTo(DataPolicy.REPLICATE);
-			assertThat(yellowPagesRegion.getAttributes().getEnableSubscriptionConflation()).isTrue();
+			assertThat(yellowPages).isNotNull();
+			assertThat(yellowPages.getName()).isEqualTo("YellowPages");
+			assertThat(yellowPages.getAttributes()).isNotNull();
+			assertThat(yellowPages.getAttributes().getDataPolicy()).isEqualTo(DataPolicy.REPLICATE);
+			assertThat(yellowPages.getAttributes().getEnableSubscriptionConflation()).isTrue();
 
 		};
 	}
@@ -87,10 +93,10 @@ public class BootGeodeNearCachingCacheServerApplication {
 	static class GeodeConfiguration {
 
 		@Bean("YellowPages")
-		public ReplicatedRegionFactoryBean<Object, Object> yellowPagesRegion(GemFireCache gemfireCache,
-				@Qualifier("YellowPagesAttributes") RegionAttributes<Object, Object> exampleAttributes) {
+		public ReplicatedRegionFactoryBean<String, Person> yellowPagesRegion(GemFireCache gemfireCache,
+				@Qualifier("YellowPagesAttributes") RegionAttributes<String, Person> exampleAttributes) {
 
-			ReplicatedRegionFactoryBean<Object, Object> yellowPagesRegion =
+			ReplicatedRegionFactoryBean<String, Person> yellowPagesRegion =
 				new ReplicatedRegionFactoryBean<>();
 
 			yellowPagesRegion.setAttributes(exampleAttributes);
@@ -102,9 +108,9 @@ public class BootGeodeNearCachingCacheServerApplication {
 		}
 
 		@Bean("YellowPagesAttributes")
-		public RegionAttributesFactoryBean<Object, Object> exampleRegionAttributes() {
+		public RegionAttributesFactoryBean<String, Person> exampleRegionAttributes() {
 
-			RegionAttributesFactoryBean<Object, Object> yellowPagesRegionAttributes =
+			RegionAttributesFactoryBean<String, Person> yellowPagesRegionAttributes =
 				new RegionAttributesFactoryBean<>();
 
 			yellowPagesRegionAttributes.setEnableSubscriptionConflation(true);

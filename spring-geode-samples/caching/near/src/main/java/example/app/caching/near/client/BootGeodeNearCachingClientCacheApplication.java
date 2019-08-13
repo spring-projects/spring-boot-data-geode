@@ -28,13 +28,20 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import example.app.caching.near.client.model.Person;
+
 /**
  * Spring Boot application demonstrating Spring's Cache Abstraction with Apache Geode as the caching provider
  * for {@literal Near Caching}.
  *
  * @author John Blum
+ * @see org.apache.geode.cache.Region
+ * @see org.apache.geode.cache.client.Pool
+ * @see org.springframework.boot.ApplicationRunner
  * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.context.annotation.Bean
+ * @see example.app.caching.near.client.model.Person
  * @since 1.1.0
  */
 // tag::class[]
@@ -47,7 +54,7 @@ public class BootGeodeNearCachingClientCacheApplication {
 
 	// tag::application-runner[]
 	@Bean
-	public ApplicationRunner runner(@Qualifier("YellowPages") Region<?, ?> yellowPages) {
+	public ApplicationRunner runner(@Qualifier("YellowPages") Region<String, Person> yellowPages) {
 
 		return args -> {
 

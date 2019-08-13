@@ -21,8 +21,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import example.app.caching.near.client.service.support.AbstractCacheableService;
 import example.app.caching.near.client.model.Person;
+import example.app.caching.near.client.service.support.AbstractCacheableService;
 import example.app.caching.near.client.service.support.EmailGenerator;
 import example.app.caching.near.client.service.support.PhoneNumberGenerator;
 
@@ -31,18 +31,20 @@ import example.app.caching.near.client.service.support.PhoneNumberGenerator;
  *
  * @author John Blum
  * @see org.springframework.cache.annotation.Cacheable
+ * @see org.springframework.cache.annotation.CachePut
+ * @see org.springframework.cache.annotation.CacheEvict
  * @see org.springframework.stereotype.Service
- * @see Person
- * @see AbstractCacheableService
- * @see EmailGenerator
- * @see PhoneNumberGenerator
+ * @see example.app.caching.near.client.model.Person
+ * @see example.app.caching.near.client.service.support.AbstractCacheableService
+ * @see example.app.caching.near.client.service.support.EmailGenerator
+ * @see example.app.caching.near.client.service.support.PhoneNumberGenerator
  * @since 1.1.0
  */
 // tag::class[]
 @Service
 public class YellowPagesService extends AbstractCacheableService {
 
-	@Cacheable(cacheNames = "YellowPages", key = "#name")
+	@Cacheable("YellowPages")
 	public Person find(String name) {
 
 		this.cacheMiss.set(true);
