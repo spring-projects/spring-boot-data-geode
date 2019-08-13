@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.near.caching.client.controller;
+package example.app.caching.near.client.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import example.app.near.caching.client.model.Person;
-import example.app.near.caching.client.service.YellowPagesService;
+import example.app.caching.near.client.service.YellowPagesService;
+import example.app.caching.near.client.model.Person;
 
 /**
  * Spring {@link RestController} class for implementing the UI to the Yellow Pages application.
@@ -30,8 +30,8 @@ import example.app.near.caching.client.service.YellowPagesService;
  * @author John Blum
  * @see org.springframework.web.bind.annotation.GetMapping
  * @see org.springframework.web.bind.annotation.RestController
- * @see example.app.near.caching.client.model.Person
- * @see example.app.near.caching.client.service.YellowPagesService
+ * @see Person
+ * @see YellowPagesService
  * @since 1.1.0
  */
 // tag::class[]

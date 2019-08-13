@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.near.caching.client;
+package example.app.caching.near.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,9 +31,9 @@ import org.springframework.data.gemfire.tests.integration.ForkingClientServerInt
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import example.app.near.caching.client.model.Person;
-import example.app.near.caching.client.service.YellowPagesService;
-import example.app.near.caching.server.BootGeodeNearCachingCacheServerApplication;
+import example.app.caching.near.client.service.YellowPagesService;
+import example.app.caching.near.server.BootGeodeNearCachingCacheServerApplication;
+import example.app.caching.near.client.model.Person;
 
 /**
  * Integration Tests for the Spring Boot, {@link ClientCache} application example for {@literal Near Caching}.
@@ -44,9 +44,9 @@ import example.app.near.caching.server.BootGeodeNearCachingCacheServerApplicatio
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
- * @see example.app.near.caching.client.model.Person
- * @see example.app.near.caching.client.service.YellowPagesService
- * @see example.app.near.caching.server.BootGeodeNearCachingCacheServerApplication
+ * @see Person
+ * @see YellowPagesService
+ * @see BootGeodeNearCachingCacheServerApplication
  * @since 1.1.0
  */
 @ActiveProfiles("client")

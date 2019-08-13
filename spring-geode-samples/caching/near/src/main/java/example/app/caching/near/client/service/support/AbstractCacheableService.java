@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.near.caching.client.service.support;
+package example.app.caching.near.client.service.support;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;

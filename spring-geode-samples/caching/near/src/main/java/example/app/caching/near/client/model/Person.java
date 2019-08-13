@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.near.caching.client.model;
+package example.app.caching.near.client.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

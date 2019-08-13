@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.near.caching.server;
+package example.app.caching.near.server;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,7 +37,7 @@ import org.springframework.data.gemfire.config.annotation.CacheServerApplication
 import org.springframework.data.gemfire.config.annotation.EnableLocator;
 import org.springframework.data.gemfire.config.annotation.EnableManager;
 
-import example.app.near.caching.client.model.Person;
+import example.app.caching.near.client.model.Person;
 
 /**
  * Spring Boot application that configures and bootstraps an Apache Geode {@link CacheServer} application.

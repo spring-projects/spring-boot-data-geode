@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.near.caching.client.service;
+package example.app.caching.near.client.service;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -21,10 +21,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import example.app.near.caching.client.model.Person;
-import example.app.near.caching.client.service.support.AbstractCacheableService;
-import example.app.near.caching.client.service.support.EmailGenerator;
-import example.app.near.caching.client.service.support.PhoneNumberGenerator;
+import example.app.caching.near.client.service.support.AbstractCacheableService;
+import example.app.caching.near.client.model.Person;
+import example.app.caching.near.client.service.support.EmailGenerator;
+import example.app.caching.near.client.service.support.PhoneNumberGenerator;
 
 /**
  * Spring {@link Service} class implementing the Yellow Pages.
@@ -32,10 +32,10 @@ import example.app.near.caching.client.service.support.PhoneNumberGenerator;
  * @author John Blum
  * @see org.springframework.cache.annotation.Cacheable
  * @see org.springframework.stereotype.Service
- * @see example.app.near.caching.client.model.Person
- * @see example.app.near.caching.client.service.support.AbstractCacheableService
- * @see example.app.near.caching.client.service.support.EmailGenerator
- * @see example.app.near.caching.client.service.support.PhoneNumberGenerator
+ * @see Person
+ * @see AbstractCacheableService
+ * @see EmailGenerator
+ * @see PhoneNumberGenerator
  * @since 1.1.0
  */
 // tag::class[]

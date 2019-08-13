@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.near.caching.client.config;
+package example.app.caching.near.client.config;
 
 import org.apache.geode.cache.CacheListener;
 import org.apache.geode.cache.EntryEvent;
