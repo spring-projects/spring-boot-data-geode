@@ -576,3 +576,5 @@ high-availability (HA) and resiliency purposes.
 There is a much more that can be achieved with a _Near Cache_, so we leave it as an exercise for the reader
 to explore and experiment more.  Hopefully this has peaked your curiosity and shown you a few of the benefits of
 applying the _Near Caching_ pattern to your Spring Boot applications.
+
+link:../index.html#geode-samples[Back]
