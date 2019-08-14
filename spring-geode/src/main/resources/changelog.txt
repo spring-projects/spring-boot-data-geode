@@ -4,6 +4,22 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.1.0.RC2 (2019-08-13)
+-----------------------------------------
+Adds a new Sample with Guide and Code on Near Caching.
+
+* Adds a new Sample with Guide and Example Spring Boot Application showcasing Near Caching.
+* Adds Integration Tests for all Samples except the Spring Boot Actuator Sample.
+* Edits the Sample Guides on Look-Aside Caching and Inline Caching.
+* Upgrades to Spring Framework 5.1.9.RELEASE.
+* Upgrades to Spring Boot 2.1.7.RELEASE.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.1.10.RELEASE.
+* Upgrades to Spring Data Release Train Lovelace-SR10.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.1.5.RELEASE.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.7.RELEASE.
+* Upgrades to Test Containers 1.11.3.
+
+
 Changes in version 1.1.0.RC1 (2019-08-02)
 -----------------------------------------
 Adds a new Sample with Guide and Code on Inline Caching.
