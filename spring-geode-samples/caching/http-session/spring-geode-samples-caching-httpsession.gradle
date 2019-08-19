@@ -1,0 +1,33 @@
+apply plugin: 'io.spring.convention.spring-sample-boot'
+
+description = "Spring Geode Sample demonstrating Spring Session with Apache Geode for HTTP Session Caching."
+
+dependencies {
+
+	compile project(":spring-geode-starter")
+
+	compile ("org.springframework.boot:spring-boot-starter-web") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+//	runtime project(":spring-geode-starter-session")
+
+	runtime("org.springframework.boot:spring-boot-starter-thymeleaf") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+	runtime ("org.springframework.boot:spring-boot-starter-tomcat") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+	testCompile("org.springframework.boot:spring-boot-starter-test") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
+
+	testCompile "org.springframework.data:spring-data-geode-test"
+
+}
+
+bootJar {
+	mainClassName = 'example.app.caching.lookaside.BootGeodeHttpSessionCachingApplication'
+}

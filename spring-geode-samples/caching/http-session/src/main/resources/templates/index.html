@@ -1,0 +1,31 @@
+<!DOCTYPE html SYSTEM "https://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>HTTP Session Details</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+    <style type="text/css">
+		body {
+			padding: 1em;
+		}
+	</style>
+</head>
+<body>
+    <div class="container">
+        <table class="table table-striped" border="1">
+            <thead align="left">
+            <tr>
+                <th>HttpSession Type</th>
+                <th>HttpSession Count</th>
+                <th>HttpServletRequest Count</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${sessionType}">value</td>
+                <td th:text="${sessionCount}">value</td>
+                <td th:text="${requestCount}">value</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
