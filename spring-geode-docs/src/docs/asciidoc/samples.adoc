@@ -8,7 +8,7 @@ Some examples focus on specific Use Cases (e.g. [(HTTP) Session state] caching) 
 SBDG works under-the-hood to give users a better understanding of what is actually happening and how to debug problems
 with their Apache Geode / Pivotal GemFire, Spring Boot applications.
 
-.Example Apache Geode Applications using Spring Boot
+.Example Spring Boot applications using Apache Geode
 |===
 | Guide | Description | Source
 
@@ -34,5 +34,9 @@ This sample builds on the *_Look-Aside Caching_* sample above.
 This sample builds on the *_Look-Aside Caching_* sample above and is the 3rd and final leg in our study
 on _caching patterns_.
 | {github-samples-url}/caching/near[Near Caching]
+
+| link:guides/caching-http-session.html[HTTP Session Caching with Spring Session and Apache Geode]
+| Explains how to enable and use Spring Session with Apache Geode to manage HTTP Session state.
+| {github-samples-url}/caching/http-session[HTTP Session Caching]
 
 |===
