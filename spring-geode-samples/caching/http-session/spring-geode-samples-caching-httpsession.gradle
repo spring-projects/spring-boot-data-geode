@@ -24,6 +24,8 @@ dependencies {
 		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
 
+	testCompile project(":spring-geode-starter-session")
+
 	testCompile "org.springframework.data:spring-data-geode-test"
 
 }
