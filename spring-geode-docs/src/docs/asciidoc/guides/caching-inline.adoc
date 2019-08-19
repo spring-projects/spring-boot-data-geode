@@ -493,7 +493,7 @@ You can play around with the _square root_ operation to see the same effects of 
 The Calculator application includes an Integration Test class with tests asserting the behavior demonstrated above
 in the example.  The test class is available here:
 
-link:{samples-dir}/caching/inline/src/test/java/example/app/caching/inline/CalculatorApplicationIntegrationTests.java[]
+link:{github-samples-url}/caching/inline/src/test/java/example/app/caching/inline/CalculatorApplicationIntegrationTests.java[]
 
 [[geode-samples-caching-inline-summary]]
 == Summary
