@@ -4,6 +4,16 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.1.0.RELEASE (2019-08-21)
+-----------------------------------------
+Adds a new Sample with Guide and Code on HTTP Session Caching.
+
+* Adds a new Sample with Guide and Example Spring Boot Application showcasing HTTP Session Caching with Spring Session
+and Apache Geode.
+* Resolves GitHub Issue #41.
+* ?
+
+
 Changes in version 1.1.0.RC2 (2019-08-13)
 -----------------------------------------
 Adds a new Sample with Guide and Code on Near Caching.
