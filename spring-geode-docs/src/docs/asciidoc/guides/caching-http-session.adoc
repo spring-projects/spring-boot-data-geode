@@ -4,6 +4,7 @@
 :apache-geode-version: 16
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
+:apache-geode-website: https://geode.apache.org/
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference/html
@@ -15,9 +16,9 @@
 :spring-session-website: https://spring.io/projects/spring-session
 
 This guide walks you through building a simple Spring Boot application using {spring-session-website}[Spring Session]
-backed by Apache Geode to manage HTTP Session State.
+backed by {apache-geode-website}[Apache Geode] to manage HTTP Session state.
 
-It is assumed that the reader is familiar with the Spring _programming model_ as well as the Java Servlet API.
+It is assumed that the reader is familiar with the Spring _programming model_ as well as the _Java Servlet_ API.
 No prior knowledge of Spring Session or Apache Geode is required to utilize HTTP Session State Caching in your
 Spring Boot applications.
 
@@ -28,16 +29,16 @@ link:../index.html#geode-samples[Back]
 [[geode-samples-caching-http-session-background]]
 == Background
 
-HTTP Session State Caching is probably 1 of the most useful forms of caching in an enterprise application, especially
-given the proliferation of Web applications in the enterprise.
+HTTP Session Caching is one of the most used forms of caching in enterprise applications, especially given
+the proliferation of Web applications in the enterprise.
 
-HTTP Sessions are used primarily to manage conversational state with users of your applications between HTTP requests
-given that HTTP is a stateless protocol.  This is primarily due to the fact that HTTP connections are not persistent.
-When an HTTP client makes a request, the client opens a connection, sends an HTTP request to the server, waits for the
-server to process the request, receives a response and then closes the connection.  Each time an HTTP request is sent,
+HTTP Sessions are primarily used to manage conversational state with users of your Web applications between HTTP
+requests given that HTTP is a stateless protocol.  This is due to the fact that HTTP connections are not persistent.
+When an HTTP client makes a request, the client opens a connection to the server, sends an HTTP request, waits for
+the server to process the request and respond, and then closes the connection.  Each time an HTTP request is sent,
 the same procedure is followed.
 
-Of course, there are alternatives to HTTP when making Web Service requests.  For instance, if you are using
+Of course, there are alternatives to HTTP when making remote Web Service requests.  For instance, if you are using
 https://en.wikipedia.org/wiki/WebSocket[WebSockets] in your applications, then you would have persistent connections
 and would most likely be using either the https://stomp.github.io/[STOMP] or https://wamp-proto.org/[WAMP] protocols.
 
@@ -46,28 +47,27 @@ over the STOMP protocol.
 
 TIP: Spring Session additionally {spring-session-docs}/#websocket[supports] Session State Management for _WebSockets_.
 
-As mentioned above, it is useful to use the HTTP Session to manage conversational state with users of your application
+As mentioned above, it is useful to use the HTTP Session to manage conversational state with users of your applications
 so that they can experience continuity between separate interactions (i.e. HTTP requests).  In order to maintain that
 continuity and provide a consistent, uninterrupted experience, the HTTP Session must be preserved in a reliable manner.
 
-1 way to do this is to employ a data management solution in your application architecture that 1) makes the HTTP Session
-highly available and 2) makes the HTTP Session resilient to failures in the system architecture.
+One way to do this is to employ a data management solution in your application architecture that 1) makes the HTTP
+Session highly available and 2) makes the HTTP Session resilient to failures in the system architecture.
 
 Apache Geode is ideal for managing HTTP Session state given that it can distribute data/state across a scaled-out,
-highly-available architecture by replicating data in a redundant and organized (partitioned) manner thereby making
-the data resilient to failures, such as network or hardware failures.
+highly-available architecture by replicating data in a redundant and organized (partitioned) manner, thereby making
+the data resilient to network and hardware failures.
 
-This is an ideal arrangement in a cloud environment given that you most likely will be running multiple instances
-of your application in order to serve the demand, especially during peak loads.  In these cases, you will undoubtedly
-face failures and each application will need to be prepared to take over in a moments notice to provide the consistent,
-uninterrupted experience to which we alluded to above.  These applications instances will need access to
-the same HTTP Session.
+This is ideal in a cloud environment given that you will most likely be running multiple instances of your application
+in order to serve the demand, especially during peak loads.  In these cases, you will undoubtedly face failures and each
+application instance will need to be prepared to take over in a moments notice to provide the consistent, uninterrupted
+experience to which we alluded to above.  These applications instances will need access to the same HTTP Session state.
 
 An application architecture with HTTP Session State Caching appears as follows:
 
 image::../images/HTTP-Session-Caching.png[]
 
-Essentially, anytime an `HttpSession` is requested by your Spring Boot Web Application, the Servlet Container
+Essentially, anytime an HTTP Session is requested by your Spring Boot, Web Application, the Servlet Container
 (e.g. Apache Tomcat) delegates to Spring Session to provide the implementation of `javax.servlet.http.HttpSession`.
 After all, `javax.servlet.http.HttpServlet` is an interface that can have many implementations.
 
@@ -76,14 +76,14 @@ a Servlet `Filter` that gets registered by Spring Session programmatically when 
 classpath.
 
 Spring Session's implementation of the `javax.servlet.http.HttpSession` interface can backed by many different providers
-that implement the Spring Session framework's `SessionRepository` interface:
+that implement the Spring Session framework's `SessionRepository` interface.
 
-The Spring Session framework architecture can be depicted as follows:
+Spring Session's architecture can be depicted as follows:
 
 image::../images/Spring-Session-Framework-Architecture.png[]
 
-Again, the `SessionRepository` interface is the central component of the framework for adapting any backend data store
-provider for managing the HTTP Session.
+Again, the `SessionRepository` interface is the central component of the framework enabling any backend data store
+to be adapted and serve as a provider  for managing the HTTP Sessions.
 
 This is effectively how https://github.com/spring-projects/spring-session-data-geode[Spring Session for Apache Geode
 & Pivotal GemFire] works.
@@ -92,7 +92,7 @@ This is effectively how https://github.com/spring-projects/spring-session-data-g
 == Example
 
 For our example, we are going to keep the Web application relatively simple.  Essentially, we just want to show you
-how easy it is to use Spring Session in your Spring Boot, Web applications, without a lot of ceremony and fuss.
+how easy it is to use Spring Session in your Spring Boot, Web applications, to manage the HTTP Session state.
 
 So, we are going to switch from Servlet Container (e.g. Apache Tomcat) to Spring Session managed HTTP Sessions with a
 single-line configuration change.
@@ -100,7 +100,7 @@ single-line configuration change.
 First, let's introduce the Spring Web MVC `Controller` in our Spring Boot, Web application.
 
 [[geode-samples-caching-http-session-example-controller]]
-== Controller
+=== Controller
 
 Our Spring Web MVC `Controller` class is implemented as follows:
 
@@ -111,16 +111,16 @@ include::{samples-dir}/caching/http-session/src/main/java/example/app/caching/se
 ----
 
 The main Web Service endpoint in our Spring Boot, Web application is the `/session` endpoint, which is accessible from
-http//:localhost:8080/session.
+http//:localhost:8080/session[].
 
 The `/session` endpoint outputs 3 bits of information:
 
-1) The `javax.servlet.http.HttpSession` class type.
-2) Current HTTP Session count.
-3) Current HTTP Request count.
+1. The `javax.servlet.http.HttpSession` class type.
+2. Current HTTP Session count.
+3. Current HTTP Request count.
 
-The `HttpSession` class type lets us know the strategy (e.g. Servlet Container vs. Spring Session) is being used to
-manage the HTTP Session state.
+The `HttpSession` class type lets us know which implementation (e.g. Servlet Container vs. Spring Session) is being used
+to manage the HTTP Session state.
 
 The HTTP Request count is simply incremented every time a client HTTP Request is made to the HTTP server (e.g. Servlet
 Container) before the HTTP Session expires.  If the HTTP Session expires before another client HTTP Request is made,
@@ -136,8 +136,8 @@ include::{samples-dir}/caching/http-session/src/main/resources/application.prope
 ----
 
 The configuration is quite simple.  In this case, we have set the HTTP Session `timeout`, using the
-`server.servlet.session.timeout` property to *15 seconds*.  This property is to configure the HTTP Session timeout
-whether the HTTP Session is being managed by the Servlet Container (e.g. Apache Tomcat) or by Spring Session.
+`server.servlet.session.timeout` property, to *15 seconds*.  This property is used to configure the HTTP Session timeout
+regardless of whether the HTTP Session is being managed by the Servlet Container or by Spring Session.
 
 Additionally, we have configured the data management policy used by Apache Geode to manage the HTTP Session state
 in a `LOCAL` only cache (a.k.a. Region).  This was done by setting the
@@ -147,8 +147,9 @@ The other configuration properties in Spring Boot's `application.properties` fil
 
 TIP: In most production deployments, you will likely be using a client/server topology, where the HTTP Session
 is managed by a cluster of Apache Geode or Pivotal GemFire servers so that the HTTP Session can be shared across
-multiple instances of the Spring Boot, Web application, especially in a cloud environment when utilizing Microservices
-architecture.  However, for example purposes, we tried to keep the sample as simple as possible.
+multiple instances of the Spring Boot, Web application. This would be especially true in a cloud environment
+when utilizing a Microservices architecture.  However, for example purposes, we tried to keep the sample
+as simple as possible.
 
 NOTE: The default data management policy for the client cache (a.k.a. Region) used to manage HTTP Session state is a
 `PROXY`, which is the basis for the client/server topology.  Therefore, the default configuration assumes you will be
@@ -203,7 +204,7 @@ and we will see the HTTP Session count increment along with the HTTP Request cou
 
 image::../images/HttpSessionCachingApplication-ServletContainerSessionExpiration.png[]
 
-Now, we can repeat this exercise, but this time, with Spring Session.
+Now, we can repeat this same exercise, but this time, using Spring Session.
 
 [[geode-samples-caching-http-session-example-run-spring-session]]
 === Run the Example with Spring Session
@@ -234,16 +235,16 @@ When we run the example again, and access the `/session` Web service endpoint, w
 
 image::../images/HttpSessionCachingApplication-SpringSession.png[]
 
-Now we see the implementing class for the `javax.servlet.http.HttpSession` is
+Now we see that the implementing class for the `javax.servlet.http.HttpSession` is
 `org.springframework.session.web.http.SessionRepositoryFilter$SessionRepositoryRequestWrapper$HttpSessionWrapper`.
 
 Easy!
 
-Of course, the ability to scale-out and optimize the data management policies around HTTP Session management
-is very provider-specific (e.g. Apache Geode) and highly dependent on the use case and application requirements,
+Of course, the ability to scale-out and optimize the data management policies for HTTP Session management is very
+provider-specific (e.g. Apache Geode) and highly dependent on the use case as well a application requirements,
 therefore is beyond the scope of this guide.
 
-[[geode-samples-caching-http-session-summary]
+[[geode-samples-caching-http-session-summary]]
 == Summary
 
 Spring Session is a powerful framework for managing your HTTP Session state.  Not only does it allow you to plugin
@@ -264,5 +265,7 @@ Spring Session also allows you to manage different types of Sessions depending o
 Therefore, it makes it a simple matter to switch providers, or adopt additional Session management capabilities as your
 application requirements change and/or your use cases grow.
 
-Finally, (HTTP) Session state caching is 1 of the most effective and common ways to utilize caching in your Spring Boot,
-Web applications, and make the users experience first-class.
+HTTP Session state caching is one of the most effective and common ways to utilize caching in your Spring Boot,
+Web applications, and ensure the users experience is first-class.
+
+link:../index.html#geode-samples[Back]
