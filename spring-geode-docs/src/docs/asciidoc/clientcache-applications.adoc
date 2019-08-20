@@ -1,19 +1,31 @@
 [[geode-clientcache-applications]]
 == Building ClientCache Applications
 
-This first, opinionated option Spring Boot for Apache Geode & Pivotal GemFire gives you out-of-the-box
-is a {apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html[ClientCache] instance,
-simply by declaring either Spring Boot for Apache Geode or Pivotal GemFire on your application classpath.
+The first, opinionated option provided to you by Spring Boot for Apache Geode & Pivotal GemFire (SBDG) out-of-the-box is
+a {apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html[ClientCache] instance, simply by declaring
+either Spring Boot for Apache Geode or Spring Boot for Pivotal GemFire on your application classpath.
 
-It is assumed that most developers using Spring Boot to build applications backed by either Apache Geode
-or Pivotal GemFire will be building Spring cache client applications deployed in an Apache Geode/Pivotal GemFire
-{apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[Client/Server topology].  This is
-the most common and traditional arrangement employed by most application system architectures.
+It is assumed that most application developers using Spring Boot to build applications backed by either Apache Geode
+or Pivotal GemFire will be building cache client applications deployed in an Apache Geode or Pivotal GemFire
+{apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[Client/Server topology].
+A client/server topology is the most common and traditional architecture employed by enterprise applications.
 
-For example, build your Spring Boot, Apache Geode/Pivotal GemFire, `ClientCache` application with either
-the `spring-geode-starter` or `spring-gemfire-starter` on your application's classpath, and then:
+For example, you can begin building a Spring Boot, Apache Geode or Pivotal GemFire, `ClientCache` application
+with either the `spring-geode-starter` or `spring-gemfire-starter` on your application's classpath:
 
-.Spring Boot, Apache Geode/Pivotal GemFire ClientCache Application
+.Spring Boot for Apache Geode on the application classpath
+[source,xml]
+----
+<dependency>
+  <groupId>org.springframework.geode</groupId>
+  <artifactId>spring-geode-starter</artifactId>
+</dependency>
+----
+
+Then, you configure and bootstrap your Spring Boot, Apache Geode `ClientCache` application with the following
+main application class:
+
+.Spring Boot, Apache Geode `ClientCache` Application
 [source,java]
 ----
 @SpringBootApplication
@@ -25,24 +37,28 @@ public SpringBootApacheGeodeClientCacheApplication {
 }
 ----
 
-Your application now has a `ClientCache` instance, which can connect to an Apache Geode/Pivotal GemFire server,
-running on `localhost`, listening on the default `CacheServer` port of `40404`, by default.
+Your application now has a `ClientCache` instance, which is able to connect to an Apache Geode or Pivotal GemFire server
+running on `localhost`, listening on the default `CacheServer` port `40404`.
 
-However, the `ClientCache` instance does *not* require a GemFire/Geode sever (i.e. `CacheServer`) to  be running
-in order to use the `ClientCache` instance.  It is perfectly valid to create a cache client and perform local
-data access operations on `LOCAL` Regions.
+By default, an Apache Geode or Pivotal GemFire server (i.e. `CacheServer`) must be running in order to use
+the `ClientCache` instance.  However, it is perfectly valid to create a `ClientCache` instance and perform
+data access operations using `LOCAL` Regions.  This is very useful during development.
 
-Later on, when needed, you can expand your Spring Boot, `ClientCache` application into a fully functional client/server
-architecture by changing the client Region's {apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html[data policy]
-from `LOCAL` to `PROXY` or `CACHING_PROXY`, and send/receive data to/from 1 or more servers, respectively.
+TIP: To develop with `LOCAL` Regions, you only need to define your cache Regions with the
+{apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html#LOCAL[`ClientRegionShortcut.LOCAL`]
+data management policy.
+
+When you are ready to switch from your local development environment (IDE) to a client/server architecture in a managed
+environment, you simply change the data management policy of the client Region from `LOCAL` back to the default `PROXY`,
+or even a `CACHING_PROXY`, which will cause the data to be sent/received to/from 1 or more servers, respectively.
 
 TIP: Compare and contrast the above configuration with Spring Data for Apache Geode/Pivotal GemFire's
 {spring-data-geode-docs-html}/#bootstrap-annotation-config-geode-applications[approach].
 
-It is uncommon to ever need a direct reference to the `ClientCache` instance injected into your application components
-(e.g. `@Service` or `@Repository` beans defined in the Spring context) whether you are configuring additional
-GemFire/Geode objects (e.g. Regions, Indexes, etc) or simply using those objects indirectly in your applications.
-However, it is also possible to do if and when needed.
+It is uncommon to ever need a direct reference to the `ClientCache` instance provided by SBDG and injected into your
+application components (e.g. `@Service` or `@Repository` beans defined in a Spring `ApplicationContext`) whether you
+are configuring additional GemFire/Geode objects (e.g. Regions, Indexes, etc) or simply using those objects indirectly
+in your applications. However, it is also possible to do so if and when needed.
 
 For example, perhaps you want to perform some additional initialization in a Spring Boot
 {spring-boot-javadoc}/org/springframework/boot/ApplicationRunner.html[ApplicationRunner] on startup:
