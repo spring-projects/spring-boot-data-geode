@@ -22,8 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.shiro.util.Assert;
-import org.apache.shiro.util.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
@@ -32,7 +30,9 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 
 /**
  * The {@link OnMissingPropertyCondition} class is a {@link SpringBootCondition}, Spring {@link Condition} type

@@ -20,9 +20,10 @@ import java.lang.annotation.Annotation;
 import java.util.Optional;
 
 import org.apache.geode.cache.Cache;
-import org.apache.shiro.util.Assert;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
@@ -31,6 +32,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
 import org.springframework.data.gemfire.config.annotation.PeerCacheConfigurer;
 import org.springframework.data.gemfire.config.annotation.support.AbstractAnnotationConfigSupport;
+import org.springframework.util.Assert;
 
 /**
  * The {@link DistributedSystemIdConfiguration} class is a Spring {@link Configuration} class used to configure

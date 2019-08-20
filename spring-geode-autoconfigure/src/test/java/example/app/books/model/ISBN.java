@@ -17,7 +17,7 @@ package example.app.books.model;
 
 import java.util.UUID;
 
-import org.apache.shiro.util.Assert;
+import org.springframework.util.Assert;
 
 /**
  * The {@link ISBN} class is a Abstract Data Type (ADT) modeling either a {@link Book} ISBN-10 or ISBN-13 number.

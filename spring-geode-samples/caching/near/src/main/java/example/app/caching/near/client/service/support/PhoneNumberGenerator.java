@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.shiro.util.StringUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Generates random phone number using a few well-defined area codes.

@@ -22,7 +22,6 @@ import java.util.function.Predicate;
 import org.apache.geode.cache.CacheLoader;
 import org.apache.geode.cache.CacheWriter;
 import org.apache.geode.cache.Region;
-import org.apache.shiro.util.Assert;
 
 import org.springframework.data.gemfire.PeerRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
@@ -30,6 +29,7 @@ import org.springframework.data.gemfire.config.annotation.RegionConfigurer;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
 /**
  * A {@link RegionConfigurer} implementation used to enable Inline Caching on a designated {@link Region}.

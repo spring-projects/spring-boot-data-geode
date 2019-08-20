@@ -18,10 +18,10 @@ package example.app.temp.service;
 import java.util.Optional;
 
 import org.apache.geode.cache.query.CqEvent;
-import org.apache.shiro.util.Assert;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.gemfire.listener.annotation.ContinuousQuery;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import example.app.temp.event.BoilingTemperatureEvent;
 import example.app.temp.event.FreezingTemperatureEvent;

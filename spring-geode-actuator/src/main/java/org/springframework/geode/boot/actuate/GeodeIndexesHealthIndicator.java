@@ -23,11 +23,12 @@ import java.util.Optional;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.query.Index;
 import org.apache.geode.cache.query.IndexStatistics;
-import org.apache.shiro.util.Assert;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicator;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 /**

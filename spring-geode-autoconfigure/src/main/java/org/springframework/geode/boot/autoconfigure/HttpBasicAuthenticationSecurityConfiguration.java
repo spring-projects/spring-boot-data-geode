@@ -24,8 +24,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.geode.management.internal.security.ResourceConstants;
-import org.apache.shiro.util.Assert;
-import org.apache.shiro.util.StringUtils;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +40,9 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**

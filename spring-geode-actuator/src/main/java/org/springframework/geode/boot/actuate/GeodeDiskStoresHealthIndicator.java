@@ -25,12 +25,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.geode.cache.DiskStore;
-import org.apache.shiro.util.Assert;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicator;
+import org.springframework.util.Assert;
 
 /**
  * The {@link GeodeDiskStoresHealthIndicator} class is a Spring Boot {@link HealthIndicator} providing details about

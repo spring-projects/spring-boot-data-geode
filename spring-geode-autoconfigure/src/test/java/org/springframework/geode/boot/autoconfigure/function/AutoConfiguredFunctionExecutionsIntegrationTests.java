@@ -22,14 +22,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Optional;
 
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.execute.FunctionService;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.execute.FunctionService;
-import org.apache.shiro.util.Assert;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -41,6 +40,7 @@ import org.springframework.data.gemfire.function.annotation.GemfireFunction;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.geode.boot.autoconfigure.function.executions.Calculator;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.Assert;
 
 /**
  * Integration tests testing the auto-configuration of Spring Data for Apache Geode/Pivotal GemFire
