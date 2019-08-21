@@ -11,7 +11,9 @@ Adds a new Sample with Guide and Code on HTTP Session Caching.
 * Adds a new Sample with Guide and Example Spring Boot Application showcasing HTTP Session Caching with Spring Session
 and Apache Geode.
 * Resolves GitHub Issue #41.
-* ?
+* Removes improper use of the Apache Shiro API in production code, replacing usages with the matching and appropriate
+Spring Framework API class.
+* Cleans up unnecessary transitive dependencies.
 
 
 Changes in version 1.1.0.RC2 (2019-08-13)
