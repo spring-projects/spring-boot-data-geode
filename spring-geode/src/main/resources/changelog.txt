@@ -4,6 +4,21 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.0.M1 (2019-08-21)
+----------------------------------------
+Rebases SBDG on Spring Framework 5.2, Spring Boot 2.2, Spring Data Moore/2.2 and Spring Session Corn/2.2.
+
+* Upgrades to Apache Geode 1.9.0.
+* Upgrades to the Apache Geode Management REST API 1.9.0 for testing cluster configuration and Auth.
+* Upgrade to Pivotal GemFire 9.8.3
+* Upgrades to Spring Framework 2.2.0.BUILD-SNAPSHOT.
+* Upgrades to Spring Boot 2.2.0.BUILD-SNAPSHOT.
+* Upgrades to Spring Data Release Train Moore-BUILD-SNAPSHOT.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.2.0.BUILD-SNAPSHOT.
+* Upgrades to Spring Session BOM Corn-BUILD-SNAPSHOT.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.2.0.BUILD-SNAPSHOT.
+
+
 Changes in version 1.1.0.RELEASE (2019-08-21)
 -----------------------------------------
 Adds a new Sample with Guide and Code on HTTP Session Caching.
