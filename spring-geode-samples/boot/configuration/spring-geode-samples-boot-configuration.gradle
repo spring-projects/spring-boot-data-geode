@@ -11,10 +11,10 @@ description = "Spring Geode Sample demonstrating the use of Spring Boot Auto-Con
 dependencies {
 
 	compile project(":spring-geode-starter")
+	compile project(":spring-geode-starter-test")
 
 	compile "org.assertj:assertj-core"
 	compile "org.projectlombok:lombok"
-	compile "org.springframework.data:spring-data-geode-test"
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
 		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"

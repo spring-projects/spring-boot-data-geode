@@ -5,11 +5,9 @@ description = "Spring Boot Test Starter for Pivotal GemFire"
 
 dependencies {
 
-	compile("org.springframework.boot:spring-boot-starter-test") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
-	}
+	compile project(':spring-gemfire-starter')
 
-	compile(project(':spring-gemfire-starter'));
+	compile "org.springframework.boot:spring-boot-starter-test"
 
 	testCompile "org.springframework.data:spring-data-gemfire-test:$springDataGeodeTestVersion"
 

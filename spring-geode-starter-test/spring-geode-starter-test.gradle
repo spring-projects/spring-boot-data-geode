@@ -5,11 +5,11 @@ description = "Spring Boot Test Starter for Apache Geode"
 
 dependencies {
 
+	compile project(':spring-geode-starter')
+
 	compile("org.springframework.boot:spring-boot-starter-test") {
 		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
-
-	compile(project(':spring-geode-starter'))
 
 	testCompile 'org.springframework.data:spring-data-geode-test'
 

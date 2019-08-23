@@ -11,8 +11,8 @@ dependencies {
         exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
     }
 
-    testCompile "org.assertj:assertj-core"
     testCompile "junit:junit"
+    testCompile "org.assertj:assertj-core"
     testCompile "org.mockito:mockito-core"
     testCompile "org.projectlombok:lombok"
     testCompile "edu.umd.cs.mtc:multithreadedtc"

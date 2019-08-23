@@ -8,8 +8,8 @@ dependencies {
     compile project(":spring-geode-actuator")
     compile project(":spring-geode-autoconfigure")
 
-    testCompile "org.assertj:assertj-core"
     testCompile "junit:junit"
+    testCompile "org.assertj:assertj-core"
     testCompile "org.mockito:mockito-core"
     testCompile "org.projectlombok:lombok"
     testCompile "edu.umd.cs.mtc:multithreadedtc"

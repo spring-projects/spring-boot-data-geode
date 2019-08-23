@@ -15,7 +15,7 @@ dependencies {
 	optional "org.springframework.boot:spring-boot-configuration-processor"
 	optional "org.springframework.session:spring-session-data-geode"
 
-	provided "javax.servlet:javax.servlet-api"
+	//provided "javax.servlet:javax.servlet-api"
 
 	testCompile project(":apache-geode-extensions")
 
@@ -44,7 +44,7 @@ dependencies {
 	testRuntime "org.springframework.shell:spring-shell:$springShellVersion"
 
 	// Runtime Test dependency on Spring Cloud Services (SCS) to verify workaround to SCS problem!
-	// testRuntime("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:2.0.3.RELEASE") {
+	//testRuntime("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:2.0.3.RELEASE") {
 	//	exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
-	// }
+	//}
 }

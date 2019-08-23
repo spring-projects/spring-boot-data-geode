@@ -5,7 +5,7 @@ description = "Spring Boot Starter for Spring Session using Apache Geode"
 
 dependencies {
 
-    compile(project(':spring-geode-starter'))
+    compile project(':spring-geode-starter')
 
     compile 'org.springframework.session:spring-session-data-geode'
 

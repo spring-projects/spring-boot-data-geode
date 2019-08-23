@@ -1,6 +1,6 @@
 apply plugin: 'io.spring.convention.spring-sample-boot'
 
-description = "Spring Geode Sample demonstrating Spring's Cache Abstraction using Apache Geode as the caching provider with Look-Aside Caching."
+description = "Spring Geode Sample demonstrating Spring's Cache Abstraction using Apache Geode as the caching provider for Look-Aside Caching."
 
 dependencies {
 
@@ -10,18 +10,11 @@ dependencies {
 		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
 
-	runtime "javax.cache:cache-api"
-
-	runtime ("org.springframework.boot:spring-boot-starter-jetty") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
-	}
+	testCompile project(":spring-geode-starter-test")
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
 		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
-
-	testCompile "org.springframework.data:spring-data-geode-test"
-
 }
 
 bootJar {

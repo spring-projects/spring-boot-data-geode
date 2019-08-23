@@ -5,7 +5,7 @@ description = "Spring Boot Starter for Spring Session using Pivotal GemFire"
 
 dependencies {
 
-    compile(project(':spring-gemfire-starter'))
+    compile project(':spring-gemfire-starter')
 
     compile 'org.springframework.session:spring-session-data-gemfire'
 

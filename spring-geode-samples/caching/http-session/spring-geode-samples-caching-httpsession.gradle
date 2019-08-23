@@ -16,17 +16,12 @@ dependencies {
 		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
 
-	runtime ("org.springframework.boot:spring-boot-starter-tomcat") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
-	}
+	testCompile project(":spring-geode-starter-session")
+	testCompile project(":spring-geode-starter-test")
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
 		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
 	}
-
-	testCompile project(":spring-geode-starter-session")
-
-	testCompile "org.springframework.data:spring-data-geode-test"
 
 }
 
