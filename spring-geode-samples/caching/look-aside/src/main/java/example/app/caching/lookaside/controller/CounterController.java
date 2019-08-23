@@ -47,6 +47,11 @@ public class CounterController {
 		this.counterService = counterService;
 	}
 
+	@GetMapping("/")
+	public String home() {
+		return String.format(HEADER_ONE, "Look-Aside Caching Example");
+	}
+
 	@GetMapping("/ping")
 	public String ping() {
 		return String.format(HEADER_ONE, "PONG");
