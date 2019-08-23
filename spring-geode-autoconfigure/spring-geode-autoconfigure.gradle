@@ -15,7 +15,7 @@ dependencies {
 	optional "org.springframework.boot:spring-boot-configuration-processor"
 	optional "org.springframework.session:spring-session-data-geode"
 
-	//provided "javax.servlet:javax.servlet-api"
+	provided "javax.servlet:javax.servlet-api"
 
 	testCompile project(":apache-geode-extensions")
 
