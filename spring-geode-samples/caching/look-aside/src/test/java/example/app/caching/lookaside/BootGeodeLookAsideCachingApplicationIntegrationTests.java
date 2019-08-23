@@ -46,7 +46,7 @@ import example.app.caching.lookaside.service.CounterService;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @SuppressWarnings("unused")
-public class CounterServiceApplicationIntegrationTests extends IntegrationTestsSupport {
+public class BootGeodeLookAsideCachingApplicationIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private CounterService counterService;
