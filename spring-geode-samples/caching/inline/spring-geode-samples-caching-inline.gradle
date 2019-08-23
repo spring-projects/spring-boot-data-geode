@@ -15,7 +15,6 @@ dependencies {
 	compile "org.springframework.boot:spring-boot-starter-web"
 
 	runtime "org.hsqldb:hsqldb"
-	runtime "org.springframework.boot:spring-boot-starter-jetty"
 
 	testCompile project(":spring-geode-starter-test")
 
