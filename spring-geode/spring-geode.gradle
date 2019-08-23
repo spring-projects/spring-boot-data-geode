@@ -14,6 +14,7 @@ dependencies {
 	compile "org.springframework.boot:spring-boot-starter"
 
 	compile("org.springframework.data:spring-data-geode") {
+		exclude group: "javax.servlet", module: "javax.servlet-api"
 		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
 
@@ -32,6 +33,7 @@ dependencies {
 	testCompile "org.springframework.boot:spring-boot-starter-data-cassandra"
 
 	testCompile("org.springframework.data:spring-data-geode-test") {
+		exclude group: "javax.servlet", module: "javax.servlet-api"
 		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
 

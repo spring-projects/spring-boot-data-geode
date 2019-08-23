@@ -4,7 +4,7 @@ plugins {
 
 apply plugin: 'io.spring.convention.spring-sample-boot'
 
-description = "Spring Geode Sample demonstrating Spring's Cache Abstraction using Apache Geode as the caching provider with Inline Caching."
+description = "Spring Geode Sample demonstrating Spring's Cache Abstraction using Apache Geode as the caching provider for Inline Caching."
 
 dependencies {
 
@@ -14,14 +14,13 @@ dependencies {
 	compile "org.springframework.boot:spring-boot-starter-data-jpa"
 	compile "org.springframework.boot:spring-boot-starter-web"
 
-	runtime "javax.cache:cache-api"
 	runtime "org.hsqldb:hsqldb"
 	runtime "org.springframework.boot:spring-boot-starter-jetty"
-	runtime "org.springframework.shell:spring-shell"
 
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 
 	testCompile("org.springframework.data:spring-data-geode-test") {
+		exclude group: "javax.servlet", module: "javax.servlet-api"
 		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
 
