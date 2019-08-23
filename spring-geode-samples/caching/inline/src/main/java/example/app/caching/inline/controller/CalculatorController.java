@@ -38,7 +38,7 @@ public class CalculatorController {
 
 	@GetMapping("/")
 	public String home() {
-		return ping();
+		return format("Inline Caching Example");
 	}
 
 	@GetMapping("/ping")
