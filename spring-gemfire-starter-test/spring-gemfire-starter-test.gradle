@@ -7,8 +7,10 @@ dependencies {
 
 	compile project(':spring-gemfire-starter')
 
-	compile "org.springframework.boot:spring-boot-starter-test"
+	compile("org.springframework.boot:spring-boot-starter-test") {
+		exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+	}
 
-	testCompile "org.springframework.data:spring-data-gemfire-test:$springDataGeodeTestVersion"
+	compile "org.springframework.data:spring-data-gemfire-test:$springDataGeodeTestVersion"
 
 }
