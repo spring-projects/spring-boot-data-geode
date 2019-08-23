@@ -17,9 +17,6 @@ dependencies {
 		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
 
-	runtime "org.springframework.boot:spring-boot-starter-jetty"
-	runtime "org.springframework.shell:spring-shell"
-
 }
 
 bootJar {
