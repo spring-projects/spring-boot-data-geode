@@ -13,13 +13,9 @@ dependencies {
 	runtime "org.springframework.boot:spring-boot-starter-thymeleaf"
 
 	testCompile project(":spring-geode-starter-session")
+	testCompile project(":spring-geode-starter-test")
 
 	testCompile "org.springframework.boot:spring-boot-starter-test"
-
-	testCompile("org.springframework.data:spring-data-geode-test") {
-		exclude group: "javax.servlet", module: "javax.servlet-api"
-		exclude group: "org.apache.logging.log4j", module: "log4j-core"
-	}
 
 }
 
