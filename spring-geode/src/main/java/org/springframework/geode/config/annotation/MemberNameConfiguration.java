@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.config.annotation;
 
 import java.lang.annotation.Annotation;
@@ -23,6 +22,7 @@ import java.util.Set;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
@@ -118,13 +118,13 @@ public class MemberNameConfiguration extends AbstractAnnotationConfigSupport imp
 	@Bean
 	@Order(Ordered.HIGHEST_PRECEDENCE) // apply first (e.g. before CacheNameAutoConfiguration)
 	ClientCacheConfigurer clientCacheMemberNameConfigurer(Environment environment) {
-		return (beaName, clientCacheFactoryBean) -> configureMemberName(environment, clientCacheFactoryBean);
+		return (beanName, clientCacheFactoryBean) -> configureMemberName(environment, clientCacheFactoryBean);
 	}
 
 	@Bean
 	@Order(Ordered.HIGHEST_PRECEDENCE) // apply first (e.g. before CacheNameAutoConfiguration)
 	PeerCacheConfigurer peerCacheMemberNameConfigurer(Environment environment) {
-		return (beaName, peerCacheFactoryBean) -> configureMemberName(environment, peerCacheFactoryBean);
+		return (beanName, peerCacheFactoryBean) -> configureMemberName(environment, peerCacheFactoryBean);
 	}
 
 	private void configureMemberName(Environment environment, CacheFactoryBean cacheFactoryBean) {
