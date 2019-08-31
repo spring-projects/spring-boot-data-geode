@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.config.annotation;
 
 import java.lang.annotation.Documented;
@@ -25,6 +24,7 @@ import java.lang.annotation.Target;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
+
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
