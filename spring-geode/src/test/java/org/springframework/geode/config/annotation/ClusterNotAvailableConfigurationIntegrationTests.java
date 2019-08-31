@@ -25,6 +25,7 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -61,11 +62,19 @@ import example.app.crm.service.CustomerService;
  * @since 1.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+	classes = ClusterNotAvailableConfigurationIntegrationTests.GeodeClientApplication.class,
+	webEnvironment = SpringBootTest.WebEnvironment.NONE
+)
 @SuppressWarnings("unused")
 public class ClusterNotAvailableConfigurationIntegrationTests extends IntegrationTestsSupport {
 
 	private static final String LOG_LEVEL = "error";
+
+	@BeforeClass
+	public static void setup() {
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
+	}
 
 	@Resource(name = "Customers")
 	private Region<Long, Customer> customers;
@@ -77,7 +86,7 @@ public class ClusterNotAvailableConfigurationIntegrationTests extends Integratio
 	private Region<Object, Object> example;
 
 	@Before
-	public void setup() {
+	public void assertRegionConfiguration() {
 
 		assertRegion(this.example, "Example", DataPolicy.NORMAL, null);
 		assertRegion(this.customers, "Customers", DataPolicy.NORMAL, null);
@@ -121,7 +130,7 @@ public class ClusterNotAvailableConfigurationIntegrationTests extends Integratio
 	@EnableClusterAware
 	@EnableCachingDefinedRegions
 	@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
-	@ClientCacheApplication(name = "ClusterAvailableConfigurationIntegrationTests", logLevel = LOG_LEVEL)
+	@ClientCacheApplication(name = "ClusterNotAvailableConfigurationIntegrationTests", logLevel = LOG_LEVEL)
 	static class GeodeClientApplication {
 
 		@Bean("Example")

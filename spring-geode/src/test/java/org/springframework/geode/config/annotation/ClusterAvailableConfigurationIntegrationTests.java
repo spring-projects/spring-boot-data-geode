@@ -85,6 +85,9 @@ public class ClusterAvailableConfigurationIntegrationTests extends ForkingClient
 
 	@BeforeClass
 	public static void runGemFireServer() throws IOException {
+
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
+
 		startGemFireServer(GeodeServerApplication.class);
 	}
 

@@ -96,6 +96,10 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 
 		private static final AtomicReference<Boolean> clusterAvailable = new AtomicReference<>(null);
 
+		static void reset() {
+			clusterAvailable.set(null);
+		}
+
 		@Override
 		public synchronized boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
