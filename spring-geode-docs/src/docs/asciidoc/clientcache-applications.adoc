@@ -335,3 +335,283 @@ especially if you start multiple instances, otherwise you will run into a `java.
 due to port conflicts.
 
 TIP: See the Appendix, <<geode-cluster-configuration-bootstrapping>> for more details.
+
+[[geode-locator-applications]]
+=== Locator Applications
+
+In addition to `ClientCache`, `CacheServer` and peer `Cache` applications, SDG, and by extension SBDG, now supports
+Locator-based, Spring Boot applications.
+
+An Apache Geode or Pivotal GemFire Locator is a location-based service, or alternatively and more typically,
+a standalone process enabling clients to "locate" a cluster of Apache Geode/Pivotal GemFire servers to manage data.
+Many cache clients can connect to the same cluster in order to share data.  Running multiple clients is common in a
+Microservices architecture where you need to scale-up the number of app instances to satisfy the demand.
+
+A Locator is also used by joining members of an existing cluster to scale-out and increase capacity of the logically
+pooled system resources (i.e. Memory, CPU and Disk).  A Locator maintains metadata that is sent to the clients to
+enable capabilities like single-hop data access, thereby routing data access operations to the data node in the cluster
+maintaining the data of interests.  A Locator also maintains load information for servers in the cluster, which enables
+the load to be uniformly distributed and also provide fail-over services to a redundant member if the primary fails.
+A Locator provides many more benefit and you are encouraged to read
+the {apache-geode-docs}/configuring/running/running_the_locator.html[documentation] for more details.
+
+As shown above, a Locator service can be embedded in either a peer `Cache` or `CacheServer`, Spring Boot application
+using the SDG `@EnableLocator` annotation:
+
+.Embedded Locator Service
+[source,java]
+----
+@EnableLocator
+@CacheServerApplication
+@SpringBootApplication
+class SpringBootWithEmbeddedLocatorAndCacheServerApplication { ... }
+----
+
+However, it is more common to start standalone Locator JVM processes.  This useful when you want to increase
+the resiliency of your cluster in face of network and process failures, which are bound to happen.  If a Locator JVM
+process crashes or gets severed from the cluster due to a network failure, then having multiple Locators provides a
+degree of redundancy in order to improve on the cluster's availability (HA).
+
+Not to worry though, if all Locators in the cluster go down, then the cluster will still remain intact.
+You simply won't be able to add more peer members (i.e. scale-up the number of data nodes in the cluster)
+or connect additional clients.  If all the Locators in the cluster go down, then it is safe to simply restart them
+after a thorough diagnosis.
+
+NOTE: Once a client receives metadata about the cluster of servers, then all data access operations are sent directly
+to servers in the cluster, not a Locator.  Therefore, existing, connected clients will remain connected and operable.
+
+To configure and bootstrap Locator-based, Spring Boot applications as standalone JVM processes, use the following
+configuration:
+
+.Standalone Locator Process
+[source,java]
+----
+@LocatorApplication
+@SpringBootApplication
+class SpringBootApacheGeodeLocatorApplication { ... }
+----
+
+Instead of using the `@EnableLocator` annotation, you now use the `@LocatorApplication` annotation.
+
+The `@LocatorApplication` annotation works in the same way as the `@PeerCacheApplication` and `@CacheServerApplication`
+annotations, bootstrapping a Apache Geode or Pivotal GemFire process and overriding the default `ClientCache` instance
+provided by SBDG out-of-the-box.
+
+NOTE: If your `@SpringBootApplication` class is annotated with `@LocatorApplication`, then it can only be a `Locator`
+and not a `ClientCache`, `CacheServer` or peer `Cache` application.
+
+With our Spring Boot, Apache Geode Locator application, we can connect both Spring Boot configured and bootstrapped
+peer members (peer `Cache`, `CacheServer` and `Locator` applications) as well as _Gfsh_ started Locators and Servers.
+
+First, let's startup 2 Locators using our Apache Geode Locator, Spring Boot application class.
+
+.SpringBootApacheGeodeLocatorApplication class
+[source,java]
+----
+include::{docs-src-dir}/example/app/locator/SpringBootApacheGeodeLocatorApplication.java[class]
+----
+
+We also need to vary our configuration for each Locator app instance.
+
+Apache Geode and Pivotal GemFire requires each peer member in the cluster to be uniquely named.  We can set the name
+of the Locator by using the `spring.data.gemfire.locator.name` SDG property as a JVM System Property in your IDE's Run
+Configuration Profile for our application main class like so: `--Dspring.data.gemfire.locator=SpringLocatorOne`.
+We name the second instance, "SpringLocatorTwo".
+
+Additionally, we must vary the port numbers that the Locator's use to listen for connections.  By default,
+an Apache Geode or Pivotal GemFire Locator listens on port `10334`.  We can set the Locator port using the
+`spring.data.gemfire.locator.port` property.
+
+For our first Locator app instance (i.e. "SpringLocatorOne"), we also enable the "manager" Profile so that
+we can connect to the Locators using _Gfsh_.
+
+Our IDE Run Configuration Profile for our first Locator app instance appears as:
+
+`-server -ea -Dspring.profiles.active=manager -Dspring.data.gemfire.locator.name=SpringLocatorOne -Dlogback.log.level=INFO`
+
+And our IDE Run Configuration Profile for our second Locator app instance appears as:
+
+`-server -ea -Dspring.profiles.active= -Dspring.data.gemfire.locator.name=SpringLocatorTwo -Dspring.data.gemfire.locator.port=11235 -Dlogback.log.level=INFO`
+
+You should see log output similar to the following when you start a Locator app instance:
+
+.Spring Boot, Apache Geode Locator log output
+[source,txt]
+----
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::  (v2.2.0.BUILD-SNAPSHOT)
+
+2019-09-01 11:02:48,707  INFO .SpringBootApacheGeodeLocatorApplication:  55 - Starting SpringBootApacheGeodeLocatorApplication on jblum-mbpro-2.local with PID 30077 (/Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/out/production/classes started by jblum in /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build)
+2019-09-01 11:02:48,711  INFO .SpringBootApacheGeodeLocatorApplication: 651 - No active profile set, falling back to default profiles: default
+2019-09-01 11:02:49,374  INFO xt.annotation.ConfigurationClassEnhancer: 355 - @Bean method LocatorApplicationConfiguration.exclusiveLocatorApplicationBeanFactoryPostProcessor is non-static and returns an object assignable to Spring's BeanFactoryPostProcessor interface. This will result in a failure to process annotations such as @Autowired, @Resource and @PostConstruct within the method's declaring @Configuration class. Add the 'static' modifier to this method to avoid these container lifecycle issues; see @Bean javadoc for complete details.
+2019-09-01 11:02:49,919  INFO ode.distributed.internal.InternalLocator: 530 - Starting peer location for Distribution Locator on 10.99.199.24[11235]
+2019-09-01 11:02:49,925  INFO ode.distributed.internal.InternalLocator: 498 - Starting Distribution Locator on 10.99.199.24[11235]
+2019-09-01 11:02:49,926  INFO distributed.internal.tcpserver.TcpServer: 242 - Locator was created at Sun Sep 01 11:02:49 PDT 2019
+2019-09-01 11:02:49,927  INFO distributed.internal.tcpserver.TcpServer: 243 - Listening on port 11235 bound on address 0.0.0.0/0.0.0.0
+2019-09-01 11:02:49,928  INFO ternal.membership.gms.locator.GMSLocator: 162 - GemFire peer location service starting.  Other locators: localhost[10334]  Locators preferred as coordinators: true  Network partition detection enabled: true  View persistence file: /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build/locator11235view.dat
+2019-09-01 11:02:49,928  INFO ternal.membership.gms.locator.GMSLocator: 416 - Peer locator attempting to recover from localhost/127.0.0.1:10334
+2019-09-01 11:02:49,963  INFO ternal.membership.gms.locator.GMSLocator: 422 - Peer locator recovered initial membership of View[10.99.199.24(SpringLocatorOne:30043:locator)<ec><v0>:41000|0] members: [10.99.199.24(SpringLocatorOne:30043:locator)<ec><v0>:41000]
+2019-09-01 11:02:49,963  INFO ternal.membership.gms.locator.GMSLocator: 407 - Peer locator recovered state from LocatorAddress [socketInetAddress=localhost/127.0.0.1:10334, hostname=localhost, isIpString=false]
+2019-09-01 11:02:49,965  INFO ode.distributed.internal.InternalLocator: 644 - Starting distributed system
+2019-09-01 11:02:50,007  INFO he.geode.internal.logging.LoggingSession:  82 -
+---------------------------------------------------------------------------
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with this
+  work for additional information regarding copyright ownership.
+
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with the
+  License.  You may obtain a copy of the License at
+
+  https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+  License for the specific language governing permissions and limitations
+  under the License.
+
+---------------------------------------------------------------------------
+Build-Date: 2019-04-19 11:49:13 -0700
+Build-Id: onichols 0
+Build-Java-Version: 1.8.0_192
+Build-Platform: Mac OS X 10.14.4 x86_64
+Product-Name: Apache Geode
+Product-Version: 1.9.0
+Source-Date: 2019-04-19 11:11:31 -0700
+Source-Repository: release/1.9.0
+Source-Revision: c0a73d1cb84986d432003bd12e70175520e63597
+Native version: native code unavailable
+Running on: 10.99.199.24/10.99.199.24, 8 cpu(s), x86_64 Mac OS X 10.13.6
+Communications version: 100
+Process ID: 30077
+User: jblum
+Current dir: /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-docs/build
+Home dir: /Users/jblum
+Command Line Parameters:
+  -ea
+  -Dspring.profiles.active=
+  -Dspring.data.gemfire.locator.name=SpringLocatorTwo
+  -Dspring.data.gemfire.locator.port=11235
+  -Dlogback.log.level=INFO
+  -javaagent:/Applications/IntelliJ IDEA 19 CE.app/Contents/lib/idea_rt.jar=51961:/Applications/IntelliJ IDEA 19 CE.app/Contents/bin
+  -Dfile.encoding=UTF-8
+Class Path:
+...
+..
+.
+2019-09-01 11:02:54,112  INFO ode.distributed.internal.InternalLocator: 661 - Locator started on 10.99.199.24[11235]
+2019-09-01 11:02:54,113  INFO ode.distributed.internal.InternalLocator: 769 - Starting server location for Distribution Locator on 10.99.199.24[11235]
+2019-09-01 11:02:54,134  INFO nt.internal.locator.wan.LocatorDiscovery: 138 - Locator discovery task exchanged locator information 10.99.199.24[11235] with localhost[10334]: {-1=[10.99.199.24[10334]]}.
+2019-09-01 11:02:54,242  INFO .SpringBootApacheGeodeLocatorApplication:  61 - Started SpringBootApacheGeodeLocatorApplication in 6.137470354 seconds (JVM running for 6.667)
+Press <enter> to exit!
+----
+
+Next, start up the second Locator app instance (you should see similar log output again) and then connect to
+the cluster of Locators using _Gfsh_:
+
+.Cluster of Locators
+[source,txt]
+----
+$ echo $GEMFIRE
+/Users/jblum/pivdev/apache-geode-1.9.0
+
+$ gfsh
+    _________________________     __
+   / _____/ ______/ ______/ /____/ /
+  / /  __/ /___  /_____  / _____  /
+ / /__/ / ____/  _____/ / /    / /
+/______/_/      /______/_/    /_/    1.9.0
+
+Monitor and Manage Apache Geode
+
+gfsh>connect
+Connecting to Locator at [host=localhost, port=10334] ..
+Connecting to Manager at [host=10.99.199.24, port=1099] ..
+Successfully connected to: [host=10.99.199.24, port=1099]
+
+gfsh>list members
+      Name       | Id
+---------------- | ------------------------------------------------------------------------
+SpringLocatorOne | 10.99.199.24(SpringLocatorOne:30043:locator)<ec><v0>:41000 [Coordinator]
+SpringLocatorTwo | 10.99.199.24(SpringLocatorTwo:30077:locator)<ec><v1>:41001
+
+gfsh>
+----
+
+Using our `SpringBootApacheGeodeCacheServerApplication` main class from the previous section, we can configure
+and bootstrap an Apache Geode `CacheServer` application with Spring Boot and connect it to our cluster of Locators.
+
+.SpringBootApacheGeodeLocatorApplication class
+[source,java]
+----
+include::{docs-src-dir}/example/app/server/SpringBootApacheGeodeServerApplication.java[class]
+----
+
+Simply enable the "clustered" Profile by using a IDE Run Configuration similar to:
+
+`-server -ea -Dspring.profiles.active=clustered -Dspring.data.gemfire.name=SpringServer -Dspring.data.gemfire.cache.server.port=41414 -Dlogback.log.level=INFO`
+
+After the server starts up, you should see the new peer member in the cluster:
+
+.Cluster with Spring Boot configured and bootstrapped Apache Geode `CacheServer`
+[source,txt]
+----
+gfsh>list members
+      Name       | Id
+---------------- | ------------------------------------------------------------------------
+SpringLocatorOne | 10.99.199.24(SpringLocatorOne:30043:locator)<ec><v0>:41000 [Coordinator]
+SpringLocatorTwo | 10.99.199.24(SpringLocatorTwo:30077:locator)<ec><v1>:41001
+SpringServer     | 10.99.199.24(SpringServer:30216)<v2>:41002
+
+----
+
+Finally, we can even start additional Locators and Servers connected to this cluster using _Gfsh_:
+
+.Gfsh started Locators and Servers
+[source,txt]
+----
+gfsh>start locator --name=GfshLocator --port=12345 --log-level=config
+Starting a Geode Locator in /Users/jblum/pivdev/lab/GfshLocator...
+......
+Locator in /Users/jblum/pivdev/lab/GfshLocator on 10.99.199.24[12345] as GfshLocator is currently online.
+Process ID: 30259
+Uptime: 5 seconds
+Geode Version: 1.9.0
+Java Version: 1.8.0_192
+Log File: /Users/jblum/pivdev/lab/GfshLocator/GfshLocator.log
+JVM Arguments: -Dgemfire.default.locators=10.99.199.24[11235],10.99.199.24[10334] -Dgemfire.enable-cluster-configuration=true -Dgemfire.load-cluster-configuration-from-dir=false -Dgemfire.log-level=config -Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-core-1.9.0.jar:/Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-dependencies.jar
+
+gfsh>start server --name=GfshServer --server-port=45454 --log-level=config
+Starting a Geode Server in /Users/jblum/pivdev/lab/GfshServer...
+...
+Server in /Users/jblum/pivdev/lab/GfshServer on 10.99.199.24[45454] as GfshServer is currently online.
+Process ID: 30295
+Uptime: 2 seconds
+Geode Version: 1.9.0
+Java Version: 1.8.0_192
+Log File: /Users/jblum/pivdev/lab/GfshServer/GfshServer.log
+JVM Arguments: -Dgemfire.default.locators=10.99.199.24[11235],10.99.199.24[12345],10.99.199.24[10334] -Dgemfire.start-dev-rest-api=false -Dgemfire.use-cluster-configuration=true -Dgemfire.log-level=config -XX:OnOutOfMemoryError=kill -KILL %p -Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: /Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-core-1.9.0.jar:/Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-dependencies.jar
+
+gfsh>list members
+      Name       | Id
+---------------- | ------------------------------------------------------------------------
+SpringLocatorOne | 10.99.199.24(SpringLocatorOne:30043:locator)<ec><v0>:41000 [Coordinator]
+SpringLocatorTwo | 10.99.199.24(SpringLocatorTwo:30077:locator)<ec><v1>:41001
+SpringServer     | 10.99.199.24(SpringServer:30216)<v2>:41002
+GfshLocator      | 10.99.199.24(GfshLocator:30259:locator)<ec><v3>:41003
+GfshServer       | 10.99.199.24(GfshServer:30295)<v4>:41004
+
+gfsh>
+----
+
+You simply must be careful to vary the ports is all and name your peer members appropriately.  With Spring,
+and Spring Boot for Apache Geode or Pivotal GemFire (SBDG) in particular, it really is that easy!
