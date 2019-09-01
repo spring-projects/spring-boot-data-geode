@@ -32,6 +32,7 @@ John Blum
 :spring-data-commons-docs: https://docs.spring.io/spring-data/commons/docs/current/reference
 :spring-data-commons-docs-html: {spring-data-commons-docs}/html
 :spring-data-commons-javadoc: https://docs.spring.io/spring-data/commons/docs/current/api
+:spring-data-commons-website: https://spring.io/projects/spring-data
 :spring-data-gemfire-docs: https://docs.spring.io/spring-data/gemfire/docs/current/reference
 :spring-data-gemfire-docs-html: {spring-data-gemfire-docs}/html
 :spring-data-gemfire-javadoc: https://docs.spring.io/spring-data/gemfire/docs/current/api
