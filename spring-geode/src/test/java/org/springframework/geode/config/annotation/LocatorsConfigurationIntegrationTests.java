@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.config.annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,9 +23,12 @@ import java.util.Properties;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
+import org.apache.geode.distributed.Locator;
+
 import org.junit.Test;
-import org.springframework.context.annotation.Configuration;
+
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
+import org.springframework.data.gemfire.config.annotation.LocatorApplication;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.SpringApplicationContextIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
@@ -35,9 +37,14 @@ import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockO
  * Integration tests for {@link UseLocators} and {@link LocatorsConfiguration}.
  *
  * @author John Blum
+ * @see java.util.Properties
  * @see org.junit.Test
+ * @see org.apache.geode.cache.Cache
+ * @see org.apache.geode.cache.client.ClientCache
+ * @see org.apache.geode.distributed.Locator
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
+ * @see org.springframework.data.gemfire.config.annotation.LocatorApplication
  * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
  * @see org.springframework.data.gemfire.tests.integration.SpringApplicationContextIntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
@@ -58,8 +65,23 @@ public class LocatorsConfigurationIntegrationTests extends SpringApplicationCont
 		Properties gemfireProperties = clientCache.getDistributedSystem().getProperties();
 
 		assertThat(gemfireProperties).isNotNull();
-		assertThat(gemfireProperties.containsKey(LOCATORS_PROPERTY)).isFalse();
-		assertThat(gemfireProperties.containsKey(REMOTE_LOCATORS_PROPERTY)).isFalse();
+		assertThat(gemfireProperties).doesNotContainKeys(LOCATORS_PROPERTY, REMOTE_LOCATORS_PROPERTY);
+	}
+
+	@Test
+	public void locatorLocatorPropertiesArePresent() {
+
+		Locator locator = newApplicationContext(LocatorTestConfiguration.class).getBean(Locator.class);
+
+		assertThat(locator).isNotNull();
+		assertThat(locator.getDistributedSystem()).isNotNull();
+
+		Properties gemfireProperties = locator.getDistributedSystem().getProperties();
+
+		assertThat(gemfireProperties).isNotNull();
+		assertThat(gemfireProperties).containsKeys(LOCATORS_PROPERTY, REMOTE_LOCATORS_PROPERTY);
+		assertThat(gemfireProperties.getProperty(LOCATORS_PROPERTY)).containsIgnoringCase("skullbox[11235]");
+		assertThat(gemfireProperties.getProperty(REMOTE_LOCATORS_PROPERTY)).containsIgnoringCase("remotehost[12480]");
 	}
 
 	@Test
@@ -74,21 +96,23 @@ public class LocatorsConfigurationIntegrationTests extends SpringApplicationCont
 		Properties gemfireProperties = peerCache.getDistributedSystem().getProperties();
 
 		assertThat(gemfireProperties).isNotNull();
-		assertThat(gemfireProperties.containsKey(LOCATORS_PROPERTY)).isTrue();
+		assertThat(gemfireProperties).containsKeys(LOCATORS_PROPERTY, REMOTE_LOCATORS_PROPERTY);
 		assertThat(gemfireProperties.getProperty(LOCATORS_PROPERTY)).isEqualTo("mailbox[11235],skullbox[12480]");
-		assertThat(gemfireProperties.containsKey(REMOTE_LOCATORS_PROPERTY)).isTrue();
 		assertThat(gemfireProperties.getProperty(REMOTE_LOCATORS_PROPERTY)).isEqualTo("remotehost[10334]");
 	}
 
-	@Configuration
-	@ClientCacheApplication
 	@EnableGemFireMockObjects
+	@ClientCacheApplication(logLevel = "error")
 	@UseLocators(remoteLocators = "remotehost[10334]")
 	static class ClientCacheTestConfiguration { }
 
-	@Configuration
-	@PeerCacheApplication
 	@EnableGemFireMockObjects
+	@LocatorApplication(logLevel = "error")
+	@UseLocators(locators = "skullbox[11235]", remoteLocators = "remotehost[12480]")
+	static class LocatorTestConfiguration { }
+
+	@EnableGemFireMockObjects
+	@PeerCacheApplication(logLevel = "error")
 	@UseLocators(locators = "mailbox[11235],skullbox[12480]", remoteLocators = "remotehost[10334]")
 	static class PeerCacheTestConfiguration { }
 

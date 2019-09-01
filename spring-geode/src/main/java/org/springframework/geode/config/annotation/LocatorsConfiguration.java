@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.config.annotation;
 
 import java.lang.annotation.Annotation;
@@ -21,14 +20,17 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.geode.cache.Cache;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
+import org.springframework.data.gemfire.config.annotation.LocatorConfigurer;
 import org.springframework.data.gemfire.config.annotation.PeerCacheConfigurer;
 import org.springframework.data.gemfire.config.annotation.support.AbstractAnnotationConfigSupport;
 import org.springframework.util.StringUtils;
@@ -135,6 +137,20 @@ public class LocatorsConfiguration extends AbstractAnnotationConfigSupport imple
 							REMOTE_LOCATORS_PROPERTY, remoteLocators);
 				}
 			});
+		};
+	}
+
+	@Bean
+	LocatorConfigurer locatorLocatorsConfigurer() {
+
+		return (beanName, locatorFactoryBean) -> {
+
+			Properties gemfireProperties = locatorFactoryBean.getGemFireProperties();
+
+			getLocators().ifPresent(locators -> gemfireProperties.setProperty(LOCATORS_PROPERTY, locators));
+
+			getRemoteLocators().ifPresent(remoteLocators ->
+				gemfireProperties.setProperty(REMOTE_LOCATORS_PROPERTY, remoteLocators));
 		};
 	}
 
