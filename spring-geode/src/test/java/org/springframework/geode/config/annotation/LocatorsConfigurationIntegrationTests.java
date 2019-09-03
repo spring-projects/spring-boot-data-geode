@@ -25,13 +25,18 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.distributed.Locator;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
 import org.springframework.data.gemfire.config.annotation.LocatorApplication;
+import org.springframework.data.gemfire.config.annotation.LocatorConfigurer;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.SpringApplicationContextIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.data.gemfire.tests.util.FileSystemUtils;
 
 /**
  * Integration tests for {@link UseLocators} and {@link LocatorsConfiguration}.
@@ -52,6 +57,13 @@ import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockO
  */
 @SuppressWarnings("unused")
 public class LocatorsConfigurationIntegrationTests extends SpringApplicationContextIntegrationTestsSupport {
+
+	@Before @After
+	public void cleanup() {
+
+		FileSystemUtils.deleteRecursive(FileSystemUtils.WORKING_DIRECTORY, file ->
+			file != null && (file.getName().contains("locator") || file.getName().contains("ConfigDiskDir")));
+	}
 
 	@Test
 	public void clientCacheLocatorPropertiesAreNotPresent() {
@@ -109,7 +121,15 @@ public class LocatorsConfigurationIntegrationTests extends SpringApplicationCont
 	@EnableGemFireMockObjects
 	@LocatorApplication(logLevel = "error")
 	@UseLocators(locators = "skullbox[11235]", remoteLocators = "remotehost[12480]")
-	static class LocatorTestConfiguration { }
+	static class LocatorTestConfiguration {
+
+		@Bean
+		LocatorConfigurer locatorUseClusterConfigurationConfigurer() {
+
+			return (beanName, locatorFactoryBean) -> locatorFactoryBean.getGemFireProperties()
+				.setProperty("use-cluster-configuration", Boolean.FALSE.toString());
+		}
+	}
 
 	@EnableGemFireMockObjects
 	@PeerCacheApplication(logLevel = "error")
