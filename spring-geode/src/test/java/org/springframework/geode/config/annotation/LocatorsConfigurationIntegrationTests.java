@@ -16,20 +16,27 @@
 package org.springframework.geode.config.annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.springframework.geode.config.annotation.LocatorsConfiguration.LOCATORS_PROPERTY;
 import static org.springframework.geode.config.annotation.LocatorsConfiguration.REMOTE_LOCATORS_PROPERTY;
 
+import java.net.InetAddress;
 import java.util.Properties;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
+import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.distributed.Locator;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.gemfire.LocatorFactoryBean;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
 import org.springframework.data.gemfire.config.annotation.LocatorApplication;
 import org.springframework.data.gemfire.config.annotation.LocatorConfigurer;
@@ -37,19 +44,25 @@ import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.SpringApplicationContextIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.data.gemfire.tests.util.FileSystemUtils;
+import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
 /**
  * Integration tests for {@link UseLocators} and {@link LocatorsConfiguration}.
  *
  * @author John Blum
+ * @see java.net.InetAddress
  * @see java.util.Properties
  * @see org.junit.Test
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.apache.geode.distributed.DistributedSystem
  * @see org.apache.geode.distributed.Locator
- * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.data.gemfire.LocatorFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
  * @see org.springframework.data.gemfire.config.annotation.LocatorApplication
+ * @see org.springframework.data.gemfire.config.annotation.LocatorConfigurer
  * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
  * @see org.springframework.data.gemfire.tests.integration.SpringApplicationContextIntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
@@ -124,6 +137,23 @@ public class LocatorsConfigurationIntegrationTests extends SpringApplicationCont
 	static class LocatorTestConfiguration {
 
 		@Bean
+		BeanPostProcessor locatorFactoryBeanPostProcessor() {
+
+			return new BeanPostProcessor() {
+
+				@Nullable @Override
+				public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+
+					if (bean instanceof LocatorFactoryBean) {
+						return new TestLocatorFactoryBean((LocatorFactoryBean) bean);
+					}
+
+					return bean;
+				}
+			};
+		}
+
+		@Bean
 		LocatorConfigurer locatorUseClusterConfigurationConfigurer() {
 
 			return (beanName, locatorFactoryBean) -> locatorFactoryBean.getGemFireProperties()
@@ -131,9 +161,60 @@ public class LocatorsConfigurationIntegrationTests extends SpringApplicationCont
 		}
 	}
 
+	// TODO: replace with STDG when STDG is rebased on SD[G] Moore/2.2 and STDG includes dedicated mocking support
+	//  for Apache Geode/Pivotal GemFire Locator creation using SDG's o.s.d.g.LocatorFactoryBean
 	@EnableGemFireMockObjects
 	@PeerCacheApplication(logLevel = "error")
 	@UseLocators(locators = "mailbox[11235],skullbox[12480]", remoteLocators = "remotehost[10334]")
 	static class PeerCacheTestConfiguration { }
 
+	static class TestLocatorFactoryBean extends LocatorFactoryBean {
+
+		private Locator mockLocator;
+
+		private final LocatorFactoryBean locatorFactoryBean;
+
+		public TestLocatorFactoryBean(LocatorFactoryBean locatorFactoryBean) {
+
+			Assert.notNull(locatorFactoryBean, "LocatorFactoryBean is required");
+
+			this.locatorFactoryBean = locatorFactoryBean;
+		}
+
+		@Override
+		public void init() {
+
+			DistributedSystem mockDistributedSystem = mock(DistributedSystem.class);
+
+			InetAddress mockInetAddress = mock(InetAddress.class);
+
+			this.mockLocator = mock(Locator.class);
+
+			doReturn(mockInetAddress).when(this.mockLocator).getBindAddress();
+
+			doReturn(mockDistributedSystem).when(this.mockLocator).getDistributedSystem();
+
+			doReturn(getHostnameForClients().orElse("localhost"))
+				.when(this.mockLocator).getHostnameForClients();
+
+			doReturn(getPort()).when(this.mockLocator).getPort();
+
+			doReturn(getGemFireProperties()).when(mockDistributedSystem).getProperties();
+
+		}
+
+		@Override
+		public LocatorConfigurer getCompositeLocatorConfigurer() {
+			return getLocatorFactoryBean().getCompositeLocatorConfigurer();
+		}
+
+		@Override
+		public Locator getLocator() {
+			return this.mockLocator;
+		}
+
+		protected LocatorFactoryBean getLocatorFactoryBean() {
+			return this.locatorFactoryBean;
+		}
+	}
 }
