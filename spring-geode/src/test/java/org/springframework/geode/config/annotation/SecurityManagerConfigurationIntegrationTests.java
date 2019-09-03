@@ -20,10 +20,12 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.security.support.SecurityManagerProxy;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,6 +40,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.apache.geode.security.SecurityManager
  * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.geode.security.support.SecurityManagerProxy
  * @see org.springframework.test.context.ContextConfiguration
@@ -46,14 +49,14 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @ContextConfiguration
-public class SecurityManagerConfigurationIntegrationTests {
+public class SecurityManagerConfigurationIntegrationTests extends IntegrationTestsSupport {
 
 	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Autowired
 	public CacheFactoryBean cacheFactoryBean;
 
-	@Autowired
+	@Autowired @SuppressWarnings("unused")
 	private org.apache.geode.security.SecurityManager securityManager;
 
 	@Test
@@ -81,7 +84,7 @@ public class SecurityManagerConfigurationIntegrationTests {
 	@EnableSecurityManager
 	static class TestConfiguration {
 
-		@Bean
+		@Bean @SuppressWarnings("unused")
 		org.apache.geode.security.SecurityManager mockSecurityManager() {
 			return mock(org.apache.geode.security.SecurityManager.class);
 		}
