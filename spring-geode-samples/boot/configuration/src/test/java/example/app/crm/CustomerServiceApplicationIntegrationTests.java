@@ -20,9 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import javax.annotation.Resource;
 
 import org.apache.geode.cache.Region;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
@@ -71,7 +73,7 @@ public class CustomerServiceApplicationIntegrationTests extends IntegrationTests
 	}
 
 	@Test
-	public void putAndGetCustomerIsSuccessfu() {
+	public void putAndGetCustomerIsSuccessful() {
 
 		Customer expectedJaneDoe = Customer.newCustomer(2L, "Jane Doe");
 
