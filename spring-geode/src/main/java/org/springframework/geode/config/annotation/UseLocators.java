@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.config.annotation;
 
 import static org.springframework.geode.config.annotation.LocatorsConfiguration.DEFAULT_LOCATORS;
@@ -27,6 +26,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.apache.geode.cache.Cache;
+
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
