@@ -32,7 +32,7 @@ import example.app.crm.model.Customer;
 // tag::class[]
 public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
-  Customer findByNameLike(String name);
+	Customer findByNameLike(String name);
 
 }
 // end::class[]
