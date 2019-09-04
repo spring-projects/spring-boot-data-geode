@@ -18,6 +18,7 @@ package example.app.crm;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.geode.cache.client.ClientRegionShortcut;
+
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
