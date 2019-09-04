@@ -25,7 +25,7 @@ John Blum
 :pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
 :pivotal-gemfire-website: https://pivotal.io/pivotal-gemfire
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference
-:spring-boot-docs-html: {spring-boot-docs}/html
+:spring-boot-docs-html: {spring-boot-docs}/htmlsingle
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-boot-website: https://spring.io/projects/spring-boot
 :spring-boot-data-geode-javadoc: https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/1.0.0.BUILD-SNAPSHOT/api/
