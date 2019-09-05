@@ -1,0 +1,190 @@
+[[geode-configuration-declarative]]
+== Declarative Configuration for Productivity
+
+The primary purpose of any software development framework is to help you be _productive_ as _quickly_ and as _easily_
+as possible, and to do so in a _reliable_ manner.  You want a framework to provide constructs that are both intuitive
+and familiar so that their behaviors are boringly predictable.  This provided convenience not only helps you hit the
+ground running in the right direction sooner but increases your focus on the application domain so you are able to
+better understand the problem you are trying to solve in the first place.  Once the problem domain is well understood,
+you are more apt to make informed decisions about the design, which leads to better outcomes, faster.
+
+This is exactly what Spring Boot's _auto-configuration_ provides for you... enabling features, services and supporting
+infrastructure for Spring applications in a loosely integrated way by using conventions (e.g. classpath) that ultimately
+helps you keep your attention and focus on solving the problem at hand and not on the plumbing.
+
+For example, if you are building a Web application, simply include the `org.springframework.boot:spring-boot-starter-web`
+dependency on your application classpath.  Not only will Spring Boot enable you to build Spring Web MVC Controllers
+appropriate to your application UC (your responsibility), but will also bootstrap your Web app in an embedded Servlet
+Container on startup (Boot's responsibility).
+
+This saves you from having to handle many low-level, repetitive and tedious development tasks that are highly error-prone
+when you are simply trying to solve problems. You don't have to care how the plumbing works until you do. And, when you
+do, you will be better informed and prepared to do so.
+
+It is also equally essential that frameworks, like Spring Boot, get out of the way quickly when application requirements
+diverge from the provided defaults.  The is the beautiful and powerful thing about Spring Boot and why it is second
+to none in its class.
+
+Still, _auto-configuration_ does solve every problem all the time.  Therefore, you will need to use declarative
+configuration in some cases, whether expressed as bean definitions, in properties or by some other means.  This is so
+frameworks don't leave things to chance, especially when they are ambiguous.  The framework simply gives you a choice.
+
+Now, that we explained the motivation behind this chapter, let's outline what we will discuss:
+
+* Refer you to the SDG _Annotations_ covered by SBDG's _Auto-configuration_
+* List all SDG _Annotations_ not covered by SBDG's _Auto-configuration_
+* Cover the SBDG, SSDG and SDG _Annotations_ that must be declared explicitly and that provide the most value and productivity
+when getting started using either Apache Geode or Pivotal GemFire in Spring [Boot] applications.
+
+NOTE: SDG refers to {spring-data-geode-website}[Spring Data for Apache Geode or Pivotal GemFire]. SSDG refers to
+{spring-session-data-geode-website}[Spring Session for Apache Geode & Pivotal GemFire] and SBDG refers to
+Spring Boot for Apache Geode or Pivotal GemFire, this project.
+
+TIP: The list of SDG _Annotations_ covered by SBDG's _Auto-configuration_ is discussed in detail in the <<appendix, Appendix>>,
+in the section, <<geode-auto-configuration-annotations,Auto-configuration vs. Annotation-based configuration>>.
+
+To be absolutely clear about which SDG Annotations we are referring to, we mean the SDG _Annotations_ in
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/package-summary.html[org.springframework.data.gemfire.config.annotation].
+
+Additionally, in subsequent sections, we will cover which _Annotations_ are added by SBDG.
+
+[[geode-configuration-declarative-auto-configuration]]
+=== Auto-configuration
+
+_Auto-configuration_ was explained in complete detail in the chapter on <<geode-configuration-auto,Auto-configuration>>.
+
+Please read.
+
+[[geode-configuration-declarative-annotations]]
+=== Annotations not covered by Auto-configuration
+
+The following _Annotations_ are not implicitly applied by SBDG's _Auto-configuration_:
+
+* `@EnableAutoRegionLookup`
+* `@EnableBeanFactoryLocator`
+* `@EnableCacheServer(s)`
+* `@EnableCachingDefinedRegions`
+* `@EnableClusterConfiguration`
+* `@EnableClusterDefinedRegions`
+* `@EnableCompression`
+* `@EnableDiskStore(s)`
+* `@EnableEntityDefinedRegions`
+* `@EnableEviction`
+* `@EnableExpiration`
+* `@EnableGatewayReceiver`
+* `@EnableGatewaySender(s)`
+* `@EnableGemFireAsLastResource`
+* `@EnableGemFireMockObjects`
+* `@EnableHttpService`
+* `@EnableIndexing`
+* `@EnableOffHeap`
+* `@EnableLocator`
+* `@EnableManager`
+* `@EnableMemcachedServer`
+* `@EnablePool(s)`
+* `@EnableRedisServer`
+* `@EnableStatistics`
+* `@UseGemFireProperties`
+
+TIP: This was also covered <<geode-autoconfiguration-annotations-explicit,here>>.
+
+Part of the reason for this is because many of the _Annotations_ are server-specific:
+
+* `@EnableCacheServer(s)`
+* `@EnableGatewayReceiver`
+* `@EnableGatewaySender(s)`.
+* `@EnableHttpService`
+* `@EnableLocator`
+* `@EnableManager`
+* `@EnableMemcachedServer`
+* `@EnableRedisServer`
+
+And, we <<geode-clientcache-applications,already stated>> that SBDG is opinionated about providing a `ClientCache`
+instance out-of-the-box.
+
+Other _Annotations_ are driven by need, for example:
+
+* `@EnableAutoRegionLookup` & `@EnableBeanFactoryLocator` - really only useful when mixing configuration metadata
+formats, e.g. Spring config with GemFire `cache.xml`. This is usually only the case if you have legacy `cache.xml`
+config to begin with, otherwise, don't do this!
+* `@EnableCompression` - requires the Snappy Compression Library on your application classpath.
+* `@EnableDiskStore(s)` - only used for overflow and persistence.
+* `@EnableOffHeap` - enables data to be stored in main memory, which is only useful when your application data
+(i.e. Objects stored in GemFire/Geode) are generally uniform in size.
+* `@EnableGemFireAsLastResource` - only needed in the context of JTA Transactions.
+* `@EnableStatistics` - useful if you need runtime metrics, however enabling statistics gathering does consume
+considerable system resources (e.g. CPU & Memory).
+
+While still other _Annotations_ require more careful planning, for example:
+
+* `@EnableEviction`
+* `@EnableExpiration`
+* `@EnableIndexing`
+
+One in particular is used exclusively for Unit Testing:
+
+* `@EnableGemFireMockObjects`
+
+The bottom-line is, a framework should not _Auto-configure_ every possible feature, especially when the features
+consume additional system resources, or requires more careful planning driven by the use case.
+
+Still, all of these _Annotations_ are available for the application developer to use when needed.
+
+[[geode-configuration-declarative-annotations-productivity]]
+=== Annotations for Productivity
+
+This section calls out the _Annotations_ we believe to be most beneficial for your application development purposes
+when using either Apache Geode or Pivotal GemFire in Spring Boot applications.
+
+[[geode-configuration-declarative-annotations-productivity-enableclusteraware]]
+==== `@EnableClusterAware` (SBDG)
+
+The `@EnableClusterAware` annotation is arguably the most powerful _Annotation_ in the set of _Annotations_!
+
+When you annotate your main `@SpringBootApplication` class with `@EnableClusterAware`:
+
+.Declaring `@EnableClusterAware`
+[source,java]
+----
+@SpringBootApplication
+@EnableClusterAware
+class SpringBootApacheGeodeClientCacheApplication { ... }
+----
+
+Your Spring Boot, Apache Geode `ClientCache` application is able to seamlessly switch between client/server
+and local-only topologies with no code or configuration changes whatsoever.
+
+When a cluster of Apache Geode or Pivotal GemFire servers can be detected, the client application will send and receive
+data to and from the cluster.  If a cluster is not available, then the client automatically switches to local-only mode,
+with `LOCAL` Regions, and stores the data locally, on the client.
+
+Additionally, the `@EnableClusterAware` annotation is meta-annotated with SDG's
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html[`@EnableClusterConfiguration`] annotation.
+
+The `@EnableClusterConfiguration` enables configuration metadata defined on the client (e.g. Region and Index
+definitions) to be sent to the cluster of servers.  If those schema objects are not already present, they will be
+created by the servers in the cluster in such a way that the servers will remember the configuration on a restart
+as well as provide the configuration to new servers joining the cluster when scaling out.  This feature is careful
+not to stomp on any existing Region or Index objects already present on the servers, particularly since you may
+already have data stored in the Regions and Apache Geode and Pivotal GemFire Indexes are only maintained in memory
+and thus must be rebuilt on restarts.
+
+The primary motivation behind this annotation is to allow you to switch environments with essentially no effort.  We
+believe this will be a very common activity, especially during development, where you are debugging and testing your
+application locally, and potentially pushing to a production-like environment for more testing.
+
+By default, the configuration metadata is sent to the cluster using a non-secure HTTP connection.
+
+
+[[geode-configuration-declarative-annotations-productivity-enabledefinedregions]]
+==== `@EnableCachingDefinedRegions`, `@EnableClusterDefinedRegions` & `@EnableEntityDefinedRegions` (SDG)
+
+[[geode-configuration-declarative-annotations-productivity-enableindexing]]
+==== `@EnableIndexing` (SDG)
+
+[[geode-configuration-declarative-annotations-productivity-enableexpiration]]
+==== `@EnableExpiration` (SDG)
+
+[[geode-configuration-declarative-annotations-productivity-enablemockobjects]]
+==== `@EnableGemFireMockObjects` (STDG)
+
