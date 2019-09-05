@@ -1,4 +1,4 @@
-[[geode-configuration]]
+[[geode-configuration-externalized]]
 == Externalized Configuration
 
 Like Spring Boot itself (see {spring-boot-docs-html}/boot-features-external-config.html[here]),
@@ -96,7 +96,7 @@ a Spring context. You simply only need to autowire an instance of `GemFireProper
 A complete reference to the SBDG provided `@ConfigurationProperties` classes and supporting classes is available
 {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/configuration/package-frame.html[here].
 
-[[geode-configuration-session]]
+[[geode-configuration-externalized-session]]
 === Externalized Configuration of Spring Session
 
 The same capability applies to accessing the externalized configuration of Spring Session when using either
