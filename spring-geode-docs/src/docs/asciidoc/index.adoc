@@ -225,7 +225,9 @@ repositories {
 endif::[]
 
 include::clientcache-applications.adoc[]
-include::configuration.adoc[]
+include::configuration-auto.adoc[]
+include::configuration-declarative.adoc[]
+include::configuration-externalized.adoc[]
 include::caching.adoc[]
 include::templates.adoc[]
 include::repositories.adoc[]
