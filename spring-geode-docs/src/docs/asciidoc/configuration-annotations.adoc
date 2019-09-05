@@ -352,11 +352,14 @@ A few examples include:
 * `@EnableCacheServer(s)`
 * `@EnableCachingDefinedRegions`
 * `@EnableClusterConfiguration`
+* `@EnableClusterDefinedRegions`
 * `@EnableCompression`
 * `@EnableDiskStore(s)`
 * `@EnableEntityDefinedRegions`
 * `@EnableEviction`
 * `@EnableExpiration`
+* `@EnableGatewayReceiver`
+* `@EnableGatewaySender(s)`
 * `@EnableGemFireAsLastResource`
 * `@EnableHttpService`
 * `@EnableIndexing`
