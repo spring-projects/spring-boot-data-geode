@@ -56,7 +56,10 @@ public class MySpringBootApplication {
 }
 ----
 
-The current set of auto-configuration classes in Spring Boot for Apache Geode & Pivotal GemFire include:
+[[geode-auto-configuration-disable-classes]]
+==== Complete Set of Auto-configuration Classes
+
+The current set of auto-configuration classes in Spring Boot for Apache Geode & Pivotal GemFire (SBDG) include:
 
 * `CacheNameAutoConfiguration`
 * `CachingProviderAutoConfiguration`
@@ -71,7 +74,7 @@ The current set of auto-configuration classes in Spring Boot for Apache Geode & 
 * `RegionTemplateAutoConfiguration`
 * `RepositoriesAutoConfiguration`
 * `SpringSessionAutoConfiguration`
-* `SpringSessionAutoPropertiesConfiguration`
+* `SpringSessionPropertiesAutoConfiguration`
 * `SslAutoConfiguration`
 
 
