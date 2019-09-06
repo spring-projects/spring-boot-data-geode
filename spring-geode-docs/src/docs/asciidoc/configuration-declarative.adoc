@@ -1,5 +1,5 @@
 [[geode-configuration-declarative]]
-== Declarative Configuration for Productivity
+== Declarative Configuration
 
 The primary purpose of any software development framework is to help you be _productive_ as _quickly_ and as _easily_
 as possible, and to do so in a _reliable_ manner.  You want a framework to provide constructs that are both intuitive
@@ -25,7 +25,7 @@ It is also equally essential that frameworks, like Spring Boot, get out of the w
 diverge from the provided defaults.  The is the beautiful and powerful thing about Spring Boot and why it is second
 to none in its class.
 
-Still, _auto-configuration_ does solve every problem all the time.  Therefore, you will need to use declarative
+Still, _auto-configuration_ does not solve every problem all the time.  Therefore, you will need to use declarative
 configuration in some cases, whether expressed as bean definitions, in properties or by some other means.  This is so
 frameworks don't leave things to chance, especially when they are ambiguous.  The framework simply gives you a choice.
 
@@ -131,7 +131,7 @@ consume additional system resources, or requires more careful planning driven by
 Still, all of these _Annotations_ are available for the application developer to use when needed.
 
 [[geode-configuration-declarative-annotations-productivity]]
-=== Annotations for Productivity
+=== Productivity-driven Annotations
 
 This section calls out the _Annotations_ we believe to be most beneficial for your application development purposes
 when using either Apache Geode or Pivotal GemFire in Spring Boot applications.
@@ -139,7 +139,7 @@ when using either Apache Geode or Pivotal GemFire in Spring Boot applications.
 [[geode-configuration-declarative-annotations-productivity-enableclusteraware]]
 ==== `@EnableClusterAware` (SBDG)
 
-The `@EnableClusterAware` annotation is arguably the most powerful _Annotation_ in the set of _Annotations_!
+The `@EnableClusterAware` annotation is arguably the most powerful and valuable _Annotation_ in the set of _Annotations_!
 
 When you annotate your main `@SpringBootApplication` class with `@EnableClusterAware`:
 
@@ -154,37 +154,493 @@ class SpringBootApacheGeodeClientCacheApplication { ... }
 Your Spring Boot, Apache Geode `ClientCache` application is able to seamlessly switch between client/server
 and local-only topologies with no code or configuration changes whatsoever.
 
-When a cluster of Apache Geode or Pivotal GemFire servers can be detected, the client application will send and receive
-data to and from the cluster.  If a cluster is not available, then the client automatically switches to local-only mode,
-with `LOCAL` Regions, and stores the data locally, on the client.
+When a cluster of Apache Geode or Pivotal GemFire servers is detected, the client application will send and receive data
+to and from the cluster.  If a cluster is not available, then the client automatically switches to local-only mode, with
+`LOCAL` Regions, storing data locally on the client.
 
 Additionally, the `@EnableClusterAware` annotation is meta-annotated with SDG's
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html[`@EnableClusterConfiguration`] annotation.
 
 The `@EnableClusterConfiguration` enables configuration metadata defined on the client (e.g. Region and Index
-definitions) to be sent to the cluster of servers.  If those schema objects are not already present, they will be
-created by the servers in the cluster in such a way that the servers will remember the configuration on a restart
-as well as provide the configuration to new servers joining the cluster when scaling out.  This feature is careful
-not to stomp on any existing Region or Index objects already present on the servers, particularly since you may
-already have data stored in the Regions and Apache Geode and Pivotal GemFire Indexes are only maintained in memory
-and thus must be rebuilt on restarts.
+definitions) as needed by the application based on requirements and use cases, to be sent to the cluster of servers.
+If those schema objects are not already present, they will be created by the servers in the cluster in such a way that
+the servers will remember the configuration on a restart as well as provide the configuration to new servers joining
+the cluster when scaling out.  This feature is careful not to stomp on any existing Region or Index objects already
+present on the servers, particularly since you may already have data stored in the Regions and Apache Geode
+and Pivotal GemFire Indexes are only maintained in memory and thus must be rebuilt on restarts.
 
 The primary motivation behind this annotation is to allow you to switch environments with essentially no effort.  We
-believe this will be a very common activity, especially during development, where you are debugging and testing your
-application locally, and potentially pushing to a production-like environment for more testing.
+believe this will be a very common development-time activity, where you are debugging and testing your application
+locally, then potentially pushing to a production-like environment for more testing and feedback.
 
-By default, the configuration metadata is sent to the cluster using a non-secure HTTP connection.
+By default, the configuration metadata is sent to the cluster using a non-secure HTTP connection.  Using HTTPS,
+changing the host and port, or even the Region data management policy used by the servers when creating Regions
+are all configurable.
 
+TIP: Refer to the section in the SDG Reference Guide on
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-cluster[Configuring Cluster Configuration Push]
+for more details.
 
-[[geode-configuration-declarative-annotations-productivity-enabledefinedregions]]
+[[geode-configuration-declarative-annotations-productivity-regions]]
 ==== `@EnableCachingDefinedRegions`, `@EnableClusterDefinedRegions` & `@EnableEntityDefinedRegions` (SDG)
+
+This set of _Annotations_ are used to create Regions in the cache to manage your application data (i.e. Objects).
+
+You can of course, create Regions using Java configuration and the Spring API:
+
+.Creating a Region with Spring JavaConfig
+[source,java]
+----
+@Bean("Customers")
+ClientRegionFactoryBean<Long, Customer> customersRegion(GemFireCache cache) {
+
+  ClientRegionFactoryBean<Long, Customer> customers = new ClientRegionFactoryBean<>();
+
+  customers.setCache(cache);
+  customers.setShortcut(ClientRegionShortcut.PROXY);
+
+  return customers;
+}
+----
+
+Or XML:
+
+.Creating a client Region using Spring XML
+[source,xml]
+----
+<gfe:client-region id="Customers" shorcut="PROXY"/>
+----
+
+However, it is far easier to use the _Annotations_, especially during development when the complete Region configuration
+is unknown and you simply want a Region to persist your data and move on.
+
+[[geode-configuration-declarative-annotations-productivity-regions-enablecachingdefined]]
+===== `@EnableCachingDefinedRegions`
+
+You could use `@EnableCachingDefinedRegions` annotations when you have application components registered in the Spring
+Container that are annotated with Spring or JSR-107 JCache {spring-framework-docs}/integration.html#cache-jsr-107[annotations],
+to create Regions that hold the data you want cached.  The cache name specified in the caching annotation is used to
+name the Region.
+
+For example, given:
+
+.Defining Regions based on Spring or JSR-107 JCache Annotations
+[source,java]
+----
+@Service
+class CustomerService {
+
+  @Cacheable("CustomersByAccountNumber" key="#account.number")
+  Customer findBy(Account account) {
+    ...
+  }
+}
+----
+
+When your main `@SpringBootApplication` class is annotated with `@EnableCachingDefinedRegions`:
+
+.Using `@EnableCachingDefinedRegions`
+[source,java]
+----
+@SpringBootApplication
+@EnableCachingDefineRegions
+class SpringBootApacheGeodeClientCacheApplication { ... }
+----
+
+It would create a client `PROXY` Region (or `PARTITION_REGION` if your application were a peer member of the cluster)
+with the name "_CustomersByAccountNumber_" as if you created the Region using either the Spring JavaConfig
+or XML approaches shown above.
+
+You can use the `clientRegionShortcut` attribute for clients and the `serverRegionShortcut` attribute for peer servers
+on the `@EnableCachingDefinedRegions` annotation to change the data management policy of the Regions created.
+
+Additionally, for client Regions, you can also assign a specific Pool of connections that the client `*PROXY` Regions
+will use to send data access operations to the cluster of servers by setting the `poolName` attribute.
+
+[[geode-configuration-declarative-annotations-productivity-regions-enableentitydefined]]
+===== `@EnableEntityDefinedRegions`
+
+Like `@EnableCachingDefinedRegions`, with `@EnableEntityDefinedRegions` you can create Regions based on the entities
+you have defined as part of your application domain model.
+
+For instance, if you have entity class annotated with SDG's
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/mapping/annotation/Region.html[`@Region`] mapping annotation:
+
+.Customer entity class annotated with `@Region`
+[source,java]
+----
+@Region("Customers")
+class Customer {
+
+  @Id
+  private Long id;
+
+  @Indexed
+  private String name;
+
+  ...
+}
+----
+
+Then SBDG will create Regions from the name provided in the `@Region` mapping annotation on the entity class,
+in this case "Customers" for the `Customer` application-defined entity class, when the main `@SpringBootApplication`
+class is annotated with `@EnableEntityDefinedRegions`:
+
+.Using `@EnableEntityDefinedRegions`
+[source,java]
+----
+@SpringBootApplication
+@EnableEntityDefinedRegions(basePackageClasses = Customer.class,
+    clientRegionShortcut = ClientRegionShortcut.CACHING_PROXY)
+class SpringBootApacheGeodeClientCacheApplication { ... }
+----
+
+Like the `@EnableCachingDefinedRegions` annotation, you can affect the client and server Region data management policies
+with the `clientRegionShortcut` and `serverRegionShortcut` attributes, respectively, as well as set the dedicated Pool
+of connections used by the client Regions with the `poolName` attribute.
+
+Unlike the `@EnableCachingDefinedRegions` annotation, however, users are expected to specify either the `basePackage`,
+or the type-safe alternative, `basePackageClasses` attribute (recommended) when using the `@EnableEntityDefinedRegions`
+annotation.
+
+Part of the reason for this is that `@EnableEntityDefinedRegions` performs a component scan for the entity classes
+defined by your application.  Additionally, the scan must load each class to inspect the _Annotation_ metadata for that
+class.  This is not unlike the JPA entity scan when working with JPA providers like Hibernate.
+
+Therefore, it is customary to limit the scope of the scan, otherwise you are loading potentially a lot of classes
+unnecessarily so.  After all, Java and the JVM uses a dynamic linking system.
+
+Both the `basePackages` and `basePackageClasses` attributes accept an array of values.  With `basePackageClasses`
+attribute (recommended) you only need to refer to a single class type in that package and every class in that package
+as well as classes in the sub-packages will be scanned to determine if the class type represents an entity.  A class
+type is an entity if it is annotated with the `@Region` mapping annotation, otherwise it is not considered an entity.
+
+By example, suppose you had the following structure:
+
+.Entity Scan
+[source,txt]
+----
+- example.app.crm.model
+ |- Customer.class
+ |- NonEntity.class
+ |- contact
+   |- Address.class
+   |- PhoneNumber.class
+   |- AnotherNonEntity.class
+- example.app.accounts.model
+ |- Account.class
+...
+..
+.
+----
+
+Then you could configure the `@EnableEntityDefinedRegions` as follows:
+
+.Targeting with `@EnableEntityDefinedRegions`
+[source,java]
+----
+@SpringBootApplication
+@EnableEntityDefinedRegions(basePackageClasses = { NonEntity.class, Account.class } )
+class SpringBootApacheGeodeClientCacheApplication { ... }
+----
+
+If, `Customer`, `Address`, `PhoneNumber` and `Account` were all entity classes properly annotated with `@Region`, then
+the scan would pick up all these classes and create Regions for them.  The `NonEntity` class serves only as a marker
+in this case for where (i.e. what package) the scan should begin.
+
+Additionally, the `@EnableEntityDefinedRegions` annotation provides _include_ and _exclude_ filters, the same as
+the core Spring Frameworks `@ComponentScan` annotation.
+
+TIP: Refer to the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-regions[Configuring Regions]
+for more details.
+
+[[geode-configuration-declarative-annotations-productivity-regions-enableclusterdefined]]
+===== `@EnableClusterDefinedRegions`
+
+Sometimes it is ideal or necessary to pull configuration from the cluster (rather than push).  That is, you want
+the Regions defined on the servers to be created in your client and used by your application.
+
+This is as simple as annotating your main `@SpringBootApplication` class with `@EnableClusterDefinedRegions`:
+
+.Using `@EnableClusterDefinedRegions`
+[source,java]
+----
+@SpringBootApplication
+@EnableClusterDefinedRegions
+class SpringBootApacheGeodeClientCacheApplication { ... }
+----
+
+Every Region that exists on the cluster of servers will have a corresponding client `PROXY` Region defined and created
+as a Spring bean in your Spring Boot application.
+
+If the cluster of servers defines a Region called "_ServerRegion_" you can inject the client `PROXY` Region
+by the same name (i.e. "_ServerRegion_") created for you by SBDG in your Spring Boot application and use it:
+
+.Using a server-side Region on the client
+[source,java]
+----
+@Component
+class SomeApplicationComponent {
+
+  @Resource(name = "ServerRegion")
+  private Region<Integer, EntityType> serverRegion;
+
+  public void sometMethod() {
+
+    EntityType entity = ...;
+
+    this.serverRegion.put(1, entity);
+
+    ...
+  }
+----
+
+Of course, SBDG will even _auto-configure_ a `GemfireTemplate` for the "_ServerRegion_" Region (as described
+<<geode-configuration-declarative-auto-configuration-regiontemplates,here>>), so a better way to interact with
+the client `PROXY` Region corresponding to the "_ServerRegion_" Region on the server is to inject
+and use the template:
+
+.Using a server-side Region on the client with a template
+[source,java]
+----
+@Component
+class SomeApplicationComponent {
+
+  @Autowired
+  @Qualifier("ServerRegion")
+  private GemfireTemplate serverRegionTemplate
+
+  public void sometMethod() {
+
+    EntityType entity = ...;
+
+    this.serverRegionTemplate.put(1, entity);
+
+    ...
+  }
+----
+
+TIP: Refer to the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-cluster-defined[Configuring Cluster-defined Regions]
+for more details.
 
 [[geode-configuration-declarative-annotations-productivity-enableindexing]]
 ==== `@EnableIndexing` (SDG)
 
+Only when you are using `@EnableEntityDefinedRegions` can you also use the `@EnableIndexing` annotation.  This is
+because `@EnableIndexing` requires the entities to be scanned to analyze additional mapping metadata defined on
+the class type of the entity.  This includes annotations like Spring Data Commons `@Id` annotation as well as
+SDG provided annotations, `@Indexed` and `@LuceneIndexed`.
+
+The `@Id` annotation identifies the (primary) key of the entity and `@Indexed` is used for OQL Queries where as
+`@LuceneIndexed` is used in searches.
+
+NOTE: Unfortunately, Lucene Indexes can only be created on `PARTITION` Regions, which is server-side.
+
+You may have noticed that our `Customer` entity class, `name` field was annotated with `@Indexed`:
+
+.Customer entity class with `@Indexed` annotated `name` field
+[source,java]
+----
+@Region("Customers")
+class Customer {
+
+  @Id
+  private Long id;
+
+  @Indexed
+  private String name;
+
+  ...
+}
+----
+
+As a result, when our main `@SpringBootApplication` class is annotated with `@EnableIndexing`:
+
+.Using `@EnableIndexing`
+[source,java]
+----
+@SpringBootApplication
+@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
+@EnableIndexing
+class SpringBootApacheGeodeClientCacheApplication { ... }
+----
+
+An Apache Geode OQL Index for the `Customer.name` field will be created making OQL Queries on a Customers by name
+in effect more efficient.
+
+NOTE: Keep in mind that OQL Indexes are not persistent between restarts (i.e. Apache Geode & Pivotal GemFire
+maintains Indexes in-memory only) and so the OQL Index must always be rebuilt when the node is restarted.
+
+When you combine `@EnableIndexing` with either `@EnableClusterConfiguration` or `@EnableClusterAware`, then those Index
+definitions will be pushed to the server-side Regions where Queries are generally executed.
+
+TIP: Refer to the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-indexes[Configuring Indexes]
+for more details.
+
 [[geode-configuration-declarative-annotations-productivity-enableexpiration]]
 ==== `@EnableExpiration` (SDG)
+
+It is often useful to define both _Eviction_ and _Expiration_ policies, particularly with a system like Apache Geode
+or Pivotal GemFire, given it primarily keeps data in-memory, on the JVM Heap.  As you can imagine your data volume size
+may far exceed the amount of available JVM Heap memory and/or keeping too much data on the JVM Heap can cause
+Garbage Collection (GC) issues.
+
+TIP: You can enable off-heap (or main memory usage) capabilities by declaring SDG's `@EnableOffHeap` annotation.
+Refer to the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-off-heap[Configuring Off-Heap Memory]
+for more details.
+
+Defining sensible _Eviction_ and _Expiration_ policies is a useful techniques for limiting what is kept in memory
+and for how long.
+
+While {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-eviction[configuring _Eviction_] is certainly
+made easy with SDG, we particularly want to call out _Expiration_ since
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-region-expiration[configuring _Expiration_] is a special case
+in SDG.
+
+With SDG, it is possible to define the Expiration policies associated with a particular application class type on the
+class type itself, using the {spring-data-geode-javadoc}/org/springframework/data/gemfire/expiration/Expiration.html[`@Expiration`],
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/expiration/IdleTimeoutExpiration.html[`@IdleTimeoutExpiration`]
+and {spring-data-geode-javadoc}/org/springframework/data/gemfire/expiration/TimeToLiveExpiration.html[`@TimeToLiveExpiration`]
+annotations.
+
+TIP: Refer to the Apache Geode {apache-geode-docs}/developing/expiration/how_expiration_works.html[User Guide]
+for more details on the different Expiration Types (i.e. _Idle Timeout_ (TTI) vs. _Time-To-Live_ (TTL)).
+
+For example, suppose we want to limit the number of `Customers` maintained in memory for a period of time (measured in
+seconds) based on the last time a `Customer` was accessed (e.g. _read_).  We can the define an _Idle Timeout_ Expiration
+policy on our `Customer` class type, like so:
+
+.Customer entity class with `@Indexed` annotated `name` field
+[source,java]
+----
+@Region("Customers")
+@IdleTimeoutExpiration(action = "INVALIDATE", timeout = "300")
+class Customer {
+
+  @Id
+  private Long id;
+
+  @Indexed
+  private String name;
+
+  ...
+}
+----
+
+Therefore, the `Customer` entry in the "Customers" Region will be `invalidated` after `300 seconds` (or `5 minutes`).
+
+All we need do to enable annotation-based Expiration policies is annotate our main `@SpringBootApplication` class
+with `@EnableExpiration`:
+
+.Enabling Expiration
+[source,java]
+----
+@SpringBootApplication
+@EnableExpiration
+class SpringBootApacheGeodeApplication { ... }
+----
+
+NOTE: Technically, this entity class specific, Annotation-based Expiration policy is implemented using Apache Geode's
+{apache-geode-javadoc}/org/apache/geode/cache/CustomExpiry.html[`CustomExpiry`] interface.
+
+TIP: Refer to the SDG Reference Guide for more details on
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-region-expiration[configuration Expiration], along with
+{spring-data-geode-docs-html}/#bootstrap:region:expiration:annotation[here].
 
 [[geode-configuration-declarative-annotations-productivity-enablemockobjects]]
 ==== `@EnableGemFireMockObjects` (STDG)
 
+_Software Testing_ in general, and _Unit Testing_ in particular, are clearly very important tasks in the successful
+development of your Spring Boot applications and being able to assert the correct outcomes.
+
+Apache Geode and Pivotal GemFire can be make the task of testing very difficult in certain cases, especially if every
+test had to be coded as an _Integration Test_.  Fortunately, it doesn't.
+
+Spring has your back and once again provides a story for testing Spring Boot applications using either Apache Geode
+or Pivotal GemFire.  This is where the {spring-test-data-gemfire-website}[Spring Test for Apache Geode & Pivotal GemFire (STDG)] project
+can certainly help out, especially with _Unit Testing_.
+
+For example, if you do not care exactly what Apache Geode or Pivotal GemFire would actually do and you only cared about
+the "contract", which is what mocking a collaborator is, then you could effectively mock Apache Geode
+or Pivotal GemFire's objects to isolate the "_subject under test_" (SUT) to focus on the interaction(s) and outcomes
+you expect to happen.
+
+With STDG, you don't have to change a bit of configuration to enable mocks in the _Unit Tests_ for your
+Spring Boot applications.  You simply only need annotate the test class with `@EnableGemFireMockObjects`, like so:
+
+.Using Mock Apache Geode or Pivotal GemFire objects
+[source,java]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+class MyApplicationTestClass {
+
+  @Test
+  public void someTestCase() {
+    ...
+  }
+
+  @Configuration
+  @EnableGemFireMockObjects
+  static class GeodeMockObjectConfiguration { }
+
+}
+----
+
+All your Spring Boot application configuration of Apache Geode will return mock objects in this case for Apache Geode
+objects, like Regions, etc.
+
+Mocking Apache Geode or Pivotal GemFire objects even works for GemFire/Geode objects (e.g. Regions) created from the
+convenience annotations discussed in the previous sections, above.
+
+For example, given the following Spring Boot, Apache Geode `ClientCache` application class:
+
+.Main `@SpringBootApplication` class under test
+[source,java]
+----
+@SpringBootApplication
+@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
+class SpringBootApacheGeodeClientCacheApplication { ... }
+----
+
+The "_Customers_" Region defined from the `Customer` entity class and created by the `@EnableEntityDefinedRegions`
+annotation would be a "mock" Region and not an actual Region.  You can still inject the Region in your test as before
+and assert interactions on the Region based on your application workflows:
+
+.Using Mock Apache Geode or Pivotal GemFire objects
+[source,java]
+----
+@RunWith(SpringRunner.class)
+@SpringBootTest
+class MyApplicationTestClass {
+
+  @Resource(name = "Customers")
+  private Region<Long, Customer> customers;
+
+
+  @Test
+  public void someTestCase() {
+
+    Customer jonDoe = ...;
+
+    // Use the application in some way and test the interaction on the "Customers" Region
+
+    assertThat(this.customers).containsValue(jonDoe);
+
+    ...
+  }
+
+  ...
+
+}
+----
+
+There are many more things that STDG can do for you in both _Unit & Integration Testing_.
+
+Refer to the https://github.com/spring-projects/spring-test-data-geode#unit-testing-with-stdg[documentation on Unit Testing]
+for more details.
+
+It is possible to https://github.com/spring-projects/spring-test-data-geode#integration-testing-with-stdg[write _Integration Tests_]
+using STDG as well.  Writing _Integration Tests_ is an essential concern when you need to assert whether your
+application OQL Queries are well-formed, for instance.  There are many other valid cases where _Integration Testing_
+is applicable, too.
