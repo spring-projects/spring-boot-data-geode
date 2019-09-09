@@ -21,11 +21,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Resource;
 
+import org.apache.geode.cache.Region;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import org.apache.geode.cache.Region;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,11 +41,13 @@ import example.app.caching.inline.service.CalculatorService;
  * Integration Tests for Calculator Application.
  *
  * @author John Blum
+ * @see java.util.concurrent.atomic.AtomicBoolean
  * @see org.junit.Test
  * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.test.context.junit4.SpringRunner
+ * @see example.app.caching.inline.model.Operator
  * @see example.app.caching.inline.model.ResultHolder
  * @see example.app.caching.inline.repo.CalculatorRepository
  * @see example.app.caching.inline.service.CalculatorService
@@ -54,6 +56,7 @@ import example.app.caching.inline.service.CalculatorService;
 // tag::class[]
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@SuppressWarnings("unused")
 public class CalculatorApplicationIntegrationTests extends IntegrationTestsSupport {
 
 	private static final AtomicBoolean runOnce = new AtomicBoolean(false);
