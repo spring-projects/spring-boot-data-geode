@@ -31,9 +31,9 @@ import org.springframework.data.gemfire.tests.integration.ForkingClientServerInt
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import example.app.caching.near.client.model.Person;
 import example.app.caching.near.client.service.YellowPagesService;
 import example.app.caching.near.server.BootGeodeNearCachingCacheServerApplication;
-import example.app.caching.near.client.model.Person;
 
 /**
  * Integration Tests for the Spring Boot, {@link ClientCache} application example for {@literal Near Caching}.
@@ -44,14 +44,15 @@ import example.app.caching.near.client.model.Person;
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
- * @see Person
- * @see YellowPagesService
- * @see BootGeodeNearCachingCacheServerApplication
+ * @see example.app.caching.near.client.model.Person
+ * @see example.app.caching.near.client.service.YellowPagesService
+ * @see example.app.caching.near.server.BootGeodeNearCachingCacheServerApplication
  * @since 1.1.0
  */
 @ActiveProfiles("client")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SuppressWarnings("unused")
 public class BootGeodeNearCachingClientCacheApplicationIntegrationTests
 		extends ForkingClientServerIntegrationTestsSupport {
 
