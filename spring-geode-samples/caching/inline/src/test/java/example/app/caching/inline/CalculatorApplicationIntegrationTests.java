@@ -55,7 +55,9 @@ import example.app.caching.inline.service.CalculatorService;
  */
 // tag::class[]
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties = {
+	"spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=false"
+})
 @SuppressWarnings("unused")
 public class CalculatorApplicationIntegrationTests extends IntegrationTestsSupport {
 

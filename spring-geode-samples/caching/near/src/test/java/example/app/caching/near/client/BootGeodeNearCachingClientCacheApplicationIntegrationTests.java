@@ -51,7 +51,10 @@ import example.app.caching.near.server.BootGeodeNearCachingCacheServerApplicatio
  */
 @ActiveProfiles("client")
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(
+	properties = { "spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=false" },
+	webEnvironment = SpringBootTest.WebEnvironment.MOCK
+)
 @SuppressWarnings("unused")
 public class BootGeodeNearCachingClientCacheApplicationIntegrationTests
 		extends ForkingClientServerIntegrationTestsSupport {
@@ -60,7 +63,8 @@ public class BootGeodeNearCachingClientCacheApplicationIntegrationTests
 	public static void startGemFireServer() throws IOException {
 
 		startGemFireServer(BootGeodeNearCachingCacheServerApplication.class,
-			"-Dspring.profiles.active=server");
+			"-Dspring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=false",
+						"-Dspring.profiles.active=server");
 	}
 
 	@Autowired

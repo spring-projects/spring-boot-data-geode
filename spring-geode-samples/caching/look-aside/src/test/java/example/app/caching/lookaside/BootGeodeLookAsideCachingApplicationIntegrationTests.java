@@ -46,7 +46,10 @@ import example.app.caching.lookaside.service.CounterService;
  */
 // tag::class[]
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(
+	properties = { "spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=false" },
+	webEnvironment = SpringBootTest.WebEnvironment.MOCK
+)
 @SuppressWarnings("unused")
 public class BootGeodeLookAsideCachingApplicationIntegrationTests extends IntegrationTestsSupport {
 

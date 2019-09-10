@@ -51,7 +51,9 @@ import example.app.crm.repo.CustomerRepository;
 // tag::class[]
 @ActiveProfiles("debug")
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties = {
+	"spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=false"
+})
 @SuppressWarnings("unused")
 public class CustomerServiceApplicationIntegrationTests extends IntegrationTestsSupport {
 
