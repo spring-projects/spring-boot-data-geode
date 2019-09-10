@@ -17,10 +17,10 @@ package org.springframework.geode.boot.autoconfigure.template;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.apache.geode.cache.Region;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import org.apache.geode.cache.Region;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableGemFireProperties;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
-import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -73,8 +72,8 @@ public class NativeDefinedRegionTemplateAutoConfigurationIntegrationTests extend
 		assertThat(this.exampleTemplate.getRegion().getName()).isEqualTo("Example");
 	}
 
+	@SpringBootApplication
 	@EnableGemFireProperties(cacheXmlFile = "template-cache.xml")
-	@SpringBootApplication(exclude = ContinuousQueryAutoConfiguration.class)
 	static class TestConfiguration { }
 
 }

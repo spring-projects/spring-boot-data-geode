@@ -31,7 +31,6 @@ import org.springframework.data.gemfire.cache.GemfireCacheManager;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.CachingProviderAutoConfiguration;
-import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -76,8 +75,8 @@ public class ManuallyConfiguredCachingIntegrationTests extends IntegrationTestsS
 		assertThat(mockCacheManager).isNotInstanceOf(GemfireCacheManager.class);
 	}
 
+	@SpringBootApplication
 	@EnableGemFireMockObjects
-	@SpringBootApplication(exclude = ContinuousQueryAutoConfiguration.class)
 	static class TestConfiguration {
 
 		@Bean

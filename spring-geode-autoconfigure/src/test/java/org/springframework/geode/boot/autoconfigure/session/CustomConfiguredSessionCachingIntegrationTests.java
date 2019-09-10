@@ -23,11 +23,11 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import org.apache.geode.cache.RegionShortcut;
 import org.apache.geode.cache.client.ClientRegionShortcut;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -40,7 +40,6 @@ import org.springframework.data.gemfire.client.PoolFactoryBean;
 import org.springframework.data.gemfire.tests.integration.SpringBootApplicationIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
-import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.mock.env.MockPropertySource;
 import org.springframework.mock.web.MockServletContext;
@@ -261,8 +260,8 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 
 	@SpringBootConfiguration
 	@EnableGemFireMockObjects
-	@EnableAutoConfiguration(exclude = ContinuousQueryAutoConfiguration.class)
-	//@SpringBootApplication(exclude = ContinuousQueryAutoConfiguration.class)
+	@EnableAutoConfiguration
+	//@SpringBootApplication
 	static class TestConfiguration {
 
 		@Bean("MockSessionSerializer")

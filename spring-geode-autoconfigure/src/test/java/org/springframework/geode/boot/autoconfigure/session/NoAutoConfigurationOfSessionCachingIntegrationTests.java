@@ -26,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
-import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.SpringSessionAutoConfiguration;
 import org.springframework.session.SessionRepository;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -66,8 +65,8 @@ public class NoAutoConfigurationOfSessionCachingIntegrationTests extends Integra
 		assertThat(this.applicationContext.getBeansOfType(SessionRepository.class)).isEmpty();
 	}
 
+	@SpringBootApplication
 	@EnableGemFireMockObjects
-	@SpringBootApplication(exclude = ContinuousQueryAutoConfiguration.class)
 	static class TestConfiguration { }
 
 }

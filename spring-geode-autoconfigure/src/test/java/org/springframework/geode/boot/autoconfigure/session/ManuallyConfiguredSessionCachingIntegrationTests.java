@@ -18,11 +18,11 @@ package org.springframework.geode.boot.autoconfigure.session;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
+import org.apache.geode.cache.GemFireCache;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,7 +31,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
-import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
@@ -96,9 +95,9 @@ public class ManuallyConfiguredSessionCachingIntegrationTests extends Integratio
 		assertThat(sessionRepository).isNotInstanceOf(GemFireOperationsSessionRepository.class);
 	}
 
-	@EnableGemFireMockObjects
+	@SpringBootApplication
 	@EnableSpringHttpSession
-	@SpringBootApplication(exclude = ContinuousQueryAutoConfiguration.class)
+	@EnableGemFireMockObjects
 	static class TestConfiguration {
 
 		@Bean
