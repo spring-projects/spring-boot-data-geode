@@ -27,7 +27,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.CachingProviderAutoConfiguration;
-import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -64,8 +63,8 @@ public class ManuallyConfiguredWithPropertiesCachingIntegrationTests extends Int
 		assertThat(this.applicationContext.containsBean("cacheManager")).isFalse();
 	}
 
+	@SpringBootApplication
 	@EnableGemFireMockObjects
-	@SpringBootApplication(exclude = ContinuousQueryAutoConfiguration.class)
 	static class TestConfiguration { }
 
 }

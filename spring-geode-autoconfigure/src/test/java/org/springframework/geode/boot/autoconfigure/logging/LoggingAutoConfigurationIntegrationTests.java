@@ -19,18 +19,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Properties;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.distributed.internal.DistributionConfig;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
-import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -78,8 +77,8 @@ public class LoggingAutoConfigurationIntegrationTests extends IntegrationTestsSu
 		assertThat(distributedSystemProperties.getProperty(DistributionConfig.LOG_LEVEL_NAME)).isEqualTo("fine");
 	}
 
+	@SpringBootApplication
 	@EnableGemFireMockObjects
-	@SpringBootApplication(exclude = ContinuousQueryAutoConfiguration.class)
 	static class TestConfiguration { }
 
 }

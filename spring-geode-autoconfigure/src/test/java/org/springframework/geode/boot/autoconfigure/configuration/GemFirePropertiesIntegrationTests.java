@@ -17,10 +17,10 @@ package org.springframework.geode.boot.autoconfigure.configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.apache.geode.cache.RegionShortcut;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import org.apache.geode.cache.RegionShortcut;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,7 +30,6 @@ import org.springframework.data.gemfire.config.annotation.EnableSsl;
 import org.springframework.data.gemfire.server.SubscriptionEvictionPolicy;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
-import org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.configuration.support.CacheProperties;
 import org.springframework.geode.boot.autoconfigure.configuration.support.CacheServerProperties;
 import org.springframework.geode.boot.autoconfigure.configuration.support.ClientCacheProperties;
@@ -489,8 +488,8 @@ public class GemFirePropertiesIntegrationTests extends IntegrationTestsSupport {
 		assertThat(redisProperties.getPort()).isEqualTo(3697);
 	}
 
+	@SpringBootApplication
 	@EnableGemFireMockObjects
-	@SpringBootApplication(exclude = ContinuousQueryAutoConfiguration.class)
 	static class TestConfiguration { }
 
 }
