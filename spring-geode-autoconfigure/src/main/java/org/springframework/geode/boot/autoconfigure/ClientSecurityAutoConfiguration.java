@@ -47,6 +47,7 @@ import org.springframework.data.gemfire.config.annotation.EnableSecurity;
 import org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer;
 import org.springframework.geode.core.env.VcapPropertySource;
 import org.springframework.geode.core.env.support.CloudCacheService;
+import org.springframework.geode.core.env.support.User;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
@@ -79,6 +80,7 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.geode.core.env.VcapPropertySource
  * @see org.springframework.geode.core.env.support.CloudCacheService
  * @see org.springframework.geode.core.env.support.Service
+ * @see org.springframework.geode.core.env.support.User
  * @since 1.0.0
  */
 @Configuration
@@ -136,7 +138,7 @@ public class ClientSecurityAutoConfiguration {
 				environment.getProperty(CLOUD_SECURITY_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY,
 					Boolean.class, true);
 
-			logger.debug("{} enabled {}", ClientSecurityAutoConfiguration.class.getSimpleName(),
+			logger.debug("{} enabled? [{}]", ClientSecurityAutoConfiguration.class.getSimpleName(),
 				clientSecurityAutoConfigurationEnabled);
 
 			return clientSecurityAutoConfigurationEnabled;
@@ -147,7 +149,7 @@ public class ClientSecurityAutoConfiguration {
 			boolean securityPropertiesSet = environment.containsProperty(SECURITY_USERNAME_PROPERTY)
 				&& environment.containsProperty(SECURITY_PASSWORD_PROPERTY);
 
-			logger.debug("Security Properties set {}", securityPropertiesSet);
+			logger.debug("Security Properties set? [{}]", securityPropertiesSet);
 
 			return securityPropertiesSet;
 		}
@@ -159,15 +161,36 @@ public class ClientSecurityAutoConfiguration {
 		private void configureAuthentication(Environment environment, VcapPropertySource vcapPropertySource,
 				CloudCacheService cloudCacheService, Properties cloudCacheProperties) {
 
-			vcapPropertySource.findFirstUserByRoleClusterOperator(cloudCacheService)
-				.filter(user -> isSecurityPropertiesNotSet(environment))
-				.ifPresent(user -> {
+			if (isSecurityPropertiesNotSet(environment)) {
+				if (environment.containsProperty(SECURITY_USERNAME_PROPERTY)) {
 
-					cloudCacheProperties.setProperty(SECURITY_USERNAME_PROPERTY, user.getName());
+					String targetUsername = environment.getProperty(SECURITY_USERNAME_PROPERTY);
 
-					user.getPassword().ifPresent(password ->
-						cloudCacheProperties.setProperty(SECURITY_PASSWORD_PROPERTY, password));
-				});
+					vcapPropertySource.findUserByName(cloudCacheService, targetUsername)
+						.flatMap(User::getPassword)
+						.map(password -> {
+
+							cloudCacheProperties.setProperty(SECURITY_USERNAME_PROPERTY, targetUsername);
+							cloudCacheProperties.setProperty(SECURITY_PASSWORD_PROPERTY, password);
+
+							return password;
+
+						})
+						.orElseThrow(() -> newIllegalStateException(
+							"No User with name [%s] was configured for Cloud Cache service [%s]",
+								targetUsername, cloudCacheService.getName()));
+				}
+				else {
+					vcapPropertySource.findFirstUserByRoleClusterOperator(cloudCacheService)
+						.ifPresent(user -> {
+
+							cloudCacheProperties.setProperty(SECURITY_USERNAME_PROPERTY, user.getName());
+
+							user.getPassword().ifPresent(password ->
+								cloudCacheProperties.setProperty(SECURITY_PASSWORD_PROPERTY, password));
+						});
+				}
+			}
 		}
 
 		private void configureLocators(Environment environment, VcapPropertySource vcapPropertySource,
@@ -212,11 +235,11 @@ public class ClientSecurityAutoConfiguration {
 				.orElseGet(() -> {
 
 					if (StringUtils.hasText(cloudcacheServiceInstanceName)) {
-						throw newIllegalStateException("No CloudCache Service Instance with name [%s] was found",
+						throw newIllegalStateException("No Cloud Cache service instance with name [%s] was found",
 							cloudcacheServiceInstanceName);
 					}
 					else {
-						logger.warn("No CloudCache Service Instance was found");
+						logger.warn("No Cloud Cache service instance was found");
 					}
 
 					return null;
