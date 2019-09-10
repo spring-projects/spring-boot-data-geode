@@ -34,6 +34,7 @@ import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.geode.core.env.support.CloudCacheService;
 import org.springframework.geode.core.env.support.Service;
 import org.springframework.geode.core.env.support.User;
@@ -52,6 +53,7 @@ import org.springframework.util.StringUtils;
  * @see java.net.URL
  * @see java.util.Properties
  * @see java.util.function.Predicate
+ * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.EnumerablePropertySource
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertiesPropertySource
@@ -72,9 +74,11 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 	private static final String VCAP_APPLICATION_URIS_PROPERTY = VCAP_APPLICATION_PROPERTY + "uris";
 	private static final String VCAP_PROPERTY_SOURCE_NAME = "vcap";
 	private static final String VCAP_SERVICES_PROPERTY = "vcap.services.";
-	private static final String VCAP_SERVICES_SERVICE_NAME_GFSH_URL_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.urls.gfsh";
 	private static final String VCAP_SERVICES_SERVICE_NAME_LOCATORS_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.locators";
-	private static final String VCAP_SERVICES_SERVICE_NAME_USERS_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.users[%d]";
+	private static final String VCAP_SERVICES_SERVICE_NAME_NAME_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.name";
+	private static final String VCAP_SERVICES_SERVICE_NAME_URL_GFSH_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.urls.gfsh";
+	private static final String VCAP_SERVICES_SERVICE_NAME_USERS_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.users";
+	private static final String VCAP_SERVICES_SERVICE_NAME_USERS_INDEX_PROPERTY = VCAP_SERVICES_SERVICE_NAME_USERS_PROPERTY + "[%d]";
 
 	private static final Predicate<Object> CLOUD_CACHE_SERVICE_PREDICATE =
 		propertyValue -> String.valueOf(propertyValue).toLowerCase().contains(CLOUD_CACHE_TAG_NAME);
@@ -152,7 +156,7 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 
 	protected Set<String> findAllPropertiesByNameMatching(Iterable<String> properties, Predicate<String> predicate) {
 
-		return StreamSupport.stream(properties.spliterator(), false)
+		return StreamSupport.stream(CollectionUtils.nullSafeIterable(properties).spliterator(), false)
 			.filter(predicate)
 			.collect(Collectors.toSet());
 	}
@@ -163,7 +167,7 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 
 	protected Set<String> findAllPropertiesByValueMatching(Iterable<String> properties, Predicate<Object> predicate) {
 
-		return StreamSupport.stream(properties.spliterator(), false)
+		return StreamSupport.stream(CollectionUtils.nullSafeIterable(properties).spliterator(), false)
 			.filter(propertyName -> predicate.test(getProperty(propertyName)))
 			.collect(Collectors.toSet());
 	}
@@ -207,7 +211,7 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 					.filter(StringUtils::hasText)
 					.ifPresent(service::withLocators);
 
-				Object gfshUrl = getProperty(String.format(VCAP_SERVICES_SERVICE_NAME_GFSH_URL_PROPERTY, service));
+				Object gfshUrl = getProperty(String.format(VCAP_SERVICES_SERVICE_NAME_URL_GFSH_PROPERTY, service));
 
 				Optional.ofNullable(gfshUrl)
 					.map(String::valueOf)
@@ -246,35 +250,83 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 			.orElseThrow(() -> newIllegalStateException("No service with tags [%s] was found", tags));
 	}
 
-	public Optional<User> findFirstUserByRoleClusterOperator(Service service) {
+	public Optional<User> findUserByName(Service service, String targetUsername) {
+
+		Assert.hasText(targetUsername, String.format("Target username [%s] is required", targetUsername));
+
+		Optional<User> optionalUser = Optional.empty();
 
 		String serviceName = service.getName();
-		String userPropertyName = String.format(VCAP_SERVICES_SERVICE_NAME_USERS_PROPERTY, serviceName, 0);
+		String userPropertyName = String.format(VCAP_SERVICES_SERVICE_NAME_USERS_INDEX_PROPERTY, serviceName, 0);
 
-		for (int index = 1; containsProperty(userPropertyName+".roles"); index++) {
+		for (int index = 1; containsProperty(asUserUsernameProperty(userPropertyName)); index++) {
 
-			String roles = String.valueOf(getProperty(userPropertyName+".roles"));
+			String username = String.valueOf(getProperty(asUserUsernameProperty(userPropertyName)));
+
+			if (username.equals(targetUsername)) {
+				break;
+			}
+
+			userPropertyName = String.format(VCAP_SERVICES_SERVICE_NAME_USERS_INDEX_PROPERTY, serviceName, index);
+		}
+
+		if (containsProperty(asUserUsernameProperty(userPropertyName))) {
+
+			String username = String.valueOf(getProperty(asUserUsernameProperty(userPropertyName)));
+			String password = String.valueOf(getProperty(asUserPasswordProperty(userPropertyName)));
+
+			User user = User.with(username)
+				.withPassword(password);
+
+			optionalUser = Optional.of(user);
+		}
+
+		return optionalUser;
+	}
+
+	public Optional<User> findFirstUserByRoleClusterOperator(Service service) {
+
+		Optional<User> optionalUser = Optional.empty();
+
+		String serviceName = service.getName();
+		String userPropertyName = String.format(VCAP_SERVICES_SERVICE_NAME_USERS_INDEX_PROPERTY, serviceName, 0);
+
+		for (int index = 1; containsProperty(asUserRolesProperty(userPropertyName)); index++) {
+
+			String roles = String.valueOf(getProperty(asUserRolesProperty(userPropertyName)));
 
 			if (roles.contains(User.Role.CLUSTER_OPERATOR.name().toLowerCase())) {
 				break;
 			}
 
-			userPropertyName = String.format(VCAP_SERVICES_SERVICE_NAME_USERS_PROPERTY, serviceName, index);
+			userPropertyName = String.format(VCAP_SERVICES_SERVICE_NAME_USERS_INDEX_PROPERTY, serviceName, index);
 		}
 
-		if (containsProperty(userPropertyName+".username")) {
+		if (containsProperty(asUserUsernameProperty(userPropertyName))) {
 
-			String username = String.valueOf(getProperty(userPropertyName+".username"));
-			String password = String.valueOf(getProperty(userPropertyName+".password"));
+			String username = String.valueOf(getProperty(asUserUsernameProperty(userPropertyName)));
+			String password = String.valueOf(getProperty(asUserPasswordProperty(userPropertyName)));
 
 			User user = User.with(username)
 				.withPassword(password)
 				.withRole(User.Role.CLUSTER_OPERATOR);
 
-			return Optional.of(user);
+			optionalUser = Optional.of(user);
 		}
 
-		return Optional.empty();
+		return optionalUser;
+	}
+
+	private String asUserPasswordProperty(String userProperty) {
+		return String.format("%s.password", userProperty);
+	}
+
+	private String asUserRolesProperty(String userProperty) {
+		return String.format("%s.roles", userProperty);
+	}
+
+	private String asUserUsernameProperty(String userProperty) {
+		return String.format("%s.username", userProperty);
 	}
 
 	@Nullable
