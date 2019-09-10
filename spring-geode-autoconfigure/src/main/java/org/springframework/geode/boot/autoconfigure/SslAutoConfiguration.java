@@ -27,9 +27,13 @@ import java.util.Properties;
 
 import org.apache.geode.cache.GemFireCache;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -52,9 +56,6 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's SSL transport
  * between client and servers when using the client/server topology.
@@ -65,18 +66,25 @@ import org.slf4j.LoggerFactory;
  * @see java.util.Properties
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.SpringApplication
+ * @see org.springframework.boot.autoconfigure.AutoConfigureBefore
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
- * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
  * @see org.springframework.boot.env.EnvironmentPostProcessor
  * @see org.springframework.context.annotation.Condition
+ * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.context.annotation.Conditional
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertiesPropertySource
+ * @see org.springframework.core.env.PropertySource
+ * @see org.springframework.core.io.ClassPathResource
  * @see org.springframework.core.io.Resource
+ * @see org.springframework.core.type.AnnotatedTypeMetadata
  * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.EnableSsl
+ * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  * @since 1.0.0
  */
 @Configuration
@@ -96,8 +104,6 @@ public class SslAutoConfiguration {
 	private static final String GEMFIRE_SSL_TRUSTSTORE_PROPERTY = "gemfire.ssl-truststore";
 	private static final String SECURITY_SSL_KEYSTORE_PROPERTY = "spring.data.gemfire.security.ssl.keystore";
 	private static final String SECURITY_SSL_TRUSTSTORE_PROPERTY = "spring.data.gemfire.security.ssl.truststore";
-	private static final String SSL_KEYSTORE_PROPERTY = "ssl-keystore";
-	private static final String SSL_TRUSTSTORE_PROPERTY = "ssl-truststore";
 	private static final String TRUSTED_KEYSTORE_FILENAME = "trusted.keystore";
 	private static final String TRUSTED_KEYSTORE_FILENAME_PROPERTY = "spring.boot.data.gemfire.security.ssl.keystore.name";
 	private static final String USER_HOME_DIRECTORY = System.getProperty("user.home");
@@ -107,11 +113,9 @@ public class SslAutoConfiguration {
 	private static boolean isSslConfigured(Environment environment) {
 
 		return (environment.containsProperty(SECURITY_SSL_KEYSTORE_PROPERTY)
-				&& environment.containsProperty(SECURITY_SSL_TRUSTSTORE_PROPERTY))
+			&& environment.containsProperty(SECURITY_SSL_TRUSTSTORE_PROPERTY))
 			|| (environment.containsProperty(GEMFIRE_SSL_KEYSTORE_PROPERTY)
-				&& environment.containsProperty(GEMFIRE_SSL_TRUSTSTORE_PROPERTY))
-			|| (environment.containsProperty(SSL_KEYSTORE_PROPERTY)
-				&& environment.containsProperty(SSL_TRUSTSTORE_PROPERTY));
+			&& environment.containsProperty(GEMFIRE_SSL_TRUSTSTORE_PROPERTY));
 	}
 
 	private static boolean isSslNotConfigured(Environment environment) {
@@ -144,9 +148,6 @@ public class SslAutoConfiguration {
 	}
 
 	private static Optional<File> resolveKeyStoreFromClassPath(Environment environment) {
-
-		//System.err.printf("KEYSTORE LOCATION [%s]%n", ObjectUtils.doOperationSafely(() ->
-		//	new File(new ClassPathResource(keystoreName).getURL().toURI())).getAbsolutePath());
 
 		return locateKeyStoreInClassPath(environment)
 			.map(resource -> {
@@ -186,7 +187,6 @@ public class SslAutoConfiguration {
 		return locateKeyStoreInClassPath(resolveTrustedKeystoreName(environment));
 	}
 
-	@SuppressWarnings("all")
 	private static Optional<ClassPathResource> locateKeyStoreInClassPath(String keystoreName) {
 
 		return Optional.of(new ClassPathResource(keystoreName))
@@ -210,11 +210,7 @@ public class SslAutoConfiguration {
 
 		assertDirectory(directory);
 
-		//System.err.printf("Searching [%s]...%n", directory);
-
 		for (File file : nullSafeListFiles(directory)) {
-
-			//System.err.printf("Testing [%s]...%n", file);
 
 			if (isDirectory(file)) {
 
@@ -258,30 +254,6 @@ public class SslAutoConfiguration {
 		return nullSafeArray(directory.listFiles(), File.class);
 	}
 
-	@SuppressWarnings("unused")
-	static class EnableSslCondition extends AnyNestedCondition {
-
-		public EnableSslCondition() {
-			super(ConfigurationPhase.PARSE_CONFIGURATION);
-		}
-
-		@Conditional(TrustedKeyStoreIsPresentCondition.class)
-		static class TrustedKeyStoreCondition {}
-
-		@ConditionalOnProperty(prefix = "spring.data.gemfire.security.ssl", name = { "keystore", "truststore", })
-		static class SpringDataGeodeSslContextCondition {}
-
-		// TODO: ;-)
-		@ConditionalOnProperty({
-			GEMFIRE_SSL_KEYSTORE_PROPERTY,
-			GEMFIRE_SSL_TRUSTSTORE_PROPERTY,
-			SSL_KEYSTORE_PROPERTY,
-			SSL_TRUSTSTORE_PROPERTY,
-		})
-		static class StandaloneApacheGeodeSslContextCondition {}
-
-	}
-
 	public static class SslEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
 		@Override
@@ -316,17 +288,48 @@ public class SslAutoConfiguration {
 		}
 	}
 
+	static class EnableSslCondition extends AllNestedConditions {
+
+		public EnableSslCondition() {
+			super(ConfigurationPhase.PARSE_CONFIGURATION);
+		}
+
+		@ConditionalOnProperty(name = SECURITY_SSL_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY,
+			havingValue = "true", matchIfMissing = true)
+		static class SpringBootDataGemFireSecuritySslEnvironmentPostProcessorEnabled { }
+
+		@Conditional(SslTriggersCondition.class)
+		static class AnySslTriggerCondition { }
+
+	}
+
+	static class SslTriggersCondition extends AnyNestedCondition {
+
+		public SslTriggersCondition() {
+			super(ConfigurationPhase.PARSE_CONFIGURATION);
+		}
+
+		@Conditional(TrustedKeyStoreIsPresentCondition.class)
+		static class TrustedKeyStoreCondition { }
+
+		@ConditionalOnProperty(prefix = "spring.data.gemfire.security.ssl", name = { "keystore", "truststore" })
+		static class SpringDataGemFireSecuritySslKeyStoreAndTruststorePropertiesSet { }
+
+		@ConditionalOnProperty({ GEMFIRE_SSL_KEYSTORE_PROPERTY, GEMFIRE_SSL_TRUSTSTORE_PROPERTY })
+		static class ApacheGeodeSslKeyStoreAndTruststorePropertiesSet { }
+
+	}
+
 	static class TrustedKeyStoreIsPresentCondition implements Condition {
 
 		@Override
-		@SuppressWarnings("all")
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
 			Environment environment = context.getEnvironment();
 
 			return locateKeyStoreInClassPath(environment).isPresent()
-				|| locateKeyStoreInUserHome(environment).isPresent()
-				|| locateKeyStoreInFileSystem(environment).isPresent();
+				|| locateKeyStoreInFileSystem(environment).isPresent()
+				|| locateKeyStoreInUserHome(environment).isPresent();
 		}
 	}
 }
