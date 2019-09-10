@@ -36,6 +36,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.data.gemfire.tests.logging.slf4j.logback.TestAppender;
 import org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration.AutoConfiguredCloudSecurityEnvironmentPostProcessor;
@@ -184,7 +185,8 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		vcapProperties.setProperty("vcap.services.test-pcc.credentials.users[1].username", "Master");
 		vcapProperties.setProperty("vcap.services.test-pcc.credentials.users[1].password", "p@$$w0rd");
 		vcapProperties.setProperty("vcap.services.test-pcc.credentials.users[1].roles", "cluster_operator");
-		vcapProperties.setProperty("vcap.services.test-pcc.tags", "gemfire,cloudcache,test,geode");
+		vcapProperties.setProperty("vcap.services.test-pcc.name", "test-pcc");
+		vcapProperties.setProperty("vcap.services.test-pcc.tags", "gemfire,cloudcache,test,geode,pivotal");
 
 		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
 
@@ -224,6 +226,8 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		when(mockEnvironment.containsProperty("spring.data.gemfire.security.username")).thenReturn(true);
 		when(mockEnvironment.containsProperty("spring.data.gemfire.security.password")).thenReturn(true);
 
+		MutablePropertySources propertySources = new MutablePropertySources();
+
 		Properties vcapProperties = new Properties();
 
 		vcapProperties.setProperty("vcap.application.name", "TestApp");
@@ -239,8 +243,6 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		vcapProperties.setProperty("vcap.services.test-pcc.tags", "gemfire,cloudcache,test");
 
 		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
-
-		MutablePropertySources propertySources = new MutablePropertySources();
 
 		propertySources.addFirst(vcapPropertySource);
 
@@ -275,12 +277,12 @@ public class ClientSecurityAutoConfigurationUnitTests {
 
 		MutablePropertySources propertySources = spy(new MutablePropertySources());
 
-		Properties vcap = new Properties();
+		Properties vcapProperties = new Properties();
 
-		vcap.setProperty("vcap.application.name", "TestApp");
-		vcap.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
+		vcapProperties.setProperty("vcap.application.name", "TestApp");
+		vcapProperties.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
 
-		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcap);
+		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
 
 		propertySources.addFirst(vcapPropertySource);
 
@@ -297,7 +299,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 			TestAppender testAppender = TestAppender.getInstance();
 
 			assertThat(testAppender).isNotNull();
-			assertThat(testAppender.lastLogMessage()).isEqualTo("No CloudCache Service Instance was found");
+			assertThat(testAppender.lastLogMessage()).isEqualTo("No Cloud Cache service instance was found");
 		}
 		finally {
 
@@ -315,12 +317,12 @@ public class ClientSecurityAutoConfigurationUnitTests {
 
 		MutablePropertySources propertySources = spy(new MutablePropertySources());
 
-		Properties vcap = new Properties();
+		Properties vcapProperties = new Properties();
 
-		vcap.setProperty("vcap.application.name", "TestApp");
-		vcap.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
+		vcapProperties.setProperty("vcap.application.name", "TestApp");
+		vcapProperties.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
 
-		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcap);
+		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
 
 		propertySources.addFirst(vcapPropertySource);
 
@@ -336,7 +338,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		}
 		catch (IllegalStateException expected) {
 
-			assertThat(expected).hasMessage("No CloudCache Service Instance with name [test-pcc] was found");
+			assertThat(expected).hasMessage("No Cloud Cache service instance with name [test-pcc] was found");
 			assertThat(expected).hasNoCause();
 
 			throw expected;
@@ -348,5 +350,191 @@ public class ClientSecurityAutoConfigurationUnitTests {
 			verify(mockEnvironment, times(1)).getPropertySources();
 			verify(propertySources, never()).addLast(any(PropertySource.class));
 		}
+	}
+
+	@Test
+	public void configuresAuthenticationWithCloudPlatformCredentials() {
+
+		ConfigurableEnvironment environment = spy(new StandardEnvironment());
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "TestApp");
+		vcap.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
+		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
+		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal, cloudcache, database, gemfire");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users", "Abuser, Master");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].username", "Abuser");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].password", "p@55w0rd");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].roles", "cluster_developer");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].username", "Master");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].password", "p9@$$w0rd");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].roles", "cluster_operator");
+
+		PropertiesPropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcap);
+
+		environment.getPropertySources().addLast(vcapPropertySource);
+
+		AutoConfiguredCloudSecurityEnvironmentPostProcessor environmentPostProcessor =
+			new AutoConfiguredCloudSecurityEnvironmentPostProcessor();
+
+		environmentPostProcessor.configureSecurityContext(environment);
+
+		assertThat(environment.getProperty("spring.data.gemfire.security.username")).isEqualTo("Master");
+		assertThat(environment.getProperty("spring.data.gemfire.security.password")).isEqualTo("p9@$$w0rd");
+
+		verify(environment, times(2))
+			.containsProperty(eq("spring.data.gemfire.security.username"));
+
+		verify(environment, never())
+			.containsProperty(eq("spring.data.gemfire.security.password"));
+	}
+
+	@Test
+	public void configuresAuthenticationWithCloudPlatformCredentialsAndTargetUser() {
+
+		ConfigurableEnvironment environment = spy(new StandardEnvironment());
+
+		Properties springDataGemFire = new Properties();
+
+		springDataGemFire.setProperty("spring.data.gemfire.security.username", "Abuser");
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "TestApp");
+		vcap.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
+		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
+		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal, cloudcache, database, gemfire");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users", "Abuser, Master");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].username", "Abuser");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].password", "p@55w0rd");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].roles", "cluster_developer");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].username", "Master");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].password", "p9@$$w0rd");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].roles", "cluster_operator");
+
+		PropertiesPropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcap);
+
+		PropertiesPropertySource springDataGemFirePropertySource =
+			new PropertiesPropertySource("spring.data.gemfire", springDataGemFire);
+
+		environment.getPropertySources().addLast(vcapPropertySource);
+		environment.getPropertySources().addLast(springDataGemFirePropertySource);
+
+		AutoConfiguredCloudSecurityEnvironmentPostProcessor environmentPostProcessor =
+			new AutoConfiguredCloudSecurityEnvironmentPostProcessor();
+
+		environmentPostProcessor.configureSecurityContext(environment);
+
+		assertThat(environment.getProperty("spring.data.gemfire.security.username")).isEqualTo("Abuser");
+		assertThat(environment.getProperty("spring.data.gemfire.security.password")).isEqualTo("p@55w0rd");
+
+		verify(environment, times(2))
+			.containsProperty(eq("spring.data.gemfire.security.username"));
+
+		verify(environment, times(1))
+			.containsProperty(eq("spring.data.gemfire.security.password"));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void configuresAuthenticationWithCloudPlatformCredentialsAndNonExistingTargetUserThrowsIllegalStateException() {
+
+		ConfigurableEnvironment environment = spy(new StandardEnvironment());
+
+		Properties springDataGemFire = new Properties();
+
+		springDataGemFire.setProperty("spring.data.gemfire.security.username", "NonExistingUser");
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "TestApp");
+		vcap.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
+		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
+		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal, cloudcache, database, gemfire");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users", "Abuser, Master");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].username", "Abuser");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].password", "p@55w0rd");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].roles", "cluster_developer");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].username", "Master");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].password", "p9@$$w0rd");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].roles", "cluster_operator");
+
+		PropertiesPropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcap);
+
+		PropertiesPropertySource springDataGemFirePropertySource =
+			new PropertiesPropertySource("spring.data.gemfire", springDataGemFire);
+
+		environment.getPropertySources().addLast(vcapPropertySource);
+		environment.getPropertySources().addLast(springDataGemFirePropertySource);
+
+		AutoConfiguredCloudSecurityEnvironmentPostProcessor environmentPostProcessor =
+			new AutoConfiguredCloudSecurityEnvironmentPostProcessor();
+
+		try {
+			environmentPostProcessor.configureSecurityContext(environment);
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected)
+				.hasMessage("No User with name [NonExistingUser] was configured for Cloud Cache service [test-pcc]");
+
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(environment, times(2))
+				.containsProperty(eq("spring.data.gemfire.security.username"));
+
+			verify(environment, times(1))
+				.containsProperty(eq("spring.data.gemfire.security.password"));
+		}
+	}
+
+	@Test
+	public void configuresAuthenticationWithUserSuppliedCredentials() {
+
+		ConfigurableEnvironment environment = spy(new StandardEnvironment());
+
+		Properties springDataGemFire = new Properties();
+
+		springDataGemFire.setProperty("spring.data.gemfire.security.username", "MyUser");
+		springDataGemFire.setProperty("spring.data.gemfire.security.password", "s3cUr3");
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "TestApp");
+		vcap.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
+		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
+		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal, cloudcache, database, gemfire");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users", "Abuser, Master");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].username", "Abuser");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].password", "p@55w0rd");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].roles", "cluster_developer");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].username", "Master");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].password", "p9@$$w0rd");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users[1].roles", "cluster_operator");
+
+		PropertiesPropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcap);
+
+		PropertiesPropertySource springDataGemFirePropertySource =
+			new PropertiesPropertySource("spring.data.gemfire", springDataGemFire);
+
+		environment.getPropertySources().addLast(vcapPropertySource);
+		environment.getPropertySources().addLast(springDataGemFirePropertySource);
+
+		AutoConfiguredCloudSecurityEnvironmentPostProcessor environmentPostProcessor =
+			new AutoConfiguredCloudSecurityEnvironmentPostProcessor();
+
+		environmentPostProcessor.configureSecurityContext(environment);
+
+		assertThat(environment.getProperty("spring.data.gemfire.security.username")).isEqualTo("MyUser");
+		assertThat(environment.getProperty("spring.data.gemfire.security.password")).isEqualTo("s3cUr3");
+
+		verify(environment, times(1))
+			.containsProperty(eq("spring.data.gemfire.security.username"));
+
+		verify(environment, times(1))
+			.containsProperty(eq("spring.data.gemfire.security.password"));
 	}
 }
