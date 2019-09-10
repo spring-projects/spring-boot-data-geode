@@ -23,9 +23,13 @@ import java.util.Properties;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform;
@@ -46,9 +50,6 @@ import org.springframework.geode.core.env.support.CloudCacheService;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Security functionality,
  * and specifically Authentication between a client and server using Spring Data Geode Security annotations.
@@ -58,8 +59,12 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.SpringApplication
+ * @see org.springframework.boot.autoconfigure.AutoConfigureBefore
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnClass
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
  * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.boot.env.EnvironmentPostProcessor
  * @see org.springframework.context.annotation.Conditional
@@ -227,14 +232,29 @@ public class ClientSecurityAutoConfiguration {
 		}
 	}
 
-	static class EnableSecurityCondition extends AnyNestedCondition {
+	static class EnableSecurityCondition extends AllNestedConditions {
 
-		public EnableSecurityCondition() {
+		EnableSecurityCondition() {
+			super(ConfigurationPhase.PARSE_CONFIGURATION);
+		}
+
+		@ConditionalOnProperty(name = CLOUD_SECURITY_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY,
+			havingValue = "true", matchIfMissing = true)
+		static class SpringBootDataGemFireSecurityAuthEnvironmentPostProcessorEnabled { }
+
+		@Conditional(SecurityTriggersCondition.class)
+		static class AnySecurityTriggerCondition { }
+
+	}
+
+	static class SecurityTriggersCondition extends AnyNestedCondition {
+
+		SecurityTriggersCondition() {
 			super(ConfigurationPhase.PARSE_CONFIGURATION);
 		}
 
 		@ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
-		static class CloudSecurityContextCondition { }
+		static class CloudPlatformSecurityContextCondition { }
 
 		@ConditionalOnProperty({
 			"spring.data.gemfire.security.username",
@@ -246,7 +266,7 @@ public class ClientSecurityAutoConfiguration {
 			"gemfire.security-username",
 			"gemfire.security-password",
 		})
-		static class StandaloneApacheGeodeSecurityContextCondition { }
+		static class UsingApacheGeodeSecurityContextCondition { }
 
 	}
 
