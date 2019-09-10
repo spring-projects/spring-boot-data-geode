@@ -51,13 +51,20 @@ import org.springframework.geode.core.env.support.User;
  * Unit tests for {@link VcapPropertySource}.
  *
  * @author John Blum
+ * @see java.net.URL
  * @see java.util.Properties
+ * @see java.util.function.Predicate
  * @see org.junit.Test
  * @see org.mockito.Mockito
+ * @see org.springframework.core.env.ConfigurableEnvironment
+ * @see org.springframework.core.env.EnumerablePropertySource
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertiesPropertySource
  * @see org.springframework.core.env.PropertySource
  * @see org.springframework.geode.core.env.VcapPropertySource
+ * @see org.springframework.geode.core.env.support.CloudCacheService
+ * @see org.springframework.geode.core.env.support.Service
+ * @see org.springframework.geode.core.env.support.User
  * @since 1.0.0
  */
 public class VcapPropertySourceUnitTests {
@@ -355,7 +362,7 @@ public class VcapPropertySourceUnitTests {
 	}
 
 	@Test
-	public void findTargetVcapApplicationPropertiesIsSuccessful() {
+	public void findTargetVcapServicePropertiesIsSuccessful() {
 
 		EnumerablePropertySource mockPropertySource = mock(EnumerablePropertySource.class);
 
@@ -609,29 +616,134 @@ public class VcapPropertySourceUnitTests {
 	}
 
 	@Test
-	public void findFirstUserByRoleClusterOperatorReturnsUser() {
+	public void findUserByNameReturnsOptionalOfUser() {
 
 		Properties vcap = new Properties();
 
 		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+		vcap.setProperty("vcap.services.jblum-pcc.name", "jblum-pcc");
+		vcap.setProperty("vcap.services.jblum-pcc.tags", "pivotal,cloudcache,database,gemfire");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users", "admin, root, majorTom, jimbo, buster");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[0].username", "admin");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[0].roles", "cluster_admin");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[0].password", "p@55w0rd");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[1].username", "root");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[1].roles", "cluster_operator");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[1].password", "p@55w0rd");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[2].username", "majorTom");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[2].roles", "cluster_operator,ground_controller");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[2].password", "s3cUr3");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[3].username", "jimbo");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[3].roles", "cluster_fuck");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[3].password", "p@55!t");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[4].username", "buster");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[4].roles", "cluster_operator");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[4].password", "p@55!t");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+
+		Service jblumPcc = Service.with("jblum-pcc");
+		Service nonExistingService = Service.with("non-existing-service");
+
+		Optional<User> user = propertySource.findUserByName(jblumPcc, "majorTom");
+
+		assertThat(user).isNotNull();
+		assertThat(user.map(User::getName).orElse(null)).isEqualTo("majorTom");
+		assertThat(user.flatMap(User::getPassword).orElse(null)).isEqualTo("s3cUr3");
+
+		user = propertySource.findUserByName(jblumPcc, "admin");
+
+		assertThat(user).isNotNull();
+		assertThat(user.map(User::getName).orElse(null)).isEqualTo("admin");
+		assertThat(user.flatMap(User::getPassword).orElse(null)).isEqualTo("p@55w0rd");
+
+		user = propertySource.findUserByName(jblumPcc, "nonExistingUser");
+
+		assertThat(user).isNotNull();
+		assertThat(user.isPresent()).isFalse();
+
+		user = propertySource.findUserByName(nonExistingService, "root");
+
+		assertThat(user).isNotNull();
+		assertThat(user.isPresent()).isFalse();
+
+
+		user = propertySource.findUserByName(jblumPcc, "buster");
+
+		assertThat(user).isNotNull();
+		assertThat(user.map(User::getName).orElse(null)).isEqualTo("buster");
+		assertThat(user.flatMap(User::getPassword).orElse(null)).isEqualTo("p@55!t");
+	}
+
+	private void testFindUserByInvalidNameThrowsIllegalArgumentException(String targetUsername) {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+
+		try {
+			propertySource.findUserByName(Service.with("test-service"), targetUsername);
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("Target username [%s] is required", targetUsername);
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void findUserByBlankName() {
+		testFindUserByInvalidNameThrowsIllegalArgumentException("  ");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void findUserByEmptyName() {
+		testFindUserByInvalidNameThrowsIllegalArgumentException("");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void findUserByNullName() {
+		testFindUserByInvalidNameThrowsIllegalArgumentException(null);
+	}
+
+	@Test
+	public void findFirstUserByRoleClusterOperatorReturnsOptionalOfUser() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
 		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
+		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal,cloudcache , database,  gemfire ");
+		vcap.setProperty("vcap.services.test-pcc.credentials.users", "jdoe");
 		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].username", "jdoe");
 		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].roles", "developer,poweruser,seaswab");
 		vcap.setProperty("vcap.services.test-pcc.credentials.users[0].password", "test");
-		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal,cloudcache , database,  gemfire ");
-		vcap.setProperty("vcap.application.space_name", "outerspace");
 		vcap.setProperty("vcap.services.a-pcc.name", "a-pcc");
+		vcap.setProperty("vcap.services.a-pcc.tags", "pivotal,cloudcache,database");
+		vcap.setProperty("vcap.services.a-pcc.credentials.users", "admin, root");
 		vcap.setProperty("vcap.services.a-pcc.credentials.users[0].username", "admin");
 		vcap.setProperty("vcap.services.a-pcc.credentials.users[0].roles", "cluster_admin");
 		vcap.setProperty("vcap.services.a-pcc.credentials.users[0].password", "p@55w0rd");
 		vcap.setProperty("vcap.services.a-pcc.credentials.users[1].username", "root");
 		vcap.setProperty("vcap.services.a-pcc.credentials.users[1].roles", "cluster_operator");
 		vcap.setProperty("vcap.services.a-pcc.credentials.users[1].password", "p@55w0rd");
-		vcap.setProperty("vcap.services.a-pcc.tags", "pivotal,cloudcache,database");
-		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
 		vcap.setProperty("vcap.services.jblum-pcc.name", "jblum-pcc");
+		vcap.setProperty("vcap.services.jblum-pcc.tags", "pivotal,gemfire,database");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users", "majorTom, jimbo, buster");
 		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[0].username", "majorTom");
-		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[0].roles", "cluster_operator,ground_contoller");
+		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[0].roles", "cluster_operator,ground_controller");
 		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[0].password", "s3cUr3");
 		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[1].username", "jimbo");
 		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[1].roles", "cluster_fuck");
@@ -639,12 +751,13 @@ public class VcapPropertySourceUnitTests {
 		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[2].username", "buster");
 		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[2].roles", "cluster_operator");
 		vcap.setProperty("vcap.services.jblum-pcc.credentials.users[2].password", "p@55!t");
-		vcap.setProperty("vcap.services.jblum-pcc.tags", "pivotal,gemfire,database");
 
 		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
 
 		assertThat(propertySource).isNotNull();
 		assertThat(propertySource.findFirstUserByRoleClusterOperator(Service.with("test-pcc")).isPresent()).isFalse();
+		assertThat(propertySource.findFirstUserByRoleClusterOperator(Service.with("non-existing-service")).isPresent())
+			.isFalse();
 
 		User root = propertySource.findFirstUserByRoleClusterOperator(Service.with("a-pcc")).orElse(null);
 
@@ -667,7 +780,7 @@ public class VcapPropertySourceUnitTests {
 
 		Properties properties = new Properties();
 
-		properties.setProperty("vcap.application.name", "withVcapServicePredicateConfiguresVcapServicePredicateReturnsThis");
+		properties.setProperty("vcap.application.name", "withMockVcapServicePredicateConfiguresVcapServicePredicateReturnsThis");
 		properties.setProperty("vcap.application.uris", "{}");
 
 		Predicate<String> mockVcapServicePredicate = mock(Predicate.class);
