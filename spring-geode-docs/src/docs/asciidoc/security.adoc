@@ -119,17 +119,17 @@ that you setup when you provisioned a PCC service instance in your PCF organizat
 2 users with roles "_cluster_operator_" and "_developer_", respectively, to any Spring Boot application bound to the PCC
 service instance.
 
-By default, SBDG will auto-configure your Spring Boot app to run with the user having the "_cluster_operator_role_".
-This ensures that your Spring Boot app has the necessary privileges (i.e. Authorization) to perform all data access
-operations on the cluster of PCC servers, including, for example, pushing cluster configuration meta-data for the client
+By default, SBDG will auto-configure your Spring Boot app to run with the user having the "_cluster_operator" Role.
+This ensures that your Spring Boot app has the necessary permissions (i.e. Authorization) to perform all data access
+operations on the servers in the PCC cluster including, for example, pushing configuration metadata from the client
 to the servers in the PCC cluster.
 
 See the section, <<[cloudfoundry-cloudcache-security-auth-runtime-user-configuration,Running Spring Boot applications as a specific user>>,
 in the <<cloudfoundry,Pivotal Cloud Foundry>> chapter for additional details on user authentication and authorization.
 
-See the <<cloudfoundry,chapter on 'Pivotal CloudFoundry'> for more general details.
+See the <<cloudfoundry,chapter>> titled '_Pivotal CloudFoundry_' for more general details.
 
-See the {pivotal-cloudcache-docs}/index.html#security[Pivotal Cloud Cache documentation] for security details
+See the {pivotal-cloudcache-docs}/security.html[Pivotal Cloud Cache documentation] for security details
 when using PCC and PCF.
 
 [[geode-security-ssl]]
