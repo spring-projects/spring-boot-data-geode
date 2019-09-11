@@ -15,7 +15,7 @@ John Blum
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
 :pivotal-cloudcache-version: 1-8
-:pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}/index.html
+:pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}
 :pivotal-cloudcache-website: https://pivotal.io/pivotal-cloud-cache
 :pivotal-cloudfoundry-version: 2-6
 :pivotal-cloudfoundry-docs: https://docs.pivotal.io/pivotalcf/{pivotal-cloudfoundry-version}
