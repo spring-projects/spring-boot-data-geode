@@ -261,7 +261,7 @@ which Pivotal Cloud Cache service instance and cluster the data for the client R
 NOTE: By default, SBDG configures all `Pools` declared in a Spring Boot, `ClientCache` application to connect to
 and use a single PCC service instance.  This may be a targeted PCC service instance when using the
 `spring.boot.data.gemfire.cloud.cloudfoundry.service.cloudcache.name` property
-as discussed <<cloudfoundry-cloudcache-multi-instance-target,above>>.
+as discussed <<cloudfoundry-cloudcache-multiinstance-using,above>>.
 
 [[cloudfoundry-geode]]
 === Hybrid Pivotal CloudFoundry & Apache Geode Spring Boot Applications
