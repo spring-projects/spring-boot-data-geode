@@ -4,18 +4,62 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.0.M2 (2019-09-11)
+----------------------------------------
+Adds support to run Spring Boot applications deployed to PCF using PCC as a specific user.  Additionally, adds
+Spring Boot Starters for Pivotal Cloud Cache.
+
+* Adds Spring Boot Starters (e.g. spring-cloudcache-starter, *-starter-actuator, *-starter-session, and *-starter-test)
+for Pivotal Cloud Cache (PCC).
+https://github.com/spring-projects/spring-boot-data-geode/issues/46
+* Adds support to run Spring Boot applications deployed to PCF using PCC as a specific user.
+https://github.com/spring-projects/spring-boot-data-geode/issues/44
+* Adds support for setting the 'locators' and 'remote-locators' GemFire/Geode properties when configuring
+and bootstrapping Apache Geode Locator applications using Spring Boot and the SDG @LocatorApplication annotation.
+* Adds documentation to the Reference Guide on configuring and bootstrapping Apache Geode Locator-based application
+using Spring Boot and the SDG @LocatorApplication annotation.  An example class is also provided.
+* Changes Apache Geode documentation references to version 1.9 and Pivotal GemFire documentation references
+to version 9.8.
+* Edits the documentation on 'Building ClientCache Applications' in the Reference Guide.
+* Edits the documentation on 'Building Embedded (Peer & Server) Cache Applications' in the Reference Guide.
+* Edits the 'Security' & 'Pivotal CloudFoundry' chapters in the Reference Guide.
+* Fixes incorrect URL reference to the Pivotal Cloud Cache documentation.
+* Fixes the incorrect declared scope of the 'org.springframework.data:spring-data-geode-test' dependency in the 'spring-geode-starter-test' module
+as well as the incorrect declared scope of the 'org.springframework.data:spring-data-gemfire-test' dependency in the 'spring-gemfire-starter-test' module.
+https://github.com/spring-projects/spring-boot-data-geode/issues/50
+* Fixes the EnableSecurityCondition and nested Conditions to properly consider the SBDG property for enabling
+and disabling ClientSecurityAutoConfiguration.
+* Fixes the EnableSslCondition and nested Conditions to properly consider the SBDG property for enabling and disabling
+SslAutoConfiguration.
+* Fixes an issue caused by Apache Geode that makes Spring Boot think all Spring Boot, Apache Geode applications
+are Web Applications.  This is dues to geode-core's compile-time dependency on 'org.eclipe.jetty:jetty-server', which
+itself has a transitive dependency on the 'javax.servlet:javax.servlet-api'.  Therefore, SBDG Starters add an exclude
+on the 'javax.servlet-api'.
+https://github.com/spring-projects/spring-boot-data-geode/issues/47
+* Removes the runtime dependency on the 'javax.cache:cache-api' for the SBDG Starters, which is no longer
+a required SDG dependency.
+https://github.com/spring-projects/spring-boot-data-geode/issues/45
+* Upgrades to Spring Framework 5.2.0.RC2
+* Upgrades to Spring Boot 2.2.0.M6
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.2.0.RC3.
+* Upgrades to Spring Data Release Train Moore-RC3.
+* Upgrades to Spring Session BOM Corn-M4.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.2.0.M4.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.8.RELEASE.
+
+
 Changes in version 1.1.1.RELEASE (2019-09-11)
 ---------------------------------------------
 Adds support to run Spring Boot applications deployed to PCF using PCC as a specific user.
 
 * Adds support to run Spring Boot applications deployed to PCF using PCC as a specific user.
 https://github.com/spring-projects/spring-boot-data-geode/issues/44
-* Fixes the incorrect declared scope of the 'org.springframework.data:spring-data-geode-test' dependency in the 'spring-geode-starter-test' module
-as well as the incorrect declared scope of the 'org.springframework.data:spring-data-gemfire-test' dependency in the 'spring-gemfire-starter-test' module.
-https://github.com/spring-projects/spring-boot-data-geode/issues/50
 * Edits the documentation on 'Building ClientCache Applications' in the Reference Guide.
 * Edits the documentation on 'Building Embedded (Peer & Server) Cache Applications' in the Reference Guide.
 * Edits the 'Security' & 'Pivotal CloudFoundry' chapters in the Reference Guide.
+* Fixes the incorrect declared scope of the 'org.springframework.data:spring-data-geode-test' dependency in the 'spring-geode-starter-test' module
+as well as the incorrect declared scope of the 'org.springframework.data:spring-data-gemfire-test' dependency in the 'spring-gemfire-starter-test' module.
+https://github.com/spring-projects/spring-boot-data-geode/issues/50
 * Fixes the EnableSecurityCondition and nested Conditions to properly consider the SBDG property for enabling
 and disabling the ClientSecurityAutoConfiguration.
 * Fixes the EnableSslCondition and nested Conditions to properly consider the SBDG property for enabling and disabling
