@@ -28,6 +28,7 @@ import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.cache.server.CacheServer;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -85,10 +86,12 @@ public class ClusterAvailableConfigurationIntegrationTests extends ForkingClient
 
 	@BeforeClass
 	public static void runGemFireServer() throws IOException {
-
-		ClusterAwareConfiguration.ClusterAwareCondition.reset();
-
 		startGemFireServer(GeodeServerApplication.class);
+	}
+
+	@AfterClass
+	public static void tearDown() {
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
 	}
 
 	@Autowired

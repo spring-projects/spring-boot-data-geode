@@ -24,8 +24,8 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
+import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -71,8 +71,8 @@ public class ClusterNotAvailableConfigurationIntegrationTests extends Integratio
 
 	private static final String LOG_LEVEL = "error";
 
-	@BeforeClass
-	public static void setup() {
+	@AfterClass
+	public static void tearDown() {
 		ClusterAwareConfiguration.ClusterAwareCondition.reset();
 	}
 
