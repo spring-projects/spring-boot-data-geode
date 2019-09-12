@@ -4,6 +4,26 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.1.1.RELEASE (2019-09-11)
+---------------------------------------------
+Adds support to run Spring Boot applications deployed to PCF using PCC as a specific user.
+
+* Adds support to run Spring Boot applications deployed to PCF using PCC as a specific user.
+https://github.com/spring-projects/spring-boot-data-geode/issues/44
+* Fixes the incorrect declared scope of the 'org.springframework.data:spring-data-geode-test' dependency in the 'spring-geode-starter-test' module
+as well as the incorrect declared scope of the 'org.springframework.data:spring-data-gemfire-test' dependency in the 'spring-gemfire-starter-test' module.
+https://github.com/spring-projects/spring-boot-data-geode/issues/50
+* Edits the documentation on 'Building ClientCache Applications' in the Reference Guide.
+* Edits the documentation on 'Building Embedded (Peer & Server) Cache Applications' in the Reference Guide.
+* Edits the 'Security' & 'Pivotal CloudFoundry' chapters in the Reference Guide.
+* Fixes the EnableSecurityCondition and nested Conditions to properly consider the SBDG property for enabling
+and disabling the ClientSecurityAutoConfiguration.
+* Fixes the EnableSslCondition and nested Conditions to properly consider the SBDG property for enabling and disabling
+the SslAutoConfiguration.
+* Upgrades to Spring Boot 2.1.8.RELEASE.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.8.RELEASE.
+
+
 Changes in version 1.2.0.M1 (2019-08-21)
 ----------------------------------------
 Rebases SBDG on Spring Framework 5.2, Spring Boot 2.2, Spring Data Moore/2.2 and Spring Session Corn/2.2.
@@ -20,7 +40,7 @@ Rebases SBDG on Spring Framework 5.2, Spring Boot 2.2, Spring Data Moore/2.2 and
 
 
 Changes in version 1.1.0.RELEASE (2019-08-21)
------------------------------------------
+---------------------------------------------
 Adds a new Sample with Guide and Code on HTTP Session Caching.
 
 * Adds a new Sample with Guide and Example Spring Boot Application showcasing HTTP Session Caching with Spring Session
