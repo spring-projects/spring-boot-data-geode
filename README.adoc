@@ -53,8 +53,8 @@ This, along with many other benefits, are provided by this project.
 | `current` | https://docs.spring.io/spring-boot-data-geode-build/current/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/current/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/current/reference/html5/#geode-samples[Samples]
 | `1.0.1.RELEASE` | https://docs.spring.io/spring-boot-data-geode-build/1.0.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.0.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.0.x/reference/html5/#geode-samples[Samples]
 | `1.0.2.BUILD-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.0.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.0.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.0.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
-| `1.1.0.RELEASE` | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/reference/html5/#geode-samples[Samples]
-| `1.1.1.BUILD-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
+| `1.1.1.RELEASE` | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/reference/html5/#geode-samples[Samples]
+| `1.1.2.BUILD-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
 
 |===
 
@@ -62,25 +62,26 @@ This, along with many other benefits, are provided by this project.
 === Examples
 
 The single, most relevant "_source of truth_" on how to get started quickly and effectively, using Spring Boot
-for Apache Geode & Pivotal GemFire (SBDG) to solve problems, is by starting with the
+for Apache Geode & Pivotal GemFire (SBDG) to solve problems, is to start with the
 https://docs.spring.io/spring-boot-data-geode-build/current/reference/html5/#geode-samples[Samples].
-There, you will find different examples with documentation and code showing you how to use SBDG to address
-specific application concerns, like Caching.
+There, you will find different examples with documentation and code showing you how to use SBDG to appropriately
+handle specific application concerns, like Caching.
 
 You can find an example of using SBDG in the Pivotal Cloud Cache (PCC) https://github.com/pivotal-cf/PCC-Sample-App-PizzaStore[Pizza Store]
-repository, which is a Spring Boot `ClientCache` application that talks to PCC when the app is deploy to PCF.
+GitHub repository, which is a Spring Boot, Pivotal GemFire `ClientCache` application that connects to PCC when the app
+is deployed to PCF.
 
 The https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example] found in the
 _Contacts Application Reference Implementation_ for _Spring Data for Apache Geode & Pivotal GemFire_ (SDG) uses SBDG
 to manage Books in a _System of Record_ Use Case.
 
-Then, there is a series of examples that walks a user though a series of steps starting with building a simple,
+Then, there is a series of examples that walks a user through a series of steps starting by building a simple,
 Spring Boot client application using the Apache Geode API only.  Next, the app is rebuilt using Spring Data
-for Apache Geode (SDG) to show the simplifications that SDG affords you as a developer.  Finally, the app rebuilt
-once more using SBDG to demonstrate the power of Apache Geode when combined with Spring Boot.  The example can found
+for Apache Geode (SDG) to show the simplifications that SDG affords you as a developer.  Finally, the app is rebuilt
+once more using SBDG to demonstrate the power of Apache Geode when combined with Spring Boot.  The example can be found
 in the https://github.com/kohlmu-pivotal/PCCDemo[PCCDemo] GitHub repository.  Each app can be deployed to PCF
-and bound to a Pivotal Cloud Cache service.  With SBDG, little or no code or configuration changes are necessary
-to run the app locally and then later deploy the same app artifact to a managed environment like PCF.  It just works!
+and bound to a Pivotal Cloud Cache service instance.  With SBDG, little to no code or configuration changes are
+necessary to run the app locally and then later deploy the same app to a managed environment like PCF.  It just works!
 
 Finally, the https://github.com/jxblum/temperature-service/tree/using-spring-boot[Temperature Service] example is
 an _Internet of Things_ (IoT) and _Event Stream Processing_ (ESP) Use Case that manages Temperature Sensors and Monitors
