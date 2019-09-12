@@ -32,8 +32,8 @@ import org.springframework.data.gemfire.config.annotation.EnableClusterConfigura
 @Configuration
 @Conditional(ClusterAvailableConfiguration.ClusterAvailableCondition.class)
 @EnableClusterConfiguration(requireHttps = false, useHttp = true)
-class ClusterAvailableConfiguration {
+public class ClusterAvailableConfiguration {
 
-	static final class ClusterAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition { }
+	public static final class ClusterAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition { }
 
 }

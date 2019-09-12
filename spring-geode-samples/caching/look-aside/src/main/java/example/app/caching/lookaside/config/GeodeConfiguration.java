@@ -16,6 +16,7 @@
 package example.app.caching.lookaside.config;
 
 import org.apache.geode.cache.client.ClientRegionShortcut;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;

@@ -21,10 +21,12 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
 import org.springframework.data.gemfire.config.annotation.EnableContinuousQueries;
+import org.springframework.geode.config.annotation.ClusterAvailableConfiguration;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Continuous Query (CQ)
@@ -34,13 +36,16 @@ import org.springframework.data.gemfire.config.annotation.EnableContinuousQuerie
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.context.annotation.Conditional
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer
  * @see org.springframework.data.gemfire.config.annotation.EnableContinuousQueries
+ * @see org.springframework.geode.config.annotation.ClusterAvailableConfiguration.ClusterAvailableCondition
  * @since 1.0.0
  */
 @Configuration
+@Conditional(ClusterAvailableConfiguration.ClusterAvailableCondition.class)
 @ConditionalOnBean(ClientCacheFactoryBean.class)
 @ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor",
 	type = "org.springframework.data.gemfire.listener.ContinuousQueryListenerContainer")

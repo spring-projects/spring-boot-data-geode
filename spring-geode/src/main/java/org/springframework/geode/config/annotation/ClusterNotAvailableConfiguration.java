@@ -97,7 +97,7 @@ public class ClusterNotAvailableConfiguration {
 		return clientRegion;
 	}
 
-	static final class CusterNotAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition {
+	public static final class CusterNotAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition {
 
 		@Override
 		public synchronized boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
