@@ -34,10 +34,12 @@ import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.geode.boot.autoconfigure.support.EnableSubscriptionConfiguration;
 import org.springframework.session.Session;
 import org.springframework.session.data.gemfire.config.annotation.web.http.EnableGemFireHttpSession;
 import org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration;
@@ -49,10 +51,25 @@ import org.springframework.util.StringUtils;
  * or Pivotal GemFire as an (HTTP) {@link Session} state management provider in Spring Session.
  *
  * @author John Blum
+ * @see java.util.Properties
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.boot.SpringApplication
+ * @see org.springframework.boot.autoconfigure.AutoConfigureAfter
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
+ * @see org.springframework.context.annotation.Condition
+ * @see org.springframework.context.annotation.ConditionContext
+ * @see org.springframework.context.annotation.Conditional
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.context.annotation.Import
+ * @see org.springframework.core.env.ConfigurableEnvironment
+ * @see org.springframework.core.env.PropertiesPropertySource
+ * @see org.springframework.core.env.PropertySource
+ * @see org.springframework.core.type.AnnotatedTypeMetadata
+ * @see org.springframework.geode.boot.autoconfigure.support.EnableSubscriptionConfiguration
  * @see org.springframework.session.Session
  * @see org.springframework.session.data.gemfire.config.annotation.web.http.EnableGemFireHttpSession
  * @see org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration
@@ -67,6 +84,7 @@ import org.springframework.util.StringUtils;
 @ConditionalOnMissingBean(SessionRepositoryFilter.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @EnableGemFireHttpSession
+@Import(EnableSubscriptionConfiguration.class)
 @SuppressWarnings("unused")
 public class SpringSessionAutoConfiguration {
 
@@ -121,7 +139,7 @@ public class SpringSessionAutoConfiguration {
 
 	protected static class SpringSessionStoreTypeCondition implements Condition {
 
-		@Override @SuppressWarnings("all")
+		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
 			String springSessionStoreTypeValue =
