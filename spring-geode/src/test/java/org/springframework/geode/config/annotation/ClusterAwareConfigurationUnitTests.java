@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -40,7 +41,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.data.gemfire.support.ConnectionEndpoint;
@@ -51,9 +56,14 @@ import org.springframework.data.gemfire.tests.integration.IntegrationTestsSuppor
  * Unit Tests for {@link EnableClusterAware} and {@link ClusterAwareConfiguration}.
  *
  * @author John Blum
+ * @see java.net.Socket
+ * @see java.util.Properties
  * @see org.junit.Test
  * @see org.mockito.Mockito
  * @see org.mockito.Spy
+ * @see org.springframework.context.ApplicationListener
+ * @see org.springframework.context.ConfigurableApplicationContext
+ * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.data.gemfire.support.ConnectionEndpoint
  * @see org.springframework.data.gemfire.support.ConnectionEndpointList
@@ -69,7 +79,32 @@ public class ClusterAwareConfigurationUnitTests extends IntegrationTestsSupport 
 
 	@Before @After
 	public void setupAndTearDown() {
+
 		System.clearProperty(ClusterAwareConfiguration.SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY);
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
+	}
+
+	@Test
+	public void matchRegistersApplicationListenerCallsDoMatch() {
+
+		ConditionContext mockConditionContext = mock(ConditionContext.class);
+
+		ConfigurableApplicationContext mockApplicationContext = mock(ConfigurableApplicationContext.class);
+
+		Environment mockEnvironment = mock(Environment.class);
+
+		when(mockConditionContext.getEnvironment()).thenReturn(mockEnvironment);
+		when(mockConditionContext.getResourceLoader()).thenReturn(mockApplicationContext);
+
+		ClusterAwareConfiguration.ClusterAwareCondition condition =
+			spy(new ClusterAwareConfiguration.ClusterAwareCondition());
+
+		assertThat(condition.matches(mockConditionContext, null)).isFalse();
+
+		verify(mockApplicationContext, times(1))
+			.addApplicationListener(isA(ApplicationListener.class));
+
+		verify(condition, times(1)).doMatch(eq(mockConditionContext));
 	}
 
 	@Test

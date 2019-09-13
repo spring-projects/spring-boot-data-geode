@@ -23,6 +23,7 @@ import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -32,10 +33,13 @@ import org.apache.geode.cache.server.CacheServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
@@ -59,10 +63,13 @@ import org.springframework.util.StringUtils;
  * @see java.net.Socket
  * @see java.net.SocketAddress
  * @see org.apache.geode.cache.server.CacheServer
+ * @see org.springframework.context.ApplicationListener
+ * @see org.springframework.context.ConfigurableApplicationContext
  * @see org.springframework.context.annotation.Condition
  * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Import
+ * @see org.springframework.context.event.ContextClosedEvent
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertySource
@@ -92,11 +99,15 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 	}
 
 	@SuppressWarnings("unused")
-	static class ClusterAwareCondition implements Condition {
+	public static class ClusterAwareCondition implements Condition {
 
 		private static final AtomicReference<Boolean> clusterAvailable = new AtomicReference<>(null);
 
-		static void reset() {
+		private static ApplicationListener<ContextClosedEvent> clusterAwareConditionResetApplicationListener() {
+			return contextClosedEvent-> reset();
+		}
+
+		public static void reset() {
 			clusterAvailable.set(null);
 		}
 
@@ -104,20 +115,44 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 		public synchronized boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
 			if (clusterAvailable.get() == null) {
-
-				Environment environment = context.getEnvironment();
-
-				ConnectionEndpointList connectionEndpoints = new ConnectionEndpointList(getDefaultConnectionEndpoints())
-					.add(getConfiguredConnectionEndpoints(environment));
-
-				int connectionCount = countConnections(connectionEndpoints);
-
-				configureTopology(environment, connectionEndpoints, connectionCount);
-
-				clusterAvailable.set(isMatch(connectionEndpoints, connectionCount));
+				registerApplicationListener(context);
+				doMatch(context);
 			}
 
 			return Boolean.TRUE.equals(clusterAvailable.get());
+		}
+
+		ConditionContext registerApplicationListener(ConditionContext conditionContext) {
+
+			Optional.ofNullable(conditionContext)
+				.map(ConditionContext::getResourceLoader)
+				.filter(ConfigurableApplicationContext.class::isInstance)
+				.map(ConfigurableApplicationContext.class::cast)
+				.ifPresent(applicationContext ->
+					applicationContext.addApplicationListener(clusterAwareConditionResetApplicationListener()));
+
+			return conditionContext;
+		}
+
+		ConditionContext doMatch(ConditionContext conditionContext) {
+
+			Environment environment = conditionContext.getEnvironment();
+
+			ConnectionEndpointList connectionEndpoints =
+				new ConnectionEndpointList(getDefaultConnectionEndpoints())
+					.add(getConfiguredConnectionEndpoints(environment));
+
+			int connectionCount = countConnections(connectionEndpoints);
+
+			configureTopology(environment, connectionEndpoints, connectionCount);
+
+			clusterAvailable.set(isMatch(connectionEndpoints, connectionCount));
+
+			return conditionContext;
+		}
+
+		Logger getLogger() {
+			return logger;
 		}
 
 		List<ConnectionEndpoint> getDefaultConnectionEndpoints() {
@@ -190,23 +225,6 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			return array;
 		}
 
-		Logger getLogger() {
-			return logger;
-		}
-
-		private boolean close(Socket socket) {
-			return ObjectUtils.<Boolean>doOperationSafely(() -> {
-
-				if (socket != null) {
-					socket.close();
-					return true;
-				}
-
-				return false;
-
-			}, cause -> false);
-		}
-
 		int countConnections(ConnectionEndpointList connectionEndpoints) {
 
 			int count = 0;
@@ -247,6 +265,20 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			socket.connect(socketAddress, DEFAULT_TIMEOUT_IN_MILLISECONDS);
 
 			return socket;
+		}
+
+		boolean close(Socket socket) {
+
+			return ObjectUtils.<Boolean>doOperationSafely(() -> {
+
+				if (socket != null) {
+					socket.close();
+					return true;
+				}
+
+				return false;
+
+			}, cause -> false);
 		}
 
 		void configureTopology(Environment environment, ConnectionEndpointList connectionEndpoints,
