@@ -21,17 +21,17 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import org.apache.geode.cache.CacheLoader;
 import org.apache.geode.cache.CacheLoaderException;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.LoaderHelper;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -48,6 +48,7 @@ import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
+import org.springframework.geode.config.annotation.ClusterAwareConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.geode.query.cq.event.TemperatureReading;
@@ -58,6 +59,7 @@ import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
  *
  * @author John Blum
  * @see org.junit.Test
+ * @see org.apache.geode.cache.CacheLoader
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
@@ -66,7 +68,6 @@ import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
- * @see org.springframework.data.gemfire.tests.integration.config.SubscriptionEnabledClientServerIntegrationTestsConfiguration
  * @see org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
  * @see example.geode.query.cq.event.TemperatureReading
@@ -74,8 +75,10 @@ import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
-	classes = AutoConfiguredContinuousQueryIntegrationTests.GemFireClientConfiguration.class)
+@SpringBootTest(
+	classes = AutoConfiguredContinuousQueryIntegrationTests.GemFireClientConfiguration.class,
+	webEnvironment = SpringBootTest.WebEnvironment.NONE
+)
 @SuppressWarnings("unused")
 public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
@@ -83,13 +86,15 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
+
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
+
 		startGemFireServer(GemFireServerConfiguration.class);
 	}
 
 	@Autowired
 	private GemfireTemplate temperatureReadingsTemplate;
 
-	@SuppressWarnings("all")
 	@Resource(name = "TemperatureReadings")
 	private Region<Long, TemperatureReading> temperatureReadings;
 
@@ -119,7 +124,6 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 	@SpringBootApplication
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	@Import(ClientServerIntegrationTestsConfiguration.class)
-	//@Import(SubscriptionEnabledClientServerIntegrationTestsConfiguration.class)
 	public static class GemFireClientConfiguration {
 
 		@Bean("TemperatureReadings")
