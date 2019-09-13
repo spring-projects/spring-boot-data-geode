@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.geode.cache.client.Pool;
 import org.apache.geode.cache.client.PoolFactory;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

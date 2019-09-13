@@ -21,10 +21,10 @@ import static org.mockito.Mockito.mock;
 import java.util.Collections;
 import java.util.function.Function;
 
-import org.junit.Test;
-
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.Pool;
+
+import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;

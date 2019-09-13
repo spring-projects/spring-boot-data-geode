@@ -21,6 +21,7 @@ import java.util.Properties;
 import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.RegionShortcut;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

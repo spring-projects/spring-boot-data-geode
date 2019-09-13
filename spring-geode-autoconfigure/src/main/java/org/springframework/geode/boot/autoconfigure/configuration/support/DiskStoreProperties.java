@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import org.apache.geode.cache.DiskStore;
 import org.apache.geode.cache.DiskStoreFactory;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

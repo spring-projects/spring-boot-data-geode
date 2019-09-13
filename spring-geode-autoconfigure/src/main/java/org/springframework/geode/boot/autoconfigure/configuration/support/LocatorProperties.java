@@ -19,6 +19,7 @@ package org.springframework.geode.boot.autoconfigure.configuration.support;
 import java.util.Properties;
 
 import org.apache.geode.distributed.Locator;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

@@ -20,14 +20,14 @@ import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newI
 
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

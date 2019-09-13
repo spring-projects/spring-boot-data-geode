@@ -18,7 +18,6 @@ package org.springframework.geode.boot.autoconfigure.configuration.support;
 
 import java.util.Properties;
 
-import org.apache.geode.cache.Cache;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.data.gemfire.config.annotation.EnableSsl;
