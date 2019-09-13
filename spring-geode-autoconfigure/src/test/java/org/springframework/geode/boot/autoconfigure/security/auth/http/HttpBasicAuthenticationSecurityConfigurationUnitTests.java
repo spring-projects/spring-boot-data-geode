@@ -34,17 +34,17 @@ import java.net.InetAddress;
 import java.net.PasswordAuthentication;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.Test;
-
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.management.internal.security.ResourceConstants;
+
+import org.junit.Test;
 
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.config.admin.remote.RestHttpGemfireAdminTemplate;
 import org.springframework.data.gemfire.config.annotation.ClusterConfigurationConfiguration;
-import org.springframework.geode.boot.autoconfigure.HttpBasicAuthenticationSecurityConfiguration;
+import org.springframework.geode.boot.autoconfigure.support.HttpBasicAuthenticationSecurityConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -60,7 +60,7 @@ import org.springframework.web.client.RestTemplate;
  * @see org.junit.Test
  * @see org.mockito.Mock
  * @see org.mockito.Mockito
- * @see org.springframework.geode.boot.autoconfigure.HttpBasicAuthenticationSecurityConfiguration
+ * @see HttpBasicAuthenticationSecurityConfiguration
  * @since 1.0.0
  */
 public class HttpBasicAuthenticationSecurityConfigurationUnitTests {

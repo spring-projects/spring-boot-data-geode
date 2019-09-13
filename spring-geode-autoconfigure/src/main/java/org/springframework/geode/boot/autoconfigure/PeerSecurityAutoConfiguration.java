@@ -37,7 +37,6 @@ import org.springframework.geode.config.annotation.EnableSecurityManager;
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.ApacheShiroSecurityConfiguration
  * @see org.springframework.data.gemfire.config.annotation.GeodeIntegratedSecurityConfiguration
- * @see org.springframework.geode.boot.autoconfigure.HttpBasicAuthenticationSecurityConfiguration
  * @see org.springframework.geode.config.annotation.EnableSecurityManager
  * @since 1.0.0
  */
