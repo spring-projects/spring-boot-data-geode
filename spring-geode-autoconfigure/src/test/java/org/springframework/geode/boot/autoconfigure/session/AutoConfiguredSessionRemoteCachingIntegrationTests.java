@@ -24,14 +24,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.geode.cache.DataPolicy;
+import org.apache.geode.cache.Region;
+import org.apache.geode.cache.client.ClientCache;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import org.apache.geode.cache.DataPolicy;
-import org.apache.geode.cache.Region;
-import org.apache.geode.cache.client.ClientCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.WebApplicationType;
@@ -59,9 +59,31 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * The AutoConfiguredSessionRemoteCachingIntegrationTests class...
+ * Integration Tests for Spring Session, Remote Caching (e.g. client/server).
  *
  * @author John Blum
+ * @see java.net.URI
+ * @see org.junit.Test
+ * @see org.apache.geode.cache.Region
+ * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.builder.SpringApplicationBuilder
+ * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
+ * @see org.springframework.data.gemfire.config.annotation.EnableLogging
+ * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
+ * @see org.springframework.geode.boot.autoconfigure.SpringSessionAutoConfiguration
+ * @see org.springframework.session.data.gemfire.config.annotation.web.http.EnableGemFireHttpSession
+ * @see org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration
+ * @see org.springframework.session.web.http.HttpSessionIdResolver
+ * @see org.springframework.test.context.ActiveProfiles
+ * @see org.springframework.test.context.junit4.SpringRunner
+ * @see org.springframework.web.bind.annotation.GetMapping
+ * @see org.springframework.web.bind.annotation.RequestMapping
+ * @see org.springframework.web.bind.annotation.RequestParam
+ * @see org.springframework.web.bind.annotation.RestController
+ * @see org.springframework.web.client.RestTemplate
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
