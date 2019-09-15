@@ -18,23 +18,27 @@ The following Spring Framework, Spring Data for Apache Geode & Pivotal GemFire (
 * `@EnableGemFireHttpSession` (from Spring Session for Apache Geode or Pivotal GemFire)
 
 NOTE: This means you DO NOT need to explicitly declare any of these _Annotations_ on your `@SpringBootApplication` class
-since they provided by SBDG already.  The only reason you would explicitly declare any of these _Annotations_ is if
-you wanted to "_override_" Spring Boot's, and in particular, SBDG's, _Auto-configuration_.  Otherwise, it is unnecessary!
+since they are provided by SBDG already.  The only reason you would explicitly declare any of these _Annotations_ is if
+you wanted to "_override_" Spring Boot's, and in particular, SBDG's _Auto-configuration_.  Otherwise, it is unnecessary!
 
 TIP: You should read the chapter in Spring Boot's Reference Guide on
 {spring-boot-docs-html}/#using-boot-auto-configuration[Auto-configuration].
 
+TIP: You should review the chapter in Spring Data for Apache Geode or Pivotal GemFire's (SDG) Reference Guide on
+{spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based Configuration].  For a quick reference,
+or an overview of Annotation-based Configuration, see {spring-data-geode-docs-html}/#bootstap-annotations-quickstart[here].
+
 [[geode-configuration-auto-customizing]]
 === Customizing Auto-configuration
 
-You might ask how can I customize the _Auto-configuration_ provided by SBDG if I do not explicitly declare
+You might ask how I can customize the _Auto-configuration_ provided by SBDG if I do not explicitly declare
 the annotation?  Good question!
 
 For example, maybe you want to customize the member's "_name_".  You know that the
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html[`@ClientCacheApplication`] annotation
 provides the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableGemFireProperties.html#name--[`name`] attribute
 so you can set the client member's "_name_".  But SBDG has already implicitly declared the `@ClientCacheApplication`
-via _Auto-configuration_ on your behalf.  What do you do?
+annotation via _Auto-configuration_ on your behalf.  What do you do?
 
 Well, SBDG supplies a few very useful _Annotations_ in this case.
 
@@ -59,9 +63,19 @@ Alternatively, you could set the `spring.application.name` or the `spring.data.g
 spring.application.name = MyMemberName
 ----
 
+Or:
+
+.Setting the member's name using the `spring.data.gemfire.cache.name` property
+[source,txt]
+----
+# Spring Boot application.properties
+
+spring.data.gemfire.cache.name = MyMemberName
+----
+
 In general, there are 3 ways to customize configuration, even in the context of SBDG's _Auto-configuration_:
 
-1. Using {spring-boot-data-geode-javadoc}/org/springframework/geode/config/annotation/package-frame.html[Annotations]
+1. Using {spring-boot-data-geode-javadoc}/org/springframework/geode/config/annotation/package-summary.html[Annotations]
 provided by SBDG for common and popular concerns (e.g. naming client or peer members with `@UseMemberName`, or enabling
 durable clients with `@EnableDurableClient`).
 
@@ -76,10 +90,10 @@ TIP: For the complete list of _documented_ Properties, see <<geode-configuration
 [[geode-configuration-auto-disabling]]
 === Disabling Auto-configuration
 
-Disabling Spring Boot _Auto-configuration_ is explained in detail in Spring Boot's Reference Guide,
-{spring-boot-docs-html}/#using-boot-disabling-specific-auto-configuration[here].
+Disabling Spring Boot _Auto-configuration_ is {spring-boot-docs-html}/#using-boot-disabling-specific-auto-configuration[explained]
+in detail in Spring Boot's Reference Guide.
 
-Disabling SBDG _Auto-confiugration_ was also explained in detail, <<geode-auto-configuration-disable,here>>.
+Disabling SBDG _Auto-confiugration_ was also <<geode-auto-configuration-disable,here>>[explained] in detail.
 
 In a nutshell, if you want to disable any _Auto-configuration_ provided by either Spring Boot or SBDG,
 then you can declare your intent in the `@SpringBootApplication` annotation, like so:
@@ -87,7 +101,9 @@ then you can declare your intent in the `@SpringBootApplication` annotation, lik
 .Disabling Specific Auto-configuration Classes
 [source,java]
 ----
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, PdxAutoConfiguration.class })
+@SpringBootApplication(
+  exclude = { DataSourceAutoConfiguration.class, PdxAutoConfiguration.class }
+)
 class SpringBootClientCacheApplication { ... }
 ----
 
@@ -96,7 +112,8 @@ WARNING: Make sure you understand what you are doing when you are "disabling" _A
 [[geode-configuration-auto-overriding]]
 === Overriding Auto-configuration
 
-Overriding SBDG _Auto-configuration_ was explained in detail, <<geode-autoconfiguration-annotations-overriding,here>>.
+Overriding SBDG _Auto-configuration_ was <<geode-autoconfiguration-annotations-overriding,here>>[explained]
+in detail as well.
 
 In a nutshell, if you want to override the default _Auto-configuration_ provided by SBDG then you must annotate
 your `@SpringBootApplication` class with your intent.  For example, say you want to configure and bootstrap an
@@ -110,8 +127,7 @@ Apache Geode or Pivotal GemFire `CacheServer` application (a peer; not a client)
 class SpringBootCacheServerApplication { ... }
 ----
 
-Even when you explicitly declare the `@ClientCacheApplication` annotation on your `@SpringBootApplication` class,
-like so:
+Even when you explicitly declare the `@ClientCacheApplication` annotation on your `@SpringBootApplication` class as so:
 
 .Overrdigin by explicitly declaring `@ClientCacheApplication`
 [source,java]
@@ -121,25 +137,25 @@ like so:
 class SpringBootClientCacheApplication { ... }
 ----
 
-This overrides SBDG's _Auto-configuration_ of the `ClientCache` instance.  As a result, you have now also implicitly
-consented to being responsible for other aspects of the configuration as well (e.g. _Security_)!  Why?
+You are overriding SBDG's _Auto-configuration_ of the `ClientCache` instance.  As a result, you have now also implicitly
+consented to being responsible for other aspects of the configuration (e.g. _Security_)!  Why?
 
 This is because in certain cases, like _Security_, certain aspects of _Security_ configuration (e.g. SSL) must be
-configured before the cache instance is created.  And Spring Boot always applies user configuration before
-_Auto-configuration_ to partially to determine what needs to be auto-configured in the first place.
+configured before the cache instance is created.  And, Spring Boot always applies user configuration before
+_Auto-configuration_ partially to determine what needs to be auto-configured in the first place.
 
 WARNING: Especially make sure you understand what you are doing when you are "overriding" _Auto-configuration_.
 
 [[geode-configuration-auto-replacing]]
 === Replacing Auto-configuration
 
-We will simply refer you to the Spring Boot Reference Guide where replacing _Auto-configuration_ is concerned.
+We will simply refer you to the Spring Boot Reference Guide on replacing _Auto-configuration_.
 See {spring-boot-docs-html}/#using-boot-replacing-auto-configuration[here].
 
 [[geode-configuration-auto-explained]]
 === Auto-configuration Explained
 
-This section covers the SBDG provided _Auto-configuration_ classes corresponding to the _Annotations_ in more detail.
+This section covers the SBDG provided _Auto-configuration_ classes corresponding to the SDG _Annotations_ in more detail.
 
 To review the complete list of SBDG _Auto-confiugration_ classes, <<geode-auto-configuration-disable-classes,see here>>.
 
