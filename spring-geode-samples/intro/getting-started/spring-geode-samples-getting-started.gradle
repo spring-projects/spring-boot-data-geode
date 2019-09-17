@@ -11,11 +11,12 @@ description = "Spring Geode Sample for Getting Started with Spring Boot for Apac
 dependencies {
 
 	compile project(":spring-geode-starter")
-	compile project(":spring-geode-starter-test")
 
 	compile "org.assertj:assertj-core"
 	compile "org.projectlombok:lombok"
 	compile "org.springframework.boot:spring-boot-starter-web"
+
+	testCompile project(":spring-geode-starter-test")
 
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 
