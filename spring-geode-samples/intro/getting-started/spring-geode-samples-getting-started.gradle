@@ -1,0 +1,34 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+	id "io.freefair.lombok" version "3.2.1"
+}
+
+apply plugin: 'io.spring.convention.spring-sample-boot'
+
+description = "Spring Geode Sample for Getting Started with Spring Boot for Apache Geode quickly, easily and reliably."
+
+dependencies {
+
+	compile project(":spring-geode-starter")
+	compile project(":spring-geode-starter-test")
+
+	compile "org.assertj:assertj-core"
+	compile "org.projectlombok:lombok"
+	compile "org.springframework.boot:spring-boot-starter-web"
+
+	testCompile "org.springframework.boot:spring-boot-starter-test"
+
+}
+
+processResources {
+	eachFile { file ->
+		if (!file.name.endsWith(".jks")) {
+			file.filter ReplaceTokens, tokens: [
+				'project-dir' : rootProject.projectDir.path,
+				'project-version' : project.version,
+				'samples-dir' : rootProject.projectDir.path + '/spring-geode-samples'
+			]
+		}
+	}
+}
