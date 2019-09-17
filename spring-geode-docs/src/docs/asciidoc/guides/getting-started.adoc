@@ -1358,7 +1358,7 @@ as the code evolves.
 *****
 
 [[spring-geode-samples-getting-started-run-app-cloudplatform]]
-== Run the Application in a Managed Environment/Platform
+== Run the Application in a Managed Cloud Platform Environment
 
 Now that we have built and ran our application locally as well as in a client/server topology, we are ready to push
 the application to a managed cloud platform environment, like _Pivotal Platform_ using _Pivotal Cloud Cache_ (PCC).
