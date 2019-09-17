@@ -10,7 +10,7 @@ John Blum
 :numbered:
 :icons: font
 :hide-uri-scheme:
-:apache-geode-version: 19
+:apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/

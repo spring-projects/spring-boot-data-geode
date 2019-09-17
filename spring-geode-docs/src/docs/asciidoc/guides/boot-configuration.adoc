@@ -1,7 +1,7 @@
 [[geode-samples-boot-configuration]]
 = Spring Boot Auto-configuration for Apache Geode & Pivotal GemFire
 John Blum
-:apache-geode-version: 16
+:apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :toc:
 :toclevels: 2

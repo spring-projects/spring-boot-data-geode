@@ -1,7 +1,7 @@
 [[geode-samples-caching-lookaside]]
 = Look-Aside Caching with Spring
 :images-dir: ../images
-:apache-geode-version: 16
+:apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
@@ -214,7 +214,7 @@ include::{samples-dir}/caching/look-aside/src/main/java/example/app/caching/look
 Essentially, we just inject our `CounterService` application class and wrap the service operations in Web service
 endpoints, accessible by URL using HTTP:
 
-.Example Apache Geode Applications using Spring Boot
+.Counter Web service endpoints
 |===
 | URL | Description
 
