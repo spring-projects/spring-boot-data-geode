@@ -12,6 +12,11 @@ with their Apache Geode / Pivotal GemFire, Spring Boot applications.
 |===
 | Guide | Description | Source
 
+| link:guides/getting-started.html[Getting Started with Spring Boot for Apache Geode]
+| Explains how to get started quickly, easily and reliably building Apache Geode and Pivotal Cloud Cache powered
+applications with Spring Boot.
+| {github-samples-url}/intro/getting-started[Getting Started]
+
 | link:guides/boot-configuration.html[Spring Boot Auto-Configuration for Apache Geode/Pivotal GemFire]
 | Explains what auto-configuration is provided by SBDG out-of-the-box and what the auto-configuration is doing.
 | {github-samples-url}/boot/configuration[Boot Auto-Configuration]
