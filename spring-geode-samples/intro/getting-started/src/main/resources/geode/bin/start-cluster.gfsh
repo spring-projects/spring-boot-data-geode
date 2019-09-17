@@ -1,0 +1,5 @@
+# Gfsh shell script to start an Apache Geode cluster with 1 Locator and 2 Servers.
+
+start locator --name=LocatorOne --log-level=config
+start server --name=ServerOne --log-level=config
+start server --name=ServerTwo --log-level=config --server-port=50505
