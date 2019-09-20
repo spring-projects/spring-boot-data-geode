@@ -1,25 +1,30 @@
 [[geode-data-access-region-templates]]
 == Data Access with GemfireTemplate
 
-There are several ways to access data stored in Apache Geode.  For instance, developers may choose to use
-the {apache-geode-javadoc}/org/apache/geode/cache/Region.html[Region API] directly. If developers are driven by
-the application's domain context, they might choose to leverage the power of
+There are several ways to access data stored in Apache Geode.
+
+For instance, developers may choose to use the {apache-geode-javadoc}/org/apache/geode/cache/Region.html[Region API]
+directly. If developers are driven by the application's domain context, they might choose to leverage the power of
 {spring-data-commons-docs-html}/#repositories[Spring Data Repositories] instead.
 
 While using the _Region_ API directly offers flexibility, it couples your application to Apache Geode, which is usually
-undesirable and unnecessary.  While using Spring Data _Repositories_ provides a convenient abstraction, you give up
-flexibility and power provided by a lower level API.
+undesirable and unnecessary.  While using Spring Data _Repositories_ provides a very powerful and convenient abstraction,
+you give up flexibility provided by a lower level API.
 
 A good comprise is to use the _Template_ pattern.  Indeed, this pattern is consistently and widely used throughout
-the entire Spring portfolio. For example, there is the
-{spring-framework-javadoc}/org/springframework/jdbc/core/JdbcTemplate.html[JdbcTemplate]
-and {spring-framework-javadoc}/org/springframework/jms/core/JmsTemplate.html[JmsTemplate]
-provided by the core Spring Framework. Other Spring Data modules, such as Spring Data Redis, offer the
+the entire Spring portfolio.
+
+For example, there is the {spring-framework-javadoc}/org/springframework/jdbc/core/JdbcTemplate.html[JdbcTemplate]
+and {spring-framework-javadoc}/org/springframework/jms/core/JmsTemplate.html[JmsTemplate], which are provided by
+the core Spring Framework.
+
+Other Spring Data modules, such as Spring Data Redis, offer the
 https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html[RedisTemplate],
 and Spring Data for Apache Geode/Pivotal GemFire (SDG) offers the
 {spring-data-gemfire-javadoc}/org/springframework/data/gemfire/GemfireTemplate.html[GemfireTemplate].
+
 The `GemfireTemplate` provides a highly consistent and familiar API to perform data access operations on Apache Geode
-or Pivotal GemFire cache Regions.
+or Pivotal GemFire cache `Regions`.
 
 `GemfireTemplate` offers:
 
@@ -28,7 +33,7 @@ or Pivotal GemFire cache Regions.
 3. Automatic enlistment in the presence of local, cache transactions.
 4. Protection from {apache-geode-javadoc}/org/apache/geode/cache/Region.html[Region API] breaking changes.
 
-Given these conveniences, Spring Boot for Apache Geode/Pivotal GemFire (SBDG) will auto-configure `GemfireTemplate`
+Given these conveniences, Spring Boot for Apache Geode & Pivotal GemFire (SBDG) will auto-configure `GemfireTemplate`
 beans for each Region present in the GemFire/Geode cache.
 
 Additionally, SBDG is careful not to create a `GemfireTemplate` if the user has already declared a `GemfireTemplate`
@@ -51,7 +56,7 @@ class GemFireConfiguration {
 }
 ----
 
-SBDG will automatically create a `GemfireTemplate` bean for the "Example" Region using a bean name of "exampleTemplate".
+SBDG will automatically create a `GemfireTemplate` bean for the "Example" Region using a bean name "exampleTemplate".
 SBDG will name the `GemfireTemplate` bean after the Region by converting the first letter in the Region's name
 to lowercase and appending the word "Template" to the bean name.
 
@@ -70,12 +75,14 @@ class ExampleDataAccessObject {
 ----
 
 It's advisable, especially if you have more than 1 Region, to use the `@Qualifier` annotation to qualify which
-`GemfireTemplate` bean you are specifically referring.
+`GemfireTemplate` bean you are specifically referring as demonstrated above.
 
 [[geode-data-access-region-templates-entity-defined]]
 === Entity-defined Regions
 
-SBDG auto-configures `GemfireTemplate` beans for Entity-defined Regions.  Given the following entity class:
+SBDG auto-configures `GemfireTemplate` beans for Entity-defined Regions.
+
+Given the following entity class:
 
 [source,java]
 ----
@@ -96,8 +103,8 @@ class GemFireConfiguration {
 }
 ----
 
-SBDG auto-configures a `GemfireTemplate` bean for the "Customers" Region named "customersTemplate", which you can inject
-into an application component:
+SBDG auto-configures a `GemfireTemplate` bean for the "Customers" Region named "customersTemplate", which you can then
+inject into an application component:
 
 [source,java]
 ----
@@ -125,6 +132,7 @@ in the {spring-framework-docs}integration.html#cache-annotations[Caching Annotat
 components.
 
 Fortunately, SBDG makes enabling and configuring caching easy and <<geode-caching-provider,automatic>> out-of-the-box.
+
 Given a cacheable application service component:
 
 [source,java]
@@ -166,10 +174,16 @@ as shown above.
 Again, be careful to qualify the `GemfireTemplate` bean injection if you have multiple Regions, whether declared
 explicitly or implicitly, such as when using the `@EnableCachingDefineRegions` annotation.
 
+WARNING: There are certain cases where autowiring (i.e. injecting) `GemfireTemplate` beans auto-configured by SBDG
+for Caching-defined Regions into your application components will not always work!  This has to do with the Spring
+Container bean creation process.  In those case you may need to lazily lookup the `GemfireTemplate` as needed, using
+`applicationContext.getBean("customersByNameTemplate", GemfireTemplate.class)`.  This is certainly not ideal but works
+when autowiring does not.
+
 [[geode-data-access-region-templates-native-defined]]
 === Native-defined Regions
 
-SBDG will even auto-configure `GemfireTemplate` beans for Regions defined using Apache Geode/Pivotal GemFire native
+SBDG will even auto-configure `GemfireTemplate` beans for Regions defined using Apache Geode and Pivotal GemFire native
 configuration meta-data, such as `cache.xml`.
 
 Given the following GemFire/Geode native `cache.xml`:
