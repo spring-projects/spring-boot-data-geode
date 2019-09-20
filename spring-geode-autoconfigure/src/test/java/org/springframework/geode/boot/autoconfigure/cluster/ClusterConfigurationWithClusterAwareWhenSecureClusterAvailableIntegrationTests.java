@@ -23,12 +23,14 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.config.annotation.ClusterConfigurationConfiguration;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.geode.core.util.ObjectUtils;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -47,6 +49,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.2.0
  */
+@ActiveProfiles("cluster-configuration-with-secure-cluster")
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	webEnvironment = SpringBootTest.WebEnvironment.NONE,
@@ -84,6 +87,7 @@ public class ClusterConfigurationWithClusterAwareWhenSecureClusterAvailableInteg
 	@SpringBootApplication
 	@EnableClusterAware
 	@EnableGemFireMockObjects
+	@Profile("cluster-configuration-with-secure-cluster")
 	static class TestConfiguration { }
 
 }

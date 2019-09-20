@@ -39,8 +39,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.GemfireUtils;
@@ -51,6 +50,7 @@ import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnableManager;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.geode.security.TestSecurityManager;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.app.books.model.Book;
@@ -68,6 +68,7 @@ import example.app.books.model.ISBN;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
+@ActiveProfiles("cluster-configuration-with-auth-client")
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes = ClusterConfigurationWithAuthenticationIntegrationTests.GeodeClientConfiguration.class,
@@ -85,7 +86,8 @@ public class ClusterConfigurationWithAuthenticationIntegrationTests extends Fork
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
-		startGemFireServer(GeodeServerConfiguration.class);
+		startGemFireServer(GeodeServerConfiguration.class,
+			"-Dspring.profiles.active=cluster-configuration-with-auth-server");
 	}
 
 	@Autowired
@@ -114,15 +116,14 @@ public class ClusterConfigurationWithAuthenticationIntegrationTests extends Fork
 	}
 
 	@SpringBootApplication
+	@Profile("cluster-configuration-with-auth-client")
 	@EnableClusterConfiguration(useHttp = true)
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	@EnableEntityDefinedRegions(basePackageClasses = Book.class)
 	static class GeodeClientConfiguration { }
 
 	@SpringBootApplication
-	@ComponentScan(excludeFilters =
-		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = GeodeClientConfiguration.class)
-	)
+	@Profile("cluster-configuration-with-auth-server")
 	@CacheServerApplication(name = "ClusterConfigurationWithAuthenticationIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
 	@EnableManager(start = true)
 	static class GeodeServerConfiguration {
