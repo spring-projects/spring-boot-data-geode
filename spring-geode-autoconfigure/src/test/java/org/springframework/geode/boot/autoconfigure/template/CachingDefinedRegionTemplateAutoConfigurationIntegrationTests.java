@@ -102,6 +102,10 @@ public class CachingDefinedRegionTemplateAutoConfigurationIntegrationTests exten
 			.map(Region::getName)
 			.sorted()
 			.collect(Collectors.toList())).containsExactly("BooksByAuthor", "BooksByYear", "CachedBooks");
+
+		assertThat(this.booksByAuthor).isNotNull();
+		assertThat(this.booksByTitle).isNotNull();
+		assertThat(this.booksByYear).isNotNull();
 	}
 
 	@Test
@@ -133,6 +137,11 @@ public class CachingDefinedRegionTemplateAutoConfigurationIntegrationTests exten
 		@Bean
 		LibraryService libraryService() {
 			return new LibraryService();
+		}
+
+		//@Bean("TestBean")
+		Object testBean(@Qualifier("booksByAuthor") GemfireTemplate booksByAuthorTemplate) {
+			return "TEST";
 		}
 	}
 }

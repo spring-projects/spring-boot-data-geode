@@ -18,16 +18,19 @@ package org.springframework.geode.boot.autoconfigure.template;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
+import org.apache.geode.cache.client.ClientCache;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -39,11 +42,12 @@ import org.springframework.data.gemfire.config.annotation.CacheServerApplication
 import org.springframework.data.gemfire.config.annotation.EnableClusterDefinedRegions;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
+import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests for {@link RegionTemplateAutoConfiguration} using SDG's {@link EnableServerDefinedRegions}
+ * Integration tests for {@link RegionTemplateAutoConfiguration} using SDG's {@link EnableClusterDefinedRegions}
  * annotation to define {@link Region Regions} and associated Templates.
  *
  * @author John Blum
@@ -81,10 +85,23 @@ public class ServerDefinedRegionTemplateAutoConfigurationIntegrationTests
 	private ApplicationContext applicationContext;
 
 	@Autowired
+	private ClientCache clientCache;
+
+	@Autowired
 	private GemfireTemplate exampleServerRegionTemplate;
 
 	@Test
-	public void exampleServerRegionExistsAsClientRegion() {
+	public void clientCacheContainsExampleServerRegion() {
+
+		assertThat(this.clientCache).isNotNull();
+
+		assertThat(CollectionUtils.nullSafeSet(this.clientCache.rootRegions()).stream()
+			.map(Region::getName)
+			.collect(Collectors.toSet())).containsExactly("ExampleServerRegion");
+	}
+
+	@Test
+	public void exampleServerRegionExistsAsClientRegionBean() {
 
 		Region<?, ?> exampleServerRegion = this.applicationContext.getBean("ExampleServerRegion", Region.class);
 
@@ -105,7 +122,13 @@ public class ServerDefinedRegionTemplateAutoConfigurationIntegrationTests
 	@SpringBootApplication
 	@EnableClusterDefinedRegions
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
-	static class GemFireClientConfiguration { }
+	static class GemFireClientConfiguration {
+
+		@Bean("TestBean")
+		Object testBean(@Qualifier("exampleServerRegionTemplate") GemfireTemplate exampleServerRegionTemplate) {
+			return "TEST";
+		}
+	}
 
 	@CacheServerApplication(logLevel = GEMFIRE_LOG_LEVEL)
 	static class GemFireServerConfiguration {

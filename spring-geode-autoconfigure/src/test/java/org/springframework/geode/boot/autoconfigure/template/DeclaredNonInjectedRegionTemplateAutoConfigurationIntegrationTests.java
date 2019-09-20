@@ -17,12 +17,12 @@ package org.springframework.geode.boot.autoconfigure.template;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.annotation.Resource;
-
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
+import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,72 +30,89 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests for {@link RegionTemplateAutoConfiguration} using explicitly declared {@link Region}
- * bean definitions in a Spring {@link ApplicationContext}.
+ * Integration Tests for {@link RegionTemplateAutoConfiguration}.
+ *
+ * This Integration Test class tests that the {@link GemfireTemplate} is created regardless of whether
+ * the {@literal Example} client {@link Region} bean is actually referenced (injected) into application code.
  *
  * @author John Blum
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
+ * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.data.gemfire.GemfireTemplate
  * @see org.springframework.data.gemfire.client.ClientRegionFactoryBean
- * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
- * @since 1.0.0
+ * @see <a href="https://github.com/spring-projects/spring-boot-data-geode/issues/55">Autowiring a GemfireTemplate into the application is not working in all cases</a>
+ * @since 1.2.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class DeclaredRegionTemplateAutoConfigurationIntegrationTests extends IntegrationTestsSupport {
+public class DeclaredNonInjectedRegionTemplateAutoConfigurationIntegrationTests extends IntegrationTestsSupport {
+
+	@Autowired
+	private ClientCache clientCache;
 
 	@Autowired
 	@Qualifier("exampleTemplate")
 	private GemfireTemplate exampleTemplate;
 
-	@Resource(name = "Example")
-	private Region<Long, String> exampleRegion;
+	@Before
+	public void setup() {
 
-	@Test
-	public void exampleRegionIsPresent() {
-
-		assertThat(this.exampleRegion).isNotNull();
-		assertThat(this.exampleRegion.getName()).isEqualTo("Example");
+		assertThat(this.clientCache).isNotNull();
+		assertThat(this.exampleTemplate).isNotNull();
 	}
 
 	@Test
-	public void exampleRegionTemplateIsPresent() {
+	public void clientCacheContainsExampleRegion() {
 
-		assertThat(this.exampleTemplate).isNotNull();
-		assertThat(this.exampleTemplate.getRegion()).isEqualTo(this.exampleRegion);
+		Region<?, ?> example = this.clientCache.getRegion(RegionUtils.toRegionPath("Example"));
+
+		assertThat(example).isNotNull();
+		assertThat(example.getName()).isEqualTo("Example");
+	}
+
+	@Test
+	public void exampleRegionTemplateExists() {
+		assertThat(this.exampleTemplate.getRegion())
+			.isEqualTo(this.clientCache.getRegion(RegionUtils.toRegionPath("Example")));
 	}
 
 	@SpringBootApplication
 	@EnableGemFireMockObjects
-	static class TestGemFireConfiguration {
+	static class TestConfiguration {
 
 		@Bean("Example")
-		ClientRegionFactoryBean<Long, String> exampleRegion(GemFireCache gemfireCache) {
+		public ClientRegionFactoryBean<Object, Object> exampleRegion(GemFireCache gemfireCache) {
 
-			ClientRegionFactoryBean<Long, String> exampleRegion = new ClientRegionFactoryBean<>();
+			ClientRegionFactoryBean<Object, Object> exampleRegion = new ClientRegionFactoryBean<>();
 
 			exampleRegion.setCache(gemfireCache);
 			exampleRegion.setShortcut(ClientRegionShortcut.LOCAL);
 
 			return exampleRegion;
+		}
+
+		@Bean("TestBean")
+		public Object testBean(@Qualifier("exampleTemplate") GemfireTemplate exampleTemplate) {
+			return "TEST";
 		}
 	}
 }

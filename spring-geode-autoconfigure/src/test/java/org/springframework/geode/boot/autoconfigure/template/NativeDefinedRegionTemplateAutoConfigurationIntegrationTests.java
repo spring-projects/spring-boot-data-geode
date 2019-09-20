@@ -17,6 +17,9 @@ package org.springframework.geode.boot.autoconfigure.template;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.stream.Collectors;
+
+import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 
 import org.junit.Test;
@@ -24,12 +27,16 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableGemFireProperties;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
+import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -57,7 +64,20 @@ public class NativeDefinedRegionTemplateAutoConfigurationIntegrationTests extend
 	private ApplicationContext applicationContext;
 
 	@Autowired
+	private GemFireCache cache;
+
+	@Autowired
 	private GemfireTemplate exampleTemplate;
+
+	@Test
+	public void cacheContainsExampleRegion() {
+
+		assertThat(this.cache).isNotNull();
+
+		assertThat(CollectionUtils.nullSafeSet(this.cache.rootRegions()).stream()
+			.map(Region::getName)
+			.collect(Collectors.toSet())).containsExactly("Example");
+	}
 
 	@Test(expected = NoSuchBeanDefinitionException.class)
 	public void exampleRegionBeanIsNotPresent() {
@@ -74,6 +94,12 @@ public class NativeDefinedRegionTemplateAutoConfigurationIntegrationTests extend
 
 	@SpringBootApplication
 	@EnableGemFireProperties(cacheXmlFile = "template-cache.xml")
-	static class TestConfiguration { }
+	static class TestConfiguration {
 
+		@Bean("TestBean")
+		@DependsOn("gemfireCache")
+		Object testBean(@Qualifier("exampleTemplate") GemfireTemplate exampleTemplate) {
+			return "TEST";
+		}
+	}
 }

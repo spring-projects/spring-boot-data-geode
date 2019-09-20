@@ -70,13 +70,19 @@ public class ExistingRegionTemplateByRegionAutoConfigurationIntegrationTests ext
 	private Region<Object, Object> example;
 
 	@Test
-	public void exampleRegionTemplateIsNotPresent() {
+	public void exampleTemplateIsPresentButIsNotGemfireTemplate() {
 
-		assertThat(this.applicationContext.containsBean("exampleTemplate")).isFalse();
+		assertThat(this.applicationContext.containsBean("exampleTemplate")).isTrue();
+		assertThat(this.applicationContext.getBean("exampleTemplate")).isNotInstanceOf(GemfireTemplate.class);
 	}
 
 	@Test
-	public void testRegionTemplateIsPresent() {
+	public void onlyOneBeanOfTypeGemfireTemplateExists() {
+		assertThat(this.applicationContext.getBeanNamesForType(GemfireTemplate.class)).hasSize(1);
+	}
+
+	@Test
+	public void testTemplateIsPresent() {
 
 		assertThat(this.testTemplate).isNotNull();
 		assertThat(this.testTemplate.getRegion()).isEqualTo(this.example);
