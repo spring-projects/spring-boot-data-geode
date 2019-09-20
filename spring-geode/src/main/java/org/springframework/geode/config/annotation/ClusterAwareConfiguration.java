@@ -62,6 +62,7 @@ import org.springframework.util.StringUtils;
  * @see java.lang.annotation.Annotation
  * @see java.net.Socket
  * @see java.net.SocketAddress
+ * @see org.apache.geode.cache.client.ClientRegionShortcut
  * @see org.apache.geode.cache.server.CacheServer
  * @see org.springframework.context.ApplicationListener
  * @see org.springframework.context.ConfigurableApplicationContext
@@ -73,6 +74,7 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertySource
+ * @see org.springframework.core.type.AnnotatedTypeMetadata
  * @see org.springframework.data.gemfire.config.annotation.support.AbstractAnnotationConfigSupport
  * @since 1.2.0
  */
@@ -90,6 +92,10 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 
 	static final String LOCALHOST = "localhost";
 	static final String MATCHING_PROPERTY_PATTERN = "spring\\.data\\.gemfire\\.pool\\..*locators|servers";
+
+	static final String SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_PROPERTY =
+		"spring.boot.data.gemfire.cluster.condition.match";
+
 	static final String SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY =
 		"spring.data.gemfire.cache.client.region.shortcut";
 
@@ -107,6 +113,10 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			return contextClosedEvent-> reset();
 		}
 
+		public static boolean isAvailable() {
+			return Boolean.TRUE.equals(clusterAvailable.get());
+		}
+
 		public static void reset() {
 			clusterAvailable.set(null);
 		}
@@ -119,7 +129,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 				doMatch(context);
 			}
 
-			return Boolean.TRUE.equals(clusterAvailable.get());
+			return isMatch(context);
 		}
 
 		ConditionContext registerApplicationListener(ConditionContext conditionContext) {
@@ -132,6 +142,15 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 					applicationContext.addApplicationListener(clusterAwareConditionResetApplicationListener()));
 
 			return conditionContext;
+		}
+
+		boolean isMatch(ConditionContext context) {
+
+			Environment environment = context.getEnvironment();
+
+			return isAvailable()
+				|| environment.getProperty(SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_PROPERTY,
+					Boolean.class, false);
 		}
 
 		ConditionContext doMatch(ConditionContext conditionContext) {
