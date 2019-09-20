@@ -105,6 +105,7 @@ public class ClientSecurityAutoConfiguration {
 
 	private static final String MANAGEMENT_HTTP_HOST_PROPERTY = "spring.data.gemfire.management.http.host";
 	private static final String MANAGEMENT_HTTP_PORT_PROPERTY = "spring.data.gemfire.management.http.port";
+	private static final String MANAGEMENT_REQUIRE_HTTPS_PROPERTY = "spring.data.gemfire.management.require-https";
 	private static final String MANAGEMENT_USE_HTTP_PROPERTY = "spring.data.gemfire.management.use-http";
 
 	private static final String POOL_LOCATORS_PROPERTY = "spring.data.gemfire.pool.locators";
@@ -206,6 +207,7 @@ public class ClientSecurityAutoConfiguration {
 			cloudCacheService.getGfshUrl().ifPresent(url -> {
 				cloudCacheProperties.setProperty(MANAGEMENT_USE_HTTP_PROPERTY, Boolean.TRUE.toString());
 				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_HOST_PROPERTY, url.getHost());
+				cloudCacheProperties.setProperty(MANAGEMENT_REQUIRE_HTTPS_PROPERTY, Boolean.TRUE.toString());
 				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_PORT_PROPERTY, String.valueOf(url.getPort()));
 			});
 		}

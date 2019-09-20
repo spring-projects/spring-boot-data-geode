@@ -141,7 +141,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 	}
 
 	@Test
-	public void clientSecurityIsDisabledWhenEnablePropertyIsTrueAndCloudFoundryIsInactive() {
+	public void clientSecurityIsDisabledWhenEnablePropertyIsTrueAndCloudFoundryIsNotActive() {
 
 		AutoConfiguredCloudSecurityEnvironmentPostProcessor environmentPostProcessor =
 			spy(new AutoConfiguredCloudSecurityEnvironmentPostProcessor());
@@ -155,6 +155,30 @@ public class ClientSecurityAutoConfigurationUnitTests {
 
 		when(mockEnvironment.getProperty(eq(ClientSecurityAutoConfiguration.CLOUD_SECURITY_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY),
 			eq(Boolean.class), eq(true))).thenReturn(true);
+
+		environmentPostProcessor.postProcessEnvironment(mockEnvironment, null);
+
+		verify(mockEnvironment, times(1))
+			.getProperty(eq(ClientSecurityAutoConfiguration.CLOUD_SECURITY_ENVIRONMENT_POST_PROCESSOR_ENABLED_PROPERTY),
+				eq(Boolean.class), eq(true));
+
+		verify(mockEnvironment, times(1)).containsProperty(eq("VCAP_APPLICATION"));
+		verify(mockEnvironment, times(1)).containsProperty(eq("VCAP_SERVICES"));
+		verify(environmentPostProcessor, never()).configureSecurityContext(eq(mockEnvironment));
+	}
+
+	@Test
+	public void clientSecurityIsDisabledWhenEnablePropertyIsUnsetAndCloudFoundryIsNotActive() {
+
+		AutoConfiguredCloudSecurityEnvironmentPostProcessor environmentPostProcessor =
+			spy(new AutoConfiguredCloudSecurityEnvironmentPostProcessor());
+
+		doNothing().when(environmentPostProcessor).configureSecurityContext(any(ConfigurableEnvironment.class));
+
+		ConfigurableEnvironment mockEnvironment = spy(new StandardEnvironment());
+
+		doReturn(false).when(mockEnvironment).containsProperty(eq("VCAP_APPLICATION"));
+		doReturn(false).when(mockEnvironment).containsProperty(eq("VCAP_SERVICES"));
 
 		environmentPostProcessor.postProcessEnvironment(mockEnvironment, null);
 
@@ -214,6 +238,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		assertThat(propertySource.getProperty("spring.data.gemfire.pool.locators"))
 			.isEqualTo("boombox[10334],skullbox[10334]");
 		assertThat(propertySource.getProperty("spring.data.gemfire.management.use-http")).isEqualTo("true");
+		assertThat(propertySource.getProperty("spring.data.gemfire.management.require-https")).isEqualTo("true");
 		assertThat(propertySource.getProperty("spring.data.gemfire.management.http.host")).isEqualTo("cloud.skullbox.com");
 		assertThat(propertySource.getProperty("spring.data.gemfire.management.http.port")).isEqualTo("8080");
 	}
@@ -266,6 +291,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		assertThat(propertySource.getProperty("spring.data.gemfire.pool.locators"))
 			.isEqualTo("boombox[10334],skullbox[10334]");
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.use-http")).isFalse();
+		assertThat(propertySource.containsProperty("spring.data.gemfire.management.require-https")).isFalse();
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.http.host")).isFalse();
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.http.port")).isFalse();
 	}

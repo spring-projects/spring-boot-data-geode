@@ -114,9 +114,9 @@ public class ClusterConfigurationWithAuthenticationIntegrationTests extends Fork
 	}
 
 	@SpringBootApplication
+	@EnableClusterConfiguration(useHttp = true)
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	@EnableEntityDefinedRegions(basePackageClasses = Book.class)
-	@EnableClusterConfiguration(useHttp = true)
 	static class GeodeClientConfiguration { }
 
 	@SpringBootApplication
