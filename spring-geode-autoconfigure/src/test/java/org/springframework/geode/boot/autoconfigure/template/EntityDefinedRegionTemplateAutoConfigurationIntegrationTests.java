@@ -17,11 +17,15 @@ package org.springframework.geode.boot.autoconfigure.template;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
 
+import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
@@ -63,6 +68,9 @@ import example.app.books.model.ISBN;
 public class EntityDefinedRegionTemplateAutoConfigurationIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
+	public GemFireCache gemfireCache;
+
+	@Autowired
 	@Qualifier("authorsTemplate")
 	private GemfireTemplate authorsTemplate;
 
@@ -75,6 +83,20 @@ public class EntityDefinedRegionTemplateAutoConfigurationIntegrationTests extend
 
 	@Resource(name = "Books")
 	private Region<ISBN, Book> books;
+
+	@Before
+	public void setup() {
+
+		assertThat(this.gemfireCache).isNotNull();
+
+		assertThat(this.gemfireCache.rootRegions().stream()
+			.map(Region::getName)
+			.sorted()
+			.collect(Collectors.toList())).containsExactly("Authors", "Books");
+
+		assertThat(this.authors).isNotNull();
+		assertThat(this.books).isNotNull();
+	}
 
 	@Test
 	public void authorsRegionTemplateIsPresent() {
@@ -93,6 +115,11 @@ public class EntityDefinedRegionTemplateAutoConfigurationIntegrationTests extend
 	@SpringBootApplication
 	@EnableGemFireMockObjects
 	@EnableEntityDefinedRegions(basePackageClasses = Book.class, clientRegionShortcut = ClientRegionShortcut.LOCAL)
-	static class TestApplicationConfiguration { }
+	static class TestApplicationConfiguration {
 
+		@Bean("TestBean")
+		Object testBean(@Qualifier("booksTemplate") GemfireTemplate booksTemplate) {
+			return "TEST";
+		}
+	}
 }
