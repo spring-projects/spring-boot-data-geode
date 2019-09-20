@@ -149,8 +149,8 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			Environment environment = context.getEnvironment();
 
 			return isAvailable()
-				|| environment.getProperty(SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_PROPERTY,
-					Boolean.class, false);
+				|| Boolean.TRUE.equals(environment.getProperty(SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_PROPERTY,
+					Boolean.class, false));
 		}
 
 		ConditionContext doMatch(ConditionContext conditionContext) {
