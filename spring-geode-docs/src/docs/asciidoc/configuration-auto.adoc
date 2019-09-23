@@ -15,7 +15,7 @@ The following Spring Framework, Spring Data for Apache Geode & Pivotal GemFire (
 * `@EnablePdx`
 * `@EnableSecurity`
 * `@EnableSsl`
-* `@EnableGemFireHttpSession` (from Spring Session for Apache Geode or Pivotal GemFire)
+* `@EnableGemFireHttpSession`
 
 NOTE: This means you DO NOT need to explicitly declare any of these _Annotations_ on your `@SpringBootApplication` class
 since they are provided by SBDG already.  The only reason you would explicitly declare any of these _Annotations_ is if
@@ -24,7 +24,7 @@ you wanted to "_override_" Spring Boot's, and in particular, SBDG's _Auto-config
 TIP: You should read the chapter in Spring Boot's Reference Guide on
 {spring-boot-docs-html}/#using-boot-auto-configuration[Auto-configuration].
 
-TIP: You should review the chapter in Spring Data for Apache Geode or Pivotal GemFire's (SDG) Reference Guide on
+TIP: You should review the chapter in Spring Data for Apache Geode and Pivotal GemFire's (SDG) Reference Guide on
 {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based Configuration].  For a quick reference,
 or an overview of Annotation-based Configuration, see {spring-data-geode-docs-html}/#bootstap-annotations-quickstart[here].
 
@@ -32,9 +32,9 @@ or an overview of Annotation-based Configuration, see {spring-data-geode-docs-ht
 === Customizing Auto-configuration
 
 You might ask how I can customize the _Auto-configuration_ provided by SBDG if I do not explicitly declare
-the annotation?  Good question!
+the annotation?
 
-For example, maybe you want to customize the member's "_name_".  You know that the
+For example, you mat want to customize the member's "_name_".  You know that the
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html[`@ClientCacheApplication`] annotation
 provides the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableGemFireProperties.html#name--[`name`] attribute
 so you can set the client member's "_name_".  But SBDG has already implicitly declared the `@ClientCacheApplication`
@@ -42,7 +42,7 @@ annotation via _Auto-configuration_ on your behalf.  What do you do?
 
 Well, SBDG supplies a few very useful _Annotations_ in this case.
 
-For example, to set the (client or peer) member's name, you can use the SBDG `@UseMemberName` annotation, like so:
+For example, to set the (client or peer) member's name, you can use the `@UseMemberName` annotation, like so:
 
 .Setting the member's name using `@UseMemberName`
 [source,java]
@@ -93,7 +93,7 @@ TIP: For the complete list of _documented_ Properties, see <<geode-configuration
 Disabling Spring Boot _Auto-configuration_ is {spring-boot-docs-html}/#using-boot-disabling-specific-auto-configuration[explained]
 in detail in Spring Boot's Reference Guide.
 
-Disabling SBDG _Auto-confiugration_ was also <<geode-auto-configuration-disable,here>>[explained] in detail.
+Disabling SBDG _Auto-confiugration_ was also <<geode-auto-configuration-disable,explained>> in detail.
 
 In a nutshell, if you want to disable any _Auto-configuration_ provided by either Spring Boot or SBDG,
 then you can declare your intent in the `@SpringBootApplication` annotation, like so:
@@ -112,14 +112,15 @@ WARNING: Make sure you understand what you are doing when you are "disabling" _A
 [[geode-configuration-auto-overriding]]
 === Overriding Auto-configuration
 
-Overriding SBDG _Auto-configuration_ was <<geode-autoconfiguration-annotations-overriding,here>>[explained]
-in detail as well.
+Overriding SBDG _Auto-configuration_ was <<geode-autoconfiguration-annotations-overriding,explained>> in detail as well.
 
 In a nutshell, if you want to override the default _Auto-configuration_ provided by SBDG then you must annotate
-your `@SpringBootApplication` class with your intent.  For example, say you want to configure and bootstrap an
-Apache Geode or Pivotal GemFire `CacheServer` application (a peer; not a client), then you would:
+your `@SpringBootApplication` class with your intent.
 
-.Overriding the default `ClientCache` _Auto-Configuration_ by configuring & bootstrapping a `CacheServer` application instead
+For example, say you want to configure and bootstrap an Apache Geode or Pivotal GemFire `CacheServer` application
+(a peer; not a client), then you would:
+
+.Overriding the default `ClientCache` _Auto-Configuration_ by configuring & bootstrapping a `CacheServer` application
 [source,java]
 ----
 @SpringBootApplication
@@ -127,9 +128,10 @@ Apache Geode or Pivotal GemFire `CacheServer` application (a peer; not a client)
 class SpringBootCacheServerApplication { ... }
 ----
 
-Even when you explicitly declare the `@ClientCacheApplication` annotation on your `@SpringBootApplication` class as so:
+Even when you explicitly declare the `@ClientCacheApplication` annotation on your `@SpringBootApplication` class,
+like so:
 
-.Overrdigin by explicitly declaring `@ClientCacheApplication`
+.Overriding by explicitly declaring `@ClientCacheApplication`
 [source,java]
 ----
 @SpringBootApplication
@@ -137,7 +139,7 @@ Even when you explicitly declare the `@ClientCacheApplication` annotation on you
 class SpringBootClientCacheApplication { ... }
 ----
 
-You are overriding SBDG's _Auto-configuration_ of the `ClientCache` instance.  As a result, you have now also implicitly
+You are overriding SBDG's _Auto-configuration_ of the `ClientCache` instance.  As a result, you now have also implicitly
 consented to being responsible for other aspects of the configuration (e.g. _Security_)!  Why?
 
 This is because in certain cases, like _Security_, certain aspects of _Security_ configuration (e.g. SSL) must be
@@ -165,11 +167,11 @@ To review the complete list of SBDG _Auto-confiugration_ classes, <<geode-auto-c
 NOTE: The {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/ClientCacheAutoConfiguration.html[`ClientCacheAutoConfiguration`] class
 corresponds to the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html[`@ClientCacheApplication`] annotation.
 
-SBDG <<getting-started,starts>> with the opinion that application developers will be mostly building Apache Geode
+SBDG <<getting-started,starts>> with the opinion that application developers will primarily be building Apache Geode
 or Pivotal GemFire <<geode-clientcache-applications,client applications>> using Spring Boot.
 
 Technically, this means building Spring Boot applications with either an Apache Geode or Pivotal GemFire `ClientCache`
-instance connected to a dedicated cluster of Apache Geode or Pivotal GemFire servers used to manage the data in a
+instance connected to a dedicated cluster of Apache Geode or Pivotal GemFire servers that manage the data as part of a
 {apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[client/server] topology.
 
 By way of example, this means you *do not* need to explicitly declare and annotate your `@SpringBootApplication` class
@@ -201,7 +203,7 @@ in particular.
 [[geode-configuration-declarative-auto-configuration-enablecaching]]
 ==== `@EnableGemfireCaching`
 
-NOTE: The {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/CachingProviderAutoConfiguration.html[`ClientCacheAutoConfiguration`] class
+NOTE: The {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/CachingProviderAutoConfiguration.html[`CachingProviderAutoConfiguration`] class
 corresponds to the {spring-data-geode-javadoc}/org/springframework/data/gemfire/cache/config/EnableGemfireCaching.html[`@EnableGemfireCaching`] annotation.
 
 If you simply used the core Spring Framework to configure either Apache Geode or Pivotal GemFire as a _caching provider_
@@ -239,7 +241,7 @@ class CachingUsingApacheGeodeConfiguration {
 }
 ----
 
-And, if you use SBDG, then you simply only need to do this:
+And, if you use SBDG, then you only need to do this:
 
 .Configuring caching using Spring Data Geode
 [source,java]
@@ -251,7 +253,7 @@ class CachingUsingApacheGeodeConfiguration {
 ----
 
 This allows you to focus on the areas in your application that would benefit from caching without having to enable
-the plumbing.  Simply demarcate the service methods in application that are good candidates for caching:
+the plumbing.  Simply demarcate the service methods in your application that are good candidates for caching:
 
 .Using caching in your application
 [source,java]
@@ -294,7 +296,7 @@ class MyCustomerApplicationContinuousQueries
 }
 ----
 
-That is, you simply define the events you are interested in receiving using a OQL query with a finely tuned query
+As shown above, you define the events you are interested in receiving by using a OQL query with a finely tuned query
 predicate describing the events of interests and implement the handler method to process the events (e.g. apply a credit
 to the customer's account and follow up in email).
 
@@ -305,12 +307,12 @@ TIP: Refer to the <<geode-continuous-query,documentation>> for more details.
 
 NOTE: The {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/FunctionExecutionAutoConfiguration.html[`FunctionExecutionAutoConfiguration`] class
 corresponds to both the {spring-data-geode-javadoc}/org/springframework/data/gemfire/function/config/EnableGemfireFunctionExecutions.html[`@EnableGemfireFunctionExecutions`]
-and {spring-data-geode-javadoc}/org/springframework/data/gemfire/function/config/EnableGemfireFunctionExecutions.html[`@EnableGemfireFunctions`] annotations.
+and {spring-data-geode-javadoc}/org/springframework/data/gemfire/function/config/EnableGemfireFunctions.html[`@EnableGemfireFunctions`] annotations.
 
 Whether you need to {spring-data-geode-docs-html}/#function-execution[_execute_] a `Function`
 or {spring-data-geode-docs-html}/#function-implementation[_implement_] a `Function`, SBDG will detect the Function
 definition and auto-configure it appropriately for use in your Spring Boot application.  You only need to define
-the Function execution or implementation in package below the main `@SpringBootApplication` class.
+the Function execution or implementation in a package below the main `@SpringBootApplication` class.
 
 .Declare a Function Execution
 [source,java]
@@ -325,7 +327,7 @@ interface MyCustomerApplicationFunctions {
 }
 ----
 
-Then you can simply inject the Function execution into any application component:
+Then you can inject the Function execution into any application component and use it:
 
 .Use the Function
 [source,java]
@@ -355,6 +357,8 @@ the Function implementation  for use (i.e. to be called by a Function execution)
 The point is, you are simply focusing on defining the logic required by your application, and not worrying about
 how Functions are registered, called, etc.  SBDG is handling this concern for you!
 
+NOTE: Function implementations are typically defined and registered on the server-side.
+
 TIP: Refer to the <<geode-functions,documentation>> for more details.
 
 [[geode-configuration-declarative-auto-configuration-enablerepositories]]
@@ -363,9 +367,9 @@ TIP: Refer to the <<geode-functions,documentation>> for more details.
 NOTE: The {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/GemFireRepositoriesAutoConfigurationRegistrar.html[`GemFireRepositoriesAutoConfigurationRegistrar`] class
 corresponds to the {spring-data-geode-javadoc}/org/springframework/data/gemfire/repository/config/EnableGemfireRepositories.html[`@EnableGemfireRepositories`] annotation.
 
-Like Functions, you are simply concerned with the data access operations (e.g. basic CRUD and simple Queries) that
-your application needs to carry out its tasks, not how to create and perform (e.g. `Region.get(key)`
-& `Region.put(key, obj)`) or execute (e.g. `Query.execute(arguments)`) them.
+Like Functions, you are only concerned with the data access operations (e.g. basic CRUD and simple Queries) required by
+your application to carry out its functions, not how to create and perform them (e.g. `Region.get(key)`
+& `Region.put(key, obj)`) or execute (e.g. `Query.execute(arguments)`).
 
 Simply define your Spring Data Repository:
 
@@ -404,9 +408,9 @@ class CustomerService {
 ----
 
 
-Plumbing be damned!  Your application-specific _Repository_ simply needs to be declared in a package below the main
-`@SpringBootApplication` class.  Again, you are simply focusing on the data access operations and queries required
-to carry out the functions of your application, nothing more.
+Your application-specific _Repository_ simply needs to be declared in a package below the main `@SpringBootApplication`
+class.  Again, you are only focusing on the data access operations and queries required to carry out the functions
+of your application, nothing more.
 
 TIP: Refer to the <<geode-repositories,documentation>> for more details.
 
@@ -416,9 +420,9 @@ TIP: Refer to the <<geode-repositories,documentation>> for more details.
 NOTE: The {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/LoggingAutoConfiguration.html[`LoggingAutoConfiguration`] class
 corresponds to the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html[`@EnableLogging`] annotation.
 
-Logging is an essential application concern to understand what is happening in the system and when and possibly where
-it occurred.  As such, SBDG auto-configures logging for Apache Geode and Pivotal GemFire by default, using the default
-"_config_" log-level.
+Logging is an essential application concern to understand what is happening in the system along with when and where
+the event occurred.  As such, SBDG auto-configures logging for Apache Geode and Pivotal GemFire by default, using
+the default log-level, "_config_".
 
 If you wish to change an aspect of logging, such as the log-level, you would typically do this in Spring Boot
 `application.properties`:
@@ -431,8 +435,8 @@ If you wish to change an aspect of logging, such as the log-level, you would typ
 spring.data.gemfire.cache.log-level=debug
 ----
 
-Other aspect may be configured as well, such as the log file size and disk space limits for file system location
-(i.e. diretory) that the log files are stored by Apache Geode at runtime.
+Other aspects may be configured as well, such as the log file size and disk space limits for the file system location
+used to store the Apache Geode log files at runtime.
 
 Under-the-hood, Apache Geode's logging is based on Log4j.  Therefore, you can configure Apache Geode logging using
 any logging provider (e.g. Logback) and configuration metadata appropriate for that logging provider so long as you
@@ -458,8 +462,8 @@ to be serializable as well as to exist on the classpath for every place it is se
 may not even be a Java application! This is where Apache Geode {apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX Serialization]
 steps into help.
 
-However, you don't have to figure out how to configure PDX or even have PDX properly identify the class types used by
-your application that will need to be serialized.  You simply define your class type:
+However, you don't have to figure out how to configure PDX to identify the application class types that will need to be
+serialized.  You simply define your class type:
 
 .Customer class
 [source,java]
@@ -505,9 +509,9 @@ spring.data.gemfire.security.password=r0b!n5ucks
 NOTE: Authentication is even easier to configure in a managed environment like PCF when using PCC;
 you don't have to do anything!
 
-Authorization is configured on the server-side and is made simple with SBDG and the help of Apache Shiro.  Of course,
-this assumes you are using SBDG to configure and bootstrap your Apache Geode cluster in the first place, which is
-<<geode-cluster-configuration-bootstrapping,possible>>, and made even easier with SBDG.
+Authorization is configured on the server-side and is made simple with SBDG and the help of https://shiro.apache.org/[Apache Shiro].
+Of course, this assumes you are using SBDG to configure and bootstrap your Apache Geode cluster in the first place,
+which is <<geode-cluster-configuration-bootstrapping,possible>>, and made even easier with SBDG.
 
 TIP: Refer to the <<geode-security,documentation>> for more details.
 
@@ -518,13 +522,13 @@ NOTE: The {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoco
 corresponds to the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html[`@EnableSsl`] annotation.
 
 Configuring SSL for secure transport (TLS) between your Spring Boot, Apache Geode `ClientCache` application
-and the servers can be a real problematic task, especially to get correct from the start.  So, it is something
+and the cluster can be a real problematic task, especially to get correct from the start.  So, it is something
 that SBDG makes simple to do out-of-the-box.
 
 Simply supply a `trusted.keystore` file containing the certificates in a well-known location (e.g. root of your
 application classpath) and SBDG's _Auto-configuration_ will kick in and handle of the rest.
 
-This is useful during development, but we highly recommend using a more secure procedures (e.g. integrating with a
+This is useful during development, but we highly recommend using a more secure procedure (e.g. integrating with a
 secure credential store like LDAP, CredHub or Vault) when deploying your Spring Boot application to production.
 
 TIP: Refer to the <<geode-security-ssl,documentation>> for more details.
@@ -533,20 +537,31 @@ TIP: Refer to the <<geode-security-ssl,documentation>> for more details.
 ==== `@EnableGemFireHttpSession`
 
 NOTE: The {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/SpringSessionAutoConfiguration.html[`SpringSessionAutoConfiguration`] class
-corresponds to the {spring-session-data-geode-javadoc}/org/springframework/session/data/gemfire/config/annotation/EnableSsl.html[`@EnableSsl`] annotation.
+corresponds to the {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/EnableSsl.html[`@EnableSsl`] annotation.
 
-Configuring Apache Geodoe or Pivotal GemFire to serve as the (HTTP) Session state caching provider using Spring Session
+Configuring Apache Geode or Pivotal GemFire to serve as the (HTTP) Session state caching provider using Spring Session
 is as simple as including the correct starter, e.g. `spring-geode-starter-session`.
+
+.Using Spring Session
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>org.springframework.geode</groupId>
+    <artifactId>spring-geode-starter-session</artifactId>
+    <version>{revnumber}</version>
+</dependency>
+----
 
 With Spring Session, and specifically Spring Session for Apache Geode or Pivotal GemFire (SSDG), on the classpath of
 your Spring Boot, Apache Geode `ClientCache` Web application, you can manage your (HTTP) Session state with either
-Apache Geode or Pivotal GemFire.  No further configuration is needed. Simply, SBDG _Auto-configuration_ detects
-Spring Session on the application classpath and does the right thing.
+Apache Geode or Pivotal GemFire.  No further configuration is needed. SBDG _Auto-configuration_ detects Spring Session
+on the application classpath and does the right thing.
 
 TIP: Refer to the <<geode-session,documentation>> for more details.
 
 [[geode-configuration-declarative-auto-configuration-regiontemplates]]
-===== RegionTemplateAutoConfiguration
+==== RegionTemplateAutoConfiguration
 
 The SBDG {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/RegionTemplateAutoConfiguration.html[`RegionTemplateAutoConfiguration`] class
 has no corresponding SDG _Annotation_.  However, the _Auto-configuration_ of a `GemfireTemplate` for every single
@@ -577,7 +592,7 @@ class GeodeConfiguration {
 
 Alternatively, you could define the "_Customers_" Region using:
 
-.Region definition using JavaConfig
+.Region definition using `@EnableEntityDefinedRegions`
 [source,java]
 ----
 @Configuration
