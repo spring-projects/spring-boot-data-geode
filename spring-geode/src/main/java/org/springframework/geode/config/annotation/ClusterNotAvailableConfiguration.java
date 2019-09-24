@@ -22,7 +22,10 @@ import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
+import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +41,8 @@ import org.springframework.lang.Nullable;
  *
  * @author John Blum
  * @see org.springframework.beans.factory.config.BeanPostProcessor
+ * @see org.springframework.boot.autoconfigure.condition.AllNestedConditions
+ * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Conditional
  * @see org.springframework.context.annotation.Configuration
@@ -47,7 +52,7 @@ import org.springframework.lang.Nullable;
  * @since 1.2.0
  */
 @Configuration
-@Conditional(ClusterNotAvailableConfiguration.CusterNotAvailableCondition.class)
+@Conditional(ClusterNotAvailableConfiguration.AllClusterNotAvailableConditions.class)
 @SuppressWarnings("unused")
 public class ClusterNotAvailableConfiguration {
 
@@ -97,11 +102,33 @@ public class ClusterNotAvailableConfiguration {
 		return clientRegion;
 	}
 
-	public static final class CusterNotAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition {
+	public static final class AllClusterNotAvailableConditions extends AllNestedConditions {
+
+		public AllClusterNotAvailableConditions() {
+			super(ConfigurationPhase.PARSE_CONFIGURATION);
+		}
+
+		@Conditional(ClusterNotAvailableCondition.class)
+		static class IsClusterNotAvailableCondition { }
+
+		@Conditional(NotCloudFoundryEnvironmentCondition.class)
+		static class IsNotCloudFoundryEnvironmentCondition { }
+
+	}
+
+	public static final class ClusterNotAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition {
 
 		@Override
 		public synchronized boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 			return !super.matches(context, metadata);
+		}
+	}
+
+	public static final class NotCloudFoundryEnvironmentCondition implements Condition {
+
+		@Override
+		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+			return !CloudPlatform.CLOUD_FOUNDRY.isActive(context.getEnvironment());
 		}
 	}
 }

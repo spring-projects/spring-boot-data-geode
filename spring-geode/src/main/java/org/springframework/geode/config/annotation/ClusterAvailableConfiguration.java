@@ -15,6 +15,9 @@
  */
 package org.springframework.geode.config.annotation;
 
+import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform;
+import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration;
@@ -24,15 +27,33 @@ import org.springframework.data.gemfire.config.annotation.EnableClusterConfigura
  * configuration when an Apache Geode or Pivotal GemFire cluster of servers are available.
  *
  * @author John Blum
+ * @see org.springframework.boot.autoconfigure.condition.AnyNestedCondition
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform
+ * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.context.annotation.Conditional
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration
  * @since 1.2.0
  */
 @Configuration
-@Conditional(ClusterAvailableConfiguration.ClusterAvailableCondition.class)
+@Conditional(ClusterAvailableConfiguration.AnyClusterAvailableCondition.class)
 @EnableClusterConfiguration(requireHttps = false, useHttp = true)
+@SuppressWarnings("unused")
 public class ClusterAvailableConfiguration {
+
+	public static final class AnyClusterAvailableCondition extends AnyNestedCondition {
+
+		public AnyClusterAvailableCondition() {
+			super(ConfigurationPhase.PARSE_CONFIGURATION);
+		}
+
+		@ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
+		static class IsCloudFoundryEnvironmentCondition { }
+
+		@Conditional(ClusterAvailableCondition.class)
+		static class IsClusterAvailableCondition { }
+
+	}
 
 	public static final class ClusterAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition { }
 

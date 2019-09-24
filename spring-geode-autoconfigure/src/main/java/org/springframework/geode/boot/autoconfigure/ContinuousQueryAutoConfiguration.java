@@ -43,11 +43,11 @@ import org.springframework.geode.config.annotation.ClusterAvailableConfiguration
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer
  * @see org.springframework.data.gemfire.config.annotation.EnableContinuousQueries
  * @see org.springframework.geode.boot.autoconfigure.support.EnableSubscriptionConfiguration
- * @see org.springframework.geode.config.annotation.ClusterAvailableConfiguration.ClusterAvailableCondition
+ * @see org.springframework.geode.config.annotation.ClusterAvailableConfiguration.AnyClusterAvailableCondition
  * @since 1.0.0
  */
 @Configuration
-@Conditional(ClusterAvailableConfiguration.ClusterAvailableCondition.class)
+@Conditional(ClusterAvailableConfiguration.AnyClusterAvailableCondition.class)
 @ConditionalOnBean(ClientCacheFactoryBean.class)
 @ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor",
 	type = "org.springframework.data.gemfire.listener.ContinuousQueryListenerContainer")
