@@ -4,6 +4,24 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.0.M3 (2019-09-24)
+----------------------------------------
+Adds support for dynamic auto-configuration of Spring Boot applications to detect the presence of an Apache Geode
+or Pivotal Cloud Cache (PCC) cluster.  When a cluster is available, SBDG applications will run in a client/server
+topology, otherwise SBDG applications switch to local-only mode.
+
+* Adds @EnableClusterAware configuration support to allow application developers to switch between local
+and client/server development environments.
+https://github.com/spring-projects/spring-boot-data-geode/issues/52
+* Adds chapter in the Reference Guide on 'Auto-configuration'.
+* Adds chapter in the Reference Guide on 'Declarative Configuration'.
+* Edits the document on 'Externalized Configuration'.
+* Fixes bug when autowiring auto-configured GemfireTemplates into application components.
+https://github.com/spring-projects/spring-boot-data-geode/issues/55
+* Improves intelligence around the auto-configuration of CQ functionality to be based on the new Cluster-aware Conditions.
+https://github.com/spring-projects/spring-boot-data-geode/issues/53
+
+
 Changes in version 1.2.0.M2 (2019-09-11)
 ----------------------------------------
 Adds support to run Spring Boot applications deployed to PCF using PCC as a specific user.  Additionally, adds
