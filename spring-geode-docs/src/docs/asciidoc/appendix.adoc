@@ -15,7 +15,6 @@ _Table of Contents_
 7. <<geode-examples>>
 8. <<references>>
 
-
 :!sectnums:
 include::configuration-annotations.adoc[leveloffset=+1]
 
@@ -74,13 +73,12 @@ The current set of auto-configuration classes in Spring Boot for Apache Geode & 
 * `SpringSessionAutoPropertiesConfiguration`
 * `SslAutoConfiguration`
 
-
 [[geode-gemfire-switch]]
 === Switch from Apache Geode to Pivotal Cloud Cache (a.k.a. Pivotal GemFire)
 
-First, understand that {pivotal-gemfire-website}[Pivotal GemFire] is being replaced by
-{pivotal-cloudcache-website}[Pivotal Cloud Cache] (PCC).  Therefore, all references to "`gemfire`" also implies for
-Pivotal Cloud Cache as well.
+First, understand that {pivotal-gemfire-website}[Pivotal GemFire] is being succeeded by
+{pivotal-cloudcache-website}[Pivotal Cloud Cache] (PCC).  Therefore, all references to Pivotal GemFire (i.e. "`gemfire`")
+also implies for Pivotal Cloud Cache (i.e. "`cloudcache`") as well.
 
 When it comes to Spring's support, whether you are developing with Open Source Software (OSS)
 {apache-geode-website}[Apache Geode] or developing for Pivotal Cloud Cache, Spring has you covered.
@@ -88,12 +86,14 @@ When it comes to Spring's support, whether you are developing with Open Source S
 At a strategic-level, this means:
 
 1. From Open Source Software (e.g. Apache Geode) to Commercial (e.g. Pivotal Cloud Cache)
-2. From Non-Managed (e.g. Standalone) to Managed Environments (e.g. Pivotal CloudFoundry)
+2. From Non-Managed Environments (e.g. Standalone, Externally Managed) to Managed Environments (e.g. Pivotal Platform)
 3. With little to no code or configuration changes necessary.  It just works!
 
-You may also go back and migrate your Spring Boot applications away from Pivotal CloudFoundry when using the commercial
-software offering Pivotal Cloud Cache and switch back to Apache Geode running in a standalone environment.  SBDG will
-not (ever) lock you in.  It is your choice.
+You may also go back and migrate your Spring Boot applications away from Pivotal Platform when using the commercial
+software offering, Pivotal Cloud Cache, and switch back to Open Source Apache Geode running in a standalone, externally
+managed environment.
+
+SBDG will not (ever) lock you in!  It is your choice!
 
 Technically, this means to go from Apache Geode to Pivotal Cloud Cache, you only need to change the SBDG dependency
 from:
@@ -140,22 +140,32 @@ dependencies {
 }
 ----
 
-To go back, simple change `spring-gemfire-starter` back to `spring-geode-starter`.  Done!
+TIP: To acquire the Pivotal Cloud Cache or Pivotal GemFire bits to use in your Spring Boot applications in place of
+Apache Geode, follow these instructions provided in the Pivotal GemFire
+https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/gemfire/getting_started/installation/obtain_gemfire_maven.html[documentation].
 
-It should just work without any code or configuration changes and if that is not the case, for whatever situation,
-then we will work to correct it, short of any feature differences between Pivotal Cloud Cache that cannot be
-accomplished with Apache Geode by itself.
+To go back, simple change `spring-gemfire-starter` back to `spring-geode-starter`.  Done!
 
 Spring Boot's auto-configuration and _convention over configuration_ approach tries to detect the runtime environment
 in order to handle infrastructure logistics so you will not have to.  This is true inside or outside of a managed
-environment so that we can provide users with a consistent and reliable experience without all the hassle and issues
-that arise by switching environments.  Switching environments is especially common as you migrate your Spring Boot
-applications from DEV to TEST, into STAGING, and finally, to PRODUCTION.
 
-Of course, it will nearly always be easier to "run" Apache Geode as a "managed" service inside Pivotal CloudFoundry
-using Pivotal Cloud Cache, especially if your Use Case requires maximum performance and high availability.  We highly
-recommend this approach when and where possible.
+It should just work without any code or configuration changes and if this is not the case, for whatever reason, then we
+will work to correct it, short of any feature differences between Pivotal Cloud Cache that cannot be accomplished with
+Apache Geode by itself.
 
+To go back, simple change `spring-gemfire-starter` back to `spring-geode-starter`.
+
+Done!
+
+Spring Boot’s _auto-configuration_ and _convention over configuration_ approach tries to detect the runtime environment
+so that we can provide users with a consistent and reliable experience without all the hassle and issues that arise
+by switching environments.  Switching environments is especially common as you migrate your Spring Boot applications
+from DEV to TEST, into STAGING, and finally, to PRODUCTION.
+
+Of course, it will nearly always be easier to "run" Apache Geode as a "managed" service inside Pivotal Platform
+using Pivotal Cloud Cache than it will to manage an externally run Apache Geode cluster, especially if your Use Case
+requires maximum performance and high availability.  We highly recommend this approach when and where possible,
+but it is still your choice.
 
 [[geode-cluster-configuration-bootstrapping]]
 === Running an Apache Geode/Pivotal GemFire cluster using Spring Boot from your IDE
@@ -498,7 +508,6 @@ from inside your IDE.
 It is pretty simple to build and run a Spring Boot, Apache Geode/Pivotal GemFire, `ClientCache` application
 that connects to this cluster.  Simply include and use Spring Boot for Apache Geode/Pivotal GemFire, ;-).
 
-
 [[geode-testing]]
 === Testing
 
@@ -514,7 +523,6 @@ their testing needs, making this new test framework for Apache Geode and Pivotal
 for all your Apache Geode/Pivotal GemFire application testing needs when using Spring as well.
 
 Later on, this reference guide will include and dedicate an entire chapter on testing.
-
 
 [[geode-examples]]
 === Examples
@@ -535,7 +543,6 @@ as a good starting point for real-world use cases.
 You may also refer to the https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example]
 from the _Contact Application_ Reference Implementation (RI) for Spring Data for Apache Geode & Pivotal GemFire
 (SDG) as yet another example.
-
 
 [[references]]
 === References
