@@ -2,8 +2,17 @@
 = Getting Started Quickly, Easily and Reliably with Spring Boot for Apache Geode & Pivotal Cloud Cache
 John Blum
 :apache-geode-version: {master-apache-geode-version}
-:apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
+:apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
+:apache-geode-website: https://geode.apache.org/
+:pivotal-cloudcache-version: 1-8
+:pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}
+:pivotal-cloudcache-website: https://pivotal.io/pivotal-cloud-cache
+:pivotal-cloudfoundry-website: https://pivotal.io/platform
+:pivotal-gemfire-version: 98
+:pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference
+:pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
+:pivotal-gemfire-website: https://pivotal.io/pivotal-gemfire
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle
 :spring-data-commons-docs: https://docs.spring.io/spring-data/commons/docs/current/reference/html
 :spring-data-commons-javadoc: https://docs.spring.io/spring-data/commons/docs/current/api
@@ -14,44 +23,48 @@ John Blum
 
 This guide walks you through building and running a simple Spring Boot, Apache Geode `ClientCache` application
 using the Spring Boot for Apache Geode (SBDG) framework.  Later in this guide, we switch the application from
-Apache Geode to Pivotal Cloud Cache and deploy (i.e `_push_`) the application up to https://pivotal.io/platform[_Pivotal Platform_].
+{apache-geode-website}[Apache Geode] to {pivotal-cloudcache-website}[Pivotal Cloud Cache] and deploy (i.e `_push_`)
+the application up to {pivotal-cloudfoundry-website}[_Pivotal Platform_].
 
-Specifically, we will:
+Specifically, you will:
 
 1. Create a new "_Spring for Apache Geode_" project using _Spring Initializer_ at https://start.spring.io[start.spring.io].
-Goto <<geode-samples-getting-started-spring-initializer,Initializer>>.
-2. Then, we build a simple Spring Boot, Apache Geode `ClientCache` application that can persist data locally, in Apache Geode.
-Goto <<spring-geode-samples-getting-started-build-app,Build App>>.
+Goto the <<geode-samples-getting-started-spring-initializer,Spring Initializer>> topic.
+2. Then, we build a simple Spring Boot, Apache Geode `ClientCache` application that can persist data locally
+in Apache Geode. Goto the <<spring-geode-samples-getting-started-build-app,Build App>> topic.
 3. Next, we switch the application from running locally to using a client/server topology.
-Goto <<spring-geode-samples-getting-started-run-app-clientserver,Client/Server>>.
+Goto the <<spring-geode-samples-getting-started-run-app-clientserver,Client/Server>> topic.
 4. And finally, we deploy the application to _Pivotal Platform_ and bind our application to a provisioned
 _Pivotal Cloud Cache_ (PCC) service instance.
-Goto <<spring-geode-samples-getting-started-run-app-cloudplatform,Cloud Platform>>.
+Goto the <<spring-geode-samples-getting-started-run-app-cloudplatform,Cloud Platform>> topic.
 
-Our goal is to accomplish each step with _little to no code or configuration_ changes.  It just works!
+Our goal is to accomplish each step with _little to no code or configuration_ changes.  It should just work!
 
-NOTE: It will also be possible to migrate backwards from a Commercial, Managed environment (running in _Pivotal Platform_
-using _Pivotal Cloud Cache_ (PCC)) back to a Open Source, Non-Managed environment (i.e. running with an externally
-managed, Open Source Apache Geode cluster).
+NOTE: It is also possible to migrate from a Commercial, Managed environment (running in _Pivotal Platform_
+using _Pivotal Cloud Cache_ (PCC)) back to an Open Source, Non-Managed environment (i.e. running with an externally
+managed Apache Geode cluster).
 
 By the end of this guide, you should feel comfortable and ready to begin building Spring Boot applications using either
-Apache Geode standalone, or _Pivotal Cloud Cache_ (PCC) running in _Pivotal Platform_.
+Apache Geode standalone or by deploying and running in _Pivotal Platform_ using _Pivotal Cloud Cache_ (PCC).
 
-NOTE: Wherever _Pivotal Cloud Cache_ (PCC) is used, also know that this implies Pivotal GemFire.
+NOTE: {pivotal-cloudcache-website}[_Pivotal Cloud Cache_] (PCC) has replaced {pivotal-gemfire-website}[_Pivotal GemFire_]
+as the new brand name.
 
 Let's begin!
 
 [[geode-samples-getting-started-spring-initializer]]
 == Beginning with Spring Initializer at start.spring.io
 
-First, open your Web browser to https://start.spring.io[].  Then select:
+First, open your Web browser to https://start.spring.io[].
 
-* Maven Project
-* Java Language
-* Spring Boot {spring.boot.version}
+Then select:
+
+* Maven Project (alternatively, you can select _Gradle_ if you prefer)
+* Java Language (alternatively, you can use Kotlin, or Groovy)
+* Spring Boot {spring-boot-version}
 * Project Metadata:
-** Group: `example.app.crm`
-** Artifact: `customer-app`
+** Group: `example.app`
+** Artifact: `crm`
 * Add Dependency: "_Spring for Apache Geode_" by typing "_Geode_" into the "_Search dependencies to add_" field.
 * Optionally Add Dependency: "_Spring Web_" to pull in `org.springframework.boot:spring-boot-starter-web`.
 
@@ -59,21 +72,19 @@ Your selections should look similar to:
 
 image::../images/spring-initializer-screenshot.png[]
 
-Make sure to click the "*+*" button next to the "_Spring for Apache Geode_" dependency to select and add it to
+Be sure to click the "*+*" button next to the "_Spring for Apache Geode_" dependency to select and add it to
 the generated project Maven POM file.
-
-Optionally add the `org.springframework.boot:spring-boot-starter-web` dependency to the project Maven POM file
-if you want to interact with this application via a REST-ful Web interface.
 
 You can explore the contents of the generated project by pressing the `CTRL+SPACE` keys:
 
 image::../images/spring-initializer-explore-project-screenshot.png[]
 
-Click the "_Generate the project_" button.  This will generate a *Java 8* project with *JAR* packaging.
+Click the "_Generate the project_" button.  This generates a *Java 8* project with *JAR* packaging.
 
 Download the ZIP file and unpack it to your desired working directory.
 
-You can then use your favorite IDE (e.g. IntelliJ IDEA or Spring Tool Suite (STS)) to open the generated Maven POM file.
+You can then use your favorite IDE (e.g. https://www.jetbrains.com/idea/[IntelliJ IDEA] or https://spring.io/tools[Spring Tool Suite] (STS))
+to open the generated project.
 
 You are ready to begin developing your Spring Boot, Apache Geode `ClientCache` application.
 
@@ -83,6 +94,7 @@ You are ready to begin developing your Spring Boot, Apache Geode `ClientCache` a
 The generated project contains a `example.app.crm.CrmApplication` Java class that is annotated with the
 `@SpringBootApplication` annotation.
 
+.Main `CrmApplication` class
 [source,java]
 ----
 package example.app.crm;
@@ -99,7 +111,8 @@ public class CrmApplication {
 }
 ----
 
-Additionally, in the project Maven POM file, we see the "_Spring Boot for Apache Geode_" (SBDG) dependency:
+Additionally, in the project Maven POM file, we see the "_Spring Boot for Apache Geode_" (SBDG) dependency
+(`org.springframework.geode:spring-geode-starter:{version}`:
 
 .Spring Boot for Apache Geode dependency
 [source,xml]
@@ -108,7 +121,7 @@ Additionally, in the project Maven POM file, we see the "_Spring Boot for Apache
 <dependency>
     <groupId>org.springframework.geode</groupId>
     <artifactId>spring-geode-starter</artifactId>
-    <version>{project.version}</version>
+    <version>{version}</version>
 </dependency>
 ----
 
@@ -177,40 +190,7 @@ Command Line Parameters:
   -javaagent:/Applications/IntelliJ IDEA 19 CE.app/Contents/lib/idea_rt.jar=57178:/Applications/IntelliJ IDEA 19 CE.app/Contents/bin
   -Dfile.encoding=UTF-8
 Class Path:
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/charsets.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/deploy.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/cldrdata.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/dnsns.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/jaccess.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/jfxrt.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/localedata.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/nashorn.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/sunec.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/sunjce_provider.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/sunpkcs11.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/tools.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext/zipfs.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/javaws.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jce.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jfr.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jfxswt.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jsse.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/management-agent.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/plugin.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/resources.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/rt.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/lib/ant-javafx.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/lib/dt.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/lib/javafx-mx.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/lib/jconsole.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/lib/packager.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/lib/sa-jdi.jar
-  /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/lib/tools.jar
-  /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-samples/intro/getting-started/out/production/classes
-  /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-autoconfigure/out/production/classes
-  /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-autoconfigure/out/production/resources
-  /Users/jblum/pivdev/spring-boot-data-geode/spring-geode/out/production/classes
-  /Users/jblum/pivdev/spring-boot-data-geode/spring-geode/out/production/resources
+  ...
   /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-test/2.2.0.BUILD-SNAPSHOT/6804e9aff102009fc451b1b4bd22931e88aaa2a5/spring-boot-starter-test-2.2.0.BUILD-SNAPSHOT.jar
   /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.data/spring-data-geode-test/0.0.9.BUILD-SNAPSHOT/e803b7ea816fc1f137ea448e9a4177373f79589f/spring-data-geode-test-0.0.9.BUILD-SNAPSHOT.jar
   /Users/jblum/.gradle/caches/modules-2/files-2.1/org.assertj/assertj-core/3.13.2/bb7b963fe752f69f055df0025691eceb83ce0c5d/assertj-core-3.13.2.jar
@@ -579,8 +559,8 @@ validate-serializable-objects=false
 Process finished with exit code 0
 ----
 
-First, you see the JVM bootstrap Spring Boot, which in starts our CrmApplication and also auto-configures and bootstraps
-an Apache Geode `ClientCache` instance.  Most of the output comes from Apache Geode.
+First, you see the JVM bootstrap Spring Boot, which in turn runs our `CrmApplication` and also auto-configures
+and bootstraps an Apache Geode `ClientCache` instance.  Most of the output comes from Apache Geode.
 
 The application falls straight through because it is not doing anything interesting, and technically, because there are
 no non-daemon Threads (e.g. Socket Thread listening on HTTP port 8080 in the case of Web applications running
@@ -595,7 +575,7 @@ to persist `Customer` data in Apache Geode and lookup `Customers` by name.
 [[spring-geode-samples-getting-started-build-app-model]]
 === `Customer` class
 
-First, we define a `Customer` class as:
+First, we define a `Customer` class:
 
 .`Customer` class
 [source,java]
@@ -606,27 +586,30 @@ include::{samples-dir}/intro/getting-started/src/main/java/example/app/crm/model
 The CRM application defines a `Customer` in terms of an identifier (i.e. `Long id`) and a name (i.e. `String name`).
 Both fields are required.
 
-Additionally, we map `Customer` objects to the "_/Customers_" Region using the Spring Data for Apache Geode's (SDG)
-{spring-data-geode-javadoc}/org/springframework/data/gemfire/mapping/annotation/Region.html[`@Region` annotation].
+Additionally, we map `Customer` objects to the "_/Customers_" Region using Spring Data for Apache Geode's (SDG)
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/mapping/annotation/Region.html[`@Region`] annotation.
 
-`@Region` simply tells Spring Data where to persist and access `Customer` objects in Apache Geode.  It is equivalent to
-JPA's `@javax.persistence.Table` annotation.
+The `@Region` annotation tells Spring Data where to persist and access `Customer` objects in Apache Geode.  It is
+basically equivalent to JPA's `@javax.persistence.Table` annotation.
 
 Additionally, we annotate the `Long id` field with Spring Data's `@org.springframework.data.annotation.Id` annotation.
 This designates the `id` field as the identifier, or in Apache Geode's case, the "key" since a Region is a key/value
 store.  In fact, Apache Geode's {apache-geode-javadoc}/org/apache/geode/cache/Region.html[`Region`] interface
-implements the `java.uti.Map` interface (i.e. a `Region` is a `Map` data structure).
+implements the `java.uti.Map` interface making it a `Map` data structure.
 
 We use https://projectlombok.org/[Project Lombok] to simply the implementation of the `Customer` class.
 
-NOTE: If you rely on Project Lombok, you will need `org.projectlombok:lombok` on your application classpath
+NOTE: If you want to use Project Lombok, you will need `org.projectlombok:lombok` on your application classpath
 as a compile-time dependency.
+
+WARNING: While Project Lombok is useful and convenient for prototyping and testing purposes, it has become a rather
+subjective topic on whether to use Lombok in production code.  We have no opinion here.
 
 [[spring-geode-samples-getting-started-build-app-repository]]
 === `CustomerRepository` interface
 
-Now that we have defined a basic model for managing Customer data, we can create a Spring Data `CrudRepository` used by
-our application to persist the `Customer` data to Apache Geode.  This same _Repository_ can be used to lookup, or query
+Now that we have defined a basic model for managing customer data, we can create a Spring Data `CrudRepository` used by
+our application to persist `Customer` objects to Apache Geode.  This same _Repository_ can be used to lookup, or query
 `Customers` by name.
 
 .`CustomerRepository` interface
@@ -637,19 +620,20 @@ include::{samples-dir}/intro/getting-started/src/main/java/example/app/crm/repo/
 
 A Spring Data `CrudRepository` is a https://en.wikipedia.org/wiki/Data_access_object[_Data Access Object_] (DAO)
 that enables an application to perform basic CRUD (i.e. CREATE, READ, UPDATE, DELETE) as well as simple Query
-data access operations on a target, persistent entity (e.g. `Customer`).
+data access operations on a persistent entity (e.g. `Customer`).
 
-TIP: See the Spring Data Commons Reference Guide for more details on {spring-data-commons-docs}/#repositories[Working with Spring Data Repositories]
+TIP: Review the Spring Data Commons Reference Guide for more details on {spring-data-commons-docs}/#repositories[Working with Spring Data Repositories]
 and Spring Data for Apache Geode's (SDG) {spring-data-geode-docs}/#gemfire-repositories[extension and implementation]
 of Spring Data Commons Repository Abstraction.
 
 [[spring-geode-samples-getting-started-build-app-controller]]
 === `CustomerController` interface
 
-*OPTIONAL:* Dependent on `org.springframework.boot:spring-boot-starter-web`, or the "_Spring Web_" dependency.
+*OPTIONAL:* And, dependent on `org.springframework.boot:spring-boot-starter-web`, the "_Spring Web_" dependency.
 
-If you selected the "_Spring Web_" dependency from the beginning, when we generated the project, then you can create
-a Spring Web MVC `@RestController` to access the CRM application from your Web browser.
+If you selected the "_Spring Web_" dependency from the beginning when you generated the project using the
+Spring Initializer, then you can create a Spring Web MVC `@RestController` to access the CRM application
+from your Web browser.
 
 .`CustomerController` class
 [source,java]
@@ -657,8 +641,8 @@ a Spring Web MVC `@RestController` to access the CRM application from your Web b
 include::{samples-dir}/intro/getting-started/src/main/java/example/app/crm/controller/CustomerController.java[tags=class]
 ----
 
-The `CustomerController` Spring Web MVC `@RestController` class contains several REST-ful Web service endpoints for
-accessing the CRM application via a Web client (e.g. Web browser).
+The `CustomerController` class is a Spring Web MVC `@RestController` containing several REST-ful Web service endpoints
+for accessing the CRM application via a Web client (e.g. Web browser).
 
 .Customer Web service endpoints
 |===
@@ -672,18 +656,20 @@ accessing the CRM application via a Web client (e.g. Web browser).
 
 |===
 
-NOTE: If you have not enabled the Web components, then not to worry, we will still be inspecting the application's
-effects on Apache Geode using _Gfsh_ (Apache Geode & Pivotal GemFire's shell tool).
+NOTE: If you did not enable the Web components by adding the Spring Web dependency to your application classpath, then
+no worries, we will still be inspecting the application's effects on Apache Geode using _Gfsh_ (Apache Geode & Pivotal
+GemFire's shell tool).  Of course, you can just add the `org.springframework.boot:spring-boot-starter-web` dependency
+to your Maven POM file as well.
 
 [[spring-geode-samples-getting-started-build-app-configuration]]
 === `CustomerConfiguration` class
 
-The final bit of code required by the application is to take care of some boilerplate configuration.
+The final bit of code required by the CRM application is to take care of some boilerplate configuration.
 
-This will no doubt cause you to pause and think, well, why do I need any configuration if we are using Spring Boot?
+This will no doubt cause you to pause and think, why do I need any configuration at all if we are using Spring Boot?
 Doesn't Spring Boot, and specifically SBDG, _Auto-configuration_ take care of all our non-custom "configuration" needs?
 
-For the most part, YES, and we'll review further below what is actually being handled by SBDG, and Spring Boot
+For the most part, YES, and we'll be reviewing further below what is actually being handled by SBDG, and Spring Boot
 in general.
 
 But, there are certain cases that not even SBDG will take for granted and assume, which becomes part of your
@@ -695,17 +681,17 @@ responsibility as the application developer.  One example is Region configuratio
 There are many ways to configure a Region and it varies significantly from application Use Case to application Use Case.
 
 First, there are different data management policies (e.g. `PARTITION` or `REPLICATE`) that might be applicable depending
-on the type of data (e.g. Transactional vs. Reference data) you are storing in Apache Geode.  You might need different
-Eviction and Expiration policies depending on your user base or peak loads.  Some data is better suited for Off-Heap
-memory.  Depending on the data management policy of the Region (e.g. `PARTITION`) you can configure additional per node
-and total Region memory usage, collocate the Region with another Region for use in JOIN Queries, and so on and so forth.
+on the type of data you store in Apache Geode (e.g. Transactional vs. Reference data).  You might need different
+Eviction and Expiration policies depending on your user base or workloads.  Some data is suited for Off-Heap memory.
+Depending on the data management policy of the Region (e.g. `PARTITION`) you can configure additional per node and total
+Region memory usage restrictions, collocate the Region with another Region for use in JOIN Queries, etc.
 
-Still, we want make the _getting started_ experience to be as simple and as easy as possible, and to do so in the most
-reliable way, especially during development.  So, while SBDG may not provide implicit _auto-configuration_ support for
-every concern, this does not mean you are left to figure it all out by yourself (e.g. Region configuration).
+Still, we want the _getting started_ experience to be as simple and as easy as possible, and to do so in a reliable way,
+especially during development.  So, while SBDG may not provide implicit _auto-configuration_ support for every concern,
+this does not mean you are left to figure it all out by yourself (e.g. Region configuration).
 
-During development, if you don't care specifically "_where_" or "_how_" your data is stored, you just want to simply
-and rapidly iterate, putting and getting data into and out of Apache Geode, then SBDG can help.
+During development, if you don't care specifically "_how_" your data is stored and you just want to simply and rapidly
+iterate, putting and getting data into and out of Apache Geode, then SBDG can help.
 
 The first thing we will do is annotate our application configuration with SDG's `@EnableEntityDefinedRegions` annotation
 and set the `basePackageClasses` attribute to our `Customer` class:
@@ -718,20 +704,22 @@ and set the `basePackageClasses` attribute to our `Customer` class:
 public class CustomerConfiguration { ... }
 ----
 
-Using the `@EnableEntityDefinedRegions` annotation is equivalent to the JPA entity scan and Hibernate's auto-schema
-creation (DDL generation) based on your JPA annotated entity classes.
+Using the `@EnableEntityDefinedRegions` annotation is basically equivalent to the JPA entity scan and Hibernate's
+auto-schema creation (DDL generation) based on your JPA annotated entity classes.
 
-The `basePackageClasses` attribute is a type-safe way to specify the base package where your entity scan will begin.
-It looks for all classes annotated with the `@Region` mapping annotation in the current package and all sub-packages.
-If the class is not annotated with `@Region` then it is not an entity.  The entity scan scans down from the package
-declared by the class (or classes) specified in the `basePackageClasses` attribute.  Sub-packages are scanned, nested
-entity classes are not.  The class or classes specified in the `basePackageClasses` attribute may be an entity class,
-or do not need to be entity classes.  It is also not necessary to list all classes in the package.
+The `basePackageClasses` attribute is a type-safe way to specify the base package or packages for where the entity scan
+will begin.  It scans for all classes annotated with the `@Region` mapping annotation in the current package as well as
+all sub-packages.  If the class is not annotated with `@Region` then it is not an entity.  The entity scan searches down
+from the package declared by the class (or classes) specified in the `basePackageClasses` attribute.  Sub-packages are
+scanned, nested entity classes are not.  The class or classes specified in the `basePackageClasses` attribute may be
+an entity class, but is not required to be an entity class.  It is also not necessary to list all classes in the package
+and sub-packages.  One class per unique top-level package is sufficient.
 
-`@EnableEntityDefinedRegions` creates the Regions local to your application.  By default, your SBDG based application
-is a `ClientCache` and therefore will create client Regions for you entities.
+`@EnableEntityDefinedRegions` creates Regions local to your application.  By default, your SBDG based application is
+a `ClientCache` and therefore will create client Regions for your entities.
 
-Of course, you can define the Region yourself using Spring _JavaConfig_, like so:
+The alternative to using `@EnableEntityDefinedRegions` (or the like) is to define Regions explicitly using Spring
+_JavaConfig_, like so:
 
 .Using Spring JavaConfig
 [source,java]
@@ -748,7 +736,7 @@ public ClientRegionFactoryBean<Long, Customer> customersRegion(GemFireCache gemf
 }
 ----
 
-Alternatively, you can use Spring XML:
+You can also use Spring XML:
 
 .Using Spring XML
 [source,xml]
@@ -757,24 +745,22 @@ Alternatively, you can use Spring XML:
 ----
 
 [[spring-geode-samples-getting-started-build-app-configuration-cluster]]
-==== Configure the Application to be Cluster Aware
+==== Configure the Application to be Cluster-Aware
 
 The final bit of configuration helps determine whether the client application is by itself or whether a cluster of
 Apache Geode servers are available to manage the application's data.
 
-During development, you might be rapidly switching between your IDE in a local development environment and a managed,
-client/server environment.  You might debug and test out new functions locally, rapidly, and then push the modified
-application back up to the client/server environment for further integration testing.
+During development, you might be iteratively and rapidly developing inside your IDE, debugging and testing new functions
+locally and then switch to a client/server environment for further integration testing.
 
 Apache Geode requires 1) all client Regions that send data to/from the cluster be `*PROXY` Regions and 2) that a
 server-side Region by the same name exists in the cluster.
 
 Switching the data management policy for all client Regions' from `*PROXY` to `LOCAL` when pulling your application code
-back inside your IDE locally, where a cluster might not be available, and then having to remember to switch data
-management policy back in addition to creating any new Regions when you add new entity classes before pushing back up to
-the client/server environment is a tedious and error-prone task.
-
-So, SBDG introduces the new `@EnableClusterAware` annotation for this very purpose:
+back inside your IDE locally, where a cluster might not be available, and then having to remember to switch the data
+management policy back to `*PROXY` in addition to creating any new Regions when you add new entity classes before
+pushing back up to the client/server environment is a tedious and error-prone task.  So, SBDG has introduced the new
+`@EnableClusterAware` annotation for this very purpose.
 
 .Using `@EnableClusterAware`
 [source,java]
@@ -794,12 +780,12 @@ The nearly equivalent alternative to `@EnableClusterAware` is:
 public class CustomerConfiguration { ... }
 ----
 
-If you switch to a client/server topology, the you would need to remember to change the `clientRegionShortcut` to
-`ClientRegionShortcut.PROXY` (the default).  Of course, you could using Spring Profiles, or just simply use the
-`@EnableClusterAware` annotation!
+If you switch to a client/server topology, then you would need to remember to change the `clientRegionShortcut` to
+`ClientRegionShortcut.PROXY` (the default).  Of course, you could use Spring Profiles with a profile customized for
+each environment where the application will be run.  Or, you can just simply use the `@EnableClusterAware` annotation.
 
-We say "nearly" because the `@EnableClusterAware` annotation does much more than manage the data management policy
-for your client Regions, particularly when a cluster of servers is available, as we'll see further below.
+We say "nearly" equivalent because the `@EnableClusterAware` annotation does much more than control the data management
+policy used by your client Regions, particularly when a cluster of servers is available, as we'll see further below.
 
 TIP: The `clientRegionShortcut` attribute is available for all application-defined Region annotations:
 [`@EnableEntityDefinedRegions`, `@EnableCachingDefinedRegions`, `@EnableClusterDefinedRegions`].
@@ -807,7 +793,7 @@ TIP: The `clientRegionShortcut` attribute is available for all application-defin
 [[spring-geode-samples-getting-started-build-app-configuration-summary]]
 ==== Configuration Summary
 
-The final custom configuration appears as follows:
+The final application specific configuration appears as follows:
 
 .`CustomerConfiguration` class
 [source,java]
@@ -818,46 +804,48 @@ include::{samples-dir}/intro/getting-started/src/main/java/example/app/crm/confi
 [[spring-geode-samples-getting-started-run-app-locally]]
 == Run the Application Locally
 
-To make it apparent that the application does something, we add the following Spring Boot `ApplicationRunner` bean
+To make it apparent that the CRM application does something, we add the following Spring Boot `ApplicationRunner` bean
 to our main `@SpringBootApplication` class:
 
-.Main `@SpringBootApplication` class
+.Spring Boot `ApplicationRunner` in the main `@SpringBootApplication` class
 [source,java]
 ----
 include::{samples-dir}/intro/getting-started/src/main/java/example/app/crm/CrmApplication.java[tags=runner]
 ----
 
-The runner simply creates a new `Customer` "_JonDoe_", persists "_JonDoe_" to Apache Geode in the "_/Customers_"
-client 'LOCAL` Region, runs an OQL query to lookup "_JonDoe_" by name using a wildcard query using the LIKE operator
-with "_%Doe_", and then asserts that the result is correct.
+The runner creates a new `Customer` "_JonDoe_", persists "_JonDoe_" to Apache Geode in the "_/Customers_" client `LOCAL`
+Region, runs an OQL query to lookup "_JonDoe_" by name using a wildcard query with the LIKE operator and argument
+"_%Doe_", then asserts that the result is correct.
 
-NOTE: The Example code uses _AssertJ_ to perform the assertions inside the `ApplicationRunner` bean, which means you
-will need `org.assertj:assertj-core` on your application classpath as a compile-time dependency.
+NOTE: The example code uses _AssertJ_ to perform assertions inside the `ApplicationRunner` bean, which means you would
+need `org.assertj:assertj-core` on your application classpath as a compile-time dependency.
 
-After running the application, you should see:
+After running the application again, you should see:
 
 .Application Log Output in Local Run
 [source,txt]
 ----
+...
 2019-09-16 13:37:24.529  INFO 10098 --- [           main] example.app.crm.CrmApplication           : Started CrmApplication in 5.506010062 seconds (JVM running for 6.114)
 Saving Customer [Customer(name=JonDoe)]...
 Querying for Customer [SELECT * FROM /Customers WHERE name LIKE '%Doe']...
 Customer was [Customer(name=JonDoe)]
 ----
 
-SBDG with the help of `@EnableEntityDefinedRegions` and `@EnableClusterAware`, and Spring Data, has already done
-quite a bit for us:
+SBDG, with the help of `@EnableEntityDefinedRegions` and `@EnableClusterAware`, along with Spring Data, has already done
+quite a bit of work for us:
 
-1. SBDG auto-configured a `ClientCache` instance required to use Apache Geode in the application.
-2. The `@EnableEntityDefinedRegion` annotation created the required client "_/Customers_" Region from our `Customer`
+1. SBDG _auto-configured_ a `ClientCache` instance required to use Apache Geode in the application.
+2. The `@EnableEntityDefinedRegion` annotation created the required "_/Customers_" client Region from our `Customer`
 entity class.
-3. SBDG auto-configured the Spring Data Repository infrastructure and supplied an implementation for
+3. SBDG _auto-configured_ the Spring Data Repository infrastructure and supplied an implementation for
 the `CustomerRepository` interface.
 4. The `CustomerRepository.findByName(:String)` derived query method applies OO to a framework generated OQL query
-thereby enabling the application to lookup a `Customer` by name simply by invoking a POJO method.
-5. The `@EnableClusterAware` annotation determines the runtime context of the application.
+thereby enabling the application to lookup a `Customer` given a name by simply invoking a POJO method.
+5. The `@EnableClusterAware` annotation determined the runtime context of the application (e.g. local or client/server).
 
-For instance, what would happen if you did not annotate the application configuration with `@EnableClusterAware`?
+To show one aspect of SBDG's _auto-configuration_ at play, what would happen if you did not annotate the application
+configuration with `@EnableClusterAware`?
 
 Then, you would hit the following Exception:
 
@@ -909,25 +897,25 @@ Caused by: org.apache.geode.cache.client.NoAvailableServersException: null
 	... 23 common frames omitted
 ----
 
-The application will continue to run if you include the Spring Web dependencies in your application classpath,
+The application will continue to run if you included the Spring Web dependencies in your application classpath,
 in which case, you can then inspect the application using a Web client (e.g. Web browser):
 
 image::../images/customer-service-application-jondoe.png[]
 
 [[spring-geode-samples-getting-started-run-app-clientserver]]
-== Run the Application using a Client/Server Topology
+== Run the Application in a Client/Server Topology
 
-Now that we have a simple Spring Boot, Apache Geode `ClientCache` CRM application running locally inside our IDE,
-we want to expand on this bit and switch to a client/server topology.
+Now that we have a simple Spring Boot, Apache Geode `ClientCache` application running locally inside our IDE, we want to
+expand on this bit and switch to a client/server topology.
 
 Although we are not quite ready to move to a managed cloud platform environment, like _Pivotal Platform_ (formerly
 known as _Pivotal CloudFoundry_) using _Pivotal Cloud Cache_ (PCC), we no longer want to maintain the data locally.
 
 Without persistence, we would lose all our data if the client application were shutdown since the data is maintained
 in-memory.  Additionally, by maintaining the data locally, other client applications, or even other instances of our
-existing application (e.g. in a Microservices landscape) would not be able to use this data.  Useless!
+existing application (e.g. in a Microservices landscape) would not be able to use this data, which is useless!
 
-To switch to a client/server topology, we need to configure and bootstrap an Apache Geode cluster.
+To switch to a client/server topology, we need to first configure and bootstrap an Apache Geode cluster.
 
 The Example Code for this Guide already provides the necessary Geode shell script (_Gfsh_) to start a cluster:
 
@@ -949,7 +937,7 @@ NOTE: Be sure to change the `@SBDG_HOME@` placeholder variable with the location
 
 The _Gfsh_ shell script starts an Apache Geode cluster with 1 _Locator_ and 2 _Servers_.
 
-The output from the script will look similar to:
+The output from the shell script will look similar to:
 
 .Starting the cluster
 [source,txt]
@@ -1011,7 +999,7 @@ Command-3 : start server --name=ServerTwo --log-level=config --server-port=50505
 Status    : PASSED
 ----
 
-After the cluster is started, Gfsh will connect to the _Locator/Manager_ where you can then inspect the cluster:
+After the cluster is started, _Gfsh_ will connect to the _Locator/Manager_ where you can then inspect the cluster:
 
 .List & Decsribe Members
 [source,txt]
@@ -1066,18 +1054,19 @@ Client Connections       : 0
 
 Note that we do not currently have any server-side Regions (e.g. "_/Customers_") defined.  This is deliberate!
 
-.List Regions (No existing Regions found)
+.List Regions (No Regions Found)
 [source,txt]
 ----
 gfsh>list regions
 No Regions Found
 ----
 
-Now, without any code or configuration change, simply run the CRM application again!
+Now, without any code or configuration changes, simply run the CRM application again!
 
 .Application Log Output in Client/Server Topology
 [source,txt]
 ----
+...
 2019-09-16 14:54:28.594  INFO 10489 --- [           main] example.app.crm.CrmApplication           : Started CrmApplication in 6.418627159 seconds (JVM running for 6.978)
 Saving Customer [Customer(name=JonDoe)]...
 2019-09-16 14:54:29.451  INFO 10489 --- [           main] o.a.geode.pdx.internal.TypeRegistry      : Caching PdxType[dsid=0, typenum=3302226
@@ -1091,7 +1080,7 @@ Customer was [Customer(name=JonDoe)]
 
 The output is nearly identical except for the PDX Type metadata registration.  We will explain this more below.
 
-Now, list Regions in the cluster again:
+Now, list Regions in the cluster again, using _Gfsh_:
 
 ."/Customers" Region was created
 [source,txt]
@@ -1102,8 +1091,9 @@ List of regions
 Customers
 ----
 
-The "_/Customers_" Region has been magically created!  When we describe the "_/Customers_" Region, we can see that
-it has 1 entry:
+The "_/Customers_" Region has been magically created!
+
+When we describe the "_/Customers_" Region, we can see that it has 1 entry:
 
 .Describe the "/Customers" Region
 [source,txt]
@@ -1124,14 +1114,14 @@ Region | size        | 1
 ----
 
 The "_/Customers_" Region entry is from the Spring Boot `ApplicationRunner` bean, which added `Customer` "_JonDoe_"
-at runtime on startup.
+at runtime during startup of the application.
 
 You will also notice that the server-side "_/Customers_" Region is created as a `PARTITION` Region, which provides
 the best data management policy and organization for transactional data.  The "_/Customers_" Region is being hosted
 on our 2 _Servers_, "ServerOne" and "ServerTwo".
 
 WARNING: You must have redundancy (and optionally, persistence) configured in your cluster to prevent (complete)
-data loss as well as implement high-availability (HA).
+data loss, which forms the basis for high-availability (HA) in Apache Geode and Pivotal Cloud Cache (PCC).
 
 We can query "_JonDoe_" from _Gfsh_:
 
@@ -1150,15 +1140,15 @@ id | name
 ----
 
 Thanks to the `@EnableClusterAware` annotation, the application seamlessly switched from local to a client/server
-topology without so much as a single line of code or any configuration changes!
+topology without so much as a single line of code, or any configuration changes!
 
 Technically, SBDG identified the configuration of the client application and pushed configuration metadata for the
-required server-side, "_/Customers" Region up to the cluster.  Not only that, but the configuration metadata was sent
+required server-side, "_/Customers_" Region up to the cluster.  Not only that, but the configuration metadata was sent
 in such a way that the cluster will remember the configuration on restarts and when new nodes are added, they will
 get the same configuration.
 
 For instance, if we start another server, it too will have the "_/Customers_" Region, which is important when
-you want to "scale-out".
+you are "scaling-out".
 
 .Add yet another server
 [source,txt]
@@ -1208,41 +1198,44 @@ Client Connections       : 0
 
 You can see that "ServerThree" is hosting the "_/Customers_" Region.
 
-NOTE: You can still access this application from your Web client (e.g. Web browser) and view the same data.
+NOTE: You can still access this application from your Web client (e.g. Web browser) and view the data.
 
-Once again, SBDG is providing you with tremendous power and convenience that you may simply not be aware of.
+Once again, SBDG is providing you with tremendous power and convenience that you may not be aware of.
 
-While there are very apparent things happening, there are a few non-apparent things happening as well, in addition to
-the aforementioned things in the last section, we now benefit from:
+While there are very apparent things happening, there are also a few non-apparent things happening as well.
+In addition to the aforementioned things in the last section, we are now benefiting from:
 
 1. SBDG appropriately configured and relied on Apache Geode internal features to connect the client to the cluster.
 2. Configuration metadata for our application's required client Regions (e.g. "_/Customers_") was sent to the cluster
 and created on the servers to leverage the client/server topology.
-3. SBDG auto-configured PDX, Apache Geode's highly powerful Serialization framework and alternative to
-Java Serialization.
+3. SBDG _auto-configured_ PDX, Apache Geode's highly powerful Serialization framework and alternative to
+_Java Serialization_.
 
 Once we migrate to a managed cloud platform environment, we'll see the full effects of SBDG's _auto-configuration_
 at play.
 
 .PDX vs. Java Serialization
 *****
-Anytime you need to send data over the network, persist or overflow data to disk, then your objects need to be
-serializable.
+Anytime you need to send data over the network, persist or overflow data to disk, your objects need to be serializable.
 
 SBDG employs Apache Geode's {apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX Serialization]
 framework so your application entity classes do not need to implement `java.io.Serializable`.  In other cases,
-implementing `java.io.Serializable` may not even be possible if your application types are composed of types
+implementing `java.io.Serializable` may not even be possible if your application domain types are composed of types
 from 3rd party libraries for which you have no control over.
 
-Perhaps you simply don't want to use Java Serialization given the inherit overhead of the Java Serialization format.
+Perhaps you don't want to use _Java Serialization_ given the inherit overhead of the _Java Serialization_ format.
 
 In any case, using Apache Geode PDX Serialization is ideal if you have large number of objects forming a complex graph
 where missing a type that needs to be serialized is easy to do.  PDX allows you to query data in serialized form
 and even allows non-Java clients (e.g. native clients written in C#/C++) to access the same data.
 
 Using PDX also prevents you from having to configure the cluster to include the application entity classes on the
-servers classpath, which is apparent if you try to deserialize the data on the server, for example by using a `SELECT *`
-OQL query that would cause a deserialization.  For example:
+servers classpath, which is apparent if you try to deserialize the data on the server.
+
+For instance, if you had written the OQL query ran in _Gfsh_ above as `SELECT *` this would have caused
+a deserialization.
+
+For example:
 
 .OQL Query causing a deserialization
 [source,txt]
@@ -1252,10 +1245,13 @@ Result  : false
 Message : Could not create an instance of a class example.app.crm.model.Customer
 ----
 
-A deserialization happens in this case because the '*' project causes a toString() method invocation on the object
-to occur.  Anytime a method is invoked on the object in the project of the query, it will cause the object to be
-deserialized.  This is why PDX Serialization and {apache-geode-docs}/developing/delta_propagation/chapter_overview.html[Delta Propagation]
+A deserialization happens in this case because the '*' projection causes the `toString()` method on the queried object
+to be called.  Anytime a method is invoked on the object in the projection, or even predicate, of a query, it will cause
+the object to be deserialized.  This is also why PDX Serialization and {apache-geode-docs}/developing/delta_propagation/chapter_overview.html[Delta Propagation]
 do not mix naturally.
+
+NOTE: _Delta Propagation_ is implemented by calling methods: `Delta.toDelta(:DataOutput)`
+and `Delta.fromDelta(:DataInput)` on the `Delta` implementing application domain class type of the object.
 
 If SBDG's Auto-configuration for PDX was disabled, such as by doing:
 
@@ -1336,8 +1332,8 @@ Caused by: java.io.NotSerializableException: example.app.crm.model.Customer
 Using SBDG cluster configuration from a client is convenient during development.  However, the Spring team recommends
 users use explicit configuration when deploying their apps to production and setting up the environment.
 
-Using `@EnableClusterAware`, or the `@EnableClusterConfiguration annotation directly, saves you from having to create
-a Region (server-side) using _Gfsh_ every time you add a new entity:
+Using `@EnableClusterAware`, or the `@EnableClusterConfiguration` annotation directly, saves you from having to create
+a Region on the server-side using _Gfsh_ every time you add a new persistent entity class:
 
 .Create server-side Region manually
 [source,txt]
@@ -1345,8 +1341,9 @@ a Region (server-side) using _Gfsh_ every time you add a new entity:
 gfsh> create region --name=Example --type=PARTITION ...
 ----
 
-While this can be sripted and the script can be checked into source control (a definitive plus) the same as
-the application code, you sill need to create the matching Region on the client.
+While this can be scripted and the script can be checked into source control (a definitive plus) the same as
+the application code, you sill need to create matching Regions on the client, for which there is no assistance
+provided by Apache Geode or Pivotal Cloud Cache.
 
 This is why `@EnableClusterAware` will help you be much more productive during development.  After you are ready to
 promote the application to the next environment, it is a simple matter to {apache-geode-docs}/tools_modules/gfsh/command-pages/export.html#topic_mdv_jgz_ck[export]
@@ -1355,36 +1352,38 @@ that same configuration into another environment.
 
 The exported configuration can be checked into the source control and versioned along with the application
 as the code evolves.
+
+Again, this is highly recommended in practice.
 *****
 
 [[spring-geode-samples-getting-started-run-app-cloudplatform]]
-== Run the Application in a Managed Cloud Platform Environment
+== Run the Application in a Cloud Platform Environment
 
 Now that we have built and ran our application locally as well as in a client/server topology, we are ready to push
 the application to a managed cloud platform environment, like _Pivotal Platform_ using _Pivotal Cloud Cache_ (PCC).
 
 This is the final step in our journey to the cloud and SBDG makes this a non-event!
 
-While SBDG handles most application development concerns, _Pivotal Cloud Cache_ (PCC) in conjunction with
-_Pivotal Platform_ handles most operational concerns.
+While SBDG handles most application development concerns, _Pivotal Cloud Cache_ (PCC), in conjunction with
+_Pivotal Platform_, handles most operational concerns.
 
 .Using Pivotal Platform
 *****
 To deploy this application to _Pivotal Platform_ and use _Pivotal Cloud Cache_ (PCC), you will need access to
 a _Pivotal Platform_ environment (e.g. PWS) with the PCC tile installed.
 
-Please see https://run.pivotal.io/[Pivotal Web Services] website for more details on how to get started.
+Please see https://run.pivotal.io/[Pivotal Web Services] (PWS) website for more details on how to get started.
 
-TIP: Alternatively, you can run this example in a locally host _Pivotal Platform_ environment called
-https://docs.pivotal.io/pcf-dev/index.html[PCDev].  See <<cloudfoundry-geode,Hybrid Cloud Environments>>
-for more details.
+TIP: Alternatively, you can run this example in a locally hosted _Pivotal Platform_ environment called
+https://docs.pivotal.io/pcf-dev/index.html[PCF Dev].
+See link:../cloudfoundry.html#cloudfoundry-geode[Hybrid Cloud Environments] for more details.
 *****
 
-Once you have secured a _Pivotal Platform_ environment and installed the necessary tools (e.g. CF CLI), then you can
+Once you have acquired a _Pivotal Platform_ environment and installed the required tools (e.g. CF CLI), then you can
 package the application and deploy (i.e. "_push_") it to _Pivotal Platform_.
 
-Before we package the application, we are going to switch the "_Spring (Boot) for Apache Geode_" dependency in our
-application Maven POM file from:
+Before we package the application, we must switch the "_Spring (Boot) for Apache Geode_" dependency in our application
+Maven POM file from:
 
 .Spring Boot for Apache Geode dependency
 [source,xml]
@@ -1410,8 +1409,104 @@ To:
 </dependency>
 ----
 
-Additionally, and for specifically deploying to _Pivotal Platform_, we are going to create a `manifest.yml` file
-containing details about the services our application requires at runtime to function properly:
+.Acquiring Pivotal Cloud Cache Bits
+*****
+In order to acquire the Pivotal Cloud Cache (PCC) bits used by your Spring Boot application, you must sign up
+and register on https://network.pivotal.io/[PivNet].
+
+This should include instructions on how to configure your application Maven POM file with the necessary `<repository>`
+declaration for acquiring the _Pivotal Cloud Cache_ bits pulled in by the `org.springframework.geode:spring-cloudcache-starter`
+SBDG application dependency along with the necessary settings in `~/.m2/settings.xml` to authenticate and access
+the Pivotal Commercial Repository.
+
+This is absolutely necessary since Pivotal Cloud Cache (PCC) bits are not available in _Maven Central_.
+
+You can also find more details on this process in the Pivotal GemFire
+https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/gemfire/getting_started/installation/obtain_gemfire_maven.html[documentation].
+*****
+
+.Rrequired Spring Boot Actuator Bits
+*****
+As of Apache Geode 1.9 and Pivotal GemFire 9.8, upon which Pivotal Cloud Cache (PCC) 1.8 is {pivotal-cloudcache-docs}/product-snapshot.html[based],
+both GemFire and Geode require and declare Micrometer on the classpath as a compile-time depedency.
+
+Technically, the Micrometer bits are pulled in by `org.apache.geode:geode-core:1.9.0` and the Micrometer version
+is determined by the version of Spring Boot you are using:
+
+.Micrometer compile-time dependency
+[source,txt]
+----
+[INFO] |  |  |  +- org.apache.geode:geode-core:jar:1.9.0:compile
+...
+[INFO] |  |  |  |  +- io.micrometer:micrometer-core:jar:1.2.1:compile
+----
+
+As of this writing, due to an https://github.com/cloudfoundry/java-buildpack-metric-writer/issues/6[Issue]
+in the _Java buildpack_ for CloudFoundry, you are also required to put Spring Boot Actuator on the classpath
+for your Spring Boot application using Apache Geode or PCC:
+
+.Declaring Spring Boot Actuator on the application classpath
+[source.xml]
+[subs="verbatim,attributes"]
+----
+<dependency>
+  <groupId>org.springframework.geode</groupId>
+  <artifactId>spring-cloudcache-starter-actuator</artifactId>
+  <version>{version}</version>
+</dependency>
+----
+
+This is because the _Java buildpack_ detects Micrometer on the application classpath, which Apach Geode or PCC depends
+on and pulls in, therefore the _Java buildpack_ will enable Spring Boot's Actuator functionality, which if not declared
+on your application classpath as well, will lead to the following Exception in a CloudFoudry environment when starting
+your app:
+
+.Exception in CloudFoundry
+[source,txt]
+----
+OUT java.lang.IllegalArgumentException: Could not find class [org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration]
+OUT     at org.springframework.util.ClassUtils.resolveClassName(ClassUtils.java:327) ~[spring-core-5.2.0.RC2.jar:5.2.0.RC2]
+OUT     at org.springframework.core.annotation.TypeMappedAnnotation.adapt(TypeMappedAnnotation.java:479) ~[spring-core-5.2.0.RC2.jar:5.2.0.RC2]
+OUT     at org.springframework.core.annotation.TypeMappedAnnotation.getValue(TypeMappedAnnotation.java:403) ~[spring-core-5.2.0.RC2.jar:5.2.0.RC2]
+...
+----
+
+On the other hand, if you try to exclude Micrometer from the Apache Geode or PCC dependency, for example:
+
+.Excluding the Micrometer dependency from `spring-cloudcache-starter`
+[source,txt]
+[subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>org.springframework.geode</groupId>
+    <artifactId>spring-cloudcache-starter</artifactId>
+    <version>{version}</version>
+    <exclusions>
+        <exclusion>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+----
+
+Then, you will get past the _Java buildpack_ Exception, but you will encounter another Exception when Spring Boot
+tries to bootstrap Apache Geode on startup:
+
+.Exception in Apache Geode
+[source,txt]
+----
+[OUT] Caused by: java.lang.NoClassDefFoundError: io/micrometer/core/instrument/MeterRegistry
+[OUT]     at org.apache.geode.cache.client.ClientCacheFactory.basicCreate(ClientCacheFactory.java:261) ~[geode-core-9.8.3.jar:na]
+----
+
+Therefore, you must include Spring Boot Actuator on your Spring Boot application classpath when deploying
+to Pivotal Platform and using Pivotal Cloud Cache (PCC).  Again, the easiest way to do that is include the
+`org.springframework.geode:spring-cloudcache-starter-actuator` dependency on your application classpath.
+*****
+
+Additionally, and specifically when deploying to _Pivotal Platform_, we will create a `manifest.yml` file
+containing details about the services our application requires at runtime to function properly up in the cloud:
 
 .Manifest.yml
 [source,yml]
@@ -1419,11 +1514,12 @@ containing details about the services our application requires at runtime to fun
 include::{samples-dir}/intro/getting-started/manifest.yml[]
 ----
 
-The `manifest.yml` file is like a deployment descriptor for our application to the managed cloud platform environment.
+The `manifest.yml` file is a type of deployment descriptor for our application to inform the cloud platform about
+the runtime environment required to run our application.
 
-A key component for packaging this application to be deployed to a managed cloud platform environment is the
-{spring-boot-docs}/build-tool-plugins-maven-plugin.html[Spring Boot Maven Plugin], which was added to the generated
-project by _Spring Initializer_:
+In order to properly package the application for deployment to a managed cloud platform environment, such as
+_Pivotal Platform_, you use the {spring-boot-docs}/#build-tool-plugins-maven-plugin[Spring Boot Maven Plugin],
+which was added to the generated project by _Spring Initializer_:
 
 .Spring Boot Maven Plugin
 [source,xml]
@@ -1438,7 +1534,7 @@ project by _Spring Initializer_:
 </build>
 ----
 
-Then, you only need to run the following `mvn` command from the command-line:
+Then, you only need to run the `mvn` command from the command-line to package the CRM application:
 
 .Maven Package Command
 [source,txt]
@@ -1466,7 +1562,268 @@ drwxr-xr-x   4 jblum  staff       128 Sep 16 18:21 surefire-reports
 drwxr-xr-x   3 jblum  staff        96 Sep 16 18:21 test-classes
 ----
 
-...
+The `crm-0.0.1-SNAPSHOT.jar` file contains the entire application: classes, configuration files and all the dependencies
+needed to run this application in the cloud.
+
+Now, we are ready to deploy, or "push" our CRM application up to the cloud.
+
+The first thing you will need to do is login to your _Pivotal Platform_ environment from the command-line
+using the CF CLI tool (i.e. `cf`):
+
+NOTE: The following CF CLI commands show what we did in our _Pivotal Platform_ environment.  You will follow a similar
+procedure for your _Pivotal Platform_ environment.  Sensitive information has be stared (*****) out.
+
+.Login to the Pivotal Platform environment
+[source,txt]
+----
+$ cf login -a <your API endpoint here> --sso
+API endpoint: *****
+
+Temporary Authentication Code ( Get one at https://login.run.****/passcode )>
+Authenticating...
+OK
+
+Select an org (or press enter to skip):
+1. pivot-jblum
+
+Org>
+
+
+API endpoint:   https://api.run.***** (API version: 2.139.0)
+User:           *****
+No org or space targeted, use 'cf target -o ORG -s SPACE'
+----
+
+The "_Temporary Authentication Code_" (i.e. "passcode") is obtained by following the provided HTTPS URL
+in your Web browser.
+
+After you successfully authenticate you can set your target Org and Space to which your Spring Boot applications
+will be deployed:
+
+.Set the target Organization and Space
+[source,txt]
+----
+$ cf target -o pivot-jblum -s playground
+api endpoint:   https://api.run.*****
+api version:    2.139.0
+user:           *****
+org:            pivot-jblum
+space:          playground
+----
+
+Now you can push your CRM, Spring Boot application up to your cloud environment:
+
+.Push your app
+[source,txt]
+[subs="verbatim,attributes"]
+----
+$ cf push crm-app -u none --no-start -p build/libs/spring-geode-samples-getting-started-1.2.0.BUILD-SNAPSHOT.jar
+Pushing from manifest to org pivot-jblum / space playground as *****...
+Using manifest file /Users/jblum/spring-boot-data-geode/spring-geode-samples/intro/getting-started/manifest.yml
+Getting app info...
+Creating app with these attributes...
++ name:                crm-app
+  path:                /Users/jblum/spring-boot-data-geode/spring-geode-samples/intro/getting-started/build/libs/spring-geode-samples-getting-started-{version}.jar
+  buildpacks:
++   https://github.com/cloudfoundry/java-buildpack.git
++ health check type:   none
++ instances:           1
++ memory:              768M
+  services:
++   pccServiceOne
+  routes:
++   crm-app.apps.*****
+
+Creating app crm-app...
+Mapping routes...
+Binding services...
+Comparing local files to remote cache...
+Packaging files to upload...
+Uploading files...
+ 14.23 MiB / 14.23 MiB [===============================================================================================
+==========================================================================================================] 100.00% 22s
+
+Waiting for API to complete processing files...
+
+name:              crm-app
+requested state:   stopped
+routes:            crm-app.apps.*****
+last uploaded:
+stack:
+buildpacks:
+
+type:           web
+instances:      0/1
+memory usage:   768M
+     state   since                  cpu    memory   disk     details
+#0   down    2019-09-27T06:12:32Z   0.0%   0 of 0   0 of 0
+----
+
+The CRM, Spring Boot application is now deployed to the cloud.
+
+We can list the deployed apps and their current state:
+
+.List current deployed apps
+[source,txt]
+----
+$ cf apps
+Getting apps in org pivot-jblum / space playground as *****...
+OK
+
+name                 requested state   instances   memory   disk   urls
+boot-pcc-demo        stopped           0/1         768M     1G     boot-pcc-demo-fantastic-kudu.apps.*****
+crm-app              stopped           0/1         768M     1G     crm-app.apps.*****
+CustomerServiceApp   stopped           0/1         768M     1G     customerserviceapp.apps.*****
+data-pcc-demo        stopped           0/1         768M     1G
+----
+
+We see the "_crm-app_" in the table of apps, which is currently stopped.
+
+We can either start and stop the app, restage the app, bind services, and so on, all from the command-line using `cf`,
+or we can perform these actions from within _Pivotal AppsManager_, which is what we will do:
+
+image::../images/pvtl-appsmanager-org-space-apps.png[]
+
+Again, we see the "_crm-app_".  You can click on the app name and drill in to get more details:
+
+image::../images/pvtl-appsmanager-org-space-apps-crm-app-overview.png[]
+
+If you click on "_Service (1)_" in the left navigation bar, you will see that the "_crm-app_" is bound to
+the "_pccServiceOne_" Pivotal Cloud Cache service instance:
+
+image::../images/pvtl-appsmanager-org-space-apps-crm-app-service.png[]
+
+If you click on "_Settings_" in the left navigation bar and "REVEAL ENV VARS" you will find the "_Gfsh login string_"
+that you can use to connect to the Pivotal Cloud Cache cluster using _Gfsh_ from your local development environment:
+
+image::../images/pvtl-appsmanager-org-space-apps-crm-app-settings.png[]
+
+Let's do that now.  Copy the "_Gfsh login string_" and enter it in _Gfsh_:
+
+.Connect to the PCC cluster using Gfsh
+[source,txt]
+----
+$ echo $GEMFIRE
+/Users/jblum/pivdev/pivotal-gemfire-9.8.4
+
+$ gfsh
+    _________________________     __
+   / _____/ ______/ ______/ /____/ /
+  / /  __/ /___  /_____  / _____  /
+ / /__/ / ____/  _____/ / /    / /
+/______/_/      /______/_/    /_/    9.8.4
+
+Monitor and Manage Pivotal GemFire
+
+gfsh>connect --url=https://cloudcache-fd422700-599b-4beb-bbbe-43d5540e80f6.run.*****/gemfire/v1 --user=cluster_operator_cI8xe8EeD3Bb1ffAxavQyw --password=RzIpqp2pnLy2aBT4t3V4g --skip-ssl-validation
+key-store:
+key-store-password:
+key-store-type(default: JKS):
+trust-store:
+trust-store-password:
+trust-store-type(default: JKS):
+ssl-ciphers(default: any):
+ssl-protocols(default: any):
+ssl-enabled-components(default: all):
+Successfully connected to: GemFire Manager HTTP service @ https://cloudcache-fd422700-599b-4beb-bbbe-43d5540e80f6.run.*****/gemfire/v1
+
+Cluster-0 gfsh>list members
+                      Name                       | Id
+------------------------------------------------ | -------------------------------------------------------------------------------------
+locator-1cabab56-b2d2-4ed9-8931-a1ea64cd8ce2     | 192.168.12.32(locator-1cabab56-b2d2-4ed9-8931-a1ea64cd8ce2:6:locator)<ec><v163>:56152
+locator-0dd76536-7bb0-43d7-ae98-f2d0389b66ae     | 192.168.14.38(locator-0dd76536-7bb0-43d7-ae98-f2d0389b66ae:6:locator)<ec><v173>:56152
+locator-38e07e17-18cb-45ab-bdf1-69201c1c8db9     | 192.168.14.39(locator-38e07e17-18cb-45ab-bdf1-69201c1c8db9:6:locator)<ec><v181>:56152
+cacheserver-b7a9665a-e672-42c9-b8f6-e2ada2cbf003 | 192.168.14.40(cacheserver-b7a9665a-e672-42c9-b8f6-e2ada2cbf003:7)<v183>:56152
+cacheserver-5a9305cf-7bd9-47c4-b624-3ef37c8ab92e | 192.168.14.79(cacheserver-5a9305cf-7bd9-47c4-b624-3ef37c8ab92e:6)<v185>:56152
+cacheserver-7c8e247d-c6ae-42a6-88b0-ce5d61062463 | 192.168.14.80(cacheserver-7c8e247d-c6ae-42a6-88b0-ce5d61062463:7)<v187>:56152
+cacheserver-a2234d3d-bc38-4acf-bf37-487bdc3e7842 | 192.168.14.81(cacheserver-a2234d3d-bc38-4acf-bf37-487bdc3e7842:7)<v189>:56152
+
+Cluster-0 gfsh>list regions
+No Regions Found
+----
+
+Now, we can start the CRM, Spring Boot application using _Pivotal AppsManager_ from the "_crm-app Overview_" page.
+
+The "_crm-app_" will be staged and then started:
+
+image::../images/pvtl-appsmanager-org-space-apps-crm-app-start.png[]
+
+Click the "_play_" button in the upper right corner above the log output frame to tail the log file of the CRM,
+Spring Boot application.  Eventually, you should see the application log the interaction with "_JonDoe_".
+
+image::../images/pvtl-appsmanager-org-space-apps-crm-app-logs-output.png[]
+
+As you can see in the image above, the application successfully logged the interactions with "_JonDoe_".  This only
+appears in red "[ERR]" since the interactions with logged with `System.err.printf` statements.
+
+If you now click on "VIEW APP" link in the upper right-hand corner, it will open a new tab to the CRM Web app's
+home page:
+
+image::../images/getting-started-crm-app-homepage.png[]
+
+Then, you get all customers in JSON by using HTTP `GET http://host:port/customers` REST API Web service endpoint:
+
+image::../images/getting-started-crm-app-getallcustomers.png[]
+
+Now, back in _Gfsh_, you can see that the 1) "_/Customers_" Region was added to the cluster of PCC servers
+and that 2) "_JonDoe_" was persisted to the cluster and you are able to query for "_JonDoe_".
+
+.Listing and Describing the "/Customers" server Region and Querying for "JonDoe"
+[source,txt]
+----
+Cluster-0 gfsh>list regions
+List of regions
+---------------
+Customers
+
+
+Cluster-0 gfsh>describe region --name=/Customers
+Name            : Customers
+Data Policy     : partition
+Hosting Members : cacheserver-a2234d3d-bc38-4acf-bf37-487bdc3e7842
+                  cacheserver-5a9305cf-7bd9-47c4-b624-3ef37c8ab92e
+                  cacheserver-7c8e247d-c6ae-42a6-88b0-ce5d61062463
+                  cacheserver-b7a9665a-e672-42c9-b8f6-e2ada2cbf003
+
+
+Non-Default Attributes Shared By Hosting Members
+
+
+ Type  |    Name     | Value
+------ | ----------- | ---------
+Region | size        | 1
+       | data-policy | PARTITION
+
+
+Cluster-0 gfsh>query --query="SELECT customer.id, customer.name FROM /Customers customer"
+Result : true
+Limit  : 100
+Rows   : 1
+
+
+id | name
+-- | ------
+1  | JonDoe
+----
+
+You successfully deployed the CRM, Spring Boot Apache Geode/Pivotal Cloud Cache `ClientCache` application to the cloud!
+
+In this final incarnation of our CRM, Spring Boot application, SBDG yet again handled many different concerns for us
+so we did not need to.  This is in addition to all the things mentioned above when running the application locally
+as well as running the application using a client/server topology.  Now, we also benefit from:
+
+1. SBDG figures out the connection criteria needed to connect your client to the servers in the Pivotal Cloud Cache
+(PCC) cluster, which is technically extracted from the VCAP environment.  SBDG will connect the Spring Boot app to
+the PCC Locators.
+2. SBDG automatically authenticates your Spring Boot app with the PCC cluster providing your app was correctly bound to
+the PCC service instance so the app can access the servers in the cluster.
+3. If Transport Layer Security (TLS) were required and SSL enabled, you could simply set the
+`spring.data.gemfire.security.ssl.use-default-context` property in Spring Boot's `application.properties`
+and SBDG would connect your client to the Locator(s) and Servers in the PCC cluster using SSL.
+4. SBDG still sends configuration metadata to the PCC cluster to ensure the correct Region and Index configuration
+on the server-side to match your client app.
+
+This is very powerful, and it greatly simplifies development, especially are you traversing environments.
 
 [[spring-geode-samples-getting-started-summary]]
 == Summary
@@ -1475,12 +1832,12 @@ In this guide, we saw first-hand the power of Spring Boot for Apache Geode (SBDG
 Spring Boot applications.
 
 Apache Geode can truly make your Spring Boot applications highly resilient to failures, highly available, performant
-in both throughput and low-latency, and without sacrificing consistency, which is paramount to any data intensive
+(i.e. high throughput and low latency), without sacrificing consistency, which is paramount to any data intensive
 application.
 
-SBDG handles a lot of low-level application concerns so you simply do not have to.  Your focus, as an enterprise
-application developer, can remain on building the application to meet your customers' needs, collect feedback,
-iterate rapidly, and realize the value proposition sooner.
+SBDG handles a lot of low-level application concerns so you do not have to.  Your focus, as an application developer,
+can remain on building the application to meet your customers' needs, collect feedback, iterate rapidly, and realize
+the value proposition sooner.
 
 Indeed, our intended goal is to make developing Apache Geode applications with Spring, and Spring Boot in particular,
 a highly productive and enjoyable experience.
