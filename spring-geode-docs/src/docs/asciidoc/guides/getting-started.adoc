@@ -52,6 +52,8 @@ as the new brand name.
 
 Let's begin!
 
+link:../index.html#geode-samples[Back]
+
 [[geode-samples-getting-started-spring-initializer]]
 == Beginning with Spring Initializer at start.spring.io
 
@@ -1843,3 +1845,5 @@ Indeed, our intended goal is to make developing Apache Geode applications with S
 a highly productive and enjoyable experience.
 
 We hope you enjoy!
+
+link:../index.html#geode-samples[Back]
