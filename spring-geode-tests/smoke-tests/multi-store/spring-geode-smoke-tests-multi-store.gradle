@@ -1,0 +1,32 @@
+plugins {
+	id "io.freefair.lombok" version "3.2.1"
+}
+
+apply plugin: 'io.spring.convention.spring-test'
+
+description = "Smoke Tests to assert that a multi-store Spring Data project using JPA for database access and Apache Geode for caching works as expected."
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+
+	implementation "org.assertj:assertj-core"
+	implementation "org.projectlombok:lombok"
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation "org.springframework.geode:spring-geode-starter:$version"
+
+	runtime "org.hsqldb:hsqldb"
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+}
+
+test {
+	useJUnitPlatform()
+}
