@@ -1827,6 +1827,27 @@ on the server-side to match your client app.
 
 This is very powerful, and it greatly simplifies development, especially are you traversing environments.
 
+[[spring-geode-samples-getting-started-run-app-hybridenv]]
+== Running the Application in a Hybrid Environment
+
+While it is possible to run the CRM, Spring Boot `ClientCache` application in a Hybrid Cloud Environment, we will not
+specifically cover the details of doing so in this guide.
+
+Running in a Hybrid Cloud Environment specifically means deploying your CRM, Spring Boot `ClientCache` application to
+a managed cloud platform environment, such as Pivotal Platform, but connect the app to an externally managed
+Apache Geode or Pivotal GemFire cluster, i.e. the GemFire/Geode cluster is running and managed off platform.
+
+NOTE: As of this writing, the inverse is also being explored, running your Spring Boot applications off platform,
+but connecting those apps to managed data services (e.g. Pivotal Cloud Cache (PCC)) on platform.
+
+There may be cases where you are unable to move your data management architecture for your applications entirely to
+the cloud.  In those cases, SBDG supports a Hybrid Cloud Architecture, that is both an on-prem and off-prem arrangement.
+Indeed, this is perhaps a crucial step in moving to the cloud, being able to migrate application services when it is
+applicable or possible to do so.
+
+You can find more information on running in a Hybrid Cloud Environment,
+link:../cloudfoundry.html#cloudfoundry-geode[here].
+
 [[spring-geode-samples-getting-started-summary]]
 == Summary
 
