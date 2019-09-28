@@ -41,7 +41,10 @@ import example.app.crm.repo.CustomerRepository;
  * @since 1.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(
+	properties = { "spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=false" },
+	webEnvironment = SpringBootTest.WebEnvironment.MOCK
+)
 @SuppressWarnings("unused")
 public class CrmApplicationIntegrationTests extends IntegrationTestsSupport {
 
