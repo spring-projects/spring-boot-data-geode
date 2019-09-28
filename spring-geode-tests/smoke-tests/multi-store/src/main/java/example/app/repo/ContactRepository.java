@@ -28,6 +28,7 @@ import example.app.model.Contact;
  * @see example.app.model.Contact
  * @since 1.2.0
  */
+//public interface ContactRepository extends JpaRepository<Contact, String> {
 public interface ContactRepository extends CrudRepository<Contact, String> {
 
 }

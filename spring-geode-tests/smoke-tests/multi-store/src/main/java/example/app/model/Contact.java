@@ -37,6 +37,8 @@ import lombok.ToString;
  */
 @Data
 @Entity
+//@Document
+//@Region("Contacts")
 @Table(name = "Contacts")
 @ToString(of = "name")
 @EqualsAndHashCode(of = "name")
