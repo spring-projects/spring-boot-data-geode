@@ -85,8 +85,8 @@ Click the "_Generate the project_" button.  This generates a *Java 8* project wi
 
 Download the ZIP file and unpack it to your desired working directory.
 
-You can then use your favorite IDE (e.g. https://www.jetbrains.com/idea/[IntelliJ IDEA] or https://spring.io/tools[Spring Tool Suite] (STS))
-to open the generated project.
+You can then use your favorite IDE (e.g. https://www.jetbrains.com/idea/[IntelliJ IDEA]
+or https://spring.io/tools[Spring Tool Suite] (STS)) to open the generated project.
 
 You are ready to begin developing your Spring Boot, Apache Geode `ClientCache` application.
 
@@ -134,7 +134,9 @@ will startup and run as an Apache Geode `ClientCache` application:
 .Application log output
 [source,txt]
 ----
-/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/bin/java "-javaagent:/Applications/IntelliJ IDEA 19 CE.app/Contents/lib/idea_rt.jar=57178:/Applications/IntelliJ IDEA 19 CE.app/Contents/bin" ... example.app.crm.CrmApplication
+/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/bin/java "-javaagent:/Applications
+    /IntelliJ IDEA 19 CE.app/Contents/lib/idea_rt.jar=57178:/Applications/IntelliJ IDEA 19 CE.app/Contents/bin" ...
+        example.app.crm.CrmApplication
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -144,15 +146,25 @@ will startup and run as an Apache Geode `ClientCache` application:
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::  (v2.2.0.BUILD-SNAPSHOT)
 
-2019-09-15 23:16:15.539  INFO 7156 --- [           main] example.app.crm.CrmApplication           : Starting CrmApplication on jblum-mbpro-2.local with PID 7156 (/Users/jblum/pivdev/spring-boot-data-geode/spring-geode-samples/intro/getting-started/out/production/classes started by jblum in /Users/jblum/pivdev/spring-boot-data-geode)
-2019-09-15 23:16:15.545  INFO 7156 --- [           main] example.app.crm.CrmApplication           : No active profile set, falling back to default profiles: default
-2019-09-15 23:16:16.058  INFO 7156 --- [           main] o.s.g.c.a.ClusterAwareConfiguration      : Failed to connect to localhost[40404]
-2019-09-15 23:16:16.061  INFO 7156 --- [           main] o.s.g.c.a.ClusterAwareConfiguration      : Failed to connect to localhost[10334]
-2019-09-15 23:16:16.220  INFO 7156 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data repositories in DEFAULT mode.
-2019-09-15 23:16:16.234  INFO 7156 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 7ms. Found 0 repository interfaces.
-2019-09-15 23:16:16.413  INFO 7156 --- [           main] o.s.c.a.ConfigurationClassEnhancer       : @Bean method PdxConfiguration.pdxDiskStoreAwareBeanFactoryPostProcessor is non-static and returns an object assignable to Spring's BeanFactoryPostProcessor interface. This will result in a failure to process annotations such as @Autowired, @Resource and @PostConstruct within the method's declaring @Configuration class. Add the 'static' modifier to this method to avoid these container lifecycle issues; see @Bean javadoc for complete details.
-2019-09-15 23:16:16.541  INFO 7156 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration' of type [org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration$$EnhancerBySpringCGLIB$$7fa0e8c9] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2019-09-15 23:16:17.608  INFO 7156 --- [           main] o.a.g.internal.logging.LoggingSession    :
+... : Starting CrmApplication on jblum-mbpro-2.local with PID 7156
+     (.../spring-boot-data-geode/spring-geode-samples/intro/getting-started/out/production/classes
+     started by jblum in /Users/jblum/pivdev/spring-boot-data-geode)
+... : No active profile set, falling back to default profiles: default
+... : Failed to connect to localhost[40404]
+... : Failed to connect to localhost[10334]
+... : Bootstrapping Spring Data repositories in DEFAULT mode.
+... : Finished Spring Data repository scanning in 7ms. Found 0 repository interfaces.
+... : @Bean method PdxConfiguration.pdxDiskStoreAwareBeanFactoryPostProcessor is non-static
+      and returns an object assignable to Spring's BeanFactoryPostProcessor interface. This
+      will result in a failure to process annotations such as @Autowired, @Resource and
+      @PostConstruct within the method's declaring @Configuration class. Add the 'static'
+      modifier to this method to avoid these container lifecycle issues; see @Bean javadoc
+      for complete details.
+... : Bean 'o.s.geode.boot.autoconfigure.RegionTemplateAutoConfiguration' of type
+     [o.s.geode.boot.autoconfigure.RegionTemplateAutoConfiguration$$EnhancerBySpringCGLIB$$7fa0e8c9]
+     is not eligible for getting processed by all BeanPostProcessors (for example:
+     not eligible for auto-proxying)
+...
 ---------------------------------------------------------------------------
 
   Licensed to the Apache Software Foundation (ASF) under one or more
@@ -189,129 +201,132 @@ User: jblum
 Current dir: /Users/jblum/pivdev/spring-boot-data-geode
 Home dir: /Users/jblum
 Command Line Parameters:
-  -javaagent:/Applications/IntelliJ IDEA 19 CE.app/Contents/lib/idea_rt.jar=57178:/Applications/IntelliJ IDEA 19 CE.app/Contents/bin
+  -javaagent:/Applications/IntelliJ IDEA 19 CE.app/Contents/lib/idea_rt.jar=57178:/Applications
+      /IntelliJ IDEA 19 CE.app/Contents/bin
   -Dfile.encoding=UTF-8
 Class Path:
   ...
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-test/2.2.0.BUILD-SNAPSHOT/6804e9aff102009fc451b1b4bd22931e88aaa2a5/spring-boot-starter-test-2.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.data/spring-data-geode-test/0.0.9.BUILD-SNAPSHOT/e803b7ea816fc1f137ea448e9a4177373f79589f/spring-data-geode-test-0.0.9.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.assertj/assertj-core/3.13.2/bb7b963fe752f69f055df0025691eceb83ce0c5d/assertj-core-3.13.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter/2.2.0.BUILD-SNAPSHOT/7b533399d6f88039537bb757f25a2c90d46fcdc7/spring-boot-starter-2.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.data/spring-data-geode/2.2.0.RC3/19c11f399bcfb47a97c003a57a9a6134e48ac2ea/spring-data-geode-2.2.0.RC3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-cq/1.9.0/cd6f1ac771d9d16a9c30620a1a1e2a0b859255dc/geode-cq-1.9.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-lucene/1.9.0/c723e30baabca866b0a1c223ee64b020cfb72c6/geode-lucene-1.9.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-wan/1.9.0/291148404c8cba2ce9c7d45e362954d7979c11b/geode-wan-1.9.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-core/1.9.0/bbfbdf8bbdabed419e095caeaeb4ecbb272beef3/geode-core-1.9.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.shell/spring-shell/1.2.0.RELEASE/d94047721f292bd5334b5654e8600cef4b845049/spring-shell-1.2.0.RELEASE.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-test-autoconfigure/2.2.0.BUILD-SNAPSHOT/2e5515925b591e23e23faf6e15defdaf542fe5a4/spring-boot-test-autoconfigure-2.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-autoconfigure/2.2.0.BUILD-SNAPSHOT/a5c2ddec46c3622237a675dfd3250ae6e0cba292/spring-boot-autoconfigure-2.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-test/2.2.0.BUILD-SNAPSHOT/3e659e2d0e3719a5703693a4bd98f5893bcb4802/spring-boot-test-2.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot/2.2.0.BUILD-SNAPSHOT/9f7956e8a72d918a291abf98db8f6a4e42843a6e/spring-boot-2.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-logging/2.2.0.BUILD-SNAPSHOT/8a88fdf34b0c71c6f6bc0013beec967523e2bbdf/spring-boot-starter-logging-2.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/jakarta.annotation/jakarta.annotation-api/1.3.5/59eb84ee0d616332ff44aba065f3888cf002cd2d/jakarta.annotation-api-1.3.5.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context-support/5.2.0.BUILD-SNAPSHOT/b4187b3ddb0c8cf790d2f82a57e8167f174aa7d1/spring-context-support-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-test/5.2.0.BUILD-SNAPSHOT/6c7fac94d6abb2a563e70484e35a5e7d719ca095/spring-test-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context/5.2.0.BUILD-SNAPSHOT/1a8a192ffa1a5156a117582bf6d7e54e213ddcb3/spring-context-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-tx/5.2.0.BUILD-SNAPSHOT/2c0a6323873e6651ca8cc2bdccdd7e0913510407/spring-tx-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-management/1.9.0/1adbf11c4686608c594d57fe31ed72f0cca879a1/geode-management-1.9.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/5.2.0.BUILD-SNAPSHOT/3beccdfdb76080981a180cbc6e28dd331957fc99/spring-web-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework.data/spring-data-commons/2.2.0.RC3/51f7652271e6dc04df8eada9635c321b4ad1a9e6/spring-data-commons-2.2.0.RC3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-aop/5.2.0.BUILD-SNAPSHOT/18e0c3c2638c7677a4990e4a42720c92aecd51db/spring-aop-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-beans/5.2.0.BUILD-SNAPSHOT/36f8177033beecb00601eb97ee05bb1a1bdfc73a/spring-beans-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-expression/5.2.0.BUILD-SNAPSHOT/d59a3cb4d9146a1b2f7bcea062b94d88e006fd79/spring-expression-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/5.2.0.BUILD-SNAPSHOT/7229adabd3e6d9751b52bbcf9334068519d1f997/spring-core-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.springframework/spring-jcl/5.2.0.BUILD-SNAPSHOT/92debbcc41fdd777adf71c47c3e63dea440d070d/spring-jcl-5.2.0.BUILD-SNAPSHOT.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/17.0/9c6ef172e8de35fd8d4d8783e4821e57cdef7445/guava-17.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/jline/jline/2.12/ce9062c6a125e0f9ad766032573c041ae8ecc986/jline-2.12.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.6/815893df5f31da2ece4040fe0a12fd44b577afaf/commons-io-2.6.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.jayway.jsonpath/json-path/2.4.0/765a4401ceb2dc8d40553c2075eb80a8fa35c2ae/json-path-2.4.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/jakarta.xml.bind/jakarta.xml.bind-api/2.3.2/8d49996a4338670764d7ca4b85a1c4ccf7fe665d/jakarta.xml.bind-api-2.3.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter/5.5.2/f8561a498ec26b24a3a64aebb6b2307fed000a33/junit-jupiter-5.5.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.junit.vintage/junit-vintage-engine/5.5.2/c3422d2aed908952f9db3e7f3a396776e5a8e017/junit-vintage-engine-5.5.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-junit-jupiter/3.0.0/61cd4985a844f9147fc8d87a2fd221695925f6a6/mockito-junit-jupiter-3.0.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/2.1/70dd49dea4507315b1fa3bc1aa59b1442d55957a/hamcrest-core-2.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest/2.1/9420ba32c29217b54eebd26ff7f9234d31c3fbb2/hamcrest-2.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-core/3.0.0/15fd0225cb1858f6922f44776b1577ac26739279/mockito-core-3.0.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.skyscreamer/jsonassert/1.5.0/6c9d5fe2f59da598d9aefc1cfc6528ff3cf32df3/jsonassert-1.5.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.xmlunit/xmlunit-core/2.6.3/cdb208320aed4a7b94fb236cfbf91aeb6d0ede14/xmlunit-core-2.6.3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/edu.umd.cs.mtc/multithreadedtc/1.01/43fbc1110d7e43cf79e415ef32036975ad85944c/multithreadedtc-1.01.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-classic/1.2.3/7c4f3c474fb2c041d8028740440937705ebb473a/logback-classic-1.2.3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-to-slf4j/2.12.1/dfb42ea8ce1a399bcf7218efe8115a0b7ab3788a/log4j-to-slf4j-2.12.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.slf4j/jul-to-slf4j/1.7.28/c6f06c420ad62d3824b38a06dfdce9fb55ba81ef/jul-to-slf4j-1.7.28.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-spring/1.4.1/5f88bc5bcea4e7248e2a60dc267f32b6982e76d8/shiro-spring-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjweaver/1.9.4/9205229878f3d62fbd3a32a0fb6be2d6ad8589a9/aspectjweaver-1.9.4.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.9.9.3/68ddd453458765757fd3ffca9437f9a42d91003e/jackson-databind-2.9.9.3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.9.0/7c10d545325e3a6e72e06381afe469fd40eb701/jackson-annotations-2.9.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-web/1.4.1/9c54b73a8989ae0d1be07862b9772e468631d798/shiro-web-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-core/1.4.1/4825f3cd3156d197c17edca51061675e4a72260d/shiro-core-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-cache/1.4.1/a93c6de86c911dddbf05ab54fcab73ae525b4592/shiro-cache-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-crypto-hash/1.4.1/8cf0d831999b586a9ee8a64a28cb674646c409c7/shiro-crypto-hash-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-crypto-cipher/1.4.1/518da6768f9565c592e230291e9e7ea2485b1c35/shiro-crypto-cipher-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-config-ogdl/1.4.1/c097cd47e0fc9d50a3a4507d2f49155c78c01fea/shiro-config-ogdl-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-config-core/1.4.1/ad768337fd1516c2bd379bc9f27d5f7922960c5/shiro-config-core-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-event/1.4.1/a6e9b78b3c0d6381db941bc1446a8b0ae5a6edd/shiro-event-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-crypto-core/1.4.1/3e3110cec2a4bf262c965b3c635757882110f594/shiro-crypto-core-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.shiro/shiro-lang/1.4.1/bc711ec9fd41d8c1b967aa41385522e9bef2fa8b/shiro-lang-1.4.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.28/2cd9b264f76e3d087ee21bfc99305928e1bdb443/slf4j-api-1.7.28.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/net.minidev/json-smart/2.3/7396407491352ce4fa30de92efb158adb76b5b/json-smart-2.3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/jakarta.activation/jakarta.activation-api/1.2.1/562a587face36ec7eff2db7f2fc95425c6602bc1/jakarta.activation-api-1.2.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-params/5.5.2/e0659722923bd9fdfa08602e2da22bd5a9d354e8/junit-jupiter-params-5.5.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-api/5.5.2/6393db7e4c0265152d8fc4ff146633d1a7d36c47/junit-jupiter-api-5.5.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-engine/1.5.2/d5697f6ebe0b4d08c0210b5b98b4e1a40f40dfc6/junit-platform-engine-1.5.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.junit.platform/junit-platform-commons/1.5.2/9703df63b65d415b2a027d43ce908c625b3aedce/junit-platform-commons-1.5.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apiguardian/apiguardian-api/1.1.0/fc9dff4bb36d627bdc553de77e1f17efd790876c/apiguardian-api-1.1.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.9.10/211a2b4d3df1eeef2a6cacf78d74a1f725e7a840/byte-buddy-1.9.10.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.9.10/9674aba5ee793e54b864952b001166848da0f26b/byte-buddy-agent-1.9.10.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.objenesis/objenesis/2.6/639033469776fd37c08358c6b92a4761feb2af4b/objenesis-2.6.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.vaadin.external.google/android-json/0.0.20131108.vaadin1/fa26d351fe62a6a17f5cda1287c1c6110dec413f/android-json-0.0.20131108.vaadin1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-core/1.2.3/864344400c3d4d92dfeb0a305dc87d953677c03c/logback-core-1.2.3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.12.1/a55e6d987f50a515c9260b0451b4fa217dc539cb/log4j-api-2.12.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.github.stephenc.findbugs/findbugs-annotations/1.3.9-1/a6b11447635d80757d64b355bed3c00786d86801/findbugs-annotations-1.3.9-1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.jgroups/jgroups/3.6.14.Final/ee11e0645462b6937625f56f42bf5e853673168/jgroups-3.6.14.Final.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/antlr/antlr/2.7.7/83cd2cd674a217ade95a4bb83a8a14f351f48bd0/antlr-2.7.7.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/commons-validator/commons-validator/1.6/e989d1e87cdd60575df0765ed5bac65c905d7908/commons-validator-1.6.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/commons-digester/commons-digester/2.1/73a8001e7a54a255eef0f03521ec1805dc738ca0/commons-digester-2.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.sun.activation/javax.activation/1.2.0/bf744c1e2776ed1de3c55c8dac1057ec331ef744/javax.activation-1.2.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/javax.xml.bind/jaxb-api/2.3.1/8531ad5ac454cc2deb9d4d32c40c4d7451939b5d/jaxb-api-2.3.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.sun.xml.bind/jaxb-impl/2.3.1/a1a12b85ba1435b4189e065f7dafcc3fb9410d38/jaxb-impl-2.3.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.sun.istack/istack-commons-runtime/2.2/475249c175393a25d953433182edb7c1a0c35dec/istack-commons-runtime-2.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.9/122c7cee69b53ed4a7681c03d4ee4c0e2765da5/commons-lang3-3.9.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/io.micrometer/micrometer-core/1.2.1/dd0198d4c7c73da7865ef7c014db743e2996b713/micrometer-core-1.2.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/it.unimi.dsi/fastutil/8.2.2/975aab42e32a96ecb9696971a87c87a049055452/fastutil-8.2.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/javax.resource/javax.resource-api/1.7.1/f86b4d697ecd992ec6c4c6053736db16d41dc57f/javax.resource-api-1.7.1.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/net.java.dev.jna/jna/4.5.2/35d000afbaa4ed425d91873b40f4df9b8236875b/jna-4.5.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/net.sf.jopt-simple/jopt-simple/5.0.4/4fdac2fbe92dfad86aa6e9301736f6b4342a3f5c/jopt-simple-5.0.4.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-server/9.4.20.v20190813/d4ee11134bca83db85919a1710fce022c67df3b7/jetty-server-9.4.20.v20190813.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/io.github.classgraph/classgraph/4.0.6/7fe1e7464ffd40c7333b8bbf53c4d73a7cbd7b4c/classgraph-4.0.6.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.healthmarketscience.rmiio/rmiio/2.1.2/1d35887bc716bff6e51d7530bb5abf14fc211e70/rmiio-2.1.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.geode/geode-common/1.9.0/958b3ee6143305b8028b6e6b4b4b866a6c9fd18f/geode-common-1.9.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-analyzers-common/6.6.2/46f562c0a503f832df42b11f733101625b56a5ca/lucene-analyzers-common-6.6.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queryparser/6.6.2/f9fe9a5431859f70b4220fbf495c35cb6474539e/lucene-queryparser-6.6.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-core/6.6.2/bcd4b690b926b41d342ae676fe84351b1680e01c/lucene-core-6.6.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/mx4j/mx4j/3.0.2/47bf147f11b4a026263e1c96a1ea0e029f9e5ab6/mx4j-3.0.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.9.9/bfff5af9fb8347d26bbb7959cb9b4fe9a2b0ca5e/jackson-core-2.9.9.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/net.minidev/accessors-smart/1.2/c592b500269bfde36096641b01238a8350f8aa31/accessors-smart-1.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.opentest4j/opentest4j/1.2.0/28c11eb91f9b6d8e200631d46e20a7f407f2a046/opentest4j-1.2.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/commons-beanutils/commons-beanutils/1.9.3/c845703de334ddc6b4b3cd26835458cb1cba1f3d/commons-beanutils-1.9.3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.5.9/a25c1be5ce99d0ce99aa43eb982868c796dd0775/httpclient-4.5.9.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.2/4bfc12adfe4842bf07b657f0369c4cb522955686/commons-logging-1.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5/commons-collections-3.2.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/javax.activation/javax.activation-api/1.2.0/85262acf3ca9816f9537ca47d5adeabaead7cb16/javax.activation-api-1.2.0.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.hdrhistogram/HdrHistogram/2.1.11/1b035a1a4ce5d3441a4a1a331d04839ef487ec49/HdrHistogram-2.1.11.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.latencyutils/LatencyUtils/2.0.3/769c0b82cb2421c8256300e907298a9410a2a3d3/LatencyUtils-2.0.3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/javax.transaction/javax.transaction-api/1.3/e006adf5cf3cca2181d16bd640ecb80148ec0fce/javax.transaction-api-1.3.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-http/9.4.20.v20190813/edda2fd904a881114aba79e2f881c6f4004e8148/jetty-http-9.4.20.v20190813.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-io/9.4.20.v20190813/b246c5e350d0aa1b310c07ec362755c34a1cc8cb/jetty-io-9.4.20.v20190813.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-queries/6.6.2/61d5b6157f41721c5ef2c710f20bd47b27bae7e5/lucene-queries-6.6.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/5.0.4/da08b8cce7bbf903602a25a3a163ae252435795/asm-5.0.4.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-util/9.4.20.v20190813/8ee753d673a124ba2880361871ab13f6863b2d40/jetty-util-9.4.20.v20190813.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpcore/4.4.12/21ebaf6d532bc350ba95bd81938fa5f0e511c132/httpcore-4.4.12.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.13/3f18e1aa31031d89db6f01ba05d501258ce69d2c/commons-codec-1.13.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.8/448003bc1b234aac04b58e27d7755c12c3ec4236/lombok-1.18.8.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/1.25/8b6e01ef661d8378ae6dd7b511a7f2a33fae1421/snakeyaml-1.25.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.junit.jupiter/junit-jupiter-engine/5.5.2/f597408bde45371548f9e9791da7981a1134328d/junit-jupiter-engine-5.5.2.jar
-  /Users/jblum/.gradle/caches/modules-2/files-2.1/org.apache.lucene/lucene-analyzers-phonetic/6.6.2/e852e469aa36b96916c74ae4d0baf50467e56688/lucene-analyzers-phonetic-6.6.2.jar
+  // NOTE: JRE JAR files ommitted
+  ...
+  .../spring-boot-starter-test-2.2.0.BUILD-SNAPSHOT.jar
+  .../spring-data-geode-test-0.0.9.BUILD-SNAPSHOT.jar
+  .../assertj-core-3.13.2.jar
+  .../7b533399d6f88039537bb757f25a2c90d46fcdc7/spring-boot-starter-2.2.0.BUILD-SNAPSHOT.jar
+  .../spring-data-geode-2.2.0.RC3.jar
+  .../geode-cq-1.9.0.jar
+  .../geode-lucene-1.9.0.jar
+  .../geode-wan-1.9.0.jar
+  .../geode-core-1.9.0.jar
+  .../spring-shell-1.2.0.RELEASE.jar
+  .../2e5515925b591e23e23faf6e15defdaf542fe5a4/spring-boot-test-autoconfigure-2.2.0.BUILD-SNAPSHOT.jar
+  .../spring-boot-autoconfigure-2.2.0.BUILD-SNAPSHOT.jar
+  .../spring-boot-test-2.2.0.BUILD-SNAPSHOT.jar
+  .../spring-boot-2.2.0.BUILD-SNAPSHOT.jar
+  .../spring-boot-starter-logging-2.2.0.BUILD-SNAPSHOT.jar
+  .../jakarta.annotation-api-1.3.5.jar
+  .../spring-context-support-5.2.0.BUILD-SNAPSHOT.jar
+  .../spring-test-5.2.0.BUILD-SNAPSHOT.jar
+  .../spring-context-5.2.0.BUILD-SNAPSHOT.jar
+  .../spring-tx-5.2.0.BUILD-SNAPSHOT.jar
+  .../geode-management-1.9.0.jar
+  .../spring-web-5.2.0.BUILD-SNAPSHOT.jar
+  .../spring-data-commons-2.2.0.RC3.jar
+  .../spring-aop-5.2.0.BUILD-SNAPSHOT.jar
+  .../spring-beans-5.2.0.BUILD-SNAPSHOT.jar
+  .../spring-expression-5.2.0.BUILD-SNAPSHOT.jar
+  .../spring-core-5.2.0.BUILD-SNAPSHOT.jar
+  .../spring-jcl-5.2.0.BUILD-SNAPSHOT.jar
+  .../guava-17.0.jar
+  .../jline-2.12.jar
+  .../commons-io-2.6.jar
+  .../json-path-2.4.0.jar
+  .../jakarta.xml.bind-api-2.3.2.jar
+  .../junit-jupiter-5.5.2.jar
+  .../junit-vintage-engine-5.5.2.jar
+  .../mockito-junit-jupiter-3.0.0.jar
+  .../junit-4.12.jar
+  .../hamcrest-core-2.1.jar
+  .../hamcrest-2.1.jar
+  .../mockito-core-3.0.0.jar
+  .../jsonassert-1.5.0.jar
+  .../xmlunit-core-2.6.3.jar
+  .../multithreadedtc-1.01.jar
+  .../logback-classic-1.2.3.jar
+  .../log4j-to-slf4j-2.12.1.jar
+  .../jul-to-slf4j-1.7.28.jar
+  .../shiro-spring-1.4.1.jar
+  .../aspectjweaver-1.9.4.jar
+  .../jackson-databind-2.9.9.3.jar
+  .../jackson-annotations-2.9.0.jar
+  .../shiro-web-1.4.1.jar
+  .../shiro-core-1.4.1.jar
+  .../shiro-cache-1.4.1.jar
+  .../shiro-crypto-hash-1.4.1.jar
+  .../shiro-crypto-cipher-1.4.1.jar
+  .../shiro-config-ogdl-1.4.1.jar
+  .../shiro-config-core-1.4.1.jar
+  .../shiro-event-1.4.1.jar
+  .../shiro-crypto-core-1.4.1.jar
+  .../shiro-lang-1.4.1.jar
+  .../slf4j-api-1.7.28.jar
+  .../json-smart-2.3.jar
+  .../jakarta.activation-api-1.2.1.jar
+  .../junit-jupiter-params-5.5.2.jar
+  .../junit-jupiter-api-5.5.2.jar
+  .../junit-platform-engine-1.5.2.jar
+  .../junit-platform-commons-1.5.2.jar
+  .../apiguardian-api-1.1.0.jar
+  .../byte-buddy-1.9.10.jar
+  .../byte-buddy-agent-1.9.10.jar
+  .../objenesis-2.6.jar
+  .../android-json-0.0.20131108.vaadin1.jar
+  .../logback-core-1.2.3.jar
+  .../log4j-api-2.12.1.jar
+  .../findbugs-annotations-1.3.9-1.jar
+  .../jgroups-3.6.14.Final.jar
+  .../antlr-2.7.7.jar
+  .../commons-validator-1.6.jar
+  .../commons-digester-2.1.jar
+  .../javax.activation-1.2.0.jar
+  .../jaxb-api-2.3.1.jar
+  .../jaxb-impl-2.3.1.jar
+  .../istack-commons-runtime-2.2.jar
+  .../commons-lang3-3.9.jar
+  .../micrometer-core-1.2.1.jar
+  .../fastutil-8.2.2.jar
+  .../javax.resource-api-1.7.1.jar
+  .../jna-4.5.2.jar
+  .../jopt-simple-5.0.4.jar
+  .../jetty-server-9.4.20.v20190813.jar
+  .../classgraph-4.0.6.jar
+  .../rmiio-2.1.2.jar
+  .../geode-common-1.9.0.jar
+  .../lucene-analyzers-common-6.6.2.jar
+  .../lucene-queryparser-6.6.2.jar
+  .../lucene-core-6.6.2.jar
+  .../mx4j-3.0.2.jar
+  .../jackson-core-2.9.9.jar
+  .../accessors-smart-1.2.jar
+  .../opentest4j-1.2.0.jar
+  .../commons-beanutils-1.9.3.jar
+  .../httpclient-4.5.9.jar
+  .../commons-logging-1.2.jar
+  .../commons-collections-3.2.2.jar
+  .../javax.activation-api-1.2.0.jar
+  .../HdrHistogram-2.1.11.jar
+  .../LatencyUtils-2.0.3.jar
+  .../javax.transaction-api-1.3.jar
+  .../jetty-http-9.4.20.v20190813.jar
+  .../jetty-io-9.4.20.v20190813.jar
+  .../lucene-queries-6.6.2.jar
+  .../asm-5.0.4.jar
+  .../jetty-util-9.4.20.v20190813.jar
+  .../httpcore-4.4.12.jar
+  .../commons-codec-1.13.jar
+  .../lombok-1.18.8.jar
+  .../snakeyaml-1.25.jar
+  .../junit-jupiter-engine-5.5.2.jar
+  .../lucene-analyzers-phonetic-6.6.2.jar
   /Applications/IntelliJ IDEA 19 CE.app/Contents/lib/idea_rt.jar
 Library Path:
   /Users/jblum/Library/Java/Extensions
@@ -333,8 +348,13 @@ System Properties:
     java.awt.headless = true
     java.awt.printerjob = sun.lwawt.macosx.CPrinterJob
     java.class.version = 52.0
-    java.endorsed.dirs = /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/endorsed
-    java.ext.dirs = /Users/jblum/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java
+    java.endorsed.dirs = /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home
+        /jre/lib/endorsed
+    java.ext.dirs = /Users/jblum/Library/Java/Extensions:/Library/Java/JavaVirtualMachines
+        /jdk1.8.0_192.jdk/Contents/Home/jre/lib/ext
+            :/Library/Java/Extensions
+            :/Network/Library/Java/Extensions:/System/Library/Java/Extensions
+            :/usr/lib/java
     java.home = /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre
     java.io.tmpdir = /var/folders/ly/d_6wcpgx7qv146hbwnp7zvfr0000gn/T/
     java.runtime.name = Java(TM) SE Runtime Environment
@@ -361,7 +381,14 @@ System Properties:
     spring.beaninfo.ignore = true
     spring.data.gemfire.cache.client.region.shortcut = LOCAL
     sun.arch.data.model = 64
-    sun.boot.class.path = /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/classes
+    sun.boot.class.path = /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/resources.jar
+        :/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/rt.jar
+        :/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/sunrsasign.jar
+        :/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jsse.jar
+        :/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jce.jar
+        :/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/charsets.jar
+        :/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib/jfr.jar
+        :/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/classes
     sun.boot.library.path = /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/jre/lib
     sun.cpu.endian = little
     sun.cpu.isalist =
@@ -379,7 +406,8 @@ Log4J 2 Configuration:
     org.apache.geode.internal.logging.NullProviderAgent
 ---------------------------------------------------------------------------
 
-2019-09-15 23:16:17.617  INFO 7156 --- [           main] o.a.g.internal.logging.LoggingSession    : Startup Configuration: ### GemFire Properties defined with api ###
+2019-09-15 23:16:17.617  INFO 7156 --- [main] o.a.g.internal.logging.LoggingSession
+  : Startup Configuration: ### GemFire Properties defined with api ###
 locators=
 log-level=config
 mcast-port=0
@@ -546,17 +574,24 @@ use-cluster-configuration=true
 user-command-packages=
 validate-serializable-objects=false
 
-2019-09-15 23:16:17.623  INFO 7156 --- [           main] o.a.g.internal.InternalDataSerializer    : initializing InternalDataSerializer with 3 services
-2019-09-15 23:16:17.671  INFO 7156 --- [           main] org.apache.geode                         : [ThreadsMonitor] New Monitor object and process were created.
+... : initializing InternalDataSerializer with 3 services
+... : [ThreadsMonitor] New Monitor object and process were created.
 
-2019-09-15 23:16:17.696  INFO 7156 --- [    StatSampler] o.a.g.i.statistics.StatArchiveHandler    : Disabling statistic archival.
-2019-09-15 23:16:17.809  INFO 7156 --- [           main] o.a.g.internal.cache.GemFireCacheImpl    : Running in client mode
-2019-09-15 23:16:18.051  INFO 7156 --- [           main] o.a.g.internal.cache.GemFireCacheImpl    : Initialized cache service org.apache.geode.cache.lucene.internal.LuceneServiceImpl
-2019-09-15 23:16:18.067  INFO 7156 --- [           main] o.s.d.g.client.ClientCacheFactoryBean    : Connected to Distributed System [SpringBasedCacheClientApplication] as Member [10.99.199.24(SpringBasedCacheClientApplication:7156:loner):0:e5f5b638:SpringBasedCacheClientApplication] in Group(s) [[]] with Role(s) [[]] on Host [10.99.199.24] having PID [7156]
-2019-09-15 23:16:18.068  INFO 7156 --- [           main] o.s.d.g.client.ClientCacheFactoryBean    : Created new Apache Geode version [1.9.0] Cache [SpringBasedCacheClientApplication]
-2019-09-15 23:16:18.179  INFO 7156 --- [           main] example.app.crm.CrmApplication           : Started CrmApplication in 3.95474938 seconds (JVM running for 4.876)
-2019-09-15 23:16:18.182  INFO 7156 --- [m shutdown hook] o.a.g.d.i.InternalDistributedSystem      : VM is exiting - shutting down distributed system
-2019-09-15 23:16:18.182  INFO 7156 --- [m shutdown hook] o.a.g.internal.cache.GemFireCacheImpl    : GemFireCache[id = 1985175273; isClosing = true; isShutDownAll = false; created = Sun Sep 15 23:16:17 PDT 2019; server = false; copyOnRead = false; lockLease = 120; lockTimeout = 60]: Now closing.
+... : Disabling statistic archival.
+... : Running in client mode
+... : Initialized cache service org.apache.geode.cache.lucene.internal.LuceneServiceImpl
+... : Connected to Distributed System [SpringBasedCacheClientApplication]
+      as Member [*****(SpringBasedCacheClientApplication:7156:loner):0:e5f5b638:SpringBasedCacheClientApplication]
+      in Group(s) [[]]
+      with Role(s) [[]]
+      on Host [10.99.199.24]
+      having PID [7156]
+... : Created new Apache Geode version [1.9.0] Cache [SpringBasedCacheClientApplication]
+... : Started CrmApplication in 3.95474938 seconds (JVM running for 4.876)
+... : VM is exiting - shutting down distributed system
+... : GemFireCache[id = 1985175273; isClosing = true; isShutDownAll = false;
+     created = Sun Sep 15 23:16:17 PDT 2019; server = false; copyOnRead = false; lockLease = 120;
+     lockTimeout = 60]: Now closing.
 
 Process finished with exit code 0
 ----
@@ -828,7 +863,7 @@ After running the application again, you should see:
 [source,txt]
 ----
 ...
-2019-09-16 13:37:24.529  INFO 10098 --- [           main] example.app.crm.CrmApplication           : Started CrmApplication in 5.506010062 seconds (JVM running for 6.114)
+... : Started CrmApplication in 5.506010062 seconds (JVM running for 6.114)
 Saving Customer [Customer(name=JonDoe)]...
 Querying for Customer [SELECT * FROM /Customers WHERE name LIKE '%Doe']...
 Customer was [Customer(name=JonDoe)]
@@ -853,49 +888,56 @@ Then, you would hit the following Exception:
 
 [source,txt]
 ----
-Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
-2019-09-16 13:57:46.401 ERROR 10127 --- [           main] o.s.boot.SpringApplication               : Application run failed
+Error starting ApplicationContext. To display the conditions report re-run your application
+    with 'debug' enabled.
+2019-09-16 13:57:46.401 ERROR 10127 --- [ main] o.s.boot.SpringApplication
+    : Application run failed
 
 java.lang.IllegalStateException: Failed to execute ApplicationRunner
-	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:778) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:765) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:322) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1226) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1215) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at example.app.crm.CrmApplication.main(CrmApplication.java:41) [classes/:na]
-Caused by: org.springframework.dao.DataAccessResourceFailureException: nested exception is org.apache.geode.cache.client.NoAvailableServersException
-	at org.springframework.data.gemfire.GemfireCacheUtils.convertGemfireAccessException(GemfireCacheUtils.java:235) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.gemfire.GemfireAccessor.convertGemFireAccessException(GemfireAccessor.java:93) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.gemfire.GemfireTemplate.find(GemfireTemplate.java:330) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.gemfire.repository.support.SimpleGemfireRepository.count(SimpleGemfireRepository.java:129) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_192]
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_192]
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_192]
-	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_192]
-	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:371) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:204) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:657) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at org.springframework.data.repository.core.support.RepositoryFactorySupport$QueryExecutorMethodInterceptor.doInvoke(RepositoryFactorySupport.java:621) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.repository.core.support.RepositoryFactorySupport$QueryExecutorMethodInterceptor.invoke(RepositoryFactorySupport.java:605) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:93) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:212) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at com.sun.proxy.$Proxy86.count(Unknown Source) ~[na:na]
-	at example.app.crm.CrmApplication.lambda$runner$0(CrmApplication.java:50) [classes/:na]
-	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:775) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
+	at o.s.b.SpringApplication.callRunner(SpringApplication.java:778)
+	at o.s.b.SpringApplication.callRunners(SpringApplication.java:765)
+	at o.s.b.SpringApplication.run(SpringApplication.java:322)
+	at o.s.b.SpringApplication.run(SpringApplication.java:1226)
+	at o.s.b.SpringApplication.run(SpringApplication.java:1215)
+	at example.app.crm.CrmApplication.main(CrmApplication.java:41)
+Caused by: o.s.dao.DataAccessResourceFailureException:
+        nested exception is o.a.g.c.c.NoAvailableServersException
+	at o.s.d.g.GemfireCacheUtils.convertGemfireAccessException(GemfireCacheUtils.java:235)
+	at o.s.d.g.GemfireAccessor.convertGemFireAccessException(GemfireAccessor.java:93)
+	at o.s.d.g.GemfireTemplate.find(GemfireTemplate.java:330)
+	at o.s.d.g.r.s.SimpleGemfireRepository.count(SimpleGemfireRepository.java:129)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at o.s.d.r.c.s.RepositoryComposition$RepositoryFragments
+	    .invoke(RepositoryComposition.java:371)
+	at o.s.d.r.c.s.RepositoryComposition.invoke(RepositoryComposition.java:204)
+	at o.s.d.r.c.s.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor
+	    .invoke(RepositoryFactorySupport.java:657)
+	at o.s.a.f.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at o.s.d.r.c.s.RepositoryFactorySupport$QueryExecutorMethodInterceptor
+	    .doInvoke(RepositoryFactorySupport.java:621)
+	at o.s.d.r.c.s.RepositoryFactorySupport$QueryExecutorMethodInterceptor
+	    .invoke(RepositoryFactorySupport.java:605)
+	at o.s.a.f.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at o.s.a.i.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:93)
+	at o.s.a.f.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at o.s.a.f.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:212)
+	at com.sun.proxy.$Proxy86.count(Unknown Source)
+	at example.app.crm.CrmApplication.lambda$runner$0(CrmApplication.java:50)
+	at o.s.b.SpringApplication.callRunner(SpringApplication.java:775)
 	... 5 common frames omitted
-Caused by: org.apache.geode.cache.client.NoAvailableServersException: null
-	at org.apache.geode.cache.client.internal.pooling.ConnectionManagerImpl.borrowConnection(ConnectionManagerImpl.java:265) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.client.internal.OpExecutorImpl.execute(OpExecutorImpl.java:150) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.client.internal.OpExecutorImpl.execute(OpExecutorImpl.java:130) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.client.internal.PoolImpl.execute(PoolImpl.java:792) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.client.internal.QueryOp.execute(QueryOp.java:59) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.client.internal.ServerProxy.query(ServerProxy.java:69) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.query.internal.DefaultQuery.executeOnServer(DefaultQuery.java:328) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.query.internal.DefaultQuery.execute(DefaultQuery.java:216) ~[geode-core-1.9.0.jar:na]
-	at org.springframework.data.gemfire.GemfireTemplate.find(GemfireTemplate.java:312) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
+Caused by: o.a.g.cache.client.NoAvailableServersException: null
+	at o.a.g.c.c.i.p.ConnectionManagerImpl.borrowConnection(ConnectionManagerImpl.java:265)
+	at o.a.g.c.c.i.OpExecutorImpl.execute(OpExecutorImpl.java:150)
+	at o.a.g.c.c.i.OpExecutorImpl.execute(OpExecutorImpl.java:130)
+	at o.a.g.c.c.i.PoolImpl.execute(PoolImpl.java:792)
+	at o.a.g.c.c.i.QueryOp.execute(QueryOp.java:59)
+	at o.a.g.c.c.i.ServerProxy.query(ServerProxy.java:69)
+	at o.a.g.c.q.i.DefaultQuery.executeOnServer(DefaultQuery.java:328)
+	at o.a.g.c.q.i.DefaultQuery.execute(DefaultQuery.java:216)
+	at o.s.d.g.GemfireTemplate.find(GemfireTemplate.java:312)
 	... 23 common frames omitted
 ----
 
@@ -944,7 +986,7 @@ The output from the shell script will look similar to:
 .Starting the cluster
 [source,txt]
 ----
-gfsh>run --file=/Users/jblum/pivdev/spring-boot-data-geode/spring-geode-samples/intro/getting-started/src/main/resources/geode/bin/start-cluster.gfsh
+gfsh>run --file=.../spring-boot-data-geode/spring-geode-samples/intro/getting-started/src/main/resources/geode/bin/start-cluster.gfsh
 1. Executing - start locator --name=LocatorOne --log-level=config
 
 Starting a Geode Locator in /Users/jblum/pivdev/lab/LocatorOne...
@@ -955,8 +997,13 @@ Uptime: 5 seconds
 Geode Version: 1.9.0
 Java Version: 1.8.0_192
 Log File: /Users/jblum/pivdev/lab/LocatorOne/LocatorOne.log
-JVM Arguments: -Dgemfire.enable-cluster-configuration=true -Dgemfire.load-cluster-configuration-from-dir=false -Dgemfire.log-level=config -Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
-Class-Path: /Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-core-1.9.0.jar:/Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-dependencies.jar
+JVM Arguments: -Dgemfire.enable-cluster-configuration=true
+               -Dgemfire.load-cluster-configuration-from-dir=false
+               -Dgemfire.log-level=config
+               -Dgemfire.launcher.registerSignalHandlers=true
+               -Djava.awt.headless=true
+               -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: .../apache-geode-1.9.0/lib/geode-core-1.9.0.jar:.../apache-geode-1.9.0/lib/geode-dependencies.jar
 
 Successfully connected to: JMX Manager [host=10.99.199.24, port=1099]
 
@@ -972,8 +1019,16 @@ Uptime: 3 seconds
 Geode Version: 1.9.0
 Java Version: 1.8.0_192
 Log File: /Users/jblum/pivdev/lab/ServerOne/ServerOne.log
-JVM Arguments: -Dgemfire.default.locators=10.99.199.24[10334] -Dgemfire.start-dev-rest-api=false -Dgemfire.use-cluster-configuration=true -Dgemfire.log-level=config -XX:OnOutOfMemoryError=kill -KILL %p -Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
-Class-Path: /Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-core-1.9.0.jar:/Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-dependencies.jar
+JVM Arguments: -Dgemfire.default.locators=10.99.199.24[10334]
+               -Dgemfire.start-dev-rest-api=false
+               -Dgemfire.use-cluster-configuration=true
+               -Dgemfire.log-level=config
+               -XX:OnOutOfMemoryError=kill -KILL %p
+               -Dgemfire.launcher.registerSignalHandlers=true
+               -Djava.awt.headless=true
+               -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: .../apache-geode-1.9.0/lib/geode-core-1.9.0.jar
+            :.../apache-geode-1.9.0/lib/geode-dependencies.jar
 
 3. Executing - start server --name=ServerTwo --log-level=config --server-port=50505
 
@@ -985,11 +1040,19 @@ Uptime: 2 seconds
 Geode Version: 1.9.0
 Java Version: 1.8.0_192
 Log File: /Users/jblum/pivdev/lab/ServerTwo/ServerTwo.log
-JVM Arguments: -Dgemfire.default.locators=10.99.199.24[10334] -Dgemfire.start-dev-rest-api=false -Dgemfire.use-cluster-configuration=true -Dgemfire.log-level=config -XX:OnOutOfMemoryError=kill -KILL %p -Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
-Class-Path: /Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-core-1.9.0.jar:/Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-dependencies.jar
+JVM Arguments: -Dgemfire.default.locators=10.99.199.24[10334]
+               -Dgemfire.start-dev-rest-api=false
+               -Dgemfire.use-cluster-configuration=true
+               -Dgemfire.log-level=config
+               -XX:OnOutOfMemoryError=kill -KILL %p
+               -Dgemfire.launcher.registerSignalHandlers=true
+               -Djava.awt.headless=true
+               -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: .../apache-geode-1.9.0/lib/geode-core-1.9.0.jar
+            :.../apache-geode-1.9.0/lib/geode-dependencies.jar
 
 ************************* Execution Summary ***********************
-Script file: /Users/jblum/pivdev/spring-boot-data-geode/spring-geode-samples/intro/getting-started/src/main/resources/geode/bin/start-cluster.gfsh
+Script file: .../spring-boot-data-geode/spring-geode-samples/intro/getting-started/src/main/resources/geode/bin/start-cluster.gfsh
 
 Command-1 : start locator --name=LocatorOne --log-level=config
 Status    : PASSED
@@ -1069,9 +1132,9 @@ Now, without any code or configuration changes, simply run the CRM application a
 [source,txt]
 ----
 ...
-2019-09-16 14:54:28.594  INFO 10489 --- [           main] example.app.crm.CrmApplication           : Started CrmApplication in 6.418627159 seconds (JVM running for 6.978)
+... : Started CrmApplication in 6.418627159 seconds (JVM running for 6.978)
 Saving Customer [Customer(name=JonDoe)]...
-2019-09-16 14:54:29.451  INFO 10489 --- [           main] o.a.geode.pdx.internal.TypeRegistry      : Caching PdxType[dsid=0, typenum=3302226
+... : Caching PdxType[dsid=0, typenum=3302226
         name=example.app.crm.model.Customer
         fields=[
         id:Object:identity:0:idx0(relativeOffset)=0:idx1(vlfOffsetIndex)=-1
@@ -1164,8 +1227,16 @@ Uptime: 3 seconds
 Geode Version: 1.9.0
 Java Version: 1.8.0_192
 Log File: /Users/jblum/pivdev/lab/ServerThree/ServerThree.log
-JVM Arguments: -Dgemfire.default.locators=10.99.199.24[10334] -Dgemfire.start-dev-rest-api=false -Dgemfire.use-cluster-configuration=true -Dgemfire.log-level=config -XX:OnOutOfMemoryError=kill -KILL %p -Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
-Class-Path: /Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-core-1.9.0.jar:/Users/jblum/pivdev/apache-geode-1.9.0/lib/geode-dependencies.jar
+JVM Arguments: -Dgemfire.default.locators=10.99.199.24[10334]
+               -Dgemfire.start-dev-rest-api=false
+               -Dgemfire.use-cluster-configuration=true
+               -Dgemfire.log-level=config
+               -XX:OnOutOfMemoryError=kill -KILL %p
+               -Dgemfire.launcher.registerSignalHandlers=true
+               -Djava.awt.headless=true
+               -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
+Class-Path: .../apache-geode-1.9.0/lib/geode-core-1.9.0.jar
+            :.../apache-geode-1.9.0/lib/geode-dependencies.jar
 
 
 gfsh>list members
@@ -1270,61 +1341,66 @@ Then you would have encountered a serialization Exception:
 [source,txt]
 ----
 java.lang.IllegalStateException: Failed to execute ApplicationRunner
-	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:778) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:765) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:322) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1226) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1215) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
-	at example.app.crm.CrmApplication.main(CrmApplication.java:42) [classes/:na]
-Caused by: org.springframework.dao.DataAccessResourceFailureException: failed serializing object; nested exception is org.apache.geode.SerializationException: failed serializing object
-	at org.springframework.data.gemfire.GemfireCacheUtils.convertGemfireAccessException(GemfireCacheUtils.java:211) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.gemfire.GemfireAccessor.convertGemFireAccessException(GemfireAccessor.java:93) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.gemfire.GemfireTemplate.put(GemfireTemplate.java:197) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.gemfire.repository.support.SimpleGemfireRepository.save(SimpleGemfireRepository.java:86) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:1.8.0_192]
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:1.8.0_192]
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:1.8.0_192]
-	at java.lang.reflect.Method.invoke(Method.java:498) ~[na:1.8.0_192]
-	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:371) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:204) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:657) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at org.springframework.data.repository.core.support.RepositoryFactorySupport$QueryExecutorMethodInterceptor.doInvoke(RepositoryFactorySupport.java:621) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.data.repository.core.support.RepositoryFactorySupport$QueryExecutorMethodInterceptor.invoke(RepositoryFactorySupport.java:605) ~[spring-data-commons-2.2.0.RC3.jar:2.2.0.RC3]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:93) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:212) ~[spring-aop-5.2.0.BUILD-SNAPSHOT.jar:5.2.0.BUILD-SNAPSHOT]
-	at com.sun.proxy.$Proxy87.save(Unknown Source) ~[na:na]
-	at example.app.crm.CrmApplication.lambda$runner$0(CrmApplication.java:57) [classes/:na]
-	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:775) [spring-boot-2.2.0.BUILD-SNAPSHOT.jar:2.2.0.BUILD-SNAPSHOT]
+	at o.s.b.SpringApplication.callRunner(SpringApplication.java:778)
+	at o.s.b.SpringApplication.callRunners(SpringApplication.java:765)
+	at o.s.b.SpringApplication.run(SpringApplication.java:322)
+	at o.s.b.SpringApplication.run(SpringApplication.java:1226)
+	at o.s.b.SpringApplication.run(SpringApplication.java:1215)
+	at example.app.crm.CrmApplication.main(CrmApplication.java:42)
+Caused by: o.s.dao.DataAccessResourceFailureException: failed serializing object;
+        nested exception is o.a.g.SerializationException: failed serializing object
+	at o.s.d.g.GemfireCacheUtils.convertGemfireAccessException(GemfireCacheUtils.java:211)...
+	at o.s.d.g.GemfireAccessor.convertGemFireAccessException(GemfireAccessor.java:93)...
+	at o.s.d.g.GemfireTemplate.put(GemfireTemplate.java:197)
+	at o.s.d.g.r.s.SimpleGemfireRepository.save(SimpleGemfireRepository.java:86)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at o.s.d.r.c.s.RepositoryComposition$RepositoryFragments
+	    .invoke(RepositoryComposition.java:371)
+	at o.s.d.r.c.s.RepositoryComposition.invoke(RepositoryComposition.java:204)
+	at o.s.d.r.c.s.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor
+	    .invoke(RepositoryFactorySupport.java:657)
+	at o.s.a.f.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at o.s.d.r.c.s.RepositoryFactorySupport$QueryExecutorMethodInterceptor
+	    .doInvoke(RepositoryFactorySupport.java:621)
+	at o.s.d.r.c.s.RepositoryFactorySupport$QueryExecutorMethodInterceptor
+	    .invoke(RepositoryFactorySupport.java:605)
+	at o.s.a.f.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at o.s.a.i.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:93)
+	at o.s.a.f.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at o.s.a.f.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:212)
+	at com.sun.proxy.$Proxy87.save(Unknown Source)
+	at example.app.crm.CrmApplication.lambda$runner$0(CrmApplication.java:57)
+	at o.s.b.SpringApplication.callRunner(SpringApplication.java:775)
 	... 5 common frames omitted
-Caused by: org.apache.geode.SerializationException: failed serializing object
-	at org.apache.geode.internal.cache.tier.sockets.Message.serializeAndAddPart(Message.java:402) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.tier.sockets.Message.addObjPart(Message.java:344) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.tier.sockets.Message.addObjPart(Message.java:323) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.client.internal.PutOp$PutOpImpl.<init>(PutOp.java:285) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.client.internal.PutOp.execute(PutOp.java:64) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.cache.client.internal.ServerRegionProxy.put(ServerRegionProxy.java:155) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.LocalRegion.serverPut(LocalRegion.java:3061) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.LocalRegion.cacheWriteBeforePut(LocalRegion.java:3176) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.ProxyRegionMap.basicPut(ProxyRegionMap.java:238) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.LocalRegion.virtualPut(LocalRegion.java:5691) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.LocalRegionDataView.putEntry(LocalRegionDataView.java:162) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.LocalRegion.basicPut(LocalRegion.java:5119) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.LocalRegion.validatedPut(LocalRegion.java:1661) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.LocalRegion.put(LocalRegion.java:1648) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.AbstractRegion.put(AbstractRegion.java:421) ~[geode-core-1.9.0.jar:na]
-	at org.springframework.data.gemfire.GemfireTemplate.put(GemfireTemplate.java:194) ~[spring-data-geode-2.2.0.RC3.jar:2.2.0.RC3]
+Caused by: o.a.g.SerializationException: failed serializing object
+	at o.a.g.i.c.t.s.Message.serializeAndAddPart(Message.java:402)
+	at o.a.g.i.c.t.s.Message.addObjPart(Message.java:344)
+	at o.a.g.i.c.t.s.Message.addObjPart(Message.java:323)
+	at o.a.g.c.c.i.PutOp$PutOpImpl.<init>(PutOp.java:285)
+	at o.a.g.c.c.i.PutOp.execute(PutOp.java:64)
+	at o.a.g.c.c.i.ServerRegionProxy.put(ServerRegionProxy.java:155)
+	at o.a.g.i.c.LocalRegion.serverPut(LocalRegion.java:3061)
+	at o.a.g.i.c.LocalRegion.cacheWriteBeforePut(LocalRegion.java:3176)
+	at o.a.g.i.c.ProxyRegionMap.basicPut(ProxyRegionMap.java:238)
+	at o.a.g.i.c.LocalRegion.virtualPut(LocalRegion.java:5691)
+	at o.a.g.i.c.LocalRegionDataView.putEntry(LocalRegionDataView.java:162)
+	at o.a.g.i.c.LocalRegion.basicPut(LocalRegion.java:5119)
+	at o.a.g.i.c.LocalRegion.validatedPut(LocalRegion.java:1661)
+	at o.a.g.i.c.LocalRegion.put(LocalRegion.java:1648)
+	at o.a.g.i.c.AbstractRegion.put(AbstractRegion.java:421)
+	at o.s.d.g.GemfireTemplate.put(GemfireTemplate.java:194)
 	... 23 common frames omitted
 Caused by: java.io.NotSerializableException: example.app.crm.model.Customer
-	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1184) ~[na:1.8.0_192]
-	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:348) ~[na:1.8.0_192]
-	at org.apache.geode.internal.InternalDataSerializer.writeSerializableObject(InternalDataSerializer.java:2385) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.InternalDataSerializer.basicWriteObject(InternalDataSerializer.java:2259) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.DataSerializer.writeObject(DataSerializer.java:2953) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.util.BlobHelper.serializeTo(BlobHelper.java:66) ~[geode-core-1.9.0.jar:na]
-	at org.apache.geode.internal.cache.tier.sockets.Message.serializeAndAddPart(Message.java:400) ~[geode-core-1.9.0.jar:na]
+	at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1184)
+	at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:348)
+	at o.a.g.i.InternalDataSerializer.writeSerializableObject(InternalDataSerializer.java:2385)
+	at o.a.g.i.InternalDataSerializer.basicWriteObject(InternalDataSerializer.java:2259)
+	at o.a.g.DataSerializer.writeObject(DataSerializer.java:2953)
+	at o.a.g.i.u.BlobHelper.serializeTo(BlobHelper.java:66)
+	at o.a.g.i.c.t.s.Message.serializeAndAddPart(Message.java:400)
 	... 38 common frames omitted
 ----
 *****
@@ -1466,10 +1542,11 @@ your app:
 .Exception in CloudFoundry
 [source,txt]
 ----
-OUT java.lang.IllegalArgumentException: Could not find class [org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration]
-OUT     at org.springframework.util.ClassUtils.resolveClassName(ClassUtils.java:327) ~[spring-core-5.2.0.RC2.jar:5.2.0.RC2]
-OUT     at org.springframework.core.annotation.TypeMappedAnnotation.adapt(TypeMappedAnnotation.java:479) ~[spring-core-5.2.0.RC2.jar:5.2.0.RC2]
-OUT     at org.springframework.core.annotation.TypeMappedAnnotation.getValue(TypeMappedAnnotation.java:403) ~[spring-core-5.2.0.RC2.jar:5.2.0.RC2]
+OUT java.lang.IllegalArgumentException:
+    Could not find class [o.s.b.a.a.m.MetricsAutoConfiguration]
+OUT     at o.s.u.ClassUtils.resolveClassName(ClassUtils.java:327)
+OUT     at o.s.c.a.TypeMappedAnnotation.adapt(TypeMappedAnnotation.java:479)
+OUT     at o.s.c.a.TypeMappedAnnotation.getValue(TypeMappedAnnotation.java:403)
 ...
 ----
 
@@ -1499,7 +1576,7 @@ tries to bootstrap Apache Geode on startup:
 [source,txt]
 ----
 [OUT] Caused by: java.lang.NoClassDefFoundError: io/micrometer/core/instrument/MeterRegistry
-[OUT]     at org.apache.geode.cache.client.ClientCacheFactory.basicCreate(ClientCacheFactory.java:261) ~[geode-core-9.8.3.jar:na]
+[OUT]     at o.a.g.c.c.ClientCacheFactory.basicCreate(ClientCacheFactory.java:261)
 ----
 
 Therefore, you must include Spring Boot Actuator on your Spring Boot application classpath when deploying
@@ -1621,11 +1698,12 @@ Now you can push your CRM, Spring Boot application up to your cloud environment:
 ----
 $ cf push crm-app -u none --no-start -p build/libs/spring-geode-samples-getting-started-1.2.0.BUILD-SNAPSHOT.jar
 Pushing from manifest to org pivot-jblum / space playground as *****...
-Using manifest file /Users/jblum/spring-boot-data-geode/spring-geode-samples/intro/getting-started/manifest.yml
+Using manifest file .../spring-boot-data-geode/spring-geode-samples/intro/getting-started/manifest.yml
 Getting app info...
 Creating app with these attributes...
 + name:                crm-app
-  path:                /Users/jblum/spring-boot-data-geode/spring-geode-samples/intro/getting-started/build/libs/spring-geode-samples-getting-started-{version}.jar
+  path:                .../spring-boot-data-geode/spring-geode-samples/intro/getting-started/build/libs
+                          /spring-geode-samples-getting-started-{version}.jar
   buildpacks:
 +   https://github.com/cloudfoundry/java-buildpack.git
 + health check type:   none
@@ -1717,7 +1795,9 @@ $ gfsh
 
 Monitor and Manage Pivotal GemFire
 
-gfsh>connect --url=https://cloudcache-fd422700-599b-4beb-bbbe-43d5540e80f6.run.*****/gemfire/v1 --user=cluster_operator_cI8xe8EeD3Bb1ffAxavQyw --password=RzIpqp2pnLy2aBT4t3V4g --skip-ssl-validation
+gfsh>connect --url=https://cloudcache-fd422700-599b-4beb-bbbe-43d5540e80f6.run.*****/gemfire/v1
+    --user=cluster_operator_cI8xe8EeD3Bb1ffAxavQyw --password=RzIpqp2pnLy2aBT4t3V4g
+    --skip-ssl-validation
 key-store:
 key-store-password:
 key-store-type(default: JKS):
