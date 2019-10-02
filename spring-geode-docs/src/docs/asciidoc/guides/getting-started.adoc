@@ -1487,7 +1487,7 @@ To:
 </dependency>
 ----
 
-See the <<geode-gemfire-switch,Appendix>> for more details on making the switch.
+TIP: See the link:../appendix.html#geode-gemfire-switch[Appendix] for more details on making the switch.
 
 .Acquiring Pivotal Cloud Cache Bits
 *****
@@ -1505,7 +1505,7 @@ You can also find more details on this process in the Pivotal GemFire
 https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/gemfire/getting_started/installation/obtain_gemfire_maven.html[documentation].
 *****
 
-.Rrequired Spring Boot Actuator Bits
+.Required Spring Boot Actuator Bits
 *****
 As of Apache Geode 1.9 and Pivotal GemFire 9.8, upon which Pivotal Cloud Cache (PCC) 1.8 is {pivotal-cloudcache-docs}/product-snapshot.html[based],
 both GemFire and Geode require and declare Micrometer on the classpath as a compile-time depedency.
