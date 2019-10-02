@@ -5,11 +5,11 @@ John Blum
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
-:pivotal-cloudcache-version: 1-8
+:pivotal-cloudcache-version: {master-pivotal-cloudcache-version}
 :pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}
 :pivotal-cloudcache-website: https://pivotal.io/pivotal-cloud-cache
 :pivotal-cloudfoundry-website: https://pivotal.io/platform
-:pivotal-gemfire-version: 98
+:pivotal-gemfire-version: {master-pivotal-gemfire-version}
 :pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference
 :pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
 :pivotal-gemfire-website: https://pivotal.io/pivotal-gemfire
@@ -1470,7 +1470,7 @@ Maven POM file from:
 <dependency>
     <groupId>org.springframework.geode</groupId>
     <artifactId>spring-geode-starter</artifactId>
-    <version>{project.version}</version>
+    <version>{version}</version>
 </dependency>
 ----
 
@@ -1483,9 +1483,11 @@ To:
 <dependency>
     <groupId>org.springframework.geode</groupId>
     <artifactId>spring-cloudcache-starter</artifactId>
-    <version>{project.version}</version>
+    <version>{version}</version>
 </dependency>
 ----
+
+See the <<geode-gemfire-switch,Appendix>> for more details on making the switch.
 
 .Acquiring Pivotal Cloud Cache Bits
 *****
