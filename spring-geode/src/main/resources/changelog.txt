@@ -4,6 +4,24 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.1.2.RELEASE (2019-10-02)
+---------------------------------------------
+Fixes auto-wiring issues with auto-configured per Region GemfireTemplate beans in application components.
+
+* Fixes auto-wiring issue with the auto-configure Region GemfireTemplate beans provided by SBDG.
+See https://github.com/spring-projects/spring-boot-data-geode/issues/55.
+* Edits documentation providing details on how to acquire the Pivotal Cloud Cache (PCC) or Pivotal GemFire bits
+when switching between Apache Geode and Pivotal GemFire or PCC.
+See https://github.com/spring-projects/spring-boot-data-geode/issues/59.
+* Upgrades to Mockito 3.1.0
+* Upgrades to Spring Framework 5.1.10.RELEASE.
+* Upgrades to Spring Boot 2.1.9.RELEASE.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.1.11.RELEASE.
+* Upgrades to Spring Data Release Train Lovelace-SR11.
+* Upgrades to Spring Session BOM Bean-SR8.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.1.6.RELEASE.
+
+
 Changes in version 1.2.0.M3 (2019-09-24)
 ----------------------------------------
 Adds support for dynamic auto-configuration of Spring Boot applications to detect the presence of an Apache Geode
