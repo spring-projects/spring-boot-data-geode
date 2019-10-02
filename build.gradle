@@ -14,8 +14,10 @@ apply plugin: 'io.spring.convention.root'
 group = 'org.springframework.geode'
 description = 'Spring Boot for Apache Geode & Pivotal GemFire'
 
-ext['spring.version'] = "$springVersion"
-ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
+//ext['spring.version'] = "$springVersion"
+//ext['spring-framework.version'] = "$springVersion"
+//ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
+//ext['spring-session-bom.version'] = "$springSessionBomVersion"
 
 ext.snapshotBuild = version.endsWith('SNAPSHOT')
 ext.releaseBuild = version.endsWith('RELEASE')
