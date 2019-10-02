@@ -80,8 +80,8 @@ The current set of _auto-configuration_ classes in Spring Boot for Apache Geode 
 === Switch from Apache Geode to Pivotal Cloud Cache (a.k.a. Pivotal GemFire)
 
 First, understand that {pivotal-gemfire-website}[Pivotal GemFire] is being succeeded by
-{pivotal-cloudcache-website}[Pivotal Cloud Cache] (PCC).  Therefore, all references to Pivotal GemFire (i.e. "`gemfire`")
-also implies for Pivotal Cloud Cache (i.e. "`cloudcache`") as well.
+{pivotal-cloudcache-website}[Pivotal Cloud Cache] (PCC).  Therefore, all references to Pivotal GemFire
+(i.e. "`gemfire`") also implies for Pivotal Cloud Cache (i.e. "`cloudcache`") as well.
 
 When it comes to Spring's support, whether you are developing with Open Source Software (OSS)
 {apache-geode-website}[Apache Geode] or developing for {pivotal-cloudcache-website}[Pivotal Cloud Cache],
@@ -89,9 +89,9 @@ Spring has you covered.
 
 At a strategic-level, this means:
 
-1. From Open Source Software (e.g. Apache Geode) to Commercial (e.g. Pivotal Cloud Cache)
-2. From Non-Managed Environments (e.g. Standalone, Externally Managed) to Managed Environments (e.g. Pivotal Platform)
-3. With little to no code or configuration changes necessary.  It just works!
+1. From _Open Source Software_ (e.g. Apache Geode) to _Commercial_ (e.g. Pivotal Cloud Cache)
+2. From _Non-Managed Environments_ (e.g. Standalone, Externally Managed) to _Managed Environments_ (e.g. Pivotal Platform)
+3. With _*little*_ to _*no code or configuration*_ changes necessary.  It just works!
 
 You may also go back and migrate your Spring Boot applications away from Pivotal Platform when using the commercial
 software offering, Pivotal Cloud Cache, and switch back to Open Source Apache Geode running in a standalone, externally
@@ -99,8 +99,8 @@ managed environment.
 
 SBDG will not (ever) lock you in!  It is your choice!
 
-Technically, this means to go from Apache Geode to Pivotal Cloud Cache, you only need to change the SBDG dependency
-from:
+Technically, this means to go from Apache Geode to Pivotal Cloud Cache (PCC), you only need to change
+the SBDG dependency from:
 
 .Maven POM with Spring Boot for Apache Geode
 [source,xml]
@@ -166,28 +166,28 @@ dependencies {
 }
 ----
 
-TIP: To acquire the Pivotal Cloud Cache or Pivotal GemFire bits to use in your Spring Boot applications in place of
-Apache Geode, follow these instructions provided in the Pivotal GemFire
+TIP: To acquire the Pivotal Cloud Cache (PCC) or Pivotal GemFire bits to use in your Spring Boot applications
+in place of Apache Geode, follow the instructions provided in the Pivotal GemFire
 https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/gemfire/getting_started/installation/obtain_gemfire_maven.html[documentation].
 
-To go back, simple change `spring-cloudcache-starter` (or `spring-gemfire-starter`) back to `spring-geode-starter`.
+To go back, simple change `spring-cloudcache-starter` (or the `spring-gemfire-starter`) to `spring-geode-starter`.
 
 Done!
 
 It should just work without any code or configuration changes and if this is not the case, for whatever reason, then we
-will work to correct it, short of any feature differences between Pivotal Cloud Cache that cannot be accomplished with
-Apache Geode by itself.
+will work to correct it, short of any feature differences between Pivotal Cloud Cache (PCC) that cannot be accomplished
+with Apache Geode by itself.
 
 Spring Boot's _auto-configuration_ and _convention over configuration_ approach tries to detect the runtime environment
 in order to handle infrastructure logistics so you do not have to.  This is true inside or outside of a managed
 environment so that we can provide users with a consistent and reliable experience without all the hassle and issues
 that arise by switching environments.  Switching environments is especially common as you migrate your Spring Boot
-applications from DEV to TEST, into STAGING, and finally, to PRODUCTION.
+applications from DEV to TEST, followed by STAGING, and finally, to PRODUCTION.
 
-Of course, it will nearly always be easier to "run" Apache Geode as a "managed" service inside Pivotal Platform
-using Pivotal Cloud Cache, especially if your Use Case requires maximum performance and high availability then it will
-to manage an externally run Apache Geode cluster.  We highly recommend this approach when and where possible, but it is
-still your choice.
+Of course, it will nearly always be easier to "run" Apache Geode as a "managed" service inside Pivotal Platform (PCF)
+using Pivotal Cloud Cache (PCC) than it will be to manage an externally run Apache Geode cluster, especially if your
+Use Cases require maximum performance and high availability.  We highly recommend this approach when and where possible,
+but it is still your choice.
 
 [[geode-cluster-configuration-bootstrapping]]
 === Running an Apache Geode or Pivotal GemFire cluster using Spring Boot from your IDE
