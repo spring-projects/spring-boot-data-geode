@@ -63,7 +63,7 @@ Then select (for example):
 
 * _Project_: **Maven Project** (alternatively, you can select "_Gradle Project_")
 * _Language_: **Java** (alternatively, you can use "_Kotlin_", or "_Groovy_")
-* _Spring Boot_: **2.2.0 M6** (if `2.2.0 M6` is not available, select the latest, non-BUILD-SNAPSHOT version)
+* _Spring Boot_: `{spring-boot-version}`
 * _Project Metadata_:
 ** _Group_: **example.app**
 ** _Artifact_: **crm**
@@ -72,9 +72,10 @@ text field.
 * (Optional) _Dependencies_: Add "_Spring Web_" to pull in `org.springframework.boot:spring-boot-starter-web`
 if you want this Spring Boot application to be a Web application.
 
-TIP: Use this https://start.spring.io/#!platformVersion={spring-boot-version}&groupId=example.app&artifactId=crm&dependencies=geode[link],
+TIP: Use this https://start.spring.io/#!platformVersion={spring-boot-version}&groupId=example.app&artifactId=crm&dependencies=geode[link]
 to select all the options above and include the "_Spring for Apache Geode_" dependency along with the Spring Boot
-version matching "this" version of Spring Boot for Apache Geode (SBDG).  The Spring Boot version may not be `2.2.0.M6`.
+version matching "this" version of Spring Boot for Apache Geode (SBDG).  This version of Spring Boot for Apache Geode
+is currently based on Spring Boot `{spring-boot-version}`.
 
 Your selections should look similar to:
 
@@ -102,9 +103,9 @@ The screenshots of _Spring Initializer_ at https://starter.spring.io[start.sprin
 `2.2.0.M6` was the current release.  You should always choose to use the latest version of Spring Boot in a particular
 release line, whether that is `2.1.x`, `2.2.x`, `2.3.x`, `3.x` or beyond.
 
-SBDG minor versions will always match minor versions of Spring Boot.  The SBDG major version will always be one version
-behind.  For example, SBDG 1.1 is based on Spring Boot 2.1.  SBDG 1.2 is based on Spring Boot 2.2.  And, SBDG 1.3 will
-be based on Spring Boot 2.3.  When Spring Boot reaches 3.0, SBDG will be at 2.0, and so on.
+SBDG `minor` versions will always match `minor` versions of Spring Boot.  The SBDG `major` version will always be one
+version behind.  For example, SBDG 1.1 is based on Spring Boot 2.1.  SBDG 1.2 is based on Spring Boot 2.2.  And, SBDG
+1.3 will be based on Spring Boot 2.3.  When Spring Boot reaches 3.0, SBDG will be at 2.0, and so on.
 *****
 
 [[geode-samples-getting-started-spring-initializer-explore-run]]
