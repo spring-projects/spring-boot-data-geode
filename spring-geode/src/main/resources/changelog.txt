@@ -4,6 +4,30 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.0.RC1 (2019-10-03)
+-----------------------------------------
+Adds a new "Getting Stated" Guide showing users how to get started quickly, easily and reliably, building Apache Geode
+applications using Spring Boot, and in particular, Spring Boot for Apache Geode.
+
+* Add new "Getting Started" Guide and Example Code showing users how to use Spring Boot for Apache Geode.
+See https://github.com/spring-projects/spring-boot-data-geode/issues/54.
+* Improved details on switching from Apache Geode to Pivotal Cloud Cache (PCC) when deploying and running your
+Spring Boot applications to Pivotal Platform using PCC.
+See https://github.com/spring-projects/spring-boot-data-geode/issues/59.
+* Added a Smoke Test test suite to cover common use cases of Spring Boot for Apache Geode.
+See https://github.com/spring-projects/spring-boot-data-geode/issues/51.
+* Upgrades to Apache Geode 1.9.1.
+* Upgrades to Mockito 3.1.0.
+* Upgrades to Pivotal GemFire 9.8.4.
+* Upgrades to Spring Framework 5.2.0.RELEASE
+* Upgrades to Spring Boot 2.2.0.RC1.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.2.0.RELEASE.
+* Upgrades to Spring Data Release Train Moore-RELEASE.
+* Upgrades to Spring Session BOM Corn-RC1.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.2.0.RC1.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.9.RELEASE.
+
+
 Changes in version 1.1.2.RELEASE (2019-10-02)
 ---------------------------------------------
 Fixes auto-wiring issues with auto-configured per Region GemfireTemplate beans in application components.
