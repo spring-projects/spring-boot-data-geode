@@ -59,23 +59,29 @@ link:../index.html#geode-samples[Back]
 
 First, open your Web browser to https://start.spring.io[].
 
-Then select (for example):
+When creating the example app for this guide, we selected:
 
-* _Project_: **Maven Project** (alternatively, you can select "_Gradle Project_")
+* _Project_: **Maven Project** (alternatively, you can create a "_Gradle Project_")
 * _Language_: **Java** (alternatively, you can use "_Kotlin_", or "_Groovy_")
-* _Spring Boot_: `{spring-boot-version}`
+* _Spring Boot_: **2.2.0 RC1**
 * _Project Metadata_:
 ** _Group_: **example.app**
 ** _Artifact_: **crm**
+** _Options_:
+*** _Package Name_: **example.app.crm**
 * _Dependencies_: Add "**Spring for Apache Geode**" by typing "_Geode_" into the "_Search dependencies to add_"
 text field.
 * (Optional) _Dependencies_: Add "_Spring Web_" to pull in `org.springframework.boot:spring-boot-starter-web`
 if you want this Spring Boot application to be a Web application.
 
-TIP: Use this https://start.spring.io/#!platformVersion={spring-boot-version}&groupId=example.app&artifactId=crm&dependencies=geode[link]
-to select all the options above and include the "_Spring for Apache Geode_" dependency along with the Spring Boot
-version matching "this" version of Spring Boot for Apache Geode (SBDG).  This version of Spring Boot for Apache Geode
-is currently based on Spring Boot `{spring-boot-version}`.
+You can use this https://start.spring.io/#!platformVersion={spring-boot-version}&groupId=example.app&artifactId=crm&dependencies=geode&input-packageName=example.app.crm[link]
+to get you started.  You will most likely need to set the "_Spring Boot_" version as well as the "_Package Name_".
+
+WARNING: As of this writing, Spring Boot `2.2.0.RC1` was the latest version.  However, that may not be the case after you
+read this, so please select the latest, non-SNAPSHOT version of Spring Boot greater than `2.2.0.RC1`.  The instructions
+reflect the screenshots of Spring Initializer at start.spring.io below when this guide was written, therefore you will
+see that `2.2.0.RC1` was selected when the project was generated.  For more on versions see the
+<<about-versions,sidebar>> at the end of this section.
 
 Your selections should look similar to:
 
@@ -97,15 +103,18 @@ or https://spring.io/tools[Spring Tool Suite] (STS)) to open the generated proje
 
 You are ready to begin developing your Spring Boot, Apache Geode `ClientCache` application.
 
+[[about-versions]]
 .Versions
 *****
-The screenshots of _Spring Initializer_ at https://starter.spring.io[start.spring.io] were taken when Spring Boot
-`2.2.0.M6` was the current release.  You should always choose to use the latest version of Spring Boot in a particular
-release line, whether that is `2.1.x`, `2.2.x`, `2.3.x`, `3.x` or beyond.
+As mentioned in the WARNING above, Spring Boot `2.2.0.RC1` was the latest version of Spring Boot when this guide was
+written.  You should always choose to use the latest, non-SNAPSHOT version of Spring Boot in a particular release line,
+whether that is `2.1.x`, `2.2.x`, `2.3.x`, `3.x` or beyond.  We recommend non-SNAPSHOT versions since BUILD-SNAPSHOT
+versions are a moving target, and may change daily due to ongoing development.
 
 SBDG `minor` versions will always match `minor` versions of Spring Boot.  The SBDG `major` version will always be one
-version behind.  For example, SBDG 1.1 is based on Spring Boot 2.1.  SBDG 1.2 is based on Spring Boot 2.2.  And, SBDG
-1.3 will be based on Spring Boot 2.3.  When Spring Boot reaches 3.0, SBDG will be at 2.0, and so on.
+version behind the `major` version of Spring Boot.  For example, SBDG 1.1 is based on Spring Boot 2.1.  SBDG 1.2 is
+based on Spring Boot 2.2.  And, SBDG 1.3 will be based on Spring Boot 2.3.  When Spring Boot reaches 3.0, SBDG will be
+at 2.0, and so on.
 *****
 
 [[geode-samples-getting-started-spring-initializer-explore-run]]
@@ -132,7 +141,7 @@ public class CrmApplication {
 ----
 
 Additionally, in the project Maven POM file, we see the "_Spring Boot for Apache Geode_" (SBDG) dependency
-(`org.springframework.geode:spring-geode-starter:{version}`:
+(`org.springframework.geode:spring-geode-starter)`:
 
 .Spring Boot for Apache Geode dependency
 [source,xml]
@@ -141,7 +150,6 @@ Additionally, in the project Maven POM file, we see the "_Spring Boot for Apache
 <dependency>
     <groupId>org.springframework.geode</groupId>
     <artifactId>spring-geode-starter</artifactId>
-    <version>{version}</version>
 </dependency>
 ----
 
