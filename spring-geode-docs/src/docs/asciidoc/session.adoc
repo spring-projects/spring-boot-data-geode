@@ -4,9 +4,9 @@
 This section covers auto-configuration of Spring Session using either Apache Geode or Pivotal GemFire to manage
 (HTTP) Session state in a reliable (consistent), highly-available (replicated) and clustered manner.
 
-{spring-session-website}[Spring Session] provides an API and several implementations for managing a user's
-session information.  It has the ability to replace the `javax.servlet.http.HttpSession` in an application container
-neutral way along with proving Session IDs in HTTP headers to work with RESTful APIs.
+{spring-session-website}[Spring Session] provides an API and several implementations for managing a user's session
+information.  It has the ability to replace the `javax.servlet.http.HttpSession` in an application container neutral
+way along with proving Session IDs in HTTP headers to work with RESTful APIs.
 
 Furthermore, Spring Session provides the ability to keep the HttpSession alive even when working with WebSockets
 and reactive Spring WebFlux WebSessions.
@@ -14,12 +14,12 @@ and reactive Spring WebFlux WebSessions.
 A full discussion of Spring Session is beyond the scope of this document, and the reader is encouraged to learn more
 by reading the {spring-session-docs}[docs] and reviewing the {spring-session-docs}/#samples[samples].
 
-Of course, Spring Boot for Apache Geode & Pivotal GemFire adds auto-configuration support to configure
-either Apache Geode or Pivotal GemFire as the user's session information management provider when
+Of course, Spring Boot for Apache Geode & Pivotal GemFire provides auto-configuration support to configure
+either Apache Geode or Pivotal GemFire as the user's session information management provider and store when
 {spring-session-data-gemfire-website}[Spring Session for Apache Geode or Pivotal GemFire] is on
 your Spring Boot application's classpath.
 
-TIP: You can learn more about Spring Session for Apache Geode/Pivotal GemFire in
+TIP: You can learn more about Spring Session for Apache Geode & Pivotal GemFire in
 the {spring-session-data-gemfire-docs}[docs].
 
 [[geode-session-configuration]]
@@ -41,16 +41,35 @@ Simply include the appropriate Spring Session dependency on your Spring Boot app
   </dependency>
 ----
 
-TIP: You may replace Apache Geode with Pivotal GemFire simply by changing the artifact from `spring-session-data-geode`
-to `spring-session-data-gemfire`.  The version number is the same.
+Alternatively, you may declare the provided `spring-geode-starter-session` dependency in your Spring Boot application
+Maven POM or Gradle build file:
 
-Then, begin your Spring Boot application as you normally would:
+.Maven dependency declaration
+[source,xml]
+[subs="verbatim,attributes"]
+----
+  <dependency>
+    <groupId>org.springframework.geode</groupId>
+    <artifactId>spring-geode-starter-session</artifactId>
+    <version>{version}</version>
+  </dependency>
+----
+
+TIP: You may replace Apache Geode with Pivotal GemFire simply by changing the artifact ID
+from `org.springframework.session:spring-session-data-geode` to `org.springframework.session:spring-session-data-gemfire`.
+The version number is the same.
+
+TIP: Alternatively, you may replace Apache Geode with either Pivotal GemFire or Pivotal Cloud Cache (PCC) simply by
+changing the artifact ID from `spring-geode-starter-session` to `spring-gemfire-starter-session` for Pivotal GemFire
+or `spring-cloudcache-starter-session` for Pivotal Cloud Cache (PCC).
+
+After declaring the required Spring Session dependency, then begin your Spring Boot application as you normally would:
 
 .Spring Boot Application
 [source,java]
 ----
 @SpringBootApplication
-public MySpringBootApplication {
+public class MySpringBootApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(MySpringBootApplication.class, args);
@@ -60,8 +79,10 @@ public MySpringBootApplication {
 }
 ----
 
-That is it! Of course, you are free to create application-specific, Spring Web MVC `Controllers` to interact with
-the `HttpSession` as needed by your application:
+That is it!
+
+Of course, you are free to create application-specific, Spring Web MVC `Controllers` to interact with the `HttpSession`
+as needed by your application:
 
 .Application Controller using HttpSession
 [source,java]
@@ -77,12 +98,12 @@ class MyApplicationController {
 ----
 
 The `HttpSession` is replaced by a Spring managed `Session` that will be stored in either Apache Geode
-or Pivotal GemFire.
+or Pivotal GemFire, or even Pivotal Cloud Cache.
 
 [[geode-session-configuration-custom]]
 === Custom Configuration
 
-By default, Spring Boot for Apache Geode/Pivotal GemFire (SBDG) applies reasonable and sensible defaults
+By default, Spring Boot for Apache Geode & Pivotal GemFire (SBDG) applies reasonable and sensible defaults
 when configuring Apache Geode or Pivotal GemFire as the provider in Spring Session.
 
 So, for instance, by default, SBDG set the session expiration timeout to 30 minutes.  It also uses a
@@ -168,3 +189,97 @@ or Pivotal GemFire as your application's persistent store (_System of Record_).
 NOTE: Spring Boot does not properly recognize `spring.session.store-type=[gemfire|geode]` even though
 Spring Boot for Apache Geode/Pivotal GemFire is setup to handle either of these property values
 (i.e. either "`gemfire`" or "`geode`").
+
+[[geode-session-pcc]]
+=== Using Spring Session with Pivotal Cloud Cache
+
+Whether you are using Spring Session in a Spring Boot `ClientCache` application connecting to an externally managed
+cluster of Apache Geode or Pivotal GemFire servers, or connecting to a cluster of servers in a Pivotal Cloud Cache
+instance managed by a Pivotal Platform environment, the setup is the same.
+
+Spring Session for Apache Geode, Pivotal GemFire, and Pivotal Cloud Cache (PCC) expects there to exist a cache Region
+in the cluster that will store and manage the (HTTP) Session state when your Spring Boot application is a `ClientCache`
+application in a client/server topology.
+
+By default, the cache Region used to store and manage (HTTP) Session state is called "_ClusteredSpringSessions_".
+
+You can set the name of the cache Region used to store and manage (HTTP) Session state either by explicitly declaring
+the `@EnableGemFireHttpSession` annotation on your main `@SpringBootApplication` class, like so:
+
+.Using `@EnableGemfireHttpSession
+[source,java]
+----
+@SpringBootApplication
+@EnableGemFireHttpSession(regionName = "MySessions")
+class MySpringBootSpringSessionApplication { ... }
+----
+
+Or alternatively, we recommend users to configure the cache Region name using the well-known and documented property
+in Spring Boot `application.properties`:
+
+.Using properties
+[source,properties]
+----
+spring.session.data.gemfire.session.region.name=MySessions
+----
+
+Once you decide on the cache Region name used to store and manage (HTTP) Sessions, you must create the Region in the
+cluster somehow.
+
+On the client, this is simple since SBDG's auto-configuration will automatically create the client `PROXY` Region
+used to send/receive (HTTP) Session state between the client and server for you, when either Spring Session is on
+the application classpath (e.g. `spring-geode-starter-session`), or you explicitly declare
+the `@EnableGemFireHttpSession` annotation on your main `@SpringBootApplication` class.
+
+However, on the server-side, you currently have a couple of options.
+
+First, you can create the cache Region manually using _Gfsh_, like so:
+
+.Create the Sessions Region using Gfsh
+[source,txt]
+----
+gfsh> create region --name=MySessions --type=PARTITION --entry-idle-time-expiration=1800
+        --entry-idle-time-expiration-action=INVALIDATE
+----
+
+You must create the cache Region with the appropriate name and an expiration policy.
+
+In this case, we created an Idle Expiration Policy with a timeout of `1800 seconds` (`30 minutes`), after which,
+the entry (i.e. Session object) will be "_invalidated_".
+
+NOTE: Session expiration is managed by the Expiration Policy set on the cache Region used to store Session state.
+The Servlet Container's (HTTP) Session expiration configuration is not used since Spring Session is replacing
+the Servlet Container's Session management capabilities with its own and Spring Session delegates this behavior
+to the individual providers, like GemFire and Geode.
+
+Alternatively, you could send the definition for the cache Region from your Spring Boot `ClientCache` application
+to the cluster using the SBDG {spring-boot-data-geode-javadoc}/org/springframework/geode/config/annotation/EnableClusterAware.html[`@EnableClusterAware`] annotation,
+which is meta-annotated with SDG's `@EnableClusterConfiguration` annotation.
+
+TIP: See the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html[Javadoc]
+on the `@EnableClusterConfiguration` annotation as well as the {spring-data-geode-docs-html}/#bootstrap-annotation-config-cluster[documentation]
+for more details.
+
+.Using `@EnableClusterAware`
+[source,java]
+----
+@SpringBootApplication
+@EnableClusterAware
+class MySpringBootSpringSessionApplication { ... }
+----
+
+However, it is not currently possible to send Expiration Policy configuration metadata to the cluster yet.  Therefore,
+you must manually alter the cache Region to set the Expiration Policy, like so:
+
+.Using Gfsh to Alter Region
+[source,txt]
+----
+gfsh> alter region --name=MySessions --entry-idle-time-expiration=1800
+        --entry-idle-time-expiration-action=INVALIDATE
+----
+
+That is it!
+
+Now your Spring Boot `ClientCache` application using Spring Session in a client/server topology is configured to store
+and manage user (HTTP) Session state in the cluster.  This works for either standalone, externally managed Apache Geode
+or Pivotal GemFire clusters, or when using PCC running in a Pivotal Platform environment.
