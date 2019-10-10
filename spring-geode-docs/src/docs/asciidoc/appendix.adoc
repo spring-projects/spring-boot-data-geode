@@ -91,16 +91,16 @@ At a strategic-level, this means:
 
 1. From _Open Source Software_ (e.g. Apache Geode) to _Commercial_ (e.g. Pivotal Cloud Cache)
 2. From _Non-Managed Environments_ (e.g. Standalone, Externally Managed) to _Managed Environments_ (e.g. Pivotal Platform)
-3. With _*little*_ to _*no code or configuration*_ changes necessary.  It just works!
+3. With _**little**_ to _**no code or configuration**_ changes necessary.  It just works!
 
-You may also go back and migrate your Spring Boot applications away from Pivotal Platform when using the commercial
-software offering, Pivotal Cloud Cache, and switch back to Open Source Apache Geode running in a standalone, externally
-managed environment.
+You may also migrate your Spring Boot applications away from Pivotal Platform using the commercial software offering,
+Pivotal Cloud Cache, and switch back to Open Source Apache Geode running in a standalone, externally managed environment.
 
-SBDG will not (ever) lock you in!  It is your choice!
+SBDG will never lock you in!  It is, and always will be, your choice!
 
-Technically, this means to go from Apache Geode to Pivotal Cloud Cache (PCC), you only need to change
-the SBDG dependency from:
+Technically, this means to go from Apache Geode to Pivotal Cloud Cache (PCC), you must change 2 things.
+
+First, you must switch the dependency from `spring-geode-starter` to `spring-cloudcache-starter`:
 
 .Maven POM with Spring Boot for Apache Geode
 [source,xml]
@@ -114,7 +114,7 @@ the SBDG dependency from:
 ----
 
 .Gradle build file with Spring Boot for Apache Geode
-[source,java]
+[source,groovy]
 [subs="verbatim,attributes"]
 ----
 dependencies {
@@ -123,6 +123,29 @@ dependencies {
 ----
 
 To:
+
+.Maven POM with Spring Boot for Pivotal Cloud Cache
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>org.springframework.geode</groupId>
+    <artifactId>spring-cloudcache-starter</artifactId>
+    <version>{revnumber}</version>
+</dependency>
+----
+
+.Gradle build file with Spring Boot for Pivotal CloudCache
+[source,groovy]
+[subs="verbatim,attributes"]
+----
+dependencies {
+    compile 'org.springframework.geode:spring-cloudcache-starter:{revnumber}'
+}
+----
+
+Alternatively, if you are developing externally managed, standalone, commercial Pivotal GemFire based
+Spring Boot applications, you would then switch to (instead of PCC):
 
 .Maven POM with Spring Boot for Pivotal GemFire
 [source,xml]
@@ -136,7 +159,7 @@ To:
 ----
 
 .Gradle build file with Spring Boot for Pivotal GemFire
-[source,java]
+[source,groovy]
 [subs="verbatim,attributes"]
 ----
 dependencies {
@@ -144,30 +167,33 @@ dependencies {
 }
 ----
 
-Or:
+Second, to obtain the commercial Pivotal Cloud Cache (PCC) or Pivotal GemFire bits, you must declare the appropriate
+repository declaration in you Maven POM or Gradle build file:
 
-.Maven POM with Spring Boot for Pivotal Cloud Cache
+.Maven Repository definition to acquire PCC or Pivotal GemFire bits
 [source,xml]
-[subs="verbatim,attributes"]
 ----
-<dependency>
-    <groupId>org.springframework.geode</groupId>
-    <artifactId>spring-cloudcache-starter</artifactId>
-    <version>{revnumber}</version>
-</dependency>
+<repositories>
+  <repository>
+    <id>pivotal-repository</id>
+    <name>Pivotal Commercial Repository</name>
+    <url>https://commercial-repo.pivotal.io/data3/gemfire-release-repo/gemfire</url>
+  </repository>
+</repositories>
 ----
 
-.Gradle build file with Spring Boot for Pivotal GemFire
-[source,java]
-[subs="verbatim,attributes"]
+.Gradle Repository definition to acquire PCC or Pivotal GemFire bits
+[source,groovy]
 ----
-dependencies {
-    compile 'org.springframework.geode:spring-cloudcache-starter:{revnumber}'
+repositories {
+  maven { url 'https://commercial-repo.pivotal.io/data3/gemfire-release-repo/gemfire' }
 }
 ----
 
-TIP: To acquire the Pivotal Cloud Cache (PCC) or Pivotal GemFire bits to use in your Spring Boot applications
-in place of Apache Geode, follow the instructions provided in the Pivotal GemFire
+Accessing the Pivotal Commercial Repository requires you to sign up and authenticate with the
+https://network.pivotal.io/[Pivotal Network] (a.k.a. "_PivNet_").
+
+TIP: For more details on acquiring the Pivotal Cloud Cache (PCC) or Pivotal GemFire bits, see Pivotal GemFire's
 https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/gemfire/getting_started/installation/obtain_gemfire_maven.html[documentation].
 
 To go back, simple change `spring-cloudcache-starter` (or the `spring-gemfire-starter`) to `spring-geode-starter`.
@@ -176,13 +202,13 @@ Done!
 
 It should just work without any code or configuration changes and if this is not the case, for whatever reason, then we
 will work to correct it, short of any feature differences between Pivotal Cloud Cache (PCC) that cannot be accomplished
-with Apache Geode by itself.
+with Apache Geode itself, of course.
 
-Spring Boot's _auto-configuration_ and _convention over configuration_ approach tries to detect the runtime environment
-in order to handle infrastructure logistics so you do not have to.  This is true inside or outside of a managed
-environment so that we can provide users with a consistent and reliable experience without all the hassle and issues
-that arise by switching environments.  Switching environments is especially common as you migrate your Spring Boot
-applications from DEV to TEST, followed by STAGING, and finally, to PRODUCTION.
+Spring Boot's _auto-configuration_ and _convention over configuration_ approach tries to determine the runtime
+environment in order to handle infrastructure logistics so you do not have to.  This is true inside or outside
+of a managed environment so that we can provide users with a consistent and reliable experience without all the hassle
+and issues that arise by switching environments in the first place.  Switching environments is especially common as you
+migrate your Spring Boot applications from DEV to TEST, followed by STAGING, and finally, to PRODUCTION.
 
 Of course, it will nearly always be easier to "run" Apache Geode as a "managed" service inside Pivotal Platform (PCF)
 using Pivotal Cloud Cache (PCC) than it will be to manage an externally run Apache Geode cluster, especially if your
