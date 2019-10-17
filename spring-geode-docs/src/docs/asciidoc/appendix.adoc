@@ -168,7 +168,7 @@ dependencies {
 ----
 
 Second, to obtain the commercial Pivotal Cloud Cache (PCC) or Pivotal GemFire bits, you must declare the appropriate
-repository declaration in you Maven POM or Gradle build file:
+repository declaration in your Maven POM or Gradle build file:
 
 .Maven Repository definition to acquire PCC or Pivotal GemFire bits
 [source,xml]
@@ -190,11 +190,33 @@ repositories {
 }
 ----
 
-Accessing the Pivotal Commercial Repository requires you to sign up and authenticate with the
-https://network.pivotal.io/[Pivotal Network] (a.k.a. "_PivNet_").
+Accessing the Pivotal Commercial Repository requires you to sign up and authenticate with https://network.pivotal.io/[Pivotal Network]
+(a.k.a. "_PivNet_").  Once you have signed up and successfully created your account, you can use your username
+and password to configure access to the server in your Maven settings (i.e. ~/.m2/settings.xml):
+
+.~/.m2/settings.xml
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
+
+  <servers>
+    <server>
+      <id>pivotal-repository</id>
+      <username>yourUsername</username>
+      <password>yourPassword</password>
+    </server>
+  </servers>
+
+</settings>
+----
 
 TIP: For more details on acquiring the Pivotal Cloud Cache (PCC) or Pivotal GemFire bits, see Pivotal GemFire's
 https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/gemfire/getting_started/installation/obtain_gemfire_maven.html[documentation].
+When using the `spring-gemfire-starter`, you do not need to declare the Pivotal GemFire dependencies noted in
+the documentation.  The `spring-gemfire-starter` does that for you!  You only need to declare the repository
+and configure your settings.
 
 To go back, simple change `spring-cloudcache-starter` (or the `spring-gemfire-starter`) to `spring-geode-starter`.
 
