@@ -79,13 +79,11 @@ The current set of _auto-configuration_ classes in Spring Boot for Apache Geode 
 [[geode-gemfire-switch]]
 === Switch from Apache Geode to Pivotal Cloud Cache (a.k.a. Pivotal GemFire)
 
-First, understand that {pivotal-gemfire-website}[Pivotal GemFire] is being succeeded by
-{pivotal-cloudcache-website}[Pivotal Cloud Cache] (PCC).  Therefore, all references to Pivotal GemFire
-(i.e. "`gemfire`") also implies for Pivotal Cloud Cache (i.e. "`cloudcache`") as well.
+First, understand that {pivotal-gemfire-website}[Pivotal GemFire] is being succeeded by {pivotal-cloudcache-website}[Pivotal Cloud Cache] (PCC).
+Therefore, all references to Pivotal GemFire implies for Pivotal Cloud Cache (PCC) as well.
 
-When it comes to Spring's support, whether you are developing with Open Source Software (OSS)
-{apache-geode-website}[Apache Geode] or developing for {pivotal-cloudcache-website}[Pivotal Cloud Cache],
-Spring has you covered.
+When it comes to Spring's support, whether you are developing with Open Source Software (OSS) {apache-geode-website}[Apache Geode]
+or developing for {pivotal-cloudcache-website}[Pivotal Cloud Cache], Spring has you covered.
 
 At a strategic-level, this means:
 
@@ -100,7 +98,7 @@ SBDG will never lock you in!  It is, and always will be, your choice!
 
 Technically, this means to go from Apache Geode to Pivotal Cloud Cache (PCC), you must change 2 things.
 
-First, you must switch the dependency from `spring-geode-starter` to `spring-cloudcache-starter`:
+First, you must switch the dependency from `spring-geode-starter` to `spring-gemfire-starter`:
 
 .Maven POM with Spring Boot for Apache Geode
 [source,xml]
@@ -123,29 +121,6 @@ dependencies {
 ----
 
 To:
-
-.Maven POM with Spring Boot for Pivotal Cloud Cache
-[source,xml]
-[subs="verbatim,attributes"]
-----
-<dependency>
-    <groupId>org.springframework.geode</groupId>
-    <artifactId>spring-cloudcache-starter</artifactId>
-    <version>{revnumber}</version>
-</dependency>
-----
-
-.Gradle build file with Spring Boot for Pivotal CloudCache
-[source,groovy]
-[subs="verbatim,attributes"]
-----
-dependencies {
-    compile 'org.springframework.geode:spring-cloudcache-starter:{revnumber}'
-}
-----
-
-Alternatively, if you are developing externally managed, standalone, commercial Pivotal GemFire based
-Spring Boot applications, you would then switch to (instead of PCC):
 
 .Maven POM with Spring Boot for Pivotal GemFire
 [source,xml]
@@ -218,7 +193,7 @@ When using the `spring-gemfire-starter`, you do not need to declare the Pivotal 
 the documentation.  The `spring-gemfire-starter` does that for you!  You only need to declare the repository
 and configure your settings.
 
-To go back, simple change `spring-cloudcache-starter` (or the `spring-gemfire-starter`) to `spring-geode-starter`.
+To go back, simple change `spring-gemfire-starter` to `spring-geode-starter`.
 
 Done!
 

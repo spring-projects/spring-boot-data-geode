@@ -55,13 +55,10 @@ Maven POM or Gradle build file:
   </dependency>
 ----
 
-TIP: You may replace Apache Geode with Pivotal GemFire simply by changing the artifact ID
+TIP: You may replace Apache Geode with Pivotal Cloud Cache or Pivotal GemFire by changing the artifact ID
 from `org.springframework.session:spring-session-data-geode` to `org.springframework.session:spring-session-data-gemfire`.
-The version number is the same.
-
-TIP: Alternatively, you may replace Apache Geode with either Pivotal GemFire or Pivotal Cloud Cache (PCC) simply by
-changing the artifact ID from `spring-geode-starter-session` to `spring-gemfire-starter-session` for Pivotal GemFire
-or `spring-cloudcache-starter-session` for Pivotal Cloud Cache (PCC).
+Alternatively, you may replace Apache Geode with Pivotal Cloud Cache (PCC) or Pivotal GemFire by changing the artifact
+ID from `spring-geode-starter-session` to `spring-gemfire-starter-session`.  The version number is the same.
 
 After declaring the required Spring Session dependency, then begin your Spring Boot application as you normally would:
 
