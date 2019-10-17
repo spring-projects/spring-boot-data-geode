@@ -15,12 +15,6 @@ dependencies {
 	// TODO Remove when https://github.com/cloudfoundry/java-buildpack-metric-writer/issues/6 is resolved!
 //	compile project(":spring-geode-starter-actuator")
 
-/*
-	compile(project(":spring-cloudcache-starter")) {
-		exclude group: "io.micrometer", module: "micrometer-core"
-	}
-*/
-
 	compile "org.assertj:assertj-core"
 	compile "org.projectlombok:lombok"
 	compile "org.springframework.boot:spring-boot-starter-web"
