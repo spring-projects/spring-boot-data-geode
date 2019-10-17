@@ -235,6 +235,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		assertThat(propertySource.getName()).isEqualTo("boot.data.gemfire.cloudcache");
 		assertThat(propertySource.getProperty("spring.data.gemfire.security.username")).isEqualTo("Master");
 		assertThat(propertySource.getProperty("spring.data.gemfire.security.password")).isEqualTo("p@$$w0rd");
+		assertThat(propertySource.containsProperty("spring.data.gemfire.security.ssl.use-default-context")).isFalse();
 		assertThat(propertySource.getProperty("spring.data.gemfire.pool.locators"))
 			.isEqualTo("boombox[10334],skullbox[10334]");
 		assertThat(propertySource.getProperty("spring.data.gemfire.management.use-http")).isEqualTo("true");
@@ -251,8 +252,6 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		when(mockEnvironment.containsProperty("spring.data.gemfire.security.username")).thenReturn(true);
 		when(mockEnvironment.containsProperty("spring.data.gemfire.security.password")).thenReturn(true);
 
-		MutablePropertySources propertySources = new MutablePropertySources();
-
 		Properties vcapProperties = new Properties();
 
 		vcapProperties.setProperty("vcap.application.name", "TestApp");
@@ -268,6 +267,8 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		vcapProperties.setProperty("vcap.services.test-pcc.tags", "gemfire,cloudcache,test");
 
 		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
+
+		MutablePropertySources propertySources = new MutablePropertySources();
 
 		propertySources.addFirst(vcapPropertySource);
 
@@ -288,12 +289,50 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		assertThat(propertySource.getName()).isEqualTo("boot.data.gemfire.cloudcache");
 		assertThat(propertySource.containsProperty("spring.data.gemfire.security.username")).isFalse();
 		assertThat(propertySource.containsProperty("spring.data.gemfire.security.password")).isFalse();
+		assertThat(propertySource.containsProperty("spring.data.gemfire.security.ssl.use-default-context")).isFalse();
 		assertThat(propertySource.getProperty("spring.data.gemfire.pool.locators"))
 			.isEqualTo("boombox[10334],skullbox[10334]");
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.use-http")).isFalse();
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.require-https")).isFalse();
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.http.host")).isFalse();
 		assertThat(propertySource.containsProperty("spring.data.gemfire.management.http.port")).isFalse();
+	}
+
+	@Test
+	public void configuresSecurityContextWithTlsUsingSsl() {
+
+		ConfigurableEnvironment mockEnvironment = mock(ConfigurableEnvironment.class);
+
+		Properties vcapProperties = new Properties();
+
+		vcapProperties.setProperty("vcap.application.name", "TestApp");
+		vcapProperties.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
+		vcapProperties.setProperty("vcap.services.test-pcc.credentials.tls-enabled", "true");
+		vcapProperties.setProperty("vcap.services.test-pcc.tags", "junk,gemfire,mock,cloudcache,test");
+
+		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
+
+		MutablePropertySources propertySources = new MutablePropertySources();
+
+		propertySources.addFirst(vcapPropertySource);
+
+		when(mockEnvironment.getPropertySources()).thenReturn(propertySources);
+
+		AutoConfiguredCloudSecurityEnvironmentPostProcessor environmentPostProcessor =
+			spy(new AutoConfiguredCloudSecurityEnvironmentPostProcessor());
+
+		environmentPostProcessor.configureSecurityContext(mockEnvironment);
+
+		verify(mockEnvironment, times(2)).getPropertySources();
+
+		assertThat(propertySources.contains("boot.data.gemfire.cloudcache")).isTrue();
+
+		PropertySource propertySource = propertySources.get("boot.data.gemfire.cloudcache");
+
+		assertThat(propertySource).isNotNull();
+		assertThat(propertySource.getName()).isEqualTo("boot.data.gemfire.cloudcache");
+		assertThat(Boolean.parseBoolean(String.valueOf(propertySource
+			.getProperty("spring.data.gemfire.security.ssl.use-default-context")))).isTrue();
 	}
 
 	@Test

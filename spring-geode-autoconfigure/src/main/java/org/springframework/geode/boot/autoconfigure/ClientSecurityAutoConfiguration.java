@@ -62,6 +62,8 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.AutoConfigureBefore
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
+ * @see org.springframework.boot.autoconfigure.condition.AllNestedConditions
+ * @see org.springframework.boot.autoconfigure.condition.AnyNestedCondition
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnClass
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -115,6 +117,9 @@ public class ClientSecurityAutoConfiguration {
 
 	private static final String SECURITY_PASSWORD_PROPERTY =
 		AutoConfiguredAuthenticationInitializer.SDG_SECURITY_PASSWORD_PROPERTY;
+
+	private static final String SSL_USE_DEFAULT_CONTEXT_PROPERTY =
+		"spring.data.gemfire.security.ssl.use-default-context";
 
 	private static final String VCAP_PROPERTY_SOURCE_NAME = "vcap";
 
@@ -212,6 +217,14 @@ public class ClientSecurityAutoConfiguration {
 			});
 		}
 
+		private void configureSsl(Environment environment, VcapPropertySource vcapPropertySource,
+				CloudCacheService cloudCacheService, Properties cloudCacheProperties) {
+
+			if (cloudCacheService.isTlsEnabled()) {
+				cloudCacheProperties.setProperty(SSL_USE_DEFAULT_CONTEXT_PROPERTY, Boolean.TRUE.toString());
+			}
+		}
+
 		public void configureSecurityContext(ConfigurableEnvironment environment) {
 
 			String cloudcacheServiceInstanceName = environment.getProperty(CLOUD_CACHE_SERVICE_INSTANCE_NAME_PROPERTY);
@@ -228,6 +241,7 @@ public class ClientSecurityAutoConfiguration {
 					configureAuthentication(environment, vcapPropertySource, cloudCacheService, cloudCacheProperties);
 					configureLocators(environment, vcapPropertySource, cloudCacheService, cloudCacheProperties);
 					configureManagementRestApiAccess(environment, vcapPropertySource, cloudCacheService, cloudCacheProperties);
+					configureSsl(environment, vcapPropertySource, cloudCacheService, cloudCacheProperties);
 
 					environment.getPropertySources()
 						.addLast(newPropertySource(CLOUD_CACHE_PROPERTY_SOURCE_NAME, cloudCacheProperties));

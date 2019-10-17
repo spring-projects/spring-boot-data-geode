@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.core.env.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +33,7 @@ import org.junit.Test;
 public class CloudCacheServiceUnitTests {
 
 	@Test
-	public void withServiceNameLocatorsAndUrlReturnsNewCloudCacheService() throws Exception {
+	public void withServiceNameLocatorsAndGfshUrlReturnsNewCloudCacheService() throws Exception {
 
 		URL gfshUrl = new URL("http://localhost:7070/v1/gemfire");
 
@@ -121,13 +120,15 @@ public class CloudCacheServiceUnitTests {
 	public void parseLocatorsWithMultipleLocatorHostsPorts() {
 
 		List<CloudCacheService.Locator> locators =
-			CloudCacheService.Locator.parseLocators("  jukebox[12345], matchbox [6789] ");
+			CloudCacheService.Locator.parseLocators("  cardboardbox,  jukebox[12345], matchbox , skullbox  [6789] ");
 
 		assertThat(locators).isNotNull();
-		assertThat(locators).hasSize(2);
+		assertThat(locators).hasSize(4);
 		assertThat(locators).containsExactly(
+			CloudCacheService.Locator.newLocator("cardboardbox", 10334),
 			CloudCacheService.Locator.newLocator("jukebox", 12345),
-			CloudCacheService.Locator.newLocator("matchbox", 6789)
+			CloudCacheService.Locator.newLocator("matchbox", 10334),
+			CloudCacheService.Locator.newLocator("skullbox", 6789)
 		);
 	}
 
@@ -238,5 +239,35 @@ public class CloudCacheServiceUnitTests {
 	public void locatorToStringPrintsHostPort() {
 		assertThat(CloudCacheService.Locator.newLocator("skullbox", 1234).toString())
 			.isEqualTo("skullbox[1234]");
+	}
+
+	@Test
+	public void tlsIsEnabledWhenSetToTrue() {
+
+		CloudCacheService cloudCacheService = CloudCacheService.with("TestCloudCacheService");
+
+		assertThat(cloudCacheService).isNotNull();
+		assertThat(cloudCacheService.withTls(true)).isEqualTo(cloudCacheService);
+		assertThat(cloudCacheService.isTlsEnabled()).isTrue();
+	}
+
+	@Test
+	public void tlsIsNotEnabledWhenSetToFalse() {
+
+		CloudCacheService cloudCacheService = CloudCacheService.with("TestCloudCacheService");
+
+		assertThat(cloudCacheService).isNotNull();
+		assertThat(cloudCacheService.withTls(false)).isEqualTo(cloudCacheService);
+		assertThat(cloudCacheService.isTlsEnabled()).isFalse();
+	}
+
+	@Test
+	public void tlsIsNotEnabledWhenSetToNull() {
+
+		CloudCacheService cloudCacheService = CloudCacheService.with("TestCloudCacheService");
+
+		assertThat(cloudCacheService).isNotNull();
+		assertThat(cloudCacheService.withTls(null)).isEqualTo(cloudCacheService);
+		assertThat(cloudCacheService.isTlsEnabled()).isFalse();
 	}
 }

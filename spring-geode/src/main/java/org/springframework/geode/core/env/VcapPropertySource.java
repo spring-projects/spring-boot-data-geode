@@ -76,6 +76,7 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 	private static final String VCAP_SERVICES_PROPERTY = "vcap.services.";
 	private static final String VCAP_SERVICES_SERVICE_NAME_LOCATORS_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.locators";
 	private static final String VCAP_SERVICES_SERVICE_NAME_NAME_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.name";
+	private static final String VCAP_SERVICES_SERVICE_NAME_TLS_ENABLED_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.tls-enabled";
 	private static final String VCAP_SERVICES_SERVICE_NAME_URL_GFSH_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.urls.gfsh";
 	private static final String VCAP_SERVICES_SERVICE_NAME_USERS_PROPERTY = VCAP_SERVICES_PROPERTY + "%s.credentials.users";
 	private static final String VCAP_SERVICES_SERVICE_NAME_USERS_INDEX_PROPERTY = VCAP_SERVICES_SERVICE_NAME_USERS_PROPERTY + "[%d]";
@@ -210,6 +211,13 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 					.map(String::valueOf)
 					.filter(StringUtils::hasText)
 					.ifPresent(service::withLocators);
+
+				Object tlsEnabled = getProperty(String.format(VCAP_SERVICES_SERVICE_NAME_TLS_ENABLED_PROPERTY, service));
+
+				Optional.ofNullable(tlsEnabled)
+					.map(String::valueOf)
+					.map(Boolean::parseBoolean)
+					.ifPresent(service::withTls);
 
 				Object gfshUrl = getProperty(String.format(VCAP_SERVICES_SERVICE_NAME_URL_GFSH_PROPERTY, service));
 

@@ -24,8 +24,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.net.URL;
@@ -59,6 +59,7 @@ import org.springframework.geode.core.env.support.User;
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.EnumerablePropertySource
  * @see org.springframework.core.env.Environment
+ * @see org.springframework.core.env.MutablePropertySources
  * @see org.springframework.core.env.PropertiesPropertySource
  * @see org.springframework.core.env.PropertySource
  * @see org.springframework.geode.core.env.VcapPropertySource
@@ -114,7 +115,7 @@ public class VcapPropertySourceUnitTests {
 			throw expected;
 		}
 		finally {
-			verifyZeroInteractions(mockEnvironment);
+			verifyNoInteractions(mockEnvironment);
 		}
 	}
 
@@ -418,6 +419,107 @@ public class VcapPropertySourceUnitTests {
 	}
 
 	@Test
+	public void findFirstCloudCacheServiceReturnsOptionalOfCloudCacheService() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal,cloudcache,database,gemfire,junk");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+
+		Optional<CloudCacheService> cloudCacheService = propertySource.findFirstCloudCacheService();
+
+		assertThat(cloudCacheService).isNotNull();
+		assertThat(cloudCacheService.isPresent()).isTrue();
+		assertThat(cloudCacheService.map(CloudCacheService::getName).orElse(null)).isEqualTo("test-pcc");
+		assertThat(cloudCacheService.flatMap(CloudCacheService::getLocators).isPresent()).isFalse();
+		assertThat(cloudCacheService.flatMap(CloudCacheService::getGfshUrl).isPresent()).isFalse();
+	}
+
+	@Test
+	public void findFirstCloudCacheServiceReturnsEmptyOptional() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.services.test-postresql.name", "TestPostreSQLDatabase");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.services.test-postresql.tags", "pivotal, database, postresql");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+		assertThat(propertySource.findFirstCloudCacheService().isPresent()).isFalse();
+	}
+
+	@Test
+	public void requireFirstCloudCacheServiceReturnsCloudCacheService() throws Exception {
+
+		URL gfshUrl = new URL("https://skullbox:7070/v1/gemfire");
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
+		vcap.setProperty("vcap.services.test-pcc.plan", "huge");
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.services.test-pcc.credentials.locators", "sandbox[1234],toolbox,xbox[6789]");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.services.test-pcc.credentials.urls.gfsh", gfshUrl.toExternalForm());
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal,cloudcache , database,  gemfire ");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+
+		CloudCacheService cloudCacheService = propertySource.requireFirstCloudCacheService();
+
+		assertThat(cloudCacheService).isNotNull();
+		assertThat(cloudCacheService.getName()).isEqualTo("test-pcc");
+		assertThat(cloudCacheService.getGfshUrl().orElse(null)).isEqualTo(gfshUrl);
+		assertThat(cloudCacheService.isTlsEnabled()).isFalse();
+		assertThat(cloudCacheService.getLocatorList()).containsExactly(
+			CloudCacheService.Locator.newLocator("sandbox", 1234),
+			CloudCacheService.Locator.newLocator("toolbox", 10334),
+			CloudCacheService.Locator.newLocator("xbox", 6789)
+		);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void requireFirstCloudCacheServiceWhenNotFoundThrowsIllegalStateException() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.services.test-postresql.name", "TestPostreSQLDatabase");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.services.test-postresql.tags", "pivotal, database, postresql");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+
+		try {
+			propertySource.requireFirstCloudCacheService();
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("Unable to resolve a CloudCache Service Instance");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test
 	public void findFirstCloudCacheServiceNameReturnsOptionalOfServiceName() {
 
 		Properties vcap = new Properties();
@@ -509,106 +611,6 @@ public class VcapPropertySourceUnitTests {
 		catch (IllegalStateException expected) {
 
 			assertThat(expected).hasMessage("No service with tags [cloudcache, gemfire] was found");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
-	}
-
-	@Test
-	public void findFirstCloudCacheServiceReturnsOptionalOfCloudCacheService() {
-
-		Properties vcap = new Properties();
-
-		vcap.setProperty("vcap.application.name", "boot-example");
-		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
-		vcap.setProperty("vcap.application.space_name", "outerspace");
-		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal,cloudcache,database,gemfire,junk");
-		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
-
-		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
-
-		assertThat(propertySource).isNotNull();
-
-		Optional<CloudCacheService> cloudCacheService = propertySource.findFirstCloudCacheService();
-
-		assertThat(cloudCacheService).isNotNull();
-		assertThat(cloudCacheService.isPresent()).isTrue();
-		assertThat(cloudCacheService.map(CloudCacheService::getName).orElse(null)).isEqualTo("test-pcc");
-		assertThat(cloudCacheService.flatMap(CloudCacheService::getLocators).isPresent()).isFalse();
-		assertThat(cloudCacheService.flatMap(CloudCacheService::getGfshUrl).isPresent()).isFalse();
-	}
-
-	@Test
-	public void findFirstCloudCacheServiceReturnsEmptyOptional() {
-
-		Properties vcap = new Properties();
-
-		vcap.setProperty("vcap.application.name", "boot-example");
-		vcap.setProperty("vcap.services.test-postresql.name", "TestPostreSQLDatabase");
-		vcap.setProperty("vcap.application.space_name", "outerspace");
-		vcap.setProperty("vcap.services.test-postresql.tags", "pivotal, database, postresql");
-		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
-
-		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
-
-		assertThat(propertySource).isNotNull();
-		assertThat(propertySource.findFirstCloudCacheService().isPresent()).isFalse();
-	}
-
-	@Test
-	public void requireFirstCloudCacheServiceReturnsCloudCacheService() throws Exception {
-
-		URL gfshUrl = new URL("https://skullbox:7070/v1/gemfire");
-
-		Properties vcap = new Properties();
-
-		vcap.setProperty("vcap.services.test-pcc.name", "test-pcc");
-		vcap.setProperty("vcap.services.test-pcc.plan", "huge");
-		vcap.setProperty("vcap.application.name", "boot-example");
-		vcap.setProperty("vcap.services.test-pcc.credentials.locators", "sandbox[1234],toolbox,xbox[6789]");
-		vcap.setProperty("vcap.application.space_name", "outerspace");
-		vcap.setProperty("vcap.services.test-pcc.credentials.urls.gfsh", gfshUrl.toExternalForm());
-		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
-		vcap.setProperty("vcap.services.test-pcc.tags", "pivotal,cloudcache , database,  gemfire ");
-
-		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
-
-		assertThat(propertySource).isNotNull();
-
-		CloudCacheService cloudCacheService = propertySource.requireFirstCloudCacheService();
-
-		assertThat(cloudCacheService).isNotNull();
-		assertThat(cloudCacheService.getName()).isEqualTo("test-pcc");
-		assertThat(cloudCacheService.getGfshUrl().orElse(null)).isEqualTo(gfshUrl);
-		assertThat(cloudCacheService.getLocatorList()).containsExactly(
-			CloudCacheService.Locator.newLocator("sandbox", 1234),
-			CloudCacheService.Locator.newLocator("toolbox", 10334),
-			CloudCacheService.Locator.newLocator("xbox", 6789)
-		);
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void requireFirstCloudCacheServiceWhenNotFoundThrowsIllegalStateException() {
-
-		Properties vcap = new Properties();
-
-		vcap.setProperty("vcap.application.name", "boot-example");
-		vcap.setProperty("vcap.services.test-postresql.name", "TestPostreSQLDatabase");
-		vcap.setProperty("vcap.application.space_name", "outerspace");
-		vcap.setProperty("vcap.services.test-postresql.tags", "pivotal, database, postresql");
-		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
-
-		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
-
-		assertThat(propertySource).isNotNull();
-
-		try {
-			propertySource.requireFirstCloudCacheService();
-		}
-		catch (IllegalStateException expected) {
-
-			assertThat(expected).hasMessage("Unable to resolve a CloudCache Service Instance");
 			assertThat(expected).hasNoCause();
 
 			throw expected;
@@ -772,6 +774,52 @@ public class VcapPropertySourceUnitTests {
 		assertThat(majorTom.getName()).isEqualTo("majorTom");
 		assertThat(majorTom.getPassword().orElse(null)).isEqualTo("s3cUr3");
 		assertThat(majorTom.getRole().map(User.Role::isClusterOperator).orElse(false)).isTrue();
+	}
+
+	@Test
+	public void cloudCacheServiceConfiguredWithTlsDisabled() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+		vcap.setProperty("vcap.services.test-cloudcache.name", "TestCloudCache");
+		vcap.setProperty("vcap.services.test-cloudcache.tags", "pivotal, cloudcache, database, gemfire");
+		vcap.setProperty("vcap.services.test-cloudcache.credentials.tls-enabled", "false");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+
+		CloudCacheService testCloudCacheService = propertySource.requireFirstCloudCacheService();
+
+		assertThat(testCloudCacheService).isNotNull();
+		assertThat(testCloudCacheService.getName()).isEqualTo("test-cloudcache");
+		assertThat(testCloudCacheService.isTlsEnabled()).isFalse();
+	}
+
+	@Test
+	public void cloudCacheServiceConfiguredWithTlsEnabled() {
+
+		Properties vcap = new Properties();
+
+		vcap.setProperty("vcap.application.name", "boot-example");
+		vcap.setProperty("vcap.application.space_name", "outerspace");
+		vcap.setProperty("vcap.application.uris", "boot-example.boot-apps.apps.cloud.net");
+		vcap.setProperty("vcap.services.test-cloudcache.name", "TestCloudCache");
+		vcap.setProperty("vcap.services.test-cloudcache.tags", "pivotal, cloudcache, database, gemfire");
+		vcap.setProperty("vcap.services.test-cloudcache.credentials.tls-enabled", "true");
+
+		VcapPropertySource propertySource = VcapPropertySource.from(vcap);
+
+		assertThat(propertySource).isNotNull();
+
+		CloudCacheService testCloudCacheService = propertySource.requireFirstCloudCacheService();
+
+		assertThat(testCloudCacheService).isNotNull();
+		assertThat(testCloudCacheService.getName()).isEqualTo("test-cloudcache");
+		assertThat(testCloudCacheService.isTlsEnabled()).isTrue();
 	}
 
 	@Test

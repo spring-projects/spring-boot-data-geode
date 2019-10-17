@@ -52,6 +52,8 @@ public class CloudCacheService extends Service {
 		return new CloudCacheService(name);
 	}
 
+	private Boolean tlsEnabled;
+
 	private String locators;
 
 	private URL gfshUrl;
@@ -109,6 +111,16 @@ public class CloudCacheService extends Service {
 	}
 
 	/**
+	 * Returns a {@link Boolean} determining whether TLS/SSL is enabled between the client and the Pivotal Cloud Cache
+	 * (PCC) service instance in Pivotal CloudFoundry (PCF).
+	 *
+	 * @return {@literal true} if TLS is enabled, {@literal false} if not.
+	 */
+	public boolean isTlsEnabled() {
+		return Boolean.TRUE.equals(this.tlsEnabled);
+	}
+
+	/**
 	 * Builder method used to configure the Gfsh {@link URL} to connect to the Pivotal GemFire
 	 * Management REST API (service).
 	 *
@@ -134,6 +146,21 @@ public class CloudCacheService extends Service {
 	public CloudCacheService withLocators(String locators) {
 
 		this.locators = locators;
+
+		return this;
+	}
+
+	/**
+	 * Builder method used to configure whether TLS/SSL is enabled between a client and the Pivotal Cloud Cache (PCC)
+	 * service instance in Pivotal CloudFoundry (PCF).
+	 *
+	 * @param enabled {@link Boolean} value indicating whether TLS/SSL is enabled.
+	 * @return this {@link CloudCacheService}.
+	 * @see #isTlsEnabled()
+	 */
+	public CloudCacheService withTls(Boolean enabled) {
+
+		this.tlsEnabled = enabled;
 
 		return this;
 	}
