@@ -4,6 +4,27 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.0.RELEASE (2019-10-18)
+---------------------------------------------
+Tidies up the SBDG project for the 1.2 GA release.  Removes the spring-cloudcache-starter* modules and then clarifies
+in documentation about switching from Apache Geode to Pivotal GemFire bits, even in the context of Pivotal Platform
+(PCF) using Pivotal Cloud Cache (PCC).  Adds auto-configuration support for TLS in PCF when using PCC.
+
+* Adds auto-configuration support to detect when TLS is enabled in PCF when using PCC and then configures SSL between
+the client and servers in a PCC cluster using the default SSL context provided via the JRE.
+See https://github.com/spring-projects/spring-boot-data-geode/issues/61.
+* Edits the documentation in the Appendix on switching between Apache Geode and Pivotal GemFire or Pivotal Cloud Cache
+(PCC) with additional details on the required Pivotal Commercial Repository declaration as well ass the server
+declaration containing user credentials required to authenticate with the repo in ~/.m2/settings.xml.
+See https://github.com/spring-projects/spring-boot-data-geode/issues/62.
+* Removes all spring-cloudcache-starter* modules.  User must use the spring-gemfire-starter* modules for both
+Pivotal GemFire as well as Pivotal Cloud Cache (PCC).
+See https://github.com/spring-projects/spring-boot-data-geode/issues/63.
+* Upgrades to Spring Boot 2.2.0.RELEASE.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.2.0.RELEASE.
+* Upgrades to Spring Session BOM Corn-RELEASE.
+
+
 Changes in version 1.2.0.RC1 (2019-10-03)
 -----------------------------------------
 Adds a new "Getting Stated" Guide showing users how to get started quickly, easily and reliably, building Apache Geode
