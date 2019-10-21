@@ -1,0 +1,21 @@
+plugins {
+	id "io.freefair.lombok" version "4.1.2"
+}
+
+apply plugin: 'io.spring.convention.spring-test'
+
+description = "Smoke Tests asserting the proper execution of an Apache Geode Function using Spring Data for Apache Geode Function annotation support in a Spring Boot context."
+
+dependencies {
+
+	implementation project(':spring-geode-starter')
+
+	implementation "org.assertj:assertj-core"
+	implementation "org.projectlombok:lombok"
+
+	testImplementation project(':spring-geode-starter-test')
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
