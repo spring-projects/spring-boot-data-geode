@@ -22,8 +22,10 @@ import javax.persistence.Table;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
@@ -42,6 +44,7 @@ import lombok.ToString;
 @Table(name = "Contacts")
 @ToString(of = "name")
 @EqualsAndHashCode(of = "name")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(staticName = "newContact")
 @SuppressWarnings("unused")
 public class Contact {
@@ -54,8 +57,6 @@ public class Contact {
 
 	@Column(name = "phone_number")
 	private String phoneNumber;
-
-	protected Contact() { }
 
 	public Contact withEmailAddress(String emailAddress) {
 		setEmailAddress(emailAddress);
