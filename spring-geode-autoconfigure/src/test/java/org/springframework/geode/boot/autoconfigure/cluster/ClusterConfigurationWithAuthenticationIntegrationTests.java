@@ -19,17 +19,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.Region;
-import org.apache.geode.distributed.internal.DistributionConfig;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.Region;
+import org.apache.geode.distributed.internal.DistributionConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,6 +53,10 @@ import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnableManager;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.geode.security.TestSecurityManager;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -82,6 +89,9 @@ import example.app.books.model.ISBN;
 @SuppressWarnings("unused")
 public class ClusterConfigurationWithAuthenticationIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
+	private static final AtomicBoolean REDIRECTING_CLIENT_HTTP_REQUEST_INTERCEPTOR_INVOKED =
+		new AtomicBoolean(false);
+
 	private static final String GEMFIRE_LOG_LEVEL = "off";
 
 	@BeforeClass
@@ -97,6 +107,11 @@ public class ClusterConfigurationWithAuthenticationIntegrationTests extends Fork
 	@Before
 	public void setup() {
 		assertThat(this.booksTemplate).isNotNull();
+	}
+
+	@After
+	public void tearDown() {
+		assertThat(REDIRECTING_CLIENT_HTTP_REQUEST_INTERCEPTOR_INVOKED.get()).isFalse();
 	}
 
 	@Test
@@ -120,7 +135,34 @@ public class ClusterConfigurationWithAuthenticationIntegrationTests extends Fork
 	@EnableClusterConfiguration(useHttp = true)
 	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	@EnableEntityDefinedRegions(basePackageClasses = Book.class)
-	static class GeodeClientConfiguration { }
+	static class GeodeClientConfiguration {
+
+		// NOTE: This ClientHttpRequestInterceptor bean should no longer be picked up by SDG's Cluster Configuration
+		// infrastructure as of SD Moore-SR1
+		@Bean
+		ClientHttpRequestInterceptor testRedirectingClientHttpRequestInterceptor() {
+
+			return (request, body, execution) -> {
+
+				REDIRECTING_CLIENT_HTTP_REQUEST_INTERCEPTOR_INVOKED.set(true);
+
+				String urlPattern = "%1$s://%2$s:%3$d%4$s";
+
+				URI originalUri = request.getURI();
+				URI redirectedUri = URI.create(String.format(urlPattern, originalUri.getScheme(), "nonExistingHost",
+					originalUri.getPort(), originalUri.getPath()));
+
+				HttpMethod httpMethod = request.getMethod();
+
+				httpMethod = httpMethod != null ? httpMethod : HttpMethod.GET;
+
+				ClientHttpRequest newRequest =
+					new SimpleClientHttpRequestFactory().createRequest(redirectedUri, httpMethod);
+
+				return execution.execute(newRequest, body);
+			};
+		}
+	}
 
 	@SpringBootApplication
 	@Profile("cluster-configuration-with-auth-server")
