@@ -17,9 +17,16 @@ package org.springframework.geode.boot.autoconfigure.caching;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import javax.annotation.Resource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.Region;
+import org.apache.geode.cache.client.ClientCache;
+import org.apache.geode.internal.cache.AbstractRegion;
+import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -39,6 +46,8 @@ import example.test.service.TestCacheableService;
  *
  * @author John Blum
  * @see org.junit.Test
+ * @see org.apache.geode.cache.Region
+ * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions
@@ -54,10 +63,22 @@ import example.test.service.TestCacheableService;
 public class AutoConfiguredCachingUnitTests extends IntegrationTestsSupport {
 
 	@Autowired
+	private ClientCache clientCache;
+
+	@Resource(name = "RandomNumbers")
+	private Region<String, Number> randomNumbers;
+
+	@Autowired
 	private TestCacheableService cacheableService;
 
 	@Before
 	public void setup() {
+
+		assertThat(this.clientCache).isNotNull();
+		assertThat(this.clientCache).isNotInstanceOf(GemFireCacheImpl.class);
+		assertThat(this.randomNumbers).isNotNull();
+		// TODO: Why is AbstractRegion internal!?!?! #argh
+		assertThat(this.randomNumbers).isNotInstanceOf(AbstractRegion.class);
 		assertThat(this.cacheableService).isNotNull();
 		assertThat(this.cacheableService.isCacheMiss()).isFalse();
 	}
