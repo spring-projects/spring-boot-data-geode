@@ -4,6 +4,19 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.1.3.RELEASE (2019-11-06)
+---------------------------------------------
+Aligns SBDG with Spring Framework 5.1.11.RELEASE, Spring Boot 2.1.10.RELEASE and Spring Data Lovelace-SR12.  Improves
+test coverage around cluster configuration metadata push from client to server.
+
+* Adds additional test cases to assert Spring Cloud ClientHttpRequestInterceptors do not run interference with
+Spring Data Geode's cluster configuration push from client to server over HTTP/REST.
+* Upgrades to Spring Framework 5.1.11.RELEASE.
+* Upgrades to Spring Boot 2.1.10.RELEASE.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.1.12.RELEASE.
+* Upgrades to Spring Data Release Train Lovelace-SR12.
+
+
 Changes in version 1.1.2.RELEASE (2019-10-02)
 ---------------------------------------------
 Fixes auto-wiring issues with auto-configured per Region GemfireTemplate beans in application components.
