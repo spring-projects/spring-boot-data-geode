@@ -17,11 +17,11 @@ package org.springframework.geode.boot.autoconfigure.session;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.apache.geode.cache.GemFireCache;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = "spring.session.store-type=none")
+@SpringBootTest(properties = "spring.session.store-type=none", webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @SuppressWarnings("unused")
 public class ManuallyConfiguredWithPropertiesSessionCachingIntegrationTests extends IntegrationTestsSupport {
 
@@ -68,10 +68,12 @@ public class ManuallyConfiguredWithPropertiesSessionCachingIntegrationTests exte
 	@Test(expected = NoSuchBeanDefinitionException.class)
 	public void gemfireSessionRegionAndSessionRepositoryAreNotPresent() {
 
+		String sessionsRegionName = GemFireHttpSessionConfiguration.DEFAULT_SESSION_REGION_NAME;
+
 		assertThat(this.applicationContext.containsBean("gemfireCache")).isTrue();
 		assertThat(this.applicationContext.containsBean("sessionRepository")).isFalse();
-		assertThat(this.applicationContext.containsBean(GemFireHttpSessionConfiguration.DEFAULT_SESSION_REGION_NAME))
-			.isFalse();
+		assertThat(this.applicationContext.containsBean(sessionsRegionName)).isFalse();
+		assertThat(this.applicationContext.getBeansOfType(SessionRepository.class)).isEmpty();
 
 		GemFireCache gemfireCache = this.applicationContext.getBean(GemFireCache.class);
 

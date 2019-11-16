@@ -18,11 +18,11 @@ package org.springframework.geode.boot.autoconfigure.session;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import org.apache.geode.cache.GemFireCache;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -62,7 +62,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @SuppressWarnings("unused")
 public class ManuallyConfiguredSessionCachingIntegrationTests extends IntegrationTestsSupport {
 
@@ -93,6 +93,7 @@ public class ManuallyConfiguredSessionCachingIntegrationTests extends Integratio
 
 		assertThat(sessionRepository).isNotNull();
 		assertThat(sessionRepository).isNotInstanceOf(GemFireOperationsSessionRepository.class);
+		assertThat(sessionRepository.getClass().getName().toLowerCase()).doesNotContain("redis");
 	}
 
 	@SpringBootApplication
