@@ -21,11 +21,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
-import org.apache.geode.cache.Region;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.Region;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -128,7 +128,6 @@ public class SessionExpirationIntegrationTests extends IntegrationTestsSupport {
 			return sessionEvent;
 		}
 
-		@SuppressWarnings("all")
 		public void onApplicationEvent(AbstractSessionEvent event) {
 			this.sessionEvent = event;
 		}
