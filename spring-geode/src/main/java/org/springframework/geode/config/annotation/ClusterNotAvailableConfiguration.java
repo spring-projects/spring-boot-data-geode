@@ -31,8 +31,10 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.data.gemfire.GemfireUtils;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.RegionConfigurer;
+import org.springframework.data.gemfire.config.annotation.support.CacheTypeAwareRegionFactoryBean;
 import org.springframework.lang.Nullable;
 
 /**
@@ -49,6 +51,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.core.env.Environment
  * @see org.springframework.data.gemfire.client.ClientRegionFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.RegionConfigurer
+ * @see org.springframework.data.gemfire.config.annotation.support.CacheTypeAwareRegionFactoryBean
  * @since 1.2.0
  */
 @Configuration
@@ -64,11 +67,8 @@ public class ClusterNotAvailableConfiguration {
 			@Nullable @Override
 			public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 
-				if (bean instanceof ClientRegionFactoryBean) {
-
-					ClientRegionFactoryBean<?, ?> clientRegion = (ClientRegionFactoryBean<?, ?>) bean;
-
-					configureAsLocalClientRegion(environment, clientRegion);
+				if (isClientRegion(bean)) {
+					configureAsLocalClientRegion(environment, bean);
 				}
 
 				return bean;
@@ -89,8 +89,32 @@ public class ClusterNotAvailableConfiguration {
 		};
 	}
 
+	protected boolean isClientRegion(Object bean) {
+		return bean instanceof CacheTypeAwareRegionFactoryBean || bean instanceof ClientRegionFactoryBean;
+	}
+
+	protected Object configureAsLocalClientRegion(Environment environment, Object clientRegion) {
+
+		return clientRegion instanceof ClientRegionFactoryBean
+			? configureAsLocalClientRegion(environment, (ClientRegionFactoryBean<?, ?>) clientRegion)
+			: configureAsLocalClientRegion(environment, (CacheTypeAwareRegionFactoryBean<?, ?>) clientRegion);
+	}
+
+	protected <K, V> CacheTypeAwareRegionFactoryBean<K, V> configureAsLocalClientRegion(Environment environment,
+			CacheTypeAwareRegionFactoryBean<K, V> clientRegion) {
+
+		ClientRegionShortcut shortcut =
+			environment.getProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
+				ClientRegionShortcut.class, LOCAL_CLIENT_REGION_SHORTCUT);
+
+		clientRegion.setClientRegionShortcut(shortcut);
+		clientRegion.setPoolName(GemfireUtils.DEFAULT_POOL_NAME);
+
+		return clientRegion;
+	}
+
 	protected <K, V> ClientRegionFactoryBean configureAsLocalClientRegion(Environment environment,
-		ClientRegionFactoryBean<K, V> clientRegion) {
+			ClientRegionFactoryBean<K, V> clientRegion) {
 
 		ClientRegionShortcut shortcut =
 			environment.getProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
