@@ -24,14 +24,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.apache.geode.cache.DataPolicy;
-import org.apache.geode.cache.Region;
-import org.apache.geode.cache.client.ClientCache;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.DataPolicy;
+import org.apache.geode.cache.Region;
+import org.apache.geode.cache.client.ClientCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.WebApplicationType;
@@ -86,6 +86,7 @@ import org.springframework.web.client.RestTemplate;
  * @see org.springframework.web.client.RestTemplate
  * @since 1.0.0
  */
+@ActiveProfiles("session-remote")
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes =  {
@@ -98,7 +99,6 @@ import org.springframework.web.client.RestTemplate;
 	},
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@ActiveProfiles("session-remote")
 @SuppressWarnings("unused")
 public class AutoConfiguredSessionRemoteCachingIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
@@ -155,8 +155,13 @@ public class AutoConfiguredSessionRemoteCachingIntegrationTests extends ForkingC
 
 		assertThat(response.getBody()).isEqualTo("SUCCESS");
 
+		//System.err.printf("HTTP RESPONSE HEADERS [%s]%n", response.getHeaders());
+
 		String httpHeaderWithSessionId =
 			StringUtils.collectionToCommaDelimitedString(response.getHeaders().get(HTTP_HEADER_AUTHENTICATION_INFO));
+
+		assertThat(httpHeaderWithSessionId).contains(sessionId.get());
+		assertThat(this.sessionsRegion.keySetOnServer()).containsExactlyInAnyOrder(sessionId.get());
 
 		RequestEntity<Void> request = RequestEntity
 			.get(URI.create(url.concat("/getter?name=MyKey")))
@@ -176,7 +181,6 @@ public class AutoConfiguredSessionRemoteCachingIntegrationTests extends ForkingC
 		HttpSessionIdResolver headerHttpSessionIdResolver() {
 			return HeaderHttpSessionIdResolver.authenticationInfo();
 		}
-
 	}
 
 	@RestController
@@ -184,7 +188,8 @@ public class AutoConfiguredSessionRemoteCachingIntegrationTests extends ForkingC
 	static class TestWebApplication {
 
 		@GetMapping("/attribute/setter")
-		public String setSessionAttribute(HttpSession session, @RequestParam("name") String name, String value) {
+		public String setSessionAttribute(HttpSession session,
+				@RequestParam("name") String name, @RequestParam("value") String value) {
 
 			assertThat(session).isNotNull();
 			assertThat(session.getClass().getPackage().getName()).startsWith("org.springframework.session");
