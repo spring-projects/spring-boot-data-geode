@@ -60,7 +60,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
-	"spring.session.data.gemfire.cache.client.pool.name=DEFAULT",
 	"spring.session.data.gemfire.cache.client.region.shortcut=LOCAL",
 	"spring.session.timeout=1",
 }, webEnvironment = SpringBootTest.WebEnvironment.MOCK)

@@ -66,10 +66,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-	properties = {
-		"spring.session.data.gemfire.cache.client.pool.name=DEFAULT",
-		"spring.session.data.gemfire.cache.client.region.shortcut="
-	},
+	properties = "spring.session.data.gemfire.cache.client.region.shortcut=",
 	webEnvironment = SpringBootTest.WebEnvironment.MOCK
 )
 @SuppressWarnings("unused")
@@ -86,6 +83,32 @@ public class AutoConfiguredSessionCachingIntegrationTests extends IntegrationTes
 	}
 
 	@Test
+	public void sessionConfigurationIsCorrect() {
+
+		GemFireHttpSessionConfiguration sessionConfiguration =
+			this.applicationContext.getBean(GemFireHttpSessionConfiguration.class);
+
+		assertThat(sessionConfiguration).isNotNull();
+		assertThat(sessionConfiguration.getClientRegionShortcut())
+			.isEqualTo(GemFireHttpSessionConfiguration.DEFAULT_CLIENT_REGION_SHORTCUT);
+		assertThat(sessionConfiguration.isExposeConfigurationAsProperties())
+			.isEqualTo(GemFireHttpSessionConfiguration.DEFAULT_EXPOSE_CONFIGURATION_AS_PROPERTIES);
+		assertThat(sessionConfiguration.getIndexableSessionAttributes())
+			.isEqualTo(GemFireHttpSessionConfiguration.DEFAULT_INDEXABLE_SESSION_ATTRIBUTES);
+		assertThat(sessionConfiguration.getMaxInactiveIntervalInSeconds())
+			.isEqualTo(GemFireHttpSessionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL_IN_SECONDS);
+		assertThat(sessionConfiguration.getPoolName()).isEqualTo("DEFAULT");
+		assertThat(sessionConfiguration.getServerRegionShortcut())
+			.isEqualTo(GemFireHttpSessionConfiguration.DEFAULT_SERVER_REGION_SHORTCUT);
+		assertThat(sessionConfiguration.getSessionExpirationPolicyBeanName().orElse(""))
+			.isEqualTo(GemFireHttpSessionConfiguration.DEFAULT_SESSION_EXPIRATION_POLICY_BEAN_NAME);
+		assertThat(sessionConfiguration.getSessionRegionName())
+			.isEqualTo(GemFireHttpSessionConfiguration.DEFAULT_SESSION_REGION_NAME);
+		assertThat(sessionConfiguration.getSessionSerializerBeanName())
+			.isEqualTo(GemFireHttpSessionConfiguration.DEFAULT_SESSION_SERIALIZER_BEAN_NAME);
+	}
+
+	@Test
 	@SuppressWarnings("unchecked")
 	public void sessionRegionExists() {
 
@@ -99,6 +122,8 @@ public class AutoConfiguredSessionCachingIntegrationTests extends IntegrationTes
 		assertThat(sessionRegion.getName()).isEqualTo(GemFireHttpSessionConfiguration.DEFAULT_SESSION_REGION_NAME);
 		assertThat(sessionRegion.getFullPath())
 			.isEqualTo(RegionUtils.toRegionPath(GemFireHttpSessionConfiguration.DEFAULT_SESSION_REGION_NAME));
+		assertThat(sessionRegion.getAttributes()).isNotNull();
+		assertThat(sessionRegion.getAttributes().getPoolName()).isNotEqualTo("gemfirePool");
 
 		RegionAttributes<Object, Session> sessionRegionAttributes = sessionRegion.getAttributes();
 

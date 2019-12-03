@@ -93,10 +93,7 @@ import org.springframework.web.client.RestTemplate;
 		AutoConfiguredSessionRemoteCachingIntegrationTests.SessionGemFireClientConfiguration.class,
 		AutoConfiguredSessionRemoteCachingIntegrationTests.TestWebApplication.class
 	},
-	properties = {
-		"spring.session.data.gemfire.cache.client.pool.name=DEFAULT",
-		"spring.session.data.gemfire.cache.client.region.shortcut=PROXY"
-	},
+	properties = "spring.session.data.gemfire.cache.client.region.shortcut=PROXY",
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @SuppressWarnings("unused")

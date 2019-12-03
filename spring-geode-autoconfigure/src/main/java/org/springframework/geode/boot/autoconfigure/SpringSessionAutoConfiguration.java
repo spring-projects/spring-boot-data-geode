@@ -83,7 +83,7 @@ import org.springframework.util.StringUtils;
 @ConditionalOnClass({ GemFireCache.class, GemFireHttpSessionConfiguration.class })
 @ConditionalOnMissingBean(SessionRepositoryFilter.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-@EnableGemFireHttpSession
+@EnableGemFireHttpSession(poolName = "DEFAULT")
 @Import(EnableSubscriptionConfiguration.class)
 @SuppressWarnings("unused")
 public class SpringSessionAutoConfiguration {
