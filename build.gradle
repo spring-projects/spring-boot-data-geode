@@ -15,7 +15,7 @@ group = 'org.springframework.geode'
 description = 'Spring Boot for Apache Geode & Pivotal GemFire'
 
 //ext['spring.version'] = "$springVersion"
-//ext['spring-framework.version'] = "$springVersion"
+ext['spring-framework.version'] = "$springVersion"
 //ext['spring-data-releasetrain.version'] = "$springDataReleaseTrainVersion"
 //ext['spring-session-bom.version'] = "$springSessionBomVersion"
 
