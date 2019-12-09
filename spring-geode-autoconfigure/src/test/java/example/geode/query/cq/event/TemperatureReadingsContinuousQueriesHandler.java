@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.geode.query.cq.event;
 
 import java.util.Collections;
@@ -23,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.geode.cache.query.CqEvent;
+
 import org.springframework.data.gemfire.listener.annotation.ContinuousQuery;
 
 /**

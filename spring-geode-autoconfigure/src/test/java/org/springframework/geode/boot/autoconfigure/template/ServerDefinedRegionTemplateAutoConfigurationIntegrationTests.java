@@ -20,14 +20,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +47,7 @@ import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfigurat
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests for {@link RegionTemplateAutoConfiguration} using SDG's {@link EnableClusterDefinedRegions}
+ * Integration Tests for {@link RegionTemplateAutoConfiguration} using SDG's {@link EnableClusterDefinedRegions}
  * annotation to define {@link Region Regions} and associated Templates.
  *
  * @author John Blum

@@ -13,15 +13,14 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.repository.model;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.gemfire.mapping.annotation.Region;
 
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.gemfire.mapping.annotation.Region;
 
 /**
  * {@link Customer} class and Abstract Data Type (ADT) modeling a customer.

@@ -28,16 +28,10 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import org.junit.Test;
 
 import org.apache.geode.security.AuthenticationFailedException;
 import org.apache.geode.security.ResourcePermission;
-
-import org.junit.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -52,6 +46,11 @@ import org.springframework.util.StringUtils;
 
 import example.echo.config.EchoClientConfiguration;
 import example.echo.config.EchoServerConfiguration;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 /**
  * The {@link AbstractAutoConfiguredSecurityContextIntegrationTests} class is an abstract security context integration test class

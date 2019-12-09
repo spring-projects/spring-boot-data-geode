@@ -34,11 +34,11 @@ import java.net.InetAddress;
 import java.net.PasswordAuthentication;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.junit.Test;
+
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.management.internal.security.ResourceConstants;
-
-import org.junit.Test;
 
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.env.Environment;
@@ -54,13 +54,15 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Unit tests for {@link HttpBasicAuthenticationSecurityConfiguration}
+ * Unit Tests for {@link HttpBasicAuthenticationSecurityConfiguration}
  *
  * @author John Blum
+ * @see java.net.Authenticator
+ * @see java.net.PasswordAuthentication
  * @see org.junit.Test
  * @see org.mockito.Mock
  * @see org.mockito.Mockito
- * @see HttpBasicAuthenticationSecurityConfiguration
+ * @see org.springframework.geode.boot.autoconfigure.support.HttpBasicAuthenticationSecurityConfiguration
  * @since 1.0.0
  */
 public class HttpBasicAuthenticationSecurityConfigurationUnitTests {

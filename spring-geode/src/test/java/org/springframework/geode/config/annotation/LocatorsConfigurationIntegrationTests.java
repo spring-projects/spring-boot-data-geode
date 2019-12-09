@@ -24,14 +24,14 @@ import static org.springframework.geode.config.annotation.LocatorsConfiguration.
 import java.net.InetAddress;
 import java.util.Properties;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.distributed.DistributedSystem;
 import org.apache.geode.distributed.Locator;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -48,7 +48,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
- * Integration tests for {@link UseLocators} and {@link LocatorsConfiguration}.
+ * Integration Tests for {@link UseLocators} and {@link LocatorsConfiguration}.
  *
  * @author John Blum
  * @see java.net.InetAddress

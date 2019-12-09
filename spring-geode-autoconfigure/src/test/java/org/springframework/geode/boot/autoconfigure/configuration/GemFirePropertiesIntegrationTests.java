@@ -17,10 +17,10 @@ package org.springframework.geode.boot.autoconfigure.configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.apache.geode.cache.RegionShortcut;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.RegionShortcut;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -52,7 +52,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests for {@link GemFireProperties}.
+ * Integration Tests for {@link GemFireProperties}.
  *
  * @author John Blum
  * @see org.junit.Test

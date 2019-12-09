@@ -15,12 +15,12 @@
  */
 package example.app.books.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.gemfire.mapping.annotation.Region;
+
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.gemfire.mapping.annotation.Region;
 
 /**
  * The {@link Author} class is an Abstract Data Type (ADT) modeling a book author.

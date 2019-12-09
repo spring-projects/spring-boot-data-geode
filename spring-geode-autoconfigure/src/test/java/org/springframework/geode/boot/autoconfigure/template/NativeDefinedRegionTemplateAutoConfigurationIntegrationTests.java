@@ -19,11 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.stream.Collectors;
 
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.Region;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.Region;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfigurat
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests for {@link RegionTemplateAutoConfiguration} using natively declared {@link Region}
+ * Integration Tests for {@link RegionTemplateAutoConfiguration} using natively declared {@link Region}
  * definitions in GemFire/Geode {@literal cache.xml}.
  *
  * @author John Blum

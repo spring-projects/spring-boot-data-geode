@@ -18,10 +18,6 @@ package org.springframework.geode.boot.autoconfigure.cache.client;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-import org.apache.geode.cache.client.ClientCache;
-import org.apache.geode.cache.client.Pool;
-import org.apache.geode.cache.client.PoolManager;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,6 +26,10 @@ import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
+import org.apache.geode.cache.client.ClientCache;
+import org.apache.geode.cache.client.Pool;
+import org.apache.geode.cache.client.PoolManager;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -45,7 +45,7 @@ import org.springframework.data.gemfire.tests.integration.SpringBootApplicationI
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 
 /**
- * Integration Test testing the custom configuration of the {@literal DEFAULT} {@link Pool}
+ * Integration Tests testing the custom configuration of the {@literal DEFAULT} {@link Pool}
  * as well as a named {@link Pool} when using Spring Boot {@link EnableAutoConfiguration auto-configuration}
  *
  * @author John Blum

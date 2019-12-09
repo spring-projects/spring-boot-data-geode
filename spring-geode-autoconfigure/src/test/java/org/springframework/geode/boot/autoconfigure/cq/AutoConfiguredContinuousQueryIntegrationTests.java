@@ -21,17 +21,17 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import org.apache.geode.cache.CacheLoader;
 import org.apache.geode.cache.CacheLoaderException;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.LoaderHelper;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -55,7 +55,7 @@ import example.geode.query.cq.event.TemperatureReading;
 import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
 
 /**
- * Integration tests testing the auto-configuration of Apache Geode/Pivotal GemFire Continuous Query.
+ * Integration Tests testing the auto-configuration of Apache Geode/Pivotal GemFire Continuous Query.
  *
  * @author John Blum
  * @see org.junit.Test

@@ -19,11 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Properties;
 
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.distributed.internal.DistributionConfig;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.distributed.internal.DistributionConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -44,6 +44,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.1.0
  */

@@ -19,12 +19,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.annotation.Resource;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,7 +40,7 @@ import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfigurat
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests for {@link RegionTemplateAutoConfiguration} using explicitly declared {@link Region}
+ * Integration Tests for {@link RegionTemplateAutoConfiguration} using explicitly declared {@link Region}
  * bean definition and existing {@link GemfireTemplate} {@link Region} in a Spring {@link ApplicationContext}.
  *
  * @author John Blum

@@ -18,11 +18,11 @@ package org.springframework.geode.boot.autoconfigure.security.auth.hybrid;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.geode.cache.client.ClientCache;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.client.ClientCache;
 
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

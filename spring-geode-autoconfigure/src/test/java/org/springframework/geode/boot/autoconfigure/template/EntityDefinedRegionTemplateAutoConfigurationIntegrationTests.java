@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.Region;
-import org.apache.geode.cache.client.ClientRegionShortcut;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.Region;
+import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,7 +46,7 @@ import example.app.books.model.Book;
 import example.app.books.model.ISBN;
 
 /**
- * Integration tests for {@link RegionTemplateAutoConfiguration} using SDG's {@link EnableEntityDefinedRegions}
+ * Integration Tests for {@link RegionTemplateAutoConfiguration} using SDG's {@link EnableEntityDefinedRegions}
  * annotation to define {@link Region Regions} and associated Templates.
  *
  * @author John Blum

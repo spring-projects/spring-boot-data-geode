@@ -19,13 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.annotation.Resource;
 
-import org.apache.geode.cache.Region;
-import org.apache.geode.cache.client.ClientRegionShortcut;
-
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+
+import org.apache.geode.cache.Region;
+import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,7 +39,7 @@ import org.springframework.geode.boot.autoconfigure.repository.service.CustomerS
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests testing the auto-configuration of Spring Data Repositories backed by either Apache Geode
+ * Integration Tests testing the auto-configuration of Spring Data Repositories backed by either Apache Geode
  * or Pivotal GemFire.
  *
  * @author John Blum
