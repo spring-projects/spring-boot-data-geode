@@ -4,9 +4,27 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.2.RELEASE (2019-12-11)
+---------------------------------------------
+Aligns SBDG with Spring Framework 5.2.2.RELEASE, Spring Boot 2.2.2.RELEASE, Spring Data Moore-SR3
+and Spring Session for Apache Geode & Pivotal GemFire 2.2.1.RELEASE.
+
+* Improves EnableClusterAware configuration logic to identify CacheTypeAwareRegionFactoryBeans.
+* Configures the Pool used by Spring Session to the DEFAULT Pool.
+* Upgrades to Spring Framework 5.2.2.RELEASE.
+* Upgrades to Spring Boot 2.2.2.RELEASE.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.2.3.RELEASE
+* Upgrades to Spring Data Release Train Moore-SR3.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.2.1.RELEASE.
+* Upgrades to Spring Session BOM Corn-RELEASE.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.11.RELEASE.
+* Upgrades to Mockito 3.2.0.
+* Upgrades to TestContainers 1.12.3.
+
+
 Changes in version 1.1.4.RELEASE (2019-12-11)
 ---------------------------------------------
-Aligns SBDG with Spring Framework 5.1.12.RELEASE, Spring Boot 2.1.11.RELEASE, Sprig Data Lovelace-SR14
+Aligns SBDG with Spring Framework 5.1.12.RELEASE, Spring Boot 2.1.11.RELEASE, Spring Data Lovelace-SR14
 and Spring Session for Apache Geode & Pivotal GemFire 2.1.7.RELEASE.
 
 * Upgrades to Spring Framework 5.1.12.RELEASE.
