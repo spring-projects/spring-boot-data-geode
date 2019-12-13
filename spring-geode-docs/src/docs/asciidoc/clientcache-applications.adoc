@@ -367,7 +367,7 @@ using the SDG `@EnableLocator` annotation:
 class SpringBootCacheServerWithEmbeddedLocatorApplication { ... }
 ----
 
-However, it is more common to start standalone Locator JVM processes.  This useful when you want to increase
+However, it is more common to start standalone Locator JVM processes.  This is useful when you want to increase
 the resiliency of your cluster in face of network and process failures, which are bound to happen.  If a Locator JVM
 process crashes or gets severed from the cluster due to a network failure, then having multiple Locators provides a
 higher degree of availability (HA) through redundancy.
