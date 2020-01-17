@@ -9,6 +9,9 @@ dependencies {
 
     compile "org.springframework.boot:spring-boot-starter-actuator"
 
+    provided "org.apache.geode:geode-log4j:$apacheGeodeVersion"
+    provided "org.apache.geode:geode-serialization:$apacheGeodeVersion"
+
     testCompile "junit:junit"
     testCompile "org.assertj:assertj-core"
     testCompile "org.mockito:mockito-core"
