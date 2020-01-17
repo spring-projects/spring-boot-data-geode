@@ -13,12 +13,12 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate.autoconfigure;
 
 import org.apache.geode.cache.GemFireCache;
+
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
-import org.springframework.boot.actuate.autoconfigure.health.HealthIndicatorAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.health.HealthContributorAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -40,7 +40,7 @@ import org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator
- * @see org.springframework.boot.actuate.autoconfigure.health.HealthIndicatorAutoConfiguration
+ * @see org.springframework.boot.actuate.autoconfigure.health.HealthContributorAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.geode.boot.actuate.autoconfigure.config.BaseGeodeHealthIndicatorConfiguration
@@ -51,7 +51,7 @@ import org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  */
 @Configuration
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
-@AutoConfigureBefore(HealthIndicatorAutoConfiguration.class)
+@AutoConfigureBefore(HealthContributorAutoConfiguration.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass(CacheFactoryBean.class)
 @ConditionalOnEnabledHealthIndicator("geode")
