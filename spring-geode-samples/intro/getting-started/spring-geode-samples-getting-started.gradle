@@ -1,7 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-	id "io.freefair.lombok" version "4.1.2"
+	id "io.freefair.lombok" version "4.1.6"
 }
 
 apply plugin: 'io.spring.convention.spring-sample-boot'
