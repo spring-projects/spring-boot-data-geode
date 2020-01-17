@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
-import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
+import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
 import org.springframework.data.gemfire.tests.util.IOUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -39,14 +39,12 @@ import org.springframework.util.StringUtils;
  * @author John Blum
  * @see org.springframework.core.io.Resource
  * @see org.springframework.data.cassandra.config.AbstractCassandraConfiguration
- * @see org.springframework.data.cassandra.config.CassandraClusterFactoryBean
+ * @see org.springframework.data.cassandra.config.CqlSessionFactoryBean
  * @since 1.1.0
  */
 public abstract class TestCassandraConfiguration extends AbstractCassandraConfiguration {
 
-	private static final boolean CASSANDRA_METRICS_ENABLED = false;
-
-	protected static final int CASSANDRA_DEFAULT_PORT = CassandraClusterFactoryBean.DEFAULT_PORT;
+	protected static final int CASSANDRA_DEFAULT_PORT = CqlSessionFactoryBean.DEFAULT_PORT;
 
 	private static final String CASSANDRA_DATA_CQL = "cassandra-data.cql";
 	private static final String CASSANDRA_SCHEMA_CQL = "cassandra-schema.cql";
@@ -61,11 +59,6 @@ public abstract class TestCassandraConfiguration extends AbstractCassandraConfig
 	@NonNull @Override
 	protected String getKeyspaceName() {
 		return KEYSPACE_NAME;
-	}
-
-	@Override
-	protected boolean getMetricsEnabled() {
-		return CASSANDRA_METRICS_ENABLED;
 	}
 
 	@Override
