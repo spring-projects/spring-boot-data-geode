@@ -18,10 +18,9 @@ dependencies {
 		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
 
-	//provided "javax.servlet:javax.servlet-api"
-
 	testCompile project(":apache-geode-extensions")
 
+	testCompile "jakarta.servlet:jakarta.servlet-api"
 	testCompile "junit:junit"
 	testCompile "org.assertj:assertj-core"
 	testCompile "org.mockito:mockito-core"
