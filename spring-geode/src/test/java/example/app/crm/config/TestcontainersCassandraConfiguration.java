@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Profile;
 import org.testcontainers.containers.GenericContainer;
 
 /**
- * Spring {@link @Configuration} for Apache Cassandra.
+ * Spring {@link @Configuration} for Apache Cassandra using Testcontainers.
  *
  * @author John Blum
  * @see org.springframework.context.annotation.Bean
@@ -34,11 +34,12 @@ import org.testcontainers.containers.GenericContainer;
 @Configuration
 @Profile("inline-caching-cassandra")
 @SuppressWarnings("unused")
-public class CassandraConfiguration extends TestCassandraConfiguration {
+public class TestcontainersCassandraConfiguration extends TestCassandraConfiguration {
 
 	private static final String CASSANDRA_DOCKER_IMAGE_NAME = "cassandra:latest";
 
 	@Bean
+	@SuppressWarnings("rawtypes")
 	GenericContainer cassandraContainer() {
 
 		GenericContainer cassandraContainer = newCassandraContainer()
@@ -49,11 +50,13 @@ public class CassandraConfiguration extends TestCassandraConfiguration {
 		return cassandraContainer;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private GenericContainer newCassandraContainer() {
 		return new GenericContainer(CASSANDRA_DOCKER_IMAGE_NAME);
 	}
 
 	@Override
+	@SuppressWarnings("all")
 	protected String getContactPoints() {
 		return cassandraContainer().getContainerIpAddress();
 	}

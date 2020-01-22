@@ -23,6 +23,7 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.cassandra.CassandraDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -37,12 +38,12 @@ import org.springframework.geode.cache.inline.AbstractInlineCachingWithExternalD
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import example.app.crm.config.CassandraConfiguration;
+import example.app.crm.config.TestcontainersCassandraConfiguration;
 import example.app.crm.model.Customer;
 import example.app.crm.repo.CustomerRepository;
 
 /**
- * Spring Boot Integration Tests testing the Inline Caching support using Apache Cassandra.
+ * Spring Boot Integration Tests testing Inline Caching support using Apache Cassandra with Apache Geode.
  *
  * @author John Blum
  * @see org.junit.Test
@@ -57,6 +58,7 @@ import example.app.crm.repo.CustomerRepository;
  * @see org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions
  * @see org.springframework.geode.cache.InlineCachingRegionConfigurer
  * @see org.springframework.geode.cache.inline.AbstractInlineCachingWithExternalDataSourceIntegrationTests
+ * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.1.0
  */
@@ -67,11 +69,11 @@ import example.app.crm.repo.CustomerRepository;
 public class InlineCachingWithCassandraIntegrationTests
 		extends AbstractInlineCachingWithExternalDataSourceIntegrationTests {
 
-	@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+	@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, CassandraDataAutoConfiguration.class })
 	@ClientCacheApplication(logLevel = GEMFIRE_LOG_LEVEL)
-	@EnableEntityDefinedRegions(basePackageClasses = Customer.class, clientRegionShortcut = ClientRegionShortcut.LOCAL)
 	@EnableCassandraRepositories(basePackageClasses = CustomerRepository.class)
-	@Import(CassandraConfiguration.class)
+	@EnableEntityDefinedRegions(basePackageClasses = Customer.class, clientRegionShortcut = ClientRegionShortcut.LOCAL)
+	@Import(TestcontainersCassandraConfiguration.class)
 	static class TestGeodeClientConfiguration {
 
 		@Bean

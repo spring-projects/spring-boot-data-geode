@@ -48,19 +48,34 @@ public abstract class TestCassandraConfiguration extends AbstractCassandraConfig
 
 	private static final String CASSANDRA_DATA_CQL = "cassandra-data.cql";
 	private static final String CASSANDRA_SCHEMA_CQL = "cassandra-schema.cql";
-	private static final String CLUSTER_NAME = "CustomerServiceCluster";
+	private static final String LOCAL_DATA_CENTER = "datacenter1";
 	private static final String KEYSPACE_NAME = "CustomerService";
-
-	@Nullable @Override
-	protected String getClusterName() {
-		return CLUSTER_NAME;
-	}
+	private static final String SESSION_NAME = "CustomerServiceCluster";
 
 	@NonNull @Override
 	protected String getKeyspaceName() {
 		return KEYSPACE_NAME;
 	}
 
+	@Override
+	@SuppressWarnings("all")
+	protected String getLocalDataCenter() {
+		return LOCAL_DATA_CENTER;
+	}
+
+	@Nullable @Override
+	protected String getSessionName() {
+		return SESSION_NAME;
+	}
+
+	/*
+	@Nullable @Override
+	protected KeyspacePopulator keyspacePopulator() {
+		return cqlSession -> loadCassandraCqlScripts().forEach(cqlSession::execute);
+	}
+	*/
+
+	// TODO: Remove use of deprecation after Spring Data for Apache Cassandra issues are resolved!
 	@Override
 	protected List<String> getStartupScripts() {
 
