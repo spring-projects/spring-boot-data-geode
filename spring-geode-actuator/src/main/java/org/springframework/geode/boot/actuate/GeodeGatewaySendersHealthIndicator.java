@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.wan.GatewaySender;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.data.gemfire.util.CacheUtils;
@@ -65,7 +66,7 @@ public class GeodeGatewaySendersHealthIndicator extends AbstractGeodeHealthIndic
 	}
 
 	@Override
-	protected void doHealthCheck(Health.Builder builder) throws Exception {
+	protected void doHealthCheck(Health.Builder builder) {
 
 		if (getGemFireCache().filter(CacheUtils::isPeer).isPresent()) {
 

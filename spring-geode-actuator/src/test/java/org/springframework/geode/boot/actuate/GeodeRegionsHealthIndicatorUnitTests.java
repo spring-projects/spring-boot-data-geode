@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +27,12 @@ import java.util.Currency;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import org.apache.geode.cache.CacheStatistics;
 import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.EvictionAction;
@@ -39,11 +44,7 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.PartitionAttributes;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.Scope;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.data.gemfire.tests.mock.CacheMockObjects;
@@ -79,8 +80,8 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
-	public void healthCheckCapturesDetails() throws Exception {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void healthCheckCapturesDetails()  {
 
 		Region<?, ?> mockRegionOne = CacheMockObjects.mockRegion("MockRegionOne", DataPolicy.PARTITION);
 
@@ -99,7 +100,7 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		when(mockPartitionAttributes.getColocatedWith()).thenReturn("CollocatedRegion");
 		when(mockPartitionAttributes.getLocalMaxMemory()).thenReturn(10240);
 		when(mockPartitionAttributes.getRedundantCopies()).thenReturn(2);
-		when(mockPartitionAttributes.getTotalMaxMemory()).thenReturn(4096000L);
+		//when(mockPartitionAttributes.getTotalMaxMemory()).thenReturn(4096000L);
 		when(mockPartitionAttributes.getTotalNumBuckets()).thenReturn(226);
 		when(mockRegionOne.getAttributes().getPartitionAttributes()).thenReturn(mockPartitionAttributes);
 
@@ -176,7 +177,7 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.collocated-with", "CollocatedRegion");
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.local-max-memory", 10240);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.redundant-copies", 2);
-		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.total-max-memory", 4096000L);
+		//assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.total-max-memory", 4096000L);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.partition.total-number-of-buckets", 226);
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.pool-name", "");
 		assertThat(healthDetails).containsEntry("geode.cache.regions.MockRegionOne.scope", Scope.DISTRIBUTED_ACK.toString());
@@ -206,7 +207,7 @@ public class GeodeRegionsHealthIndicatorUnitTests {
 	}
 
 	@Test
-	public void healthCheckFailsWhenGemFireCacheIsNotPresent() throws Exception {
+	public void healthCheckFailsWhenGemFireCacheIsNotPresent() {
 
 		GeodeRegionsHealthIndicator healthIndicator = new GeodeRegionsHealthIndicator();
 

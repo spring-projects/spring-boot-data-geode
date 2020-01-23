@@ -30,6 +30,7 @@ import org.apache.geode.cache.PartitionAttributes;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.RegionAttributes;
 import org.apache.geode.internal.cache.LocalDataSet;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.geode.boot.actuate.health.AbstractGeodeHealthIndicator;
@@ -160,7 +161,7 @@ public class GeodeRegionsHealthIndicator extends AbstractGeodeHealthIndicator {
 					builder.withDetail(cachePartitionRegionKey(regionName, "collocated-with"), emptyIfUnset(partitionAttributes.getColocatedWith()))
 						.withDetail(cachePartitionRegionKey(regionName, "local-max-memory"), partitionAttributes.getLocalMaxMemory())
 						.withDetail(cachePartitionRegionKey(regionName, "redundant-copies"), partitionAttributes.getRedundantCopies())
-						.withDetail(cachePartitionRegionKey(regionName, "total-max-memory"), partitionAttributes.getTotalMaxMemory())
+						//.withDetail(cachePartitionRegionKey(regionName, "total-max-memory"), partitionAttributes.getTotalMaxMemory())
 						.withDetail(cachePartitionRegionKey(regionName, "total-number-of-buckets"), partitionAttributes.getTotalNumBuckets());
 				}
 			}

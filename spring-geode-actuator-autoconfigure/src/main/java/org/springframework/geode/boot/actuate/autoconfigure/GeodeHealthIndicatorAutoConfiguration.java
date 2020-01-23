@@ -18,10 +18,8 @@ package org.springframework.geode.boot.actuate.autoconfigure;
 import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
-import org.springframework.boot.actuate.autoconfigure.health.HealthContributorAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -41,8 +39,10 @@ import org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator
  * @see org.springframework.boot.actuate.autoconfigure.health.HealthContributorAutoConfiguration
+ * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Import
+ * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.geode.boot.actuate.autoconfigure.config.BaseGeodeHealthIndicatorConfiguration
  * @see org.springframework.geode.boot.actuate.autoconfigure.config.ClientCacheHealthIndicatorConfiguration
  * @see org.springframework.geode.boot.actuate.autoconfigure.config.PeerCacheHealthIndicatorConfiguration
@@ -51,7 +51,6 @@ import org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  */
 @Configuration
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
-@AutoConfigureBefore(HealthContributorAutoConfiguration.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass(CacheFactoryBean.class)
 @ConditionalOnEnabledHealthIndicator("geode")

@@ -87,7 +87,7 @@ public class GeodeIndexesHealthIndicator extends AbstractGeodeHealthIndicator {
 	}
 
 	@Override
-	protected void doHealthCheck(Health.Builder builder) throws Exception {
+	protected void doHealthCheck(Health.Builder builder) {
 
 		if (getApplicationContext().isPresent()) {
 
@@ -144,6 +144,7 @@ public class GeodeIndexesHealthIndicator extends AbstractGeodeHealthIndicator {
 		return String.format("geode.index.%1$s.statistics.%2$s", indexName, suffix);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private String toRegionPath(Region region) {
 
 		String regionPath = region != null ? region.getFullPath() : null;

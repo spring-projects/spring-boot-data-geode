@@ -27,6 +27,7 @@ import org.apache.geode.cache.query.CqStatistics;
 import org.apache.geode.cache.query.Query;
 import org.apache.geode.cache.query.QueryService;
 import org.apache.geode.cache.query.QueryStatistics;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.data.gemfire.listener.ContinuousQueryListenerContainer;
@@ -102,14 +103,14 @@ public class GeodeContinuousQueriesHealthIndicator extends AbstractGeodeHealthIn
 
 			queryService
 				.map(QueryService::getCqStatistics)
-				.ifPresent(cqServiceStatistics -> {
+				.ifPresent(cqServiceStatistics ->
 
 					builder.withDetail("geode.continuous-query.number-of-active", cqServiceStatistics.numCqsActive())
 						.withDetail("geode.continuous-query.number-of-closed", cqServiceStatistics.numCqsClosed())
 						.withDetail("geode.continuous-query.number-of-created", cqServiceStatistics.numCqsCreated())
 						.withDetail("geode.continuous-query.number-of-stopped", cqServiceStatistics.numCqsStopped())
-						.withDetail("geode.continuous-query.number-on-client", cqServiceStatistics.numCqsOnClient());
-				});
+						.withDetail("geode.continuous-query.number-on-client", cqServiceStatistics.numCqsOnClient())
+				);
 
 			continuousQueries.stream()
 				.filter(Objects::nonNull)

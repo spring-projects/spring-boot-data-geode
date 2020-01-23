@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import java.util.Collections;
@@ -23,6 +22,7 @@ import java.util.Set;
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.asyncqueue.AsyncEventQueue;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.data.gemfire.util.CacheUtils;
@@ -65,7 +65,7 @@ public class GeodeAsyncEventQueuesHealthIndicator extends AbstractGeodeHealthInd
 	}
 
 	@Override
-	protected void doHealthCheck(Health.Builder builder) throws Exception {
+	protected void doHealthCheck(Health.Builder builder) {
 
 		if (getGemFireCache().filter(CacheUtils::isPeer).isPresent()) {
 

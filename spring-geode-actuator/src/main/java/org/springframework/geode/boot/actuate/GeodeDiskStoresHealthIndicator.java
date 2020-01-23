@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import java.io.File;
@@ -22,7 +21,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.geode.cache.DiskStore;
 
@@ -88,7 +86,7 @@ public class GeodeDiskStoresHealthIndicator extends AbstractGeodeHealthIndicator
 	}
 
 	@Override
-	protected void doHealthCheck(Health.Builder builder) throws Exception {
+	protected void doHealthCheck(Health.Builder builder) {
 
 		if (getApplicationContext().isPresent()) {
 
@@ -137,7 +135,7 @@ public class GeodeDiskStoresHealthIndicator extends AbstractGeodeHealthIndicator
 		return Arrays.toString(Arrays.stream(ArrayUtils.nullSafeArray(files, File.class))
 			.filter(Objects::nonNull)
 			.map(File::getAbsolutePath)
-			.collect(Collectors.toSet())
+			.distinct()
 			.toArray());
 	}
 }

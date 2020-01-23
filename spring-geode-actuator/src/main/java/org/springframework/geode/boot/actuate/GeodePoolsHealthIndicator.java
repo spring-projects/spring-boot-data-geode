@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.actuate;
 
 import static org.springframework.data.gemfire.util.CollectionUtils.nullSafeList;
@@ -29,6 +28,7 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.Pool;
 import org.apache.geode.cache.client.PoolManager;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.data.gemfire.util.CacheUtils;
@@ -72,7 +72,7 @@ public class GeodePoolsHealthIndicator extends AbstractGeodeHealthIndicator {
 	}
 
 	@Override
-	protected void doHealthCheck(Health.Builder builder) throws Exception {
+	protected void doHealthCheck(Health.Builder builder) {
 
 		if (getGemFireCache().filter(CacheUtils::isClient).isPresent()) {
 
@@ -106,8 +106,8 @@ public class GeodePoolsHealthIndicator extends AbstractGeodeHealthIndicator {
 						.withDetail(poolKey(poolName, "subscription-ack-interval"), pool.getSubscriptionAckInterval())
 						.withDetail(poolKey(poolName, "subscription-enabled"), toYesNoString(pool.getSubscriptionEnabled()))
 						.withDetail(poolKey(poolName, "subscription-message-tracking-timeout"), pool.getSubscriptionMessageTrackingTimeout())
-						.withDetail(poolKey(poolName, "subscription-redundancy"), pool.getSubscriptionRedundancy())
-						.withDetail(poolKey(poolName, "thread-local-connections"), toYesNoString(pool.getThreadLocalConnections()));
+						.withDetail(poolKey(poolName, "subscription-redundancy"), pool.getSubscriptionRedundancy());
+						//.withDetail(poolKey(poolName, "thread-local-connections"), toYesNoString(pool.getThreadLocalConnections()));
 
 					getGemFireCache()
 						.map(ClientCache.class::cast)
