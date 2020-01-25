@@ -4,6 +4,13 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.4.RELEASE (2020-01-24)
+---------------------------------------------
+Aligns SBDG with Spring Boot 2.2.4.RELEASE.
+
+* Upgrades to Spring Boot 2.2.4.RELEASE
+
+
 Changes in version 1.2.3.RELEASE (2020-01-24)
 ---------------------------------------------
 Aligns SBDG with Spring Framework 5.2.3.RELEASE, Spring Boot 2.2.3.RELEASE, Sprig Data Moore-SR4
