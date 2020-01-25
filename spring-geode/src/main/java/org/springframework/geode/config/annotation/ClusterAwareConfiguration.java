@@ -30,9 +30,6 @@ import java.util.regex.Pattern;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.cache.server.CacheServer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Condition;
@@ -52,6 +49,9 @@ import org.springframework.data.gemfire.support.ConnectionEndpointList;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link ClusterAwareConfiguration} class is a Spring {@link Configuration @Configuration} class imported by
