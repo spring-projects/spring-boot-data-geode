@@ -15,13 +15,13 @@
  */
 package example.app.caching.session.http.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
-
-import org.apache.geode.internal.concurrent.ConcurrentHashSet;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +46,7 @@ public class CounterController {
 
 	public static final String INDEX_TEMPLATE_VIEW_NAME = "index";
 
-	private final Set<String> sessionIds = new ConcurrentHashSet<>();
+	private final Set<String> sessionIds = Collections.synchronizedSet(new HashSet<>());
 
 	@GetMapping("/")
 	@ResponseBody
