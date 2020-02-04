@@ -122,6 +122,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 		}
 
 		@Override
+		@SuppressWarnings("all")
 		public synchronized boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
 			if (clusterAvailable.get() == null) {
@@ -182,6 +183,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			);
 		}
 
+		@SuppressWarnings("all")
 		List<ConnectionEndpoint> getConfiguredConnectionEndpoints(Environment environment) {
 
 			List<ConnectionEndpoint> connectionEndpoints = new ArrayList<>();
@@ -196,7 +198,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 
 					Pattern pattern = Pattern.compile(MATCHING_PROPERTY_PATTERN);
 
-					for (PropertySource propertySource : propertySources) {
+					for (PropertySource<?> propertySource : propertySources) {
 						if (propertySource instanceof EnumerablePropertySource) {
 
 							EnumerablePropertySource<?> enumerablePropertySource =
