@@ -1,0 +1,10 @@
+apply plugin: 'io.spring.convention.spring-module'
+apply from: MAVEN_POM_EDITOR_GRADLE
+
+description = "Spring Boot Logging Starter for Pivotal GemFire with Logback as the logging provider and adaptation of Log4j to SLF4J"
+
+dependencies {
+
+    compile project(":spring-geode-starter-logging")
+
+}

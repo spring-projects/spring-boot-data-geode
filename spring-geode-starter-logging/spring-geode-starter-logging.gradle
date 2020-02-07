@@ -1,0 +1,11 @@
+apply plugin: 'io.spring.convention.spring-module'
+apply from: MAVEN_POM_EDITOR_GRADLE
+
+description = "Spring Boot Logging Starter for Apache Geode with Logback as the logging provider and adaptation of Log4j to SLF4J"
+
+dependencies {
+
+    compile "org.apache.logging.log4j:log4j-to-slf4j"
+    compile "org.springframework.boot:spring-boot-starter-logging"
+
+}
