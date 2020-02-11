@@ -5,7 +5,7 @@
 
 	<include resource="logback-include.xml"/>
 
-	<root level="${logback.root.log.level:-ERROR}">
+	<root level="${logback.root.log.level:-INFO}">
 		<appender-ref ref="console"/>
 		<appender-ref ref="delegate"/>
 	</root>
