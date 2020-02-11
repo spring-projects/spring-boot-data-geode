@@ -29,14 +29,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
  * {@link SpringBootApplication Spring Boot application} generated from {@literal Spring Initializer}
  * at <a href="https://start.spring.io">start.spring.io</a>.
  *
- * Putting data into and getting data out of an Apache Geode cache {@link Region} is the most basic function.
+ * Putting data into and getting data back out of an Apache Geode (client) cache {@link Region}
+ * is the most basic function.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
@@ -49,7 +49,6 @@ import org.springframework.web.context.WebApplicationContext;
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.client.ClientRegionFactoryBean
- * @see org.springframework.data.gemfire.config.annotation.EnableLogging
  * @see org.springframework.web.context.WebApplicationContext
  * @since 1.2.0
  */
@@ -60,7 +59,7 @@ public class InitializerApplication {
 	public static void main(String[] args) {
 
 		SpringApplication springApplication =
-			new SpringApplicationBuilder(InitializerApplication.class) .build();
+			new SpringApplicationBuilder(InitializerApplication.class).build();
 
 		assertThat(springApplication).isNotNull();
 		assertThat(springApplication.getWebApplicationType()).isEqualTo(WebApplicationType.NONE);
@@ -73,7 +72,6 @@ public class InitializerApplication {
 	}
 
 	@Configuration
-	@EnableLogging(logLevel = "error")
 	static class GeodeConfiguration {
 
 		@Bean("Example")
