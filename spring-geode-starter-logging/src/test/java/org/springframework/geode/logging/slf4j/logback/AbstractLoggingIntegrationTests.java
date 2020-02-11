@@ -103,7 +103,7 @@ public abstract class AbstractLoggingIntegrationTests extends IntegrationTestsSu
 			new ContextInitializer(loggerContext).autoConfig();
 		}
 		catch (Exception cause) {
-			throw newIllegalStateException("Failed to initialize and configure SLF4J/Logback logging context", cause);
+			throw newIllegalStateException("Failed to configure and initialize SLF4J/Logback logging context", cause);
 		}
 	}
 
@@ -141,7 +141,11 @@ public abstract class AbstractLoggingIntegrationTests extends IntegrationTestsSu
 	@After
 	public void tearDown() {
 
-		Optional.ofNullable(this.testAppender).ifPresent(TestAppender::clear);
+		Optional.ofNullable(this.testAppender).ifPresent(it -> {
+			it.clear();
+			it.stop();
+		});
+
 		System.clearProperty(SPRING_BOOT_DATA_GEMFIRE_LOG_LEVEL_PROPERTY);
 	}
 }
