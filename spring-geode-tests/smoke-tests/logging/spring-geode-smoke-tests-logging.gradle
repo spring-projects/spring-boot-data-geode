@@ -1,0 +1,15 @@
+apply plugin: 'io.spring.convention.spring-test'
+
+description = "Smoke Tests to assert that Spring for Apache Geode logging functions as expected."
+
+dependencies {
+
+	implementation "org.assertj:assertj-core"
+
+	// NOTE: 'spring-geode-starter-logging' must be the first entry on the application/test classpath
+	implementation project(":spring-geode-starter-logging")
+	implementation project(':spring-geode-starter')
+
+	testImplementation project(":spring-geode-starter-test")
+
+}
