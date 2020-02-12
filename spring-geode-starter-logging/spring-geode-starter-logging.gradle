@@ -9,6 +9,6 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-to-slf4j"
     compile "org.springframework.boot:spring-boot-starter-logging"
 
-    testRuntime project(":spring-geode-starter-test")
+    testCompile project(":spring-geode-starter-test")
 
 }
