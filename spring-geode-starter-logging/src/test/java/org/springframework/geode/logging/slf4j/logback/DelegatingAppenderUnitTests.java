@@ -39,6 +39,11 @@ import ch.qos.logback.core.helpers.NOPAppender;
 public class DelegatingAppenderUnitTests {
 
 	@Test
+	public void delegatingAppenderDefaultsNameToDelegate() {
+		assertThat(new DelegatingAppender<>().getName()).isEqualTo(DelegatingAppender.DEFAULT_NAME);
+	}
+
+	@Test
 	public void delegatingAppenderDefaultsToNoOpAppender() {
 		assertThat(new DelegatingAppender<>().getAppender()).isInstanceOf(NOPAppender.class);
 	}

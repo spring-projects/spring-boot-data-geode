@@ -39,15 +39,19 @@ import ch.qos.logback.core.helpers.NOPAppender;
 public class DelegatingAppender<T> extends AppenderBase<T> {
 
 	@SuppressWarnings("rawtypes")
-	protected static final Appender defaultAppender = new NOPAppender<>();
+	protected static final Appender DEFAULT_APPENDER = new NOPAppender<>();
+
+	protected static final String DEFAULT_NAME = "delegate";
 
 	public DelegatingAppender() {
 
 		Optional.ofNullable(LoggerFactory.getILoggerFactory())
-			.filter(it -> Objects.isNull(defaultAppender.getContext()))
+			.filter(it -> Objects.isNull(DEFAULT_APPENDER.getContext()))
 			.filter(Context.class::isInstance)
 			.map(Context.class::cast)
-			.ifPresent(defaultAppender::setContext);
+			.ifPresent(DEFAULT_APPENDER::setContext);
+
+		this.name = DEFAULT_NAME;
 	}
 
 	private volatile Appender<T> appender;
@@ -58,7 +62,7 @@ public class DelegatingAppender<T> extends AppenderBase<T> {
 
 	@SuppressWarnings("unchecked")
 	protected Appender<T> getAppender() {
-		return Optional.ofNullable(this.appender).orElse(defaultAppender);
+		return Optional.ofNullable(this.appender).orElse(DEFAULT_APPENDER);
 	}
 
 	@Override
