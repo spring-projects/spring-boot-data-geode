@@ -16,8 +16,8 @@
 package example.app.geode.logging;
 
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.geode.logging.slf4j.logback.DelegatingAppender;
 import org.springframework.geode.logging.slf4j.logback.StringAppender;
@@ -53,6 +53,7 @@ import ch.qos.logback.classic.LoggerContext;
  * @see org.springframework.boot.ApplicationRunner
  * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.geode.logging.slf4j.logback.DelegatingAppender
  * @see org.springframework.geode.logging.slf4j.logback.StringAppender
@@ -63,6 +64,8 @@ import ch.qos.logback.classic.LoggerContext;
 @SpringBootApplication
 @SuppressWarnings({ "rawtypes", "unused" })
 public class ApacheGeodeLoggingApplication {
+
+	private static boolean ENABLE_PRINT_LOG = false;
 
 	private static final StringAppender stringAppender;
 
@@ -93,7 +96,13 @@ public class ApacheGeodeLoggingApplication {
 	// Customizes the configuration of SLF4J using the Logback logging provider provided in
 	// the 'spring-geode-starter-logging' module.
 	public static void main(String[] args) {
-		SpringApplication.run(ApacheGeodeLoggingApplication.class, args);
+
+		ENABLE_PRINT_LOG = true;
+
+		new SpringApplicationBuilder(ApacheGeodeLoggingApplication.class)
+			//.profiles("logging")
+			.build()
+			.run(args);
 	}
 
 	private final Logger logger = LoggerFactory.getLogger("org.apache.geode");
@@ -102,8 +111,14 @@ public class ApacheGeodeLoggingApplication {
 	ApplicationRunner runner() {
 
 		return args -> {
+
 			this.logger.info("RUNNER RAN!");
-			//printLog();
+			this.logger.debug("DEBUG TEST");
+
+			if (ENABLE_PRINT_LOG) {
+				printLog();
+			}
+
 		};
 	}
 
