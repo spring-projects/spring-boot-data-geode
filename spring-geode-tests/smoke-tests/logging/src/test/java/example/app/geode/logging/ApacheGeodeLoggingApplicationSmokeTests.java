@@ -45,11 +45,16 @@ public class ApacheGeodeLoggingApplicationSmokeTests extends IntegrationTestsSup
 
 	@Test
 	public void springApplicationLogsContent() {
-		assertThat(log.getContent()).containsSequence("RUNNER RAN!");
+		assertThat(this.log.getContent()).containsSequence("RUNNER RAN!");
+	}
+
+	@Test
+	public void debugLogStatementNotLogged() {
+		assertThat(this.log.getContent()).doesNotContain("DEBUG TEST");
 	}
 
 	@Test
 	public void apacheGeodeLogsContent() {
-		assertThat(log.getContent()).containsSequence("Product-Name: Apache Geode");
+		assertThat(this.log.getContent()).containsSequence("Product-Name: Apache Geode");
 	}
 }
