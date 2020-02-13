@@ -40,6 +40,7 @@ import ch.qos.logback.core.Context;
 public class StringAppender extends AppenderBase<ILoggingEvent> {
 
 	protected static final String DEFAULT_NAME = "string";
+	protected static final String NEWLINE = "\n";
 
 	@FunctionalInterface
 	interface StringAppenderWrapper {
@@ -53,6 +54,7 @@ public class StringAppender extends AppenderBase<ILoggingEvent> {
 		@Override
 		public void append(CharSequence charSequence) {
 			this.stringBuilder.append(charSequence);
+			this.stringBuilder.append(NEWLINE);
 		}
 
 		@Override
@@ -68,6 +70,7 @@ public class StringAppender extends AppenderBase<ILoggingEvent> {
 		@Override
 		public void append(CharSequence charSequence) {
 			this.stringBuffer.append(charSequence);
+			this.stringBuffer.append(NEWLINE);
 		}
 
 		@Override
