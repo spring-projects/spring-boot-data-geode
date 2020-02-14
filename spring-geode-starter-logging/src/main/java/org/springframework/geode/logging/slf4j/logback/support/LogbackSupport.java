@@ -15,13 +15,16 @@
  */
 package org.springframework.geode.logging.slf4j.logback.support;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 
 /**
@@ -37,6 +40,11 @@ import ch.qos.logback.core.Appender;
  */
 @SuppressWarnings("unused")
 public abstract class LogbackSupport {
+
+	protected static final Function<Logger, Optional<ch.qos.logback.classic.Logger>> slf4jLoggerToLogbackLoggerConverter =
+		logger -> Optional.ofNullable(logger)
+			.filter(ch.qos.logback.classic.Logger.class::isInstance)
+			.map(ch.qos.logback.classic.Logger.class::cast);
 
 	protected static final String CONSOLE_APPENDER_NAME = "console";
 	protected static final String DELEGATE_APPENDER_NAME = "delegate";
@@ -146,6 +154,14 @@ public abstract class LogbackSupport {
 				appenderName, nullSafeTypeName(appenderType), nullSafeLoggerName(logger))));
 	}
 
+	public static boolean addAppender(ch.qos.logback.classic.Logger logger, Appender<ILoggingEvent> appender) {
+
+		return Optional.ofNullable(logger)
+			.filter(it -> Objects.nonNull(appender))
+			.map(it -> { it.addAppender(appender); return true; })
+			.orElse(false);
+	}
+
 	/**
 	 * Removes the {@link Appender} with the specified {@link String name} from the given {@link Logger}.
 	 *
@@ -191,6 +207,20 @@ public abstract class LogbackSupport {
 		return removeAppender(logger, DELEGATE_APPENDER_NAME);
 	}
 
+	/**
+	 * Converts an SLF4J {@link Logger} to a Logback {@link ch.qos.logback.classic.Logger}.
+	 *
+	 * @param logger SLF4J {@link Logger} to convert.
+	 * @return an {@link Optional} Logback {@link ch.qos.logback.classic.Logger} for the given SLF4J {@link Logger}
+	 * iff the SLF4J {@link Logger} is {@literal not-null} and is a Logback {@link ch.qos.logback.classic.Logger}.
+	 * @see java.util.Optional
+	 * @see ch.qos.logback.classic.Logger
+	 * @see org.slf4j.Logger
+	 */
+	public static Optional<ch.qos.logback.classic.Logger> toLogbackLogger(Logger logger) {
+		return slf4jLoggerToLogbackLoggerConverter.apply(logger);
+	}
+
 	private static String nullSafeLoggerName(Logger logger) {
 		return logger != null ? logger.getName() : null;
 	}
@@ -203,7 +233,15 @@ public abstract class LogbackSupport {
 		return type != null ? type.getName() : null;
 	}
 
+	private static String nullSafeTypeSimpleName(Class<?> type) {
+		return type != null ? type.getSimpleName() : null;
+	}
+
 	private static String nullSafeTypeName(Object obj) {
 		return nullSafeTypeName(nullSafeType(obj));
+	}
+
+	private static String nullSafeTypeSimpleName(Object obj) {
+		return nullSafeTypeSimpleName(nullSafeType(obj));
 	}
 }
