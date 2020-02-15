@@ -44,26 +44,18 @@ public class StringAppender extends AppenderBase<ILoggingEvent> {
 
 	@FunctionalInterface
 	interface StringAppenderWrapper {
+
 		void append(CharSequence charSequence);
+
+		default void clear() { }
+
 	}
 
-	protected static final StringAppenderWrapper stringBuilderAppenderWrapper = new StringAppenderWrapper() {
+	protected static class StringBufferAppenderWrapper implements StringAppenderWrapper {
 
-		private final StringBuilder stringBuilder = new StringBuilder();
-
-		@Override
-		public void append(CharSequence charSequence) {
-			this.stringBuilder.append(charSequence);
-			this.stringBuilder.append(NEWLINE);
+		protected static StringBufferAppenderWrapper create() {
+			return new StringBufferAppenderWrapper();
 		}
-
-		@Override
-		public java.lang.String toString() {
-			return this.stringBuilder.toString();
-		}
-	};
-
-	protected static final StringAppenderWrapper stringBufferAppenderWrapper = new StringAppenderWrapper() {
 
 		private final StringBuffer stringBuffer = new StringBuffer();
 
@@ -74,10 +66,40 @@ public class StringAppender extends AppenderBase<ILoggingEvent> {
 		}
 
 		@Override
+		public void clear() {
+			this.stringBuffer.delete(0, this.stringBuffer.length());
+		}
+
+		@Override
 		public java.lang.String toString() {
 			return this.stringBuffer.toString();
 		}
-	};
+	}
+
+	protected static class StringBuilderAppenderWrapper implements StringAppenderWrapper {
+
+		protected static StringBuilderAppenderWrapper create() {
+			return new StringBuilderAppenderWrapper();
+		}
+
+		private final StringBuilder stringBuilder = new StringBuilder();
+
+		@Override
+		public void append(CharSequence charSequence) {
+			this.stringBuilder.append(charSequence);
+			this.stringBuilder.append(NEWLINE);
+		}
+
+		@Override
+		public void clear() {
+			this.stringBuilder.delete(0, this.stringBuilder.length());
+		}
+
+		@Override
+		public java.lang.String toString() {
+			return this.stringBuilder.toString();
+		}
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
 	public static class Builder {
@@ -148,7 +170,10 @@ public class StringAppender extends AppenderBase<ILoggingEvent> {
 		}
 
 		private StringAppenderWrapper resolveStringAppenderWrapper() {
-			return this.useSynchronization ? stringBufferAppenderWrapper : stringBuilderAppenderWrapper;
+
+			return this.useSynchronization
+				? StringBufferAppenderWrapper.create()
+				: StringBuilderAppenderWrapper.create();
 		}
 
 		public StringAppender build() {

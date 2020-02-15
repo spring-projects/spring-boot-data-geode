@@ -74,7 +74,8 @@ public class StringAppenderUnitTests {
 		assertThat(stringAppender.isStarted()).isFalse();
 		assertThat(stringAppender.getContext()).isEqualTo(LoggerFactory.getILoggerFactory());
 		assertThat(stringAppender.getName()).isEqualTo(StringAppender.DEFAULT_NAME);
-		assertThat(stringAppender.getStringAppenderWrapper()).isSameAs(StringAppender.stringBuilderAppenderWrapper);
+		assertThat(stringAppender.getStringAppenderWrapper())
+			.isInstanceOf(StringAppender.StringBuilderAppenderWrapper.class);
 	}
 
 	@Test
@@ -116,7 +117,8 @@ public class StringAppenderUnitTests {
 		assertThat(stringAppender.isStarted()).isTrue();
 		assertThat(stringAppender.getContext()).isEqualTo(mockContext);
 		assertThat(stringAppender.getName()).isEqualTo("TestStringAppender");
-		assertThat(stringAppender.getStringAppenderWrapper()).isEqualTo(StringAppender.stringBufferAppenderWrapper);
+		assertThat(stringAppender.getStringAppenderWrapper())
+			.isInstanceOf(StringAppender.StringBufferAppenderWrapper.class);
 		assertThat(rootLogger.getAppender("TestStringAppender")).isEqualTo(stringAppender);
 
 		verify(delegate, times(1)).setAppender(isA(CompositeAppender.class));
