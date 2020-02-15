@@ -76,6 +76,8 @@ public class ApacheGeodeLoggingApplication {
 	@SuppressWarnings("unchecked")
 	private static StringAppender configureAndInitializeLoggingSystem() {
 
+		LogbackSupport.resetLogback();
+
 		LoggerContext loggerContext = LogbackSupport.requireLoggerContext();
 
 		LogbackSupport.suppressSpringBootLogbackInitialization();
