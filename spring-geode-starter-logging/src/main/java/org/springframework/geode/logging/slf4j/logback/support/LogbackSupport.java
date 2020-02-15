@@ -15,6 +15,7 @@
  */
 package org.springframework.geode.logging.slf4j.logback.support;
 
+import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -22,6 +23,7 @@ import java.util.function.Function;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.impl.StaticLoggerBinder;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -65,6 +67,28 @@ public abstract class LogbackSupport {
 	 */
 	public static void suppressSpringBootLogbackInitialization() {
 		requireLoggerContext().putObject(SPRING_BOOT_LOGGING_SYSTEM_CLASS_NAME, new Object());
+	}
+
+	/**
+	 * Resets the state of the SLF4J Logback logging provider (system).
+	 */
+	public static void resetLogback() {
+
+		try {
+
+			Method loggerFactoryReset = LoggerFactory.class.getDeclaredMethod("reset");
+
+			loggerFactoryReset.setAccessible(true);
+			loggerFactoryReset.invoke(null);
+
+			Method staticLoggerBinderReset = StaticLoggerBinder.class.getDeclaredMethod("reset");
+
+			staticLoggerBinderReset.setAccessible(true);
+			staticLoggerBinderReset.invoke(null);
+		}
+		catch (Throwable cause) {
+			throw new IllegalStateException("Failed to reset Logback", cause);
+		}
 	}
 
 	/**
