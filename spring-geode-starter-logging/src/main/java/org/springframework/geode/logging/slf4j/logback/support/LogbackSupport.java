@@ -70,7 +70,7 @@ public abstract class LogbackSupport {
 	}
 
 	/**
-	 * Resets the state of the SLF4J Logback logging provider (system).
+	 * Resets the state of the SLF4J Logback logging provider and system.
 	 */
 	public static void resetLogback() {
 
@@ -153,6 +153,30 @@ public abstract class LogbackSupport {
 	}
 
 	/**
+	 * Finds an {@link Appender} with the given {@link String name} from the given {@link Logger}.
+	 *
+	 * @param <T> {@link Class type} of the {@link Appender}.
+	 * @param <E> {@link Class type} of the logging event.
+	 * @param logger SLF4J {@link Logger} from which to resolve the {@link Appender}.
+	 * @param appenderName a {@link String} containing the name of the {@link Appender} to resolve.
+	 * @param appenderType required {@link Class type} of the {@link Appender} to resolve.
+	 * @return an {@link Optional} {@link Appender} with the given {@link String name} from the {@link Logger}.
+	 * @see ch.qos.logback.core.Appender
+	 * @see java.util.Optional
+	 * @see org.slf4j.Logger
+	 */
+	public static <E, T extends Appender<E>> Optional<T> resolveAppender(ch.qos.logback.classic.Logger logger,
+			String appenderName, Class<T> appenderType) {
+
+		appenderType = nullSafeAppenderType(appenderType);
+
+		return Optional.ofNullable(logger)
+			.map(it -> it.getAppender(appenderName))
+			.filter(appenderType::isInstance)
+			.map(appenderType::cast);
+	}
+
+	/**
 	 * Requires an {@link Appender} with the given {@link String name} having the specified {@link Class type}
 	 * from the given {@link Logger}.
 	 *
@@ -170,20 +194,34 @@ public abstract class LogbackSupport {
 	public static <E, T extends Appender<E>> T requireAppender(ch.qos.logback.classic.Logger logger,
 			String appenderName, Class<T> appenderType) {
 
-		return Optional.ofNullable(logger)
-			.map(it -> it.getAppender(appenderName))
-			.filter(appenderType::isInstance)
-			.map(appenderType::cast)
+		return resolveAppender(logger, appenderName, appenderType)
 			.orElseThrow(() -> new IllegalStateException(String.format(UNRESOLVABLE_APPENDER_EXCEPTION_MESSAGE,
 				appenderName, nullSafeTypeName(appenderType), nullSafeLoggerName(logger))));
 	}
 
+	@SuppressWarnings("all")
+	private static <E, T extends Appender<E>> Class<T> nullSafeAppenderType(Class<T> appenderType) {
+		return appenderType != null ? appenderType : (Class) Appender.class;
+	}
+
+	/**
+	 * Adds the given {@link Appender} to the given {@link Logger}.
+	 *
+	 * @param logger {@link Logger} to add the {@link Appender} to.
+	 * @param appender {@link Appender} to add to the {@link Logger}.
+	 * @return a boolean value indicating whether the {@link Appender} was successfully added to the {@link Logger}.
+	 * @see ch.qos.logback.classic.Logger
+	 * @see ch.qos.logback.core.Appender
+	 */
 	public static boolean addAppender(ch.qos.logback.classic.Logger logger, Appender<ILoggingEvent> appender) {
 
 		return Optional.ofNullable(logger)
 			.filter(it -> Objects.nonNull(appender))
-			.map(it -> { it.addAppender(appender); return true; })
-			.orElse(false);
+			.map(it -> {
+				it.addAppender(appender);
+				return logger.getAppender(appender.getName());
+			})
+			.isPresent();
 	}
 
 	/**
@@ -257,12 +295,12 @@ public abstract class LogbackSupport {
 		return type != null ? type.getName() : null;
 	}
 
-	private static String nullSafeTypeSimpleName(Class<?> type) {
-		return type != null ? type.getSimpleName() : null;
-	}
-
 	private static String nullSafeTypeName(Object obj) {
 		return nullSafeTypeName(nullSafeType(obj));
+	}
+
+	private static String nullSafeTypeSimpleName(Class<?> type) {
+		return type != null ? type.getSimpleName() : null;
 	}
 
 	private static String nullSafeTypeSimpleName(Object obj) {
