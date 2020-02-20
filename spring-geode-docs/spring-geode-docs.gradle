@@ -46,7 +46,10 @@ asciidoctor {
 		'docs-src-dir' : rootProject.projectDir.path + '/spring-geode-docs/src/main/java',
 		'docs-resources-dir' : rootProject.projectDir.path + '/spring-geode-docs/src/main/resources',
 		'examples-dir' : rootProject.projectDir.path + '/spring-geode-examples',
-		'samples-dir'  : rootProject.projectDir.path + '/spring-geode-samples'
+		'samples-dir'  : rootProject.projectDir.path + '/spring-geode-samples',
+		'starter-logging-dir' : rootProject.projectDir.path + '/spring-geode-starter-logging',
+	    'starter-logging-src-dir' : rootProject.projectDir.path + '/spring-geode-starter-logging/src/main/src',
+	    'starter-logging-resources-dir' : rootProject.projectDir.path + '/spring-geode-starter-logging/src/main/resources'
 }
 
 javadoc {
