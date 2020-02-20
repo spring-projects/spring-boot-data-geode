@@ -23,6 +23,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -75,6 +78,78 @@ public class CompositeAppenderUnitTests {
 		assertThat((((CompositeAppender<?>) composite).getAppenderTwo())).isEqualTo(this.mockAppenderTwo);
 		assertThat(composite.getName()).isEqualTo(CompositeAppender.DEFAULT_NAME);
 		assertThat(composite.isStarted()).isTrue();
+	}
+
+	@Test
+	public void composeAppenderArray() {
+
+		Appender mockAppenderOne = mock(Appender.class);
+		Appender mockAppenderTwo = mock(Appender.class);
+		Appender mockAppenderThree = mock(Appender.class);
+
+		Appender composite = CompositeAppender.compose(mockAppenderOne, mockAppenderTwo, mockAppenderThree);
+
+		assertThat(composite).isInstanceOf(CompositeAppender.class);
+
+		Appender appenderOne = ((CompositeAppender) composite).getAppenderOne();
+		Appender appenderTwo = ((CompositeAppender) composite).getAppenderTwo();
+
+		assertThat(appenderOne).isInstanceOf(CompositeAppender.class);
+		assertThat(appenderTwo).isEqualTo(mockAppenderThree);
+		assertThat(((CompositeAppender) appenderOne).getAppenderOne()).isEqualTo(mockAppenderOne);
+		assertThat(((CompositeAppender) appenderOne).getAppenderTwo()).isEqualTo(mockAppenderTwo);
+	}
+
+	@Test
+	public void composeAppenderArrayWithOneAppender() {
+		assertThat(CompositeAppender.compose(this.mockAppenderOne)).isSameAs(this.mockAppenderOne);
+	}
+
+	@Test
+	public void composeAppenderArrayWithZeroAppenders() {
+		assertThat(CompositeAppender.compose()).isNull();
+	}
+
+	@Test
+	public void composeAppenderArrayIsNullSafe() {
+		assertThat(CompositeAppender.compose((Appender[]) null)).isNull();
+	}
+
+	@Test
+	public void composeAppenderIterable() {
+
+		Appender mockAppenderOne = mock(Appender.class);
+		Appender mockAppenderTwo = mock(Appender.class);
+		Appender mockAppenderThree = mock(Appender.class);
+
+		Appender composite =
+			CompositeAppender.compose(Arrays.asList(mockAppenderOne, mockAppenderTwo, mockAppenderThree));
+
+		assertThat(composite).isInstanceOf(CompositeAppender.class);
+
+		Appender appenderOne = ((CompositeAppender) composite).getAppenderOne();
+		Appender appenderTwo = ((CompositeAppender) composite).getAppenderTwo();
+
+		assertThat(appenderOne).isInstanceOf(CompositeAppender.class);
+		assertThat(appenderTwo).isEqualTo(mockAppenderThree);
+		assertThat(((CompositeAppender) appenderOne).getAppenderOne()).isEqualTo(mockAppenderOne);
+		assertThat(((CompositeAppender) appenderOne).getAppenderTwo()).isEqualTo(mockAppenderTwo);
+	}
+
+	@Test
+	public void composeAppenderIterableWithOneAppender() {
+		assertThat(CompositeAppender.compose(Collections.singletonList(this.mockAppenderTwo)))
+			.isSameAs(this.mockAppenderTwo);
+	}
+
+	@Test
+	public void composeAppenderIterableWithZeroAppenders() {
+		assertThat(CompositeAppender.compose(Collections.emptyList())).isNull();
+	}
+
+	@Test
+	public void composeAppenderIterableIsNullSafe() {
+		assertThat(CompositeAppender.compose((Iterable<Appender<Object>>) null)).isNull();
 	}
 
 	@Test

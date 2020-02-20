@@ -15,6 +15,10 @@
  */
 package org.springframework.geode.logging.slf4j.logback;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AppenderBase;
 import ch.qos.logback.core.Context;
@@ -52,6 +56,52 @@ public class CompositeAppender<T> extends AppenderBase<T> {
 	 */
 	public static <T> Appender<T> compose(Appender<T> one, Appender<T> two) {
 		return one == null ? two : two == null ? one : new CompositeAppender<>(one, two);
+	}
+
+	/**
+	 * Composes an array of {@link Appender Appenders} into a {@link CompositeAppender}.
+	 *
+	 * This operation is null-safe.
+	 *
+	 * @param <T> {@link Class type} of the logging events processed by the {@link Appender Appenders}.
+	 * @param appenders array of {@link Appender Appenders} to compose; may be {@literal null}.
+	 * @return a composition of the array of {@link Appender Appenders}; returns {@literal null} if the array is empty.
+	 * @see #compose(Iterable)
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Appender<T> compose(Appender<T>... appenders) {
+
+		List<Appender<T>> resolvedAppenders = appenders != null
+			? Arrays.asList(appenders)
+			: Collections.emptyList();
+
+		return compose(resolvedAppenders);
+
+	}
+
+	/**
+	 * Composes the {@link Iterable} of {@link Appender Appenders} into a {@link CompositeAppender}.
+	 *
+	 * This operation is null-safe.
+	 *
+	 * @param <T> {@link Class type} of the logging events processed by the {@link Appender Appenders}.
+	 * @param appenders {@link Iterable} of {@link Appender Appenders} to compose; may be {@literal null}.
+	 * @return a composition of the {@link Iterable} of {@link Appender Appenders}; returns {@literal null}
+	 * if the {@link Iterable} is {@literal null} or empty.
+	 * @see #compose(Appender, Appender)
+	 * @see java.lang.Iterable
+	 */
+	public static <T> Appender<T> compose(Iterable<Appender<T>> appenders) {
+
+		Appender<T> currentAppender = null;
+
+		appenders = appenders != null ? appenders : Collections::emptyIterator;
+
+		for (Appender<T> appender : appenders) {
+			currentAppender = compose(currentAppender, appender);
+		}
+
+		return currentAppender;
 	}
 
 	/**
