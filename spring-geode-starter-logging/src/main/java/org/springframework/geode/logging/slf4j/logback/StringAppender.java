@@ -17,6 +17,9 @@ package org.springframework.geode.logging.slf4j.logback;
 
 import java.util.Optional;
 
+import org.springframework.geode.logging.slf4j.logback.support.LogbackSupport;
+
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -125,6 +128,13 @@ public class StringAppender extends AppenderBase<ILoggingEvent> {
 			this.delegate = delegate;
 			this.replace = replace;
 			return this;
+		}
+
+		public Builder applyTo(Logger logger) {
+
+			return LogbackSupport.toLogbackLogger(logger)
+				.map(this::applyTo)
+				.orElse(this);
 		}
 
 		public Builder applyTo(ch.qos.logback.classic.Logger logger) {
