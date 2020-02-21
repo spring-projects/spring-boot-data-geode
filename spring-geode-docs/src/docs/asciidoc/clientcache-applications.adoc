@@ -617,3 +617,88 @@ GfshServer       | 10.99.199.24(GfshServer:30295)<v4>:41004
 
 You must be careful to vary the ports and name your peer members appropriately.  With Spring, and Spring Boot
 for Apache Geode and Pivotal GemFire (SBDG) in particular, it really is that easy!
+
+[[geode-manager-applications]]
+=== Building Manager Applications
+
+As discussed in the previous sections above, it is possible to enable a Spring Boot configured and bootstrapped
+Apache Geode or Pivotal GemFire peer member node in the cluster to function as a _Manager_.
+
+An Apache Geode or Pivotal GemFire _Manager_ is a peer member node in the cluster running the Management Service,
+allowing the cluster to be managed and monitored using JMX based tools, like _Gfsh_, _JConsole_ or _JVisualVM_,
+for instance.  Any tool that uses the JMX API can connect to and manage the GemFire/Geode cluster for whatever purpose.
+
+The cluster may have more than 1 _Manager_ for redundancy.  Only server-side, peer member nodes in the cluster
+may function as a _Manager_.  Therefore, a `ClientCache` application cannot be a _Manager_.
+
+To create a _Manager_, you use the SDG `@EnableManager` annotation.
+
+The 3 primary uses of the `@EnableManager` annotation to create a _Manager_ is:
+
+.1 - CacheServer Manager Application
+[source,java]
+----
+@SpringBootApplication
+@CacheServerApplication(name = "CacheServerManagerApplication")
+@EnableManager(start = true)
+class CacheServerManagerApplication {
+	// ...
+}
+----
+
+.2 - Peer Cache Manager Application
+[source,java]
+----
+@SpringBootApplication
+@PeerCacheApplication(name = "PeerCacheManagerApplication")
+@EnableManager(start = "true")
+class SpringBootPeerCacheManagerApplication {
+	// ...
+}
+----
+
+.3 - Locator Manager Application
+[source,java]
+----
+@SpringBootApplication
+@LocatorApplication(name = "LocatorManagerApplication")
+@EnableManager(start = true)
+class LocatorManagerApplication {
+	// ...
+}
+----
+
+#1 creates a peer `Cache` instance with a `CacheServer` component accepting client connections along with
+an embedded _Manager_ enabling JMX clients to connect.
+
+#2 creates only a peer `Cache` instance along with an embedded _Manager_.  As a peer `Cache` with NO `CacheServer`
+component, clients are not able to connect to this node.  It is merely a server managing data.
+
+#3 creates a _Locator_ instance with an embedded _Manager_.
+
+In all configuration arrangements, the _Manager_ was configured to start immediately.
+
+TIP: See the `@EnableManager` annotation
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html[Javadoc]
+for additional configuration options.
+
+As of Apache Geode 1.11.0, you must now include additional Geode dependencies on your Spring Boot application classpath
+to make your application a proper Apache Geode/Pivotal GemFire _Manager_ in the cluster, particularly if you are also
+enabling the embedded HTTP service in the _Manager_.
+
+The required dependencies are:
+
+.Additional Manager dependencies expressed in Gradle
+[source,groovy]
+----
+runtime "org.apache.geode:geode-http-service"
+runtime "org.apache.geode:geode-web"
+runtime "org.springframework.boot:spring-boot-starter-jetty"
+----
+
+The embedded HTTP service (implemented with the Eclipse Jetty Servlet Container), runs the Management (Admin) REST API,
+which is used by tooling, such as _Gfsh_, to connect to the cluster over HTTP.  In addition, it also runs the
+{apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool.
+
+Even if you do not start the embedded HTTP service (Jetty Servlet Container), a _Manager_ still requires
+the `geode-http-service`, `geode-web` and `spring-boot-starter-jetty` dependencies.
