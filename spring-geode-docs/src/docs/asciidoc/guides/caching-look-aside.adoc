@@ -219,9 +219,9 @@ endpoints, accessible by URL using HTTP:
 | URL | Description
 
 | `/ping` | Heartbeat request to test that our application is alive and running.
-| `/counter/{name}` | Increments the "named" counter.
-| `/counter/{name}/cached` | Returns the current, cached count for the "named" counter.
-| `/counter/{name}/reset` | Resets the count for the "named" counter.
+| `/counter/\{name}` | Increments the "named" counter.
+| `/counter/\{name}/cached` | Returns the current, cached count for the "named" counter.
+| `/counter/\{name}/reset` | Resets the count for the "named" counter.
 
 |===
 

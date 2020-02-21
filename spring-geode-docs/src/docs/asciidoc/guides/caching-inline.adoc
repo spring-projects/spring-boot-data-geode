@@ -438,10 +438,10 @@ containing the following web service endpoints:
 |===
 | REST API call | Description
 
-| /                              | Returns the home page. Defaults to `/ping`.
-| /ping                          | Heartbeat endpoint returning "PONG".
-| /calculator/factorial/{number} | Computes the _factorial_ of the `number`.
-| /calculator/sqrt/{number}      | Computes the _square root_ of the `number`.
+| `/`                               | Returns the home page. Defaults to `/ping`.
+| `/ping`                           | Heartbeat endpoint returning "PONG".
+| `/calculator/factorial/\{number}` | Computes the _factorial_ of the `number`.
+| `/calculator/sqrt/\{number}`      | Computes the _square root_ of the `number`.
 
 |===
 

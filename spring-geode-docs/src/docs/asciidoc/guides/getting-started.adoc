@@ -714,7 +714,7 @@ for accessing the CRM application via a Web client (e.g. Web browser).
 | GET `/home` | Returns description of the application.
 | GET `/ping` | Heartbeat request to test that the application is alive and running.
 | GET `/customers` | Returns a list of all Customers.
-| GET `/customers/{name}` | Returns the named Customer.
+| GET `/customers/\{name}` | Returns the named Customer.
 | POST `/customers` | Accepts JSON and creates a new Customer.
 
 |===
