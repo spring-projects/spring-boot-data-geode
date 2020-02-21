@@ -256,7 +256,7 @@ and {apache-geode-javadoc}/org/apache/geode/cache/CacheWriter.html[`CacheWriter`
 TIP: To learn more about `@EnableCachingDefinedRegions`, see the Spring Data for Apache Geode
 {spring-data-geode-docs}/#bootstrap-annotation-config-caching[documentation].
 
-[[geode-samples-caching-inline-example-calculator-configuration]]
+[[geode-samples-caching-inline-example-calculator-backend]]
 === Backend DataSource Configuration
 
 While we used Spring Data's Repository abstraction as the way to access data in the backend data store used for
