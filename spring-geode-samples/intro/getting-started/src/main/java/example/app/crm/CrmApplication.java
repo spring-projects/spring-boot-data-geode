@@ -33,6 +33,7 @@ import example.app.crm.repo.CustomerRepository;
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @since 1.2.0
  */
+@SuppressWarnings("unused")
 // tag::class[]
 @SpringBootApplication
 public class CrmApplication {
@@ -69,6 +70,6 @@ public class CrmApplication {
 			System.err.printf("Customer was [%s]%n", queriedJonDoe);
 		};
 	}
-	// tag::runner[]
+	// end::runner[]
 }
 // end::class[]
