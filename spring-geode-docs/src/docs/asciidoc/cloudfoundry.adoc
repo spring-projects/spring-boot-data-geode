@@ -232,7 +232,7 @@ NOTE: Though less common, you can also configure the `Pool` of connections to ta
 using the `spring.data.gemfire.pool.<named-pool>.severs` property.
 
 TIP: Keep in mind that properties in Spring Boot `application.properties` can refer to other properties like so:
-`property=${otherProperty}`.  This allows you to further externalize properties using Java System properties
+`property=$\{otherProperty}`.  This allows you to further externalize properties using Java System properties
 or Environment Variables.
 
 Of course, a client Region is then assigned the Pool of connections that are used to send data to/from
