@@ -27,12 +27,12 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
-import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.gemfire.GemfireUtils;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
@@ -68,9 +68,7 @@ public class SpringBootApacheGeodeClientCacheApplicationIntegrationTests extends
 	public void clientCacheAndClientRegionAreAvailable() {
 
 		Optional.ofNullable(this.clientCache)
-			.filter(GemFireCacheImpl.class::isInstance)
-			.map(GemFireCacheImpl.class::cast)
-			.map(it -> assertThat(it.isClient()).isTrue())
+			.map(it -> assertThat(GemfireUtils.isClient(it)).isTrue())
 			.orElseThrow(() -> newIllegalStateException("ClientCache was null"));
 
 		Region<Object, Object> example = this.clientCache.getRegion("Example");
