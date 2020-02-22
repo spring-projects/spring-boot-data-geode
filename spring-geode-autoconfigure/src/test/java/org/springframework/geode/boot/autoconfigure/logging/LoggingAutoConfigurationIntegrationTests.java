@@ -23,13 +23,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.distributed.internal.DistributionConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.geode.util.GeodeConstants;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -72,10 +72,10 @@ public class LoggingAutoConfigurationIntegrationTests extends IntegrationTestsSu
 
 		Properties distributedSystemProperties = this.gemfireCache.getDistributedSystem().getProperties();
 
-		assertThat(distributedSystemProperties.getProperty(DistributionConfig.LOG_DISK_SPACE_LIMIT_NAME)).isEqualTo("4096");
-		assertThat(distributedSystemProperties.getProperty(DistributionConfig.LOG_FILE_NAME)).isEqualTo("/path/to/gemfire.log");
-		assertThat(distributedSystemProperties.getProperty(DistributionConfig.LOG_FILE_SIZE_LIMIT_NAME)).isEqualTo("512");
-		assertThat(distributedSystemProperties.getProperty(DistributionConfig.LOG_LEVEL_NAME)).isEqualTo("fine");
+		assertThat(distributedSystemProperties.getProperty(GeodeConstants.LOG_DISK_SPACE_LIMIT)).isEqualTo("4096");
+		assertThat(distributedSystemProperties.getProperty(GeodeConstants.LOG_FILE)).isEqualTo("/path/to/gemfire.log");
+		assertThat(distributedSystemProperties.getProperty(GeodeConstants.LOG_FILE_SIZE_LIMIT)).isEqualTo("512");
+		assertThat(distributedSystemProperties.getProperty(GeodeConstants.LOG_LEVEL)).isEqualTo("fine");
 	}
 
 	@SpringBootApplication
