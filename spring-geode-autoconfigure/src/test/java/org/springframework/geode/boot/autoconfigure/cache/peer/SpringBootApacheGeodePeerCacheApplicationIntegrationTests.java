@@ -27,12 +27,12 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
-import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.gemfire.GemfireUtils;
 import org.springframework.data.gemfire.LocalRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
@@ -60,8 +60,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SuppressWarnings("unused")
 public class SpringBootApacheGeodePeerCacheApplicationIntegrationTests extends IntegrationTestsSupport {
 
-	private static final String GEMFIRE_LOG_LEVEL = "error";
-
 	@Autowired
 	private GemFireCache peerCache;
 
@@ -69,12 +67,10 @@ public class SpringBootApacheGeodePeerCacheApplicationIntegrationTests extends I
 	public void peerCacheWithPeerLocalRegionAreAvailable() {
 
 		Optional.ofNullable(this.peerCache)
-			.filter(GemFireCacheImpl.class::isInstance)
-			.map(GemFireCacheImpl.class::cast)
-			.map(it -> assertThat(it.isClient()).isFalse())
+			.map(it -> assertThat(GemfireUtils.isClient(it)).isFalse())
 			.orElseThrow(() -> newIllegalStateException("Peer cache was null"));
 
-		Region<Object, Object> example = peerCache.getRegion("/Example");
+		Region<Object, Object> example = this.peerCache.getRegion("/Example");
 
 		assertThat(example).isNotNull();
 		assertThat(example.getName()).isEqualTo("Example");
@@ -86,7 +82,7 @@ public class SpringBootApacheGeodePeerCacheApplicationIntegrationTests extends I
 	}
 
 	@SpringBootApplication
-	@PeerCacheApplication(logLevel = GEMFIRE_LOG_LEVEL)
+	@PeerCacheApplication
 	static class TestConfiguration {
 
 		@Bean("Example")
