@@ -13,16 +13,16 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.security;
 
 import java.util.Properties;
 
 import org.apache.geode.LogWriter;
 import org.apache.geode.distributed.DistributedMember;
-import org.apache.geode.management.internal.security.ResourceConstants;
 import org.apache.geode.security.AuthInitialize;
 import org.apache.geode.security.AuthenticationFailedException;
+
+import org.springframework.geode.util.GeodeConstants;
 
 /**
  * Simple, test {@link AuthInitialize} implementation.
@@ -51,11 +51,11 @@ public class TestAuthInitialize implements AuthInitialize {
 
 		Properties credentials = new Properties();
 
-		credentials.setProperty(ResourceConstants.USER_NAME,
-			securityProperties.getProperty(ResourceConstants.USER_NAME, DEFAULT_USERNAME));
+		credentials.setProperty(GeodeConstants.USERNAME,
+			securityProperties.getProperty(GeodeConstants.USERNAME, DEFAULT_USERNAME));
 
-		credentials.setProperty(ResourceConstants.PASSWORD,
-			securityProperties.getProperty(ResourceConstants.PASSWORD, DEFAULT_PASSWORD));
+		credentials.setProperty(GeodeConstants.PASSWORD,
+			securityProperties.getProperty(GeodeConstants.PASSWORD, DEFAULT_PASSWORD));
 
 		return credentials;
 	}

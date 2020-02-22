@@ -23,8 +23,6 @@ import java.net.PasswordAuthentication;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.apache.geode.management.internal.security.ResourceConstants;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +31,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.config.admin.remote.RestHttpGemfireAdminTemplate;
 import org.springframework.data.gemfire.config.annotation.ClusterConfigurationConfiguration;
 import org.springframework.geode.core.util.ObjectUtils;
+import org.springframework.geode.util.GeodeConstants;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -179,8 +178,8 @@ public class HttpBasicAuthenticationSecurityConfiguration {
 
 				HttpHeaders requestHeaders = request.getHeaders();
 
-				requestHeaders.add(ResourceConstants.USER_NAME, getUsername());
-				requestHeaders.add(ResourceConstants.PASSWORD, getPassword());
+				requestHeaders.add(GeodeConstants.USERNAME, getUsername());
+				requestHeaders.add(GeodeConstants.PASSWORD, getPassword());
 			}
 
 			return execution.execute(request, body);

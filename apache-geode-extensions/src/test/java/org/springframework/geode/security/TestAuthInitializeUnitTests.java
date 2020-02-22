@@ -13,18 +13,18 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Properties;
 
-import org.apache.geode.management.internal.security.ResourceConstants;
 import org.junit.Test;
 
+import org.springframework.geode.util.GeodeConstants;
+
 /**
- * Unit tests for {@link TestAuthInitialize}.
+ * Unit Tests for {@link TestAuthInitialize}.
  *
  * @author John Blum
  * @see java.util.Properties
@@ -45,11 +45,11 @@ public class TestAuthInitializeUnitTests {
 		Properties securityProperties = new Properties();
 
 		if (isSet(username)) {
-			securityProperties.setProperty(ResourceConstants.USER_NAME, username);
+			securityProperties.setProperty(GeodeConstants.USERNAME, username);
 		}
 
 		if (isSet(password)) {
-			securityProperties.setProperty(ResourceConstants.PASSWORD, password);
+			securityProperties.setProperty(GeodeConstants.PASSWORD, password);
 		}
 
 		return securityProperties;
@@ -62,8 +62,8 @@ public class TestAuthInitializeUnitTests {
 			this.authInitialize.getCredentials(newSecurityProperties("testUser", "s3cr3t"));
 
 		assertThat(credentials).isNotNull();
-		assertThat(credentials.getProperty(ResourceConstants.USER_NAME)).isEqualTo("testUser");
-		assertThat(credentials.getProperty(ResourceConstants.PASSWORD)).isEqualTo("s3cr3t");
+		assertThat(credentials.getProperty(GeodeConstants.USERNAME)).isEqualTo("testUser");
+		assertThat(credentials.getProperty(GeodeConstants.PASSWORD)).isEqualTo("s3cr3t");
 	}
 
 	@Test
@@ -73,8 +73,8 @@ public class TestAuthInitializeUnitTests {
 			this.authInitialize.getCredentials(newSecurityProperties("testUser", null));
 
 		assertThat(credentials).isNotNull();
-		assertThat(credentials.getProperty(ResourceConstants.USER_NAME)).isEqualTo("testUser");
-		assertThat(credentials.getProperty(ResourceConstants.PASSWORD)).isEqualTo("test");
+		assertThat(credentials.getProperty(GeodeConstants.USERNAME)).isEqualTo("testUser");
+		assertThat(credentials.getProperty(GeodeConstants.PASSWORD)).isEqualTo("test");
 	}
 
 	@Test
@@ -84,8 +84,8 @@ public class TestAuthInitializeUnitTests {
 			this.authInitialize.getCredentials(newSecurityProperties(null, "s3cr3t"));
 
 		assertThat(credentials).isNotNull();
-		assertThat(credentials.getProperty(ResourceConstants.USER_NAME)).isEqualTo("test");
-		assertThat(credentials.getProperty(ResourceConstants.PASSWORD)).isEqualTo("s3cr3t");
+		assertThat(credentials.getProperty(GeodeConstants.USERNAME)).isEqualTo("test");
+		assertThat(credentials.getProperty(GeodeConstants.PASSWORD)).isEqualTo("s3cr3t");
 	}
 
 	@Test
@@ -95,7 +95,7 @@ public class TestAuthInitializeUnitTests {
 			this.authInitialize.getCredentials(newSecurityProperties(null, null));
 
 		assertThat(credentials).isNotNull();
-		assertThat(credentials.getProperty(ResourceConstants.USER_NAME)).isEqualTo("test");
-		assertThat(credentials.getProperty(ResourceConstants.PASSWORD)).isEqualTo("test");
+		assertThat(credentials.getProperty(GeodeConstants.USERNAME)).isEqualTo("test");
+		assertThat(credentials.getProperty(GeodeConstants.PASSWORD)).isEqualTo("test");
 	}
 }

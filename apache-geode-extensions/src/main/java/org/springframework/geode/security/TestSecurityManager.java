@@ -19,8 +19,9 @@ import java.io.Serializable;
 import java.security.Principal;
 import java.util.Properties;
 
-import org.apache.geode.management.internal.security.ResourceConstants;
 import org.apache.geode.security.AuthenticationFailedException;
+
+import org.springframework.geode.util.GeodeConstants;
 
 /**
  * Simple, test {@link org.apache.geode.security.SecurityManager}.
@@ -37,8 +38,8 @@ public class TestSecurityManager implements org.apache.geode.security.SecurityMa
 	@Override
 	public Object authenticate(Properties credentials) throws AuthenticationFailedException {
 
-		String username = credentials.getProperty(ResourceConstants.USER_NAME);
-		String password = credentials.getProperty(ResourceConstants.PASSWORD);
+		String username = credentials.getProperty(GeodeConstants.USERNAME);
+		String password = credentials.getProperty(GeodeConstants.PASSWORD);
 
 		if (!String.valueOf(username).equals(password)) {
 			throw new AuthenticationFailedException(String.format("User [%s] could not be authenticated", username));

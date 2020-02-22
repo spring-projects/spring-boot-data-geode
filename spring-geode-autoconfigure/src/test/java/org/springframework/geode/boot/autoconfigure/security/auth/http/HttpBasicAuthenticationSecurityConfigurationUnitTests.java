@@ -24,7 +24,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -38,13 +38,13 @@ import org.junit.Test;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
-import org.apache.geode.management.internal.security.ResourceConstants;
 
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.config.admin.remote.RestHttpGemfireAdminTemplate;
 import org.springframework.data.gemfire.config.annotation.ClusterConfigurationConfiguration;
 import org.springframework.geode.boot.autoconfigure.support.HttpBasicAuthenticationSecurityConfiguration;
+import org.springframework.geode.util.GeodeConstants;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -124,11 +124,10 @@ public class HttpBasicAuthenticationSecurityConfigurationUnitTests {
 		assertThat(beanPostProcessor.postProcessBeforeInitialization(bean, "testBean")).isEqualTo(bean);
 		assertThat(beanPostProcessor.postProcessAfterInitialization(bean, "testBean")).isEqualTo(bean);
 
-		verifyZeroInteractions(mockEnvironment);
+		verifyNoMoreInteractions(mockEnvironment);
 	}
 
 	@Test
-	@SuppressWarnings("all")
 	public void schemaObjectInitializerPostProcessorProcessesClusterSchemaObjectInitializerBeans() throws Exception {
 
 		Environment mockEnvironment = mock(Environment.class);
@@ -233,8 +232,8 @@ public class HttpBasicAuthenticationSecurityConfigurationUnitTests {
 
 		interceptor.intercept(mockHttpRequest, body, mockExecution);
 
-		assertThat(httpHeaders.getFirst(ResourceConstants.USER_NAME)).isEqualTo("master");
-		assertThat(httpHeaders.getFirst(ResourceConstants.PASSWORD)).isEqualTo("s3cr3t");
+		assertThat(httpHeaders.getFirst(GeodeConstants.USERNAME)).isEqualTo("master");
+		assertThat(httpHeaders.getFirst(GeodeConstants.PASSWORD)).isEqualTo("s3cr3t");
 
 		verify(mockHttpRequest, times(1)).getHeaders();
 		verify(mockExecution, times(1)).execute(eq(mockHttpRequest), eq(body));
@@ -263,8 +262,8 @@ public class HttpBasicAuthenticationSecurityConfigurationUnitTests {
 
 		interceptor.intercept(mockHttpRequest, body, mockExecution);
 
-		assertThat(httpHeaders.containsKey(ResourceConstants.USER_NAME)).isFalse();
-		assertThat(httpHeaders.containsKey(ResourceConstants.PASSWORD)).isFalse();
+		assertThat(httpHeaders.containsKey(GeodeConstants.USERNAME)).isFalse();
+		assertThat(httpHeaders.containsKey(GeodeConstants.PASSWORD)).isFalse();
 
 		verify(mockHttpRequest, never()).getHeaders();
 		verify(mockExecution, times(1)).execute(eq(mockHttpRequest), eq(body));

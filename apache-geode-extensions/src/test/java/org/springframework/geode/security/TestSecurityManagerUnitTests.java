@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,13 +21,15 @@ import static org.mockito.Mockito.mock;
 import java.security.Principal;
 import java.util.Properties;
 
-import org.apache.geode.management.internal.security.ResourceConstants;
-import org.apache.geode.security.AuthenticationFailedException;
-import org.apache.geode.security.ResourcePermission;
 import org.junit.Test;
 
+import org.apache.geode.security.AuthenticationFailedException;
+import org.apache.geode.security.ResourcePermission;
+
+import org.springframework.geode.util.GeodeConstants;
+
 /**
- * Unit tests for {@link org.springframework.geode.security.TestSecurityManager}.
+ * Unit Tests for {@link org.springframework.geode.security.TestSecurityManager}.
  *
  * @author John Blum
  * @see org.junit.Test
@@ -44,8 +45,8 @@ public class TestSecurityManagerUnitTests {
 
 		Properties securityProperties = new Properties();
 
-		securityProperties.setProperty(ResourceConstants.USER_NAME, username);
-		securityProperties.setProperty(ResourceConstants.PASSWORD, password);
+		securityProperties.setProperty(GeodeConstants.USERNAME, username);
+		securityProperties.setProperty(GeodeConstants.PASSWORD, password);
 
 		return securityProperties;
 	}
