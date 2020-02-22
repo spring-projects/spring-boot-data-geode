@@ -25,8 +25,6 @@ import org.junit.runner.RunWith;
 
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
-import org.apache.geode.internal.cache.AbstractRegion;
-import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -37,6 +35,7 @@ import org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRe
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.CachingProviderAutoConfiguration;
+import org.springframework.geode.util.GeodeAssertions;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.test.service.TestCacheableService;
@@ -75,10 +74,11 @@ public class AutoConfiguredCachingUnitTests extends IntegrationTestsSupport {
 	public void setup() {
 
 		assertThat(this.clientCache).isNotNull();
-		assertThat(this.clientCache).isNotInstanceOf(GemFireCacheImpl.class);
 		assertThat(this.randomNumbers).isNotNull();
-		// TODO: Why is AbstractRegion internal!?!?! #argh
-		assertThat(this.randomNumbers).isNotInstanceOf(AbstractRegion.class);
+
+		GeodeAssertions.assertThat(this.clientCache).isNotInstanceOfGemFireCacheImpl();
+		GeodeAssertions.assertThat(this.randomNumbers).isNotInstanceOfAbstractRegion();
+
 		assertThat(this.cacheableService).isNotNull();
 		assertThat(this.cacheableService.isCacheMiss()).isFalse();
 	}
