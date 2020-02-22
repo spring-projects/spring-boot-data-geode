@@ -32,7 +32,6 @@ import org.junit.runner.RunWith;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
-import org.apache.geode.distributed.internal.DistributionConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,6 +52,7 @@ import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnableManager;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.geode.security.TestSecurityManager;
+import org.springframework.geode.util.GeodeConstants;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -170,7 +170,7 @@ public class ClusterConfigurationWithAuthenticationIntegrationTests extends Fork
 	@EnableManager(start = true)
 	static class GeodeServerConfiguration {
 
-		private static final String GEODE_HOME_PROPERTY = DistributionConfig.GEMFIRE_PREFIX + "home";
+		private static final String GEODE_HOME_PROPERTY = GeodeConstants.GEMFIRE_PROPERTY_PREFIX + "home";
 
 		public static void main(String[] args) throws IOException {
 
