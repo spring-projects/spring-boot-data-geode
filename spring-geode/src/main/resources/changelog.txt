@@ -4,6 +4,31 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.3.0.M2 (2020-02-20)
+----------------------------------------
+Aligns SBDG with Spring Boot 2.3.0.M2.  Upgrades to Sprig Data Neumann-M3, Spring Session for Apache Geode
+& Pivotal GemFire 2.3.0.M2 and Spring Test for Apache Geode & Pivotal GemFire 0.0.13.RELEASE.  Adds new
+spring-geode-starter-logging module to configure Apache Geode logging.
+
+* Upgrades to Spring Boot 2.3.0.M2.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.3.0.M2.
+* Upgrades to Spring Data Release Train Neumann-M3.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.3.0.M2.
+* Upgrades to Spring Session BOM Dragonfruit-M2.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.13.RELEASE.
+* Upgrades to Byte Buddy 1.10.7.
+* Upgrades to FreeFair Lombok Gradle Plugin 5.0.0-rc2.
+* Upgrades to Testcontainers 1.12.5.
+* Began removing uses of internal Apache Geode APIs from SBDG;
+Resolves (partly) https://github.com/spring-projects/spring-boot-data-geode/issues/70.
+* Adds a new spring-geode-starter-logging module to configure and control Apache Geode & Pivotal GemFire logging;
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/73.
+* Adds documentation on how to enable Apache Geode & Pivotal GemFire logging with Spring Boot;
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/71.
+* Adds documentation on how to configure and bootstrap Apache Geode/Pivotal GemFire Managers with Spring Boot;
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/72.
+
+
 Changes in version 1.3.0.M1 (2020-01-24)
 ----------------------------------------
 Aligns SBDG with Spring Framework 5.2.3.RELEASE, Spring Boot 2.3.0.M1, Sprig Data Neumann-M2
