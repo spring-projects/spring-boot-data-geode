@@ -11,7 +11,7 @@ Aligns SBDG with Spring Boot 2.3.0.M2.  Upgrades to Sprig Data Neumann-M3, Sprin
 spring-geode-starter-logging module to configure Apache Geode logging.
 
 * Upgrades to Spring Boot 2.3.0.M2.
-* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.3.0.M2.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.3.0.M3.
 * Upgrades to Spring Data Release Train Neumann-M3.
 * Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.3.0.M2.
 * Upgrades to Spring Session BOM Dragonfruit-M2.
