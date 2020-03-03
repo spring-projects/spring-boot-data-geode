@@ -6,7 +6,7 @@ https://github.com/spring-projects/spring-boot-data-geode
 
 Changes in version 1.3.0.M2 (2020-02-20)
 ----------------------------------------
-Aligns SBDG with Spring Boot 2.3.0.M2.  Upgrades to Sprig Data Neumann-M3, Spring Session for Apache Geode
+Aligns SBDG with Spring Boot 2.3.0.M2.  Upgrades to Spring Data Neumann-M3, Spring Session for Apache Geode
 & Pivotal GemFire 2.3.0.M2 and Spring Test for Apache Geode & Pivotal GemFire 0.0.13.RELEASE.  Adds new
 spring-geode-starter-logging module to configure Apache Geode logging.
 
