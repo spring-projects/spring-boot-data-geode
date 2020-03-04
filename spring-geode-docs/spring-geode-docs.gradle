@@ -25,6 +25,14 @@ asciidoctorPdf {
 	}
 }
 
+asciidoctor {
+	clearSources()
+	sources {
+		include "index.adoc"
+		include "guides/*.adoc"
+	}
+}
+
 asciidoctorj {
 
 	def githubBaseUrl = "https://github.com/spring-projects/spring-boot-data-geode"
