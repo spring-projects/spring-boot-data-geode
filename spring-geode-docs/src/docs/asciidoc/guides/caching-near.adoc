@@ -1,15 +1,18 @@
 [[geode-samples-caching-near]]
 = Near Caching with Spring
-:images-dir: ../images
 :apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
+:images-dir: ../images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference/html
 :spring-data-geode-javadoc: https://docs.spring.io/spring-data/geode/docs/current/api
 :spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
 :spring-framework-javadoc: https://docs.spring.io/spring/docs/current/javadoc-api
+:toc: left
+:toclevels: 2
+
 
 This guide walks you through building a simple Spring Boot application
 using {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]

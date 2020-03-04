@@ -18,7 +18,7 @@ John Blum
 :spring-data-commons-javadoc: https://docs.spring.io/spring-data/commons/docs/current/api
 :spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference/html
 :spring-data-geode-javadoc: https://docs.spring.io/spring-data/geode/docs/current/api
-:toc:
+:toc: left
 :toclevels: 2
 
 This guide walks you through building and running a simple Spring Boot, Apache Geode `ClientCache` application

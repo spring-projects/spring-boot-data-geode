@@ -1,10 +1,10 @@
 [[geode-samples-caching-http-session]]
 = HTTP Session State Caching with Spring
-:images-dir: ../images
 :apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
+:images-dir: ../images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference/html
@@ -14,6 +14,9 @@
 :spring-session-docs: https://docs.spring.io/spring-session/docs/current/reference/html5
 :spring-session-javadoc: https://docs.spring.io/spring-session/docs/current/api
 :spring-session-website: https://spring.io/projects/spring-session
+:toc: left
+:toclevels: 2
+
 
 This guide walks you through building a simple Spring Boot application using {spring-session-website}[Spring Session]
 backed by {apache-geode-website}[Apache Geode] to manage HTTP Session state.

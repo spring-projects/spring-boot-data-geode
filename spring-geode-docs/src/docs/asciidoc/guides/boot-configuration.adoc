@@ -3,8 +3,9 @@
 John Blum
 :apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
-:toc:
+:toc: left
 :toclevels: 2
+
 
 This guide walks you through building a simple Customer Service, Spring Boot application using Apache Geode
 to manage Customer interactions. You should already be familiar with Spring Boot and Apache Geode.

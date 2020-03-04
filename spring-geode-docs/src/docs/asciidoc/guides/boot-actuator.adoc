@@ -5,6 +5,9 @@
 :images-dir: ../images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
+:toc: left
+:toclevels: 2
+
 
 This guide walks through using {spring-boot-docs}/production-ready.html[Spring Boot Actuator] to assess the state
 of your running Apache Geode or Pivotal GemFire, Spring Boot application.

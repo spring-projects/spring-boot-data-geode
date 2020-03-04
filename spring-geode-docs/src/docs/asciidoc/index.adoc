@@ -4,12 +4,12 @@ John Blum
 :revdate: {localdate}
 :revnumber: {version}
 :doctype: book
-:toc:
-:toclevels: 1
-:source-highlighter: prettify
-:numbered:
-:icons: font
 :hide-uri-scheme:
+:icons: font
+:numbered:
+:source-highlighter: prettify
+:toc: left
+:toclevels: 1
 :apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
