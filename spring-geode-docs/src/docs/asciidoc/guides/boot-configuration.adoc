@@ -817,7 +817,7 @@ and specifically, Authentication/Authorization (Auth) along with Transport Layer
 
 In today's age, Security is no laughing matter and making sure your applications are secure is a first-class concern.
 This is why SBDG takes Security very seriously and attempts to make this as simple as possible. You are definitely
-encouraged to read the relevant <<geode-security,chapter>> in this Reference Documentation on the provided Security
+encouraged to read the relevant <<../_includes/security.adoc#geode-security,chapter>> in this Reference Documentation on the provided Security
 _auto-configuration_ support.
 
 We will now expand on our example to secure the client and server processes, with both Auth and TLS using SSL, and then
@@ -859,7 +859,7 @@ include::{samples-dir}/boot/configuration/src/main/resources/geode/bin/start-sec
 
 NOTE: SBDG does provide server-side, peer Security _auto-configuration_ support. However, you must then configure
 and bootstrap your GemFire/Geode servers with Spring. Again, an example of configuring/bootstrapping GemFire/Geode
-servers with Spring is provided <<geode-cluster-configuration-bootstrapping,here>>.
+servers with Spring is provided <<../_includes/configuration-auto.adoc#geode-cluster-configuration-bootstrapping,here>>.
 
 [[geode-samples-boot-configuration-clientserver-security-client]]
 === Securing the client

@@ -152,7 +152,7 @@ is called 2 or more times with the same input, the cached result will be returne
 expired or been evicted.  We neither configure eviction nor expiration for this example, however.
 
 Both the `factorial(..)` and `sqrt(..)` methods have been annotated with Spring's `@Cacheable` annotation to demarcate
-these methods with caching behavior.  Of course, as explained in SBDG's <<geode-caching-provider,documentation>>,
+these methods with caching behavior.  Of course, as explained in SBDG's <<../_includes/configuration-annotations.adoc#geode-caching-provider,documentation>>,
 caching with Spring's Cache Abstraction using Apache Geode (or Pivotal GemFire, even Pivotal Cloud Cache (PCC)
 when running in Pivotal CloudFoundry (PCF)) as the caching provider is enabled by default.  Therefore, there is nothing
 more you need do to start leverage caching in your Spring Boot applications than to annotate the service methods
