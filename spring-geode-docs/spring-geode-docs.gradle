@@ -18,6 +18,13 @@ dependencies {
 
 def versions = dependencyManagement.managedVersions
 
+asciidoctorPdf {
+	clearSources()
+	sources {
+		include "index.adoc"
+	}
+}
+
 asciidoctor {
 
 	def githubBaseUrl = "https://github.com/spring-projects/spring-boot-data-geode"
