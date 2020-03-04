@@ -4,6 +4,20 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.5.RELEASE (2020-03-04)
+---------------------------------------------
+Aligns SBDG with Sprig Framework 5.2.4.RELEASE, Spring Boot 2.2.5.RELEASE, Spring Data Moore-SR5
+and Spring Session for Apache Geode & Pivotal GemFire 2.2.3.RELEASE.
+
+* Upgrades to Spring Framework 5.2.4.RELEASE.
+* Upgrades to Spring Boot 2.2.5.RELEASE.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.2.5.RELEASE.
+* Upgrades to Spring Data Release Train Moore-SR5.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.2.3.RELEASE.
+* Upgrades to Spring Session BOM Corn-SR1
+* Upgrades to Mockito 3.3.0.
+
+
 Changes in version 1.1.6.RELEASE (2020-03-04)
 ---------------------------------------------
 Aligns SBDG with Spring Framework 5.1.14.RELEASE, Spring Boot 2.1.13.RELEASE, Spring Data Lovelace-SR16
