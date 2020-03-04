@@ -6,6 +6,7 @@ John Blum
 :doctype: book
 :hide-uri-scheme:
 :icons: font
+:include-dir: _includes
 :numbered:
 :source-highlighter: prettify
 :toc: left
@@ -224,20 +225,20 @@ repositories {
 ----
 endif::[]
 
-include::clientcache-applications.adoc[]
-include::configuration-auto.adoc[]
-include::configuration-declarative.adoc[]
-include::configuration-externalized.adoc[]
-include::caching.adoc[]
-include::templates.adoc[]
-include::repositories.adoc[]
-include::functions.adoc[]
-include::continuous-query.adoc[]
-include::data-serialization.adoc[]
-include::security.adoc[]
-include::logging.adoc[]
-include::actuator.adoc[]
-include::session.adoc[]
-include::cloudfoundry.adoc[]
-include::samples.adoc[]
-include::appendix.adoc[]
+include::{include-dir}/clientcache-applications.adoc[]
+include::{include-dir}/configuration-auto.adoc[]
+include::{include-dir}/configuration-declarative.adoc[]
+include::{include-dir}/configuration-externalized.adoc[]
+include::{include-dir}/caching.adoc[]
+include::{include-dir}/templates.adoc[]
+include::{include-dir}/repositories.adoc[]
+include::{include-dir}/functions.adoc[]
+include::{include-dir}/continuous-query.adoc[]
+include::{include-dir}/data-serialization.adoc[]
+include::{include-dir}/security.adoc[]
+include::{include-dir}/logging.adoc[]
+include::{include-dir}/actuator.adoc[]
+include::{include-dir}/session.adoc[]
+include::{include-dir}/cloudfoundry.adoc[]
+include::{include-dir}/samples.adoc[]
+include::{include-dir}/appendix.adoc[]
