@@ -72,7 +72,7 @@ set forth in that model: _To enable application developers to *get up and runnin
 as possible_.  In fact, Spring Boot for Apache Geode/Pivotal GemFire builds on this very
 {spring-data-geode-docs-html}/#bootstrap-annotation-config[foundation] cemented in
 Spring Data for Apache Geode/Pivotal GemFire
-(SDG footnoteref:[SDG, Spring Data for Apache Geode and Spring Data for Pivotal GemFire are commonly known as SDG.])
+(SDG footnote:SDG[Spring Data for Apache Geode and Spring Data for Pivotal GemFire are commonly known as SDG.])
 since the Spring Data Kay Release Train.
 
 [[introduction]]
@@ -86,23 +86,23 @@ application concerns (_Use Cases_) including, but not limited to:
 * {wikipedia-docs}/System_of_record[_System of Record_ (SOR)], persisting application state reliably in Apache Geode
 or Pivotal GemFire using {spring-data-commons-docs-html}/#repositories[Spring Data Repositories].
 * _Transactions_, managing application state consistently with {spring-framework-docs}/data-access.html#transaction[Spring Transaction Management]
-and SDGfootnoteref:[SDG, Spring Data for Apache Geode and Spring Data for Pivotal GemFire are commonly known as SDG.]
+and SDGfootnote:SDG[]
 support for both {spring-data-geode-docs-html}/#apis:transaction-management[Local Cache]
 and {spring-data-geode-docs-html}/#apis:global-transaction-management[Global JTA] Transactions.
 * _Distributed Computations_, run with Apache Geode/Pivotal GemFire's {apache-geode-docs}/developing/function_exec/chapter_overview.html[Function Executions] framework
-and conveniently implemented and executed with SDGfootnoteref:[SDG] {spring-data-geode-docs-html}/#function-annotations[POJO-based, annotation support for Functions].
+and conveniently implemented and executed with SDGfootnote:SDG[] {spring-data-geode-docs-html}/#function-annotations[POJO-based, annotation support for Functions].
 * _Continuous Queries_, expressing interests in a stream of events, where applications are able to react to and process changes to data in near real-time
 using Apache Geode/Pivotal GemFire {apache-geode-docs}/developing/continuous_querying/chapter_overview.html[Continuous Query (CQ)].
 Handlers are defined as simple Message-Driven POJOs (MDP) using Spring's {spring-framework-docs}/integration.html#jms-mdp[Message Listener Container],
-which has been {spring-data-geode-docs-html}/#apis:continuous-query[extended] by SDGfootnoteref:[SDG] with its
+which has been {spring-data-geode-docs-html}/#apis:continuous-query[extended] by SDGfootnote:SDG[] with its
 {spring-data-geode-docs-html}/#bootstrap-annotation-config-continuous-queries[configurable] CQ support.
 * _Data Serialization_ with Apache Geode/Pivotal GemFire {apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX],
 including first-class {spring-data-geode-docs-html}/#bootstrap-annotation-config-pdx[configuration]
-and {spring-data-geode-docs-html}/#mapping.pdx-serializer[support] in SDGfootnoteref:[SDG].
+and {spring-data-geode-docs-html}/#mapping.pdx-serializer[support] in SDGfootnote:SDG[].
 * _Security_, including {apache-geode-docs}/managing/security/authentication_overview.html[Authentication]
 & {apache-geode-docs}/managing/security/authorization_overview.html[Authorization] as well as Transport Layer Security (TLS)
 using Apache Geode/Pivotal GemFire's {apache-geode-docs}/managing/security/ssl_overview.html[Secure Socket Layer (SSL)].
-Once again, SDGfootnoteref:[SDG] includes first-class support for configuring {spring-data-geode-docs-html}/#bootstrap-annotation-config-security[Auth]
+Once again, SDGfootnote:SDG[] includes first-class support for configuring {spring-data-geode-docs-html}/#bootstrap-annotation-config-security[Auth]
 and {spring-data-geode-docs-html}/#bootstrap-annotation-config-ssl[SSL].
 * _HTTP Session state management_, by including Spring Session for Apache Geode/Pivotal GemFire on your application's
 classpath.
@@ -121,13 +121,13 @@ Of course, our story begins with the Spring Framework and the {spring-framework-
 built into the Spring container.
 
 Then, our journey continues with the extensions built into Spring Data for Apache Geode & Pivotal GemFire
-(SDGfootnoteref:[SDG, Spring Data for Apache Geode and Spring Data for Pivotal GemFire are commonly known as SDG.])
+(SDGfootnote:SDG[])
 to truly simplify the development of Apache Geode & Pivotal GemFire applications in a Spring context, using Spring's
 powerful abstractions and highly consistent programming model.  This part of the story was greatly enhanced in
-Spring Data Kay, with the SDGfootnoteref:[SDG] {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model].
+Spring Data Kay, with the SDGfootnote:SDG[] {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model].
 Though this new configuration approach using annotations provides sensible defaults out-of-the-box, its use
 is also very explicit and assumes nothing.  If any part of the configuration is ambiguous, SDG will fail fast.
-SDG gives you "_choice_", so you still must tell SDGfootnoteref:[SDG] what you want.
+SDG gives you "_choice_", so you still must tell SDGfootnote:SDG[] what you want.
 
 Next, we venture into Spring Boot and all of its wonderfully expressive and highly opinionated "_convention over configuration_"
 approach for getting the most out of your Spring, Apache Geode/Pivotal GemFire based applications in the easiest,
