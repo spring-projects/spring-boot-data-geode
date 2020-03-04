@@ -1,5 +1,4 @@
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.asciidoctor.gradle.jvm.AbstractAsciidoctorTask
 
 apply plugin: 'io.spring.convention.docs'
 apply plugin: 'io.spring.convention.spring-test'
@@ -18,12 +17,10 @@ dependencies {
 }
 
 def versions = dependencyManagement.managedVersions
+def relativePathToSpringCss = "css/spring.css"
+def absolutePathToSpringCss = new File(project.getBuildDir(), relativePathToSpringCss).getAbsolutePath()
 
-tasks.withType(AbstractAsciidoctorTask).configureEach {
-	clearSources()
-	sources {
-		include "index.adoc"
-	}
+asciidoctor {
 
 	def githubBaseUrl = "https://github.com/spring-projects/spring-boot-data-geode"
 	def githubTag = snapshotBuild ? 'master' : project.version
@@ -33,9 +30,12 @@ tasks.withType(AbstractAsciidoctorTask).configureEach {
 	    'version-snapshot': snapshotBuild,
 		'version-milestone': milestoneBuild,
 		'version-release': releaseBuild,
+		'download-url' : "${githubBaseUrl}/archive/${githubTag}.zip",
 		'github-url': githubUrl,
 		'github-samples-url': "${githubUrl}/spring-geode-samples",
-		'download-url' : "${githubBaseUrl}/archive/${githubTag}.zip",
+		'stylesheet' : absolutePathToSpringCss,
+		'highlightjsdir@': "js/highlight",
+		'docinfodir@': ".",
 		'master-apache-geode-version' : "19",
 		'master-pivotal-gemfire-version' : "98",
 		'master-pivotal-cloudcache-version' : "1-8",
