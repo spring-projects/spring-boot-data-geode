@@ -20,6 +20,10 @@ John Blum
 :spring-data-geode-javadoc: https://docs.spring.io/spring-data/geode/docs/current/api
 :toc: left
 :toclevels: 2
+:stylesdir: ../
+:highlightjsdir: ../js/highlight
+:docinfodir: guides
+
 
 This guide walks you through building and running a simple Spring Boot, Apache Geode `ClientCache` application
 using the Spring Boot for Apache Geode (SBDG) framework.  Later in this guide, we switch the application from

@@ -7,6 +7,9 @@
 :spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
 :toc: left
 :toclevels: 2
+:stylesdir: ../
+:highlightjsdir: ../js/highlight
+:docinfodir: guides
 
 
 This guide walks through using {spring-boot-docs}/production-ready.html[Spring Boot Actuator] to assess the state

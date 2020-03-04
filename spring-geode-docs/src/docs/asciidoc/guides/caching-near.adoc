@@ -12,6 +12,9 @@
 :spring-framework-javadoc: https://docs.spring.io/spring/docs/current/javadoc-api
 :toc: left
 :toclevels: 2
+:stylesdir: ../
+:highlightjsdir: ../js/highlight
+:docinfodir: guides
 
 
 This guide walks you through building a simple Spring Boot application

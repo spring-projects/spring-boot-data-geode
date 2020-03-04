@@ -16,6 +16,9 @@
 :spring-session-website: https://spring.io/projects/spring-session
 :toc: left
 :toclevels: 2
+:stylesdir: ../
+:highlightjsdir: ../js/highlight
+:docinfodir: guides
 
 
 This guide walks you through building a simple Spring Boot application using {spring-session-website}[Spring Session]
