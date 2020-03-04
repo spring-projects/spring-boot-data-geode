@@ -17,8 +17,6 @@ dependencies {
 }
 
 def versions = dependencyManagement.managedVersions
-def relativePathToSpringCss = "css/spring.css"
-def absolutePathToSpringCss = new File(project.getBuildDir(), relativePathToSpringCss).getAbsolutePath()
 
 asciidoctor {
 
@@ -33,7 +31,6 @@ asciidoctor {
 		'download-url' : "${githubBaseUrl}/archive/${githubTag}.zip",
 		'github-url': githubUrl,
 		'github-samples-url': "${githubUrl}/spring-geode-samples",
-		'stylesheet' : absolutePathToSpringCss,
 		'highlightjsdir@': "js/highlight",
 		'docinfodir@': ".",
 		'master-apache-geode-version' : "19",
