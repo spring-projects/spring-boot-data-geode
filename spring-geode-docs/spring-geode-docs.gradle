@@ -66,6 +66,7 @@ asciidoctorPdf {
 	clearSources()
 	sources {
 		include "index.adoc"
+//		include "guides/*.adoc"
 	}
 }
 
