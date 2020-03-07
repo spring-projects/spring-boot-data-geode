@@ -4,7 +4,7 @@
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
-:images-dir: ../images
+:images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference/html
@@ -74,7 +74,7 @@ experience to which we alluded to above.  These applications instances will need
 
 An application architecture with HTTP Session State Caching appears as follows:
 
-image::../images/HTTP-Session-Caching.png[]
+image::{images-dir}/HTTP-Session-Caching.png[]
 
 Essentially, anytime an HTTP Session is requested by your Spring Boot, Web Application, the Servlet Container
 (e.g. Apache Tomcat) delegates to Spring Session to provide the implementation of `javax.servlet.http.HttpSession`.
@@ -89,7 +89,7 @@ that implement the Spring Session framework's `SessionRepository` interface.
 
 Spring Session's architecture can be depicted as follows:
 
-image::../images/Spring-Session-Framework-Architecture.png[]
+image::{images-dir}/Spring-Session-Framework-Architecture.png[]
 
 Again, the `SessionRepository` interface is the central component of the framework enabling any backend data store
 to be adapted and serve as a provider  for managing the HTTP Sessions.
@@ -198,11 +198,11 @@ Container using a derived `WebApplicationContext`.
 
 Let's run the example:
 
-image::../images/HttpSessionCachingApplication.png[]
+image::{images-dir}/HttpSessionCachingApplication.png[]
 
 When we navigate to the `/session` Web service endpoint:
 
-image::../images/HttpSessionCachingApplication-ServletContainerSession.png[]
+image::{images-dir}/HttpSessionCachingApplication-ServletContainerSession.png[]
 
 We see that the Servlet Container's implementing class for the `javax.servlet.http.HttpSession` interface is
 `org.apache.catalina.session.StandardSession`.
@@ -211,7 +211,7 @@ If we continue to hit refresh in the Web browser, thereby causing additional cli
 the HTTP server, then our HTTP Request count increments.  If we wait for 15 seconds, then the HTTP Session will expire,
 and we will see the HTTP Session count increment along with the HTTP Request count reset to 1:
 
-image::../images/HttpSessionCachingApplication-ServletContainerSessionExpiration.png[]
+image::{images-dir}/HttpSessionCachingApplication-ServletContainerSessionExpiration.png[]
 
 Now, we can repeat this same exercise, but this time, using Spring Session.
 
@@ -242,7 +242,7 @@ robust, highly available, highly resilient, clustered solution provided by Sprin
 
 When we run the example again, and access the `/session` Web service endpoint, we will see:
 
-image::../images/HttpSessionCachingApplication-SpringSession.png[]
+image::{images-dir}/HttpSessionCachingApplication-SpringSession.png[]
 
 Now we see that the implementing class for the `javax.servlet.http.HttpSession` is
 `org.springframework.session.web.http.SessionRepositoryFilter$SessionRepositoryRequestWrapper$HttpSessionWrapper`.

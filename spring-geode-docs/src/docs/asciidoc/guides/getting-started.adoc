@@ -5,6 +5,7 @@ John Blum
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
+:images-dir: ./images
 :pivotal-cloudcache-version: {master-pivotal-cloudcache-version}
 :pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}
 :pivotal-cloudcache-website: https://pivotal.io/pivotal-cloud-cache
@@ -92,14 +93,14 @@ see that `2.2.0.RC1` was selected when the project was generated.  For more on v
 
 Your selections should look similar to:
 
-image::../images/spring-initializer-screenshot.png[]
+image::{images-dir}/spring-initializer-screenshot.png[]
 
 Be sure to click the "*+*" button next to the "_Spring for Apache Geode_" dependency to select and add it to
 the generated project Maven POM file.
 
 You can explore the contents of the generated project by pressing the `CTRL+SPACE` keys:
 
-image::../images/spring-initializer-explore-project-screenshot.png[]
+image::{images-dir}/spring-initializer-explore-project-screenshot.png[]
 
 Click the "_Generate the project_" button.  This generates a *Java 8* project with *JAR* packaging.
 
@@ -977,7 +978,7 @@ Caused by: o.a.g.cache.client.NoAvailableServersException: null
 The application will continue to run if you included the Spring Web dependencies in your application classpath,
 in which case, you can then inspect the application using a Web client (e.g. Web browser):
 
-image::../images/customer-service-application-jondoe.png[]
+image::{images-dir}/customer-service-application-jondoe.png[]
 
 [[spring-geode-samples-getting-started-run-app-clientserver]]
 == Run the Application in a Client/Server Topology
@@ -1797,21 +1798,21 @@ We see the "_crm-app_" in the table of apps, which is currently stopped.
 We can either start and stop the app, restage the app, bind services, and so on, all from the command-line using `cf`,
 or we can perform these actions from within _Pivotal AppsManager_, which is what we will do:
 
-image::../images/pvtl-appsmanager-org-space-apps.png[]
+image::{images-dir}/pvtl-appsmanager-org-space-apps.png[]
 
 Again, we see the "_crm-app_".  You can click on the app name and drill in to get more details:
 
-image::../images/pvtl-appsmanager-org-space-apps-crm-app-overview.png[]
+image::{images-dir}/pvtl-appsmanager-org-space-apps-crm-app-overview.png[]
 
 If you click on "_Service (1)_" in the left navigation bar, you will see that the "_crm-app_" is bound to
 the "_pccServiceOne_" Pivotal Cloud Cache service instance:
 
-image::../images/pvtl-appsmanager-org-space-apps-crm-app-service.png[]
+image::{images-dir}/pvtl-appsmanager-org-space-apps-crm-app-service.png[]
 
 If you click on "_Settings_" in the left navigation bar and "REVEAL ENV VARS" you will find the "_Gfsh login string_"
 that you can use to connect to the Pivotal Cloud Cache cluster using _Gfsh_ from your local development environment:
 
-image::../images/pvtl-appsmanager-org-space-apps-crm-app-settings.png[]
+image::{images-dir}/pvtl-appsmanager-org-space-apps-crm-app-settings.png[]
 
 Let's do that now.  Copy the "_Gfsh login string_" and enter it in _Gfsh_:
 
@@ -1863,12 +1864,12 @@ Now, we can start the CRM, Spring Boot application using _Pivotal AppsManager_ f
 
 The "_crm-app_" will be staged and then started:
 
-image::../images/pvtl-appsmanager-org-space-apps-crm-app-start.png[]
+image::{images-dir}/pvtl-appsmanager-org-space-apps-crm-app-start.png[]
 
 Click the "_play_" button in the upper right corner above the log output frame to tail the log file of the CRM,
 Spring Boot application.  Eventually, you should see the application log the interaction with "_JonDoe_".
 
-image::../images/pvtl-appsmanager-org-space-apps-crm-app-logs-output.png[]
+image::{images-dir}/pvtl-appsmanager-org-space-apps-crm-app-logs-output.png[]
 
 As you can see in the image above, the application successfully logged the interactions with "_JonDoe_".  This only
 appears in red "[ERR]" since the interactions with logged with `System.err.printf` statements.
@@ -1876,11 +1877,11 @@ appears in red "[ERR]" since the interactions with logged with `System.err.print
 If you now click on "VIEW APP" link in the upper right-hand corner, it will open a new tab to the CRM Web app's
 home page:
 
-image::../images/getting-started-crm-app-homepage.png[]
+image::{images-dir}/getting-started-crm-app-homepage.png[]
 
 Then, you get all customers in JSON by using HTTP `GET http://host:port/customers` REST API Web service endpoint:
 
-image::../images/getting-started-crm-app-getallcustomers.png[]
+image::{images-dir}/getting-started-crm-app-getallcustomers.png[]
 
 Now, back in _Gfsh_, you can see that the 1) "_/Customers_" Region was added to the cluster of PCC servers
 and that 2) "_JonDoe_" was persisted to the cluster and you are able to query for "_JonDoe_".

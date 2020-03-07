@@ -3,7 +3,7 @@
 :apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
-:images-dir: ../images
+:images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference/html
@@ -65,7 +65,7 @@ To keep up with demand and not overload backend systems, like a database, you wo
 more CPU, more Disk, more Network bandwidth, basically, more of everything, which can be a very costly endeavor as you
 try to keep up with the every growing demand (which is a good problem to have, but...):
 
-image::../images/Small-Database-To-Big-Database.png[]
+image::{images-dir}/Small-Database-To-Big-Database.png[]
 
 Rather than scale-up, you could scale-out by using a sophisticated caching technology that uniformly partitions data
 across a cluster of data nodes thereby enabling data access operations to be intelligently routed and evenly distributed
@@ -74,7 +74,7 @@ cluster more resilient to failure.  Such a data management technology is ideal i
 as a single, logical unit of pooled resources (Memory, CPU, Disk, and Network) but uses a shared-nothing architecture.
 That is, no node in the cluster can be a single point of failure.
 
-image::../images/Cluster.png[]
+image::{images-dir}/Cluster.png[]
 
 From a Spring Boot application's point-of-view, it is the client in this application architecture, and multiple
 application instances can access and share the same data.  Indeed, in a Microservices architecture, another application
@@ -107,7 +107,7 @@ These 3 things in conjunction with each other should have a net effect of reduci
 Effectively, an applied "_Near Caching_" software design pattern looks like the following in our application/system
 architecture:
 
-image::../images/Near-Caching-Pattern.png[]
+image::{images-dir}/Near-Caching-Pattern.png[]
 
 It is now time to see the _Near Caching_ pattern in action.
 
@@ -470,14 +470,14 @@ from your Web browser.  Look for a line containing: `[info 2019/08/12 13:14:19.7
 Once both application instances are running, you can access the Webapp from your Web browser at the following URL:
 `http::/localhost:8181/`.
 
-image::../images/Near-Caching-Example-Webapp.png[]
+image::{images-dir}/Near-Caching-Example-Webapp.png[]
 
 TIP: To switch between the 2 client app instances, it is useful to have 2 Web browser tabs or windows open
 accessing each Web Server port (e.g. `8181` and `8282`).
 
 Next, let's create some data using client app instance one.
 
-image::../images/Near-Caching-Example-Webapp-Create-JonDoe.png[]
+image::{images-dir}/Near-Caching-Example-Webapp-Create-JonDoe.png[]
 
 This operation takes a bit of (simulated) time (`2167 milliseconds (ms)`, or `~2 seconds (s)`) since "_Jon Doe_"
 did not previously exist in the cache, which can be noted by the `cacheMiss` value of *true*.  "_JonDoe's_"
@@ -488,7 +488,7 @@ is being pulled from the "_local_" cache (i.e. "_Near Cache_) on the client.
 
 Now, in our second client app instance, if we access the same person, "_JonDoe_", then we see the following:
 
-image::../images/Near-Caching-Example-Webapp-Read-JonDoe.png[]
+image::{images-dir}/Near-Caching-Example-Webapp-Read-JonDoe.png[]
 
 Notice that `cacheMiss` is *false* and the `latency` is only `1 ms`.  That is because the 2nd client app instance
 was already pushed the data from the server based on the client's interest registration.  This is also apparent
@@ -503,7 +503,7 @@ in the log output for the client application instances:
 To see the effects of updating a cache entry from a client app instance, let's update "_JonDoe_" from the 2nd client app
 instance by changing his email address and phone number:
 
-image::../images/Near-Caching-Example-Webapp-Update-JonDoe.png[]
+image::{images-dir}/Near-Caching-Example-Webapp-Update-JonDoe.png[]
 
 Before we refresh the Web browser tab or window pointing to our 1st client app instance, if you look at the log output
 for the 1st client app instance, you will see:
@@ -517,7 +517,7 @@ for the 1st client app instance, you will see:
 Then, switch back to the 1st client app instance Web browser tab or window and hit the refresh button, or navigate
 to the URL, `http://localhost:8181/yellow-pages/JonDoe`, and you should see the updated contact information:
 
-image::../images/Near-Caching-Example-Webapp-Reload-JonDoe.png[]
+image::{images-dir}/Near-Caching-Example-Webapp-Reload-JonDoe.png[]
 
 You can repeat this exercise as often as you like.
 

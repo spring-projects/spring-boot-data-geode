@@ -3,7 +3,7 @@
 :apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
-:images-dir: ../images
+:images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference/html
@@ -81,7 +81,7 @@ the `findBy(..)` method is called with the same `AccountNumber` (i.e. "abc123") 
 
 The _Look-Aside Caching_ pattern can be depicted in the following diagram:
 
-image::../images/Look-Aside-Caching-Pattern.png[]
+image::{images-dir}/Look-Aside-Caching-Pattern.png[]
 
 In the diagram above, we see that the caching provider (e.g. Apache Geode) is consulted first, #2, after the client
 initiated the request, #1.  If the result of the cacheable operation for the given input has already been computed
@@ -442,7 +442,7 @@ from your IDE, or from the command-line, as is:
 
 Then open your Web browser and navigate to `http://localhost:8080/ping`:
 
-image::../images/LookAsideCachingApplication-Ping.png[]
+image::{images-dir}/LookAsideCachingApplication-Ping.png[]
 
 After that, we can create and increment counters, for example:
 

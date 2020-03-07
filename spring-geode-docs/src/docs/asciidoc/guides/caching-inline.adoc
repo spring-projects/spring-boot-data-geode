@@ -3,7 +3,7 @@
 :apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
-:images-dir: ../images
+:images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference/html
@@ -104,7 +104,7 @@ strictly adhere to and be diligent in your use of _Inline Caching_.
 
 _Inline Caching_ can be depicted in the following diagram:
 
-image::../images/Inline-Caching-Pattern.png[]
+image::{images-dir}/Inline-Caching-Pattern.png[]
 
 In the diagram above, there are 2 flows: 1 for _read-through_ (right-side) and another for _write-through_ (left-side).
 Both can occur in a single operation, on a read.
@@ -465,14 +465,14 @@ include::{samples-dir}/caching/inline/src/main/resources/data.sql[]
 
 If you call `http://localhost:8080/caculator/factorial/4`, you will see the following output:
 
-image::../images/factorial-of-four-before.png[]
+image::{images-dir}/factorial-of-four-before.png[]
 
 The output shows the result of `factorial(4)` is *24*, that the calculation took *3096 _milliseconds_* and the operation
 resulted in a *_cache miss_*.  However, now that we computed `factorial(4)`, the result was put into the "cache"
 as well as INSERTED into the backend (embedded, in-memory HSQLDB) database.  So, if we run the operation again,
 the `latency` drops to zero (and *_cacheMiss_* is *_false_*):
 
-image::../images/factorial-of-four-after.png[]
+image::{images-dir}/factorial-of-four-after.png[]
 
 That is because the result (i.e. *24*) of `factorial(4)` is "cached" in Apache Geode (as well as persisted to
 the database; _write-through_) and therefore, the `CaculatorService.factorial(:int)` method is *not* called.
@@ -482,7 +482,7 @@ To see the effects of the `factorial(:int)` method involving the database as par
 call `http://localhost:8080/caculator/factorial/5`.  *5* is stored in the database, but is not currently present
 in the cache:
 
-image::../images/factorial-of-five-before.png[]
+image::{images-dir}/factorial-of-five-before.png[]
 
 While the latency is much better than invoking the _factorial_ function, it is still not as fast as pulling the result
 from the cache.
@@ -492,7 +492,7 @@ the result was loaded from the database and put into the cache (_read-through_) 
 we see that the latency drops from *12 ms* to *0 ms*.  However, in both cases, the *_cacheMiss_* was *_false_*
 because the value was found (in the database) without invoking the `CalculatorService.factorial(:int)` method:
 
-image::../images/factorial-of-five-after.png[]
+image::{images-dir}/factorial-of-five-after.png[]
 
 You can play around with the _square root_ operation to see the same effects of _Inline Caching_.
 
