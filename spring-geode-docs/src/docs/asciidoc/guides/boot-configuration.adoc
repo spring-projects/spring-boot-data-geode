@@ -26,7 +26,10 @@ presentation by John Blum during the 2017 SpringOne Platform conference.  While 
 presented in the talk both use Spring Boot, only this example is using Spring Boot for Apache Geode (SBDG). This guide
 improves on the example from the presentation by using SBDG.
 
-link:../index.html#geode-samples[Back]
+[#index-link]
+link:../index.html[Index]
+
+link:../index.html#geode-samples[Back to Samples]
 
 [[geode-samples-boot-configuration-app-domain-classes]]
 == Application Domain Classes
@@ -1140,4 +1143,4 @@ and Spring Session.  However, the concepts and effects are similar to what has b
 We leave it as an exercise for you to explore and understand the remaining _auto-configuration_ bits using this guide
 as a reference for your learning purposes.
 
-link:../index.html#geode-samples[Back]
+link:../index.html#geode-samples[Back to Samples]

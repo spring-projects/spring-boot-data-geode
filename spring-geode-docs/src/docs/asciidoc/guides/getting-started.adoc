@@ -56,7 +56,10 @@ as the new brand name.
 
 Let's begin!
 
-link:../index.html#geode-samples[Back]
+[#index-link]
+link:../index.html[Index]
+
+link:../index.html#geode-samples[Back to Samples]
 
 [[geode-samples-getting-started-spring-initializer]]
 == Begin with Spring Initializer at start.spring.io
@@ -1979,4 +1982,4 @@ a highly productive and enjoyable experience.
 
 We hope you enjoy!
 
-link:../index.html#geode-samples[Back]
+link:../index.html#geode-samples[Back to Samples]

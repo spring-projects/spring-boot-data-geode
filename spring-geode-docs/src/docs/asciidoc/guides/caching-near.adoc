@@ -30,7 +30,10 @@ _Look-Aside Caching_ followed by the guide on _Inline Caching_, first, before co
 
 Let's begin.
 
-link:../index.html#geode-samples[Back]
+[#index-link]
+link:../index.html[Index]
+
+link:../index.html#geode-samples[Back to Samples]
 
 [[geodes-samples-caching-near-background]]
 == Background
@@ -583,4 +586,4 @@ There is a much more that can be achieved with a _Near Cache_, so we leave it as
 to explore and experiment more.  Hopefully this has peaked your curiosity and shown you a few of the benefits of
 applying the _Near Caching_ pattern to your Spring Boot applications.
 
-link:../index.html#geode-samples[Back]
+link:../index.html#geode-samples[Back to Samples]

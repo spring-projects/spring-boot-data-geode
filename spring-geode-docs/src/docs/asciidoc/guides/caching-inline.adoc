@@ -30,7 +30,10 @@ guide.  Therefore, it would be helpful to have read that guide before proceeding
 
 Let's begin.
 
-link:../index.html#geode-samples[Back]
+[#index-link]
+link:../index.html[Index]
+
+link:../index.html#geode-samples[Back to Samples]
 
 [[geode-samples-caching-inline-background]]
 == Background
@@ -514,4 +517,4 @@ will serve an important role in reducing the contention and load on the backend 
 As you have seen in this guide, the configuration of _Inline Caching_ is very simple to do with Spring Boot
 for Apache Geode (SBDG) when using Spring's Cache Abstraction along with Apache Geode as the caching provider.
 
-link:../index.html#geode-samples[Back]
+link:../index.html#geode-samples[Back to Samples]

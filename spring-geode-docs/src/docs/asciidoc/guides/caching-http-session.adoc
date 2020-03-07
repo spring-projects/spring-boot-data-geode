@@ -30,7 +30,10 @@ Spring Boot applications.
 
 Let's begin.
 
-link:../index.html#geode-samples[Back]
+[#index-link]
+link:../index.html[Index]
+
+link:../index.html#geode-samples[Back to Samples]
 
 [[geode-samples-caching-http-session-background]]
 == Background
@@ -274,4 +277,4 @@ application requirements change and/or your use cases grow.
 HTTP Session state caching is one of the most effective and common ways to utilize caching in your Spring Boot,
 Web applications, and ensure the users experience is first-class.
 
-link:../index.html#geode-samples[Back]
+link:../index.html#geode-samples[Back to Samples]
