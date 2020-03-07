@@ -3,6 +3,8 @@ import org.apache.tools.ant.filters.ReplaceTokens
 apply plugin: 'io.spring.convention.docs'
 apply plugin: 'io.spring.convention.spring-test'
 
+description = "Generate Javadoc and Reference Documentation on Spring Boot for Apache Geode & Pivotal GemFire"
+
 dependencies {
 
 	compile project(':spring-geode-starter')
