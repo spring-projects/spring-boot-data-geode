@@ -1488,7 +1488,7 @@ Please see https://run.pivotal.io/[Pivotal Web Services] (PWS) website for more 
 
 TIP: Alternatively, you can run this example in a locally hosted _Pivotal Platform_ environment called
 https://docs.pivotal.io/pcf-dev/index.html[PCF Dev].
-See link:../cloudfoundry.html#cloudfoundry-geode[Hybrid Cloud Environments] for more details.
+See link:../index.html#cloudfoundry-geode[Hybrid Cloud Environments] for more details.
 *****
 
 Once you have acquired a _Pivotal Platform_ environment and installed the required tools (e.g. CF CLI), then you can
@@ -1521,7 +1521,7 @@ To:
 </dependency>
 ----
 
-TIP: See the link:../appendix.html#geode-gemfire-switch[Appendix] for more details on making the switch.
+TIP: See the link:../index.html#geode-gemfire-switch[Appendix] for more details on making the switch.
 
 .Acquiring Pivotal Cloud Cache Bits
 *****
@@ -1962,7 +1962,7 @@ Indeed, this is perhaps a crucial step in moving to the cloud, being able to mig
 applicable or possible to do so.
 
 You can find more information on running in a Hybrid Cloud Environment,
-link:../cloudfoundry.html#cloudfoundry-geode[here].
+link:../index.html#cloudfoundry-geode[here].
 
 [[spring-geode-samples-getting-started-summary]]
 == Summary

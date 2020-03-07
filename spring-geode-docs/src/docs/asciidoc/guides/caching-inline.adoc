@@ -254,7 +254,7 @@ The Region may already exist and have been created some other way.  Either way, 
 these Regions for you.
 
 TIP: If you have not done so already, you should definitely read about SBDG's support for _Inline Caching_
-in the link:../caching.html#geode-caching-provider-inline-caching[].
+in the link:../index.html#geode-caching-provider-inline-caching[Inline Caching] section.
 
 TIP: To learn more about how Apache Geode's (or Pivotal GemFire's) data loading functionality works, or specifically,
 how to {apache-geode-docs}/developing/outside_data_sources/sync_outside_data.html["Keep the Cache in Sync with Outside
