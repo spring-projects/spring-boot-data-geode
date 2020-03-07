@@ -18,13 +18,6 @@ dependencies {
 
 def versions = dependencyManagement.managedVersions
 
-asciidoctorPdf {
-	clearSources()
-	sources {
-		include "index.adoc"
-	}
-}
-
 asciidoctor {
 	clearSources()
 	sources {
@@ -67,6 +60,13 @@ asciidoctorj {
 		'starter-logging-dir' : rootProject.projectDir.path + '/spring-geode-starter-logging',
 	    'starter-logging-src-dir' : rootProject.projectDir.path + '/spring-geode-starter-logging/src/main/src',
 	    'starter-logging-resources-dir' : rootProject.projectDir.path + '/spring-geode-starter-logging/src/main/resources'
+}
+
+asciidoctorPdf {
+	clearSources()
+	sources {
+		include "index.adoc"
+	}
 }
 
 javadoc {
