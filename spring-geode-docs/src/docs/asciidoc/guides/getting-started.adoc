@@ -891,6 +891,39 @@ Region, runs an OQL query to lookup "_JonDoe_" by name using a wildcard query wi
 NOTE: The example code uses _AssertJ_ to perform assertions inside the `ApplicationRunner` bean, which means you would
 need `org.assertj:assertj-core` on your application classpath as a compile-time dependency.
 
+There are 2 primary ways to run the `CrmApplication` class.
+
+First, you can use Gradle to run the `CrmApplication`.
+
+.Using Gradle to run the `CrmApplication`
+[source,text]
+----
+$ gradlew :spring-geode-samples-getting-started:bootRun
+----
+
+The convenient thing about using Gradle is that you can run this from the SBDG project home directory, as in from
+`/path/to/spring-boot-data-geode`, where you cloned the SBDG project in your local file sytem.
+
+The downside of using Gradle is that the SBDG project Gradle build will build (compile) most modules of
+the SBDG project.
+
+Alternatively, you can now run this Getting Started Sample using Maven.
+
+.Using Maven to run the `CrmApplication`
+[source,text]
+----
+$ mvn spring-boot:run
+----
+
+You must first change working directories to `/path/to/spring-boot-data-geode/spring-geode-samples/intro/getting-started`
+then execute the `mvn` command above.
+
+The Sample specific Maven POM file resolves all dependencies from Maven Central or Spring's Artifact Repositories,
+therefore building the entire project is no longer necessary.
+
+NOTE: The Sample specific Maven POM files are generated from the Gradle build and so the Maven POMs are guaranteed
+to match the projects Gradle build in terms of dependencies and versions, and so on.
+
 After running the application again, you should see:
 
 .Application Log Output in Local Run
