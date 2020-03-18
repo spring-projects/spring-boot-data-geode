@@ -1,0 +1,16 @@
+apply plugin: 'java'
+
+task generateSamplesPoms(type: Copy) {
+	from('src/main/templates')
+	into rootProject.projectDir.path + '/spring-geode-samples'
+	include '**/*.tmpl'
+	rename { fileName -> "${(fileName - '.tmpl')}" }
+	expand([
+	    version: "${version}",
+		springBootVersion: "${springBootVersion}"
+	])
+}
+
+processResources {
+	dependsOn generateSamplesPoms
+}
