@@ -93,7 +93,7 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 	private static final Predicate<String> VCAP_APPLICATION_PROPERTIES_PREDICATE =
 		propertyName -> String.valueOf(propertyName).trim().toLowerCase().startsWith(VCAP_APPLICATION_PROPERTY);
 
-	private static final Predicate<PropertySource> VCAP_REQUIRED_PROPERTIES_PREDICATE =
+	private static final Predicate<PropertySource<?>> VCAP_REQUIRED_PROPERTIES_PREDICATE =
 		propertySource -> propertySource.containsProperty(VCAP_APPLICATION_NAME_PROPERTY)
 			&& propertySource.containsProperty(VCAP_APPLICATION_URIS_PROPERTY);
 
@@ -352,7 +352,6 @@ public class VcapPropertySource extends PropertySource<EnumerablePropertySource<
 	}
 
 	@Override
-	@SuppressWarnings("all")
 	public Iterator<String> iterator() {
 		return Collections.unmodifiableList(Arrays.asList(getSource().getPropertyNames())).iterator();
 	}
