@@ -111,7 +111,6 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 	}
 
 	@AfterClass
-	@SuppressWarnings("all")
 	public static void deleteKeyStoreFilesInCurrentWorkingDirectory() {
 
 		Predicate<File> keystorePredicate = file -> file.getAbsolutePath().endsWith(".jks");
