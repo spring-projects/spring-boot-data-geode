@@ -1,0 +1,17 @@
+{
+    "application_id": "c50bb519-2739-4fa3-8750-02c051e35735",
+    "application_name": "boot-test",
+    "application_uris": [ "boot-example.apps.tunis.cf-app.com" ],
+    "application_version": "d34bbbbd-c35c-4057-baf2-6300cb9aa2aa",
+    "cf_api": "https://api.sys.tunis.cf-app.com", "host": "0.0.0.0",
+    "instance_id": "babcf301-3b34-4dcf-720e-ccfc",
+    "instance_index": 0,
+    "limits": {
+    "disk": 1024, "fds": 16384, "mem": 1024},
+    "name": "boot-example",
+    "port": 8080,
+    "space_id": "271cf083-7855-4b5e-be19-65342d099099",
+    "space_name": "jblum-space",
+    "uris": [ "boot-example.apps.tunis.cf-app.com" ],
+    "version": "d34bbbbd-c35c-4057-baf2-6300cb9aa2aa"
+}

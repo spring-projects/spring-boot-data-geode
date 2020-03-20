@@ -1,0 +1,36 @@
+{
+  "p-cloudcache": [{
+    "credentials": {
+      "distributed_system_id": "0",
+      "locators": [ "localhost[55221]" ],
+      "urls": { "pulse": "https://cloudcache-9defb33a-6b8b-49f0-bd35-cf6f7b2f222f.sys.tunis.cf-app.com/pulse" },
+      "users": [
+        {
+          "password": "vaxAi8UuJkBp9csgDvJ5YA",
+          "roles": ["cluster_operator"],
+          "username": "cluster_operator_CQhqoDaEIT1gobjLryfpBg"
+        },
+        {
+          "password": "egSyyyaM5Q5yUMOVZD6pXA",
+          "roles": ["developer"],
+          "username": "developer_krCFKddILf8EfWs0laUQ"
+        }
+      ],
+      "wan": {
+        "sender_credentials": {
+          "active": {
+            "password": "tYHFwByaMN675FuBWDZQiQ",
+            "username": "gateway_sender_UJ0YO1pJBEnQP03yt7sVXQ"
+          }
+        }
+      }
+    },
+    "syslog_drain_url": null,
+    "volume_mounts": [],
+    "label": "p-cloudcache",
+    "provider": null,
+    "plan": "small",
+    "name": "jblum-pcc",
+    "tags": [ "gemfire", "cloudcache", "database", "pivotal" ]
+  }]
+}
