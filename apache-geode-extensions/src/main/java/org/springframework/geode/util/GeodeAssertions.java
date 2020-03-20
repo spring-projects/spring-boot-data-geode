@@ -17,6 +17,7 @@ package org.springframework.geode.util;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
+import org.apache.geode.distributed.internal.InternalDistributedSystem;
 import org.apache.geode.internal.cache.AbstractRegion;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
@@ -36,6 +37,22 @@ public abstract class GeodeAssertions {
 		return () -> obj;
 	}
 
+	private static void assertIsInstanceOf(Object target, Class<?> type) {
+
+		if (!type.isInstance(target)) {
+			throw new AssertionError(String.format("[%1$s] is not an instance of [%2$s]",
+				nullSafeTypeName(target), nullSafeTypeName(type)));
+		}
+	}
+
+	private static void assertIsNotInstanceOf(Object target, Class<?> type) {
+
+		if (type.isInstance(target)) {
+			throw new AssertionError(String.format("[%1%s] is an instance of [%2$s]",
+				nullSafeTypeName(target), nullSafeTypeName(type)));
+		}
+	}
+
 	private static Class<?> nullSafeType(Object obj) {
 		return obj != null ? obj.getClass() : null;
 	}
@@ -53,24 +70,24 @@ public abstract class GeodeAssertions {
 
 		T getSubject();
 
+		default void isInstanceOfInternalDistributedSystem() {
+			assertIsInstanceOf(getSubject(), InternalDistributedSystem.class);
+		}
+
+		default void isInstanceOfGemFireCacheImpl() {
+			assertIsInstanceOf(getSubject(), GemFireCacheImpl.class);
+		}
+
 		default void isNotInstanceOfAbstractRegion() {
+			assertIsNotInstanceOf(getSubject(), AbstractRegion.class);
+		}
 
-			Object subject = getSubject();
-
-			if (subject instanceof AbstractRegion) {
-				throw new AssertionError(String.format("[%1$s] is an instance of [%2$s]",
-					nullSafeTypeName(subject), AbstractRegion.class.getName()));
-			}
+		default void isNotInstanceOfInternalDistributedSystem() {
+			assertIsNotInstanceOf(getSubject(), InternalDistributedSystem.class);
 		}
 
 		default void isNotInstanceOfGemFireCacheImpl() {
-
-			Object subject = getSubject();
-
-			if (subject instanceof GemFireCacheImpl) {
-				throw new AssertionError(String.format("[%1$s] is an instance of [%2$s]",
-					nullSafeTypeName(subject), GemFireCacheImpl.class.getName()));
-			}
+			assertIsNotInstanceOf(getSubject(), GemFireCacheImpl.class);
 		}
 	}
 }
