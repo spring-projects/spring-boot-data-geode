@@ -27,9 +27,6 @@ import java.util.Properties;
 
 import org.apache.geode.cache.GemFireCache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -55,6 +52,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's SSL transport
@@ -102,8 +102,10 @@ public class SslAutoConfiguration {
 	private static final String GEMFIRE_SSL_KEYSTORE_PROPERTY = "gemfire.ssl-keystore";
 	private static final String GEMFIRE_SSL_PROPERTY_SOURCE_NAME = "gemfire-ssl";
 	private static final String GEMFIRE_SSL_TRUSTSTORE_PROPERTY = "gemfire.ssl-truststore";
-	private static final String SECURITY_SSL_KEYSTORE_PROPERTY = "spring.data.gemfire.security.ssl.keystore";
-	private static final String SECURITY_SSL_TRUSTSTORE_PROPERTY = "spring.data.gemfire.security.ssl.truststore";
+	private static final String SECURITY_SSL_PROPERTY_PREFIX = "spring.data.gemfire.security.ssl";
+	private static final String SECURITY_SSL_KEYSTORE_PROPERTY = SECURITY_SSL_PROPERTY_PREFIX + ".keystore";
+	private static final String SECURITY_SSL_TRUSTSTORE_PROPERTY = SECURITY_SSL_PROPERTY_PREFIX + ".truststore";
+	private static final String SECURITY_SSL_USE_DEFAULT_CONTEXT = SECURITY_SSL_PROPERTY_PREFIX + ".use-default-context";
 	private static final String TRUSTED_KEYSTORE_FILENAME = "trusted.keystore";
 	private static final String TRUSTED_KEYSTORE_FILENAME_PROPERTY = "spring.boot.data.gemfire.security.ssl.keystore.name";
 	private static final String USER_HOME_DIRECTORY = System.getProperty("user.home");
@@ -312,8 +314,11 @@ public class SslAutoConfiguration {
 		@Conditional(TrustedKeyStoreIsPresentCondition.class)
 		static class TrustedKeyStoreCondition { }
 
-		@ConditionalOnProperty(prefix = "spring.data.gemfire.security.ssl", name = { "keystore", "truststore" })
+		@ConditionalOnProperty(prefix = SECURITY_SSL_PROPERTY_PREFIX, name = { "keystore", "truststore" })
 		static class SpringDataGemFireSecuritySslKeyStoreAndTruststorePropertiesSet { }
+
+		@ConditionalOnProperty(SECURITY_SSL_USE_DEFAULT_CONTEXT)
+		static class SpringDataGeodeSslUseDefaultContextPropertySet { }
 
 		@ConditionalOnProperty({ GEMFIRE_SSL_KEYSTORE_PROPERTY, GEMFIRE_SSL_TRUSTSTORE_PROPERTY })
 		static class ApacheGeodeSslKeyStoreAndTruststorePropertiesSet { }
