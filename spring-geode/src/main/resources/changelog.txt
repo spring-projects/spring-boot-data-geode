@@ -4,9 +4,27 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.6.RELEASE (2020-03-27)
+---------------------------------------------
+Aligns SBDG with Spring Boot 2.2.6.RELEASE, Spring Framework 5.2.5.RELEASE, Spring Data Release Train Moore-SR6,
+Spring Session Corn-SR2, Spring Test for Apache Geode & Pivotal GemFire 0.0.13.RELEASE, Apache Geode 1.9.2,
+and Pivotal GemFire 9.8.7.
+
+* Fix SSL auto-configuration when TLS is enabled to properly configure the SSL default context;
+See https://github.com/spring-projects/spring-boot-data-geode/issues/77.
+* Upgrades to Gradle 6.2.
+* Upgrades to Mockito 3.3.3.
+* Upgrades to Pivotal GemFire 9.8.7.
+* Upgrades to Spring Framework 5.2.5.RELEASE.
+* Upgrades to Spring Boot 2.2.6.RELEASE.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.2.6.RELEASE.
+* Upgrades to Spring Data Release Train Moore-SR6.
+* Upgrades to Spring Session BOM Corn-SR2.
+
+
 Changes in version 1.2.5.RELEASE (2020-03-04)
 ---------------------------------------------
-Aligns SBDG with Sprig Framework 5.2.4.RELEASE, Spring Boot 2.2.5.RELEASE, Spring Data Moore-SR5
+Aligns SBDG with Spring Framework 5.2.4.RELEASE, Spring Boot 2.2.5.RELEASE, Spring Data Moore-SR5
 and Spring Session for Apache Geode & Pivotal GemFire 2.2.3.RELEASE.
 
 * Upgrades to Spring Framework 5.2.4.RELEASE.
@@ -43,7 +61,7 @@ Aligns SBDG with Spring Boot 2.2.4.RELEASE.
 
 Changes in version 1.2.3.RELEASE (2020-01-24)
 ---------------------------------------------
-Aligns SBDG with Spring Framework 5.2.3.RELEASE, Spring Boot 2.2.3.RELEASE, Sprig Data Moore-SR4
+Aligns SBDG with Spring Framework 5.2.3.RELEASE, Spring Boot 2.2.3.RELEASE, Spring Data Moore-SR4
 and Spring Session for Apache Geode & Pivotal GemFire 2.2.2.RELEASE.
 
 * Upgrades to Spring Framework 5.2.3.RELEASE.
@@ -58,7 +76,7 @@ and Spring Session for Apache Geode & Pivotal GemFire 2.2.2.RELEASE.
 
 Changes in version 1.1.5.RELEASE (2020-01-24)
 ---------------------------------------------
-Aligns SBDG with Spring Framework 5.1.13.RELEASE, Spring Boot 2.1.12.RELEASE, Sprig Data Lovelace-SR15
+Aligns SBDG with Spring Framework 5.1.13.RELEASE, Spring Boot 2.1.12.RELEASE, Spring Data Lovelace-SR15
 and Spring Session for Apache Geode & Pivotal GemFire 2.1.8.RELEASE.
 
 * Upgrades to Spring Framework 5.1.13.RELEASE.
