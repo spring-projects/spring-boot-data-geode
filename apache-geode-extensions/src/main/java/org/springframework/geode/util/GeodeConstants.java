@@ -26,7 +26,7 @@ import org.apache.geode.management.internal.security.ResourceConstants;
  */
 public interface GeodeConstants {
 
-	String GEMFIRE_PROPERTY_PREFIX = DistributionConfig.GEMFIRE_PREFIX;
+	String GEMFIRE_PROPERTY_PREFIX = "gemfire.";
 
 	// Logging Constants (referring to Properties)
 	String LOG_DISK_SPACE_LIMIT = DistributionConfig.LOG_DISK_SPACE_LIMIT_NAME;
