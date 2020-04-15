@@ -65,6 +65,9 @@ public class GemFirePropertiesFromEnvironmentAutoConfigurationIntegrationTests e
 	@Autowired
 	private ClientCache clientCache;
 
+	@Autowired
+	private GemFireProperties gemfireProperties;
+
 	@Test
 	public void gemfirePropertiesArePresent() {
 
@@ -85,6 +88,16 @@ public class GemFirePropertiesFromEnvironmentAutoConfigurationIntegrationTests e
 		assertThat(gemfireProperties.getProperty("name")).isEqualTo("TestApp");
 		assertThat(gemfireProperties.getProperty("remote-locators")).isEmpty();
 		assertThat(gemfireProperties.getProperty("spring.application.name")).isNull();
+	}
+
+	@Test
+	public void gemfirePropertiesClassDoesNotCaptureGemFireProperties() {
+
+		assertThat(this.gemfireProperties).isNotNull();
+		assertThat(this.gemfireProperties.getCache().getName()).isNotEqualTo("TestApp");
+		assertThat(this.gemfireProperties.getCache().getName()).isNotEqualTo("TestName");
+		assertThat(this.gemfireProperties.getLocator().getHost()).isNotEqualTo("skullbox");
+		assertThat(this.gemfireProperties.getLocator().getPort()).isNotEqualTo(12345);
 	}
 
 	@SpringBootApplication
