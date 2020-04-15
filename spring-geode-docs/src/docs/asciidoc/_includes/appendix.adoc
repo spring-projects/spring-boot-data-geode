@@ -222,7 +222,7 @@ since it allows you to manually spin up, test and debug your applications quickl
 
 Spring Boot for Apache Geode/Pivotal GemFire includes such a class:
 
-.Spring Boot application class used to configure and boostrap an Apache Geode/Pivotal GemFire server
+.Spring Boot application class used to configure and bootstrap an Apache Geode/Pivotal GemFire server
 [source,java]
 ----
 include::{docs-src-dir}/org/springframework/geode/docs/example/app/server/SpringBootApacheGeodeCacheServerApplication.java[tags=class]
