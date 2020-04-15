@@ -56,7 +56,7 @@ in your Spring Boot applications themselves, perhaps to further inspect or act o
 Of course, you can access any property using Spring's {spring-framework-javadoc}/org/springframework/core/env/Environment.html[`Environment`] abstraction,
 like so:
 
-.Using the Spring `Enviornment
+.Using the Spring `Enviornment`
 [source,java]
 ----
 boolean copyOnRead = environment.getProperty("spring.data.gemfire.cache.copy-on-read", Boolean.TYPE, false);
