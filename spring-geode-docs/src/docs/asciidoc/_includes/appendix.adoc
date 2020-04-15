@@ -476,7 +476,7 @@ when we `list members` and `describe member` again:
 
 .Gfsh output after starting server 2
 [source,txt]
----
+----
 gfsh>list members
                    Name                     | Id
 ------------------------------------------- | --------------------------------------------------------------------------
@@ -502,7 +502,7 @@ Server Bind              :
 Server Port              : 41414
 Running                  : true
 Client Connections       : 0
----
+----
 
 When list members, we see "_ServerTwo_" and when we `describe` "_ServerTwo_", we see that its `CacheServer` port
 is appropriately set to "41414".
