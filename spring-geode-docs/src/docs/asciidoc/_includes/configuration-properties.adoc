@@ -362,10 +362,10 @@ name, use `spring.session.data.gemfire.session.region.name` in Spring Boot `appl
 [[geode-configuration-metadata-apachegeode]]
 === Apache Geode Properties
 
-While is not recommended to use Apache Geode properties directly in your Spring applications, SBDG will not prevent you
-from doing so.  A complete reference to the Apache Geode specific properties can be found
+While it is not recommended to use Apache Geode properties directly in your Spring applications, SBDG will not prevent
+you from doing so.  A complete reference to the Apache Geode specific properties can be found
 {apache-geode-docs}/reference/topics/gemfire_properties.html[here].
 
 WARNING: Apache Geode (and Pivotal GemFire) are very strict about the properties that maybe specified in
-a `gemfire.properties` file.  You cannot mix Spring properties with `gemfire.*` properties in either
-a Spring Boot `application.properties` file or an Apache Geode `gemfire.properties` file.
+a `gemfire.properties` file.  You cannot mix Spring properties with `gemfire.*` properties in an Apache Geode
+or Pivotal GemFire, `gemfire.properties` file.
