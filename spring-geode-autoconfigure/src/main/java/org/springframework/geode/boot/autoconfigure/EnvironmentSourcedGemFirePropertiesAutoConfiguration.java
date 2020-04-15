@@ -28,6 +28,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.MutablePropertySources;
@@ -74,11 +76,15 @@ public class EnvironmentSourcedGemFirePropertiesAutoConfiguration {
 	private final Logger logger = LoggerFactory.getLogger(EnvironmentSourcedGemFirePropertiesAutoConfiguration.class);
 
 	@Bean
+	@Order(Ordered.LOWEST_PRECEDENCE)
+	@SuppressWarnings("all")
 	public ClientCacheConfigurer clientCacheGemFirePropertiesConfigurer(ConfigurableEnvironment environment) {
 		return (beanName, bean) -> configureGemFireProperties(environment, bean);
 	}
 
 	@Bean
+	@Order(Ordered.LOWEST_PRECEDENCE)
+	@SuppressWarnings("all")
 	public PeerCacheConfigurer peerCacheGemFirePropertiesConfigurer(ConfigurableEnvironment environment) {
 		return (beanName, bean) -> configureGemFireProperties(environment, bean);
 	}
