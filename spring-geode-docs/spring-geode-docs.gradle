@@ -54,6 +54,8 @@ asciidoctorj {
 		'spring-data-geode-version' : "${springDataGeodeVersion}",
 		'spring-session-data-gemfire-version' : "${springSessionDataGeodeVersion}",
 		'spring-session-data-geode-version' : "${springSessionDataGeodeVersion}",
+		'spring-test-data-gemfire-version' : "${springDataGeodeTestVersion}",
+		'spring-test-data-geode-version' : "${springDataGeodeTestVersion}",
 		'docs-dir' : rootProject.projectDir.path + '/spring-geode-docs',
 		'docs-src-dir' : rootProject.projectDir.path + '/spring-geode-docs/src/main/java',
 		'docs-resources-dir' : rootProject.projectDir.path + '/spring-geode-docs/src/main/resources',
