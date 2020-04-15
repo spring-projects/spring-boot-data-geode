@@ -21,7 +21,7 @@ John Blum
 :pivotal-cloudfoundry-version: 2-9
 :pivotal-cloudfoundry-docs: https://docs.pivotal.io/platform/application-service/{pivotal-cloudfoundry-version}
 :pivotal-cloudfoundry-website: https://pivotal.io/platform
-:pivotal-gemfire-version: 98
+:pivotal-gemfire-version: {master-pivotal-gemfire-version}
 :pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference
 :pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
 :pivotal-gemfire-website: https://pivotal.io/pivotal-gemfire
