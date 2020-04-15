@@ -1,21 +1,24 @@
 [[geode-configuration-gemfire-properties]]
-== Using GemFire Properties
+== Using Geode Properties
 :gemfire-name: Pivotal GemFire
 :geode-name: Apache Geode
 
 As of Spring Boot for {geode-name} & {gemfire-name} (SBDG) 1.3, it is now possible to declare {geode-name}
-and {gemfire-name} Properties from  `gemfire.properties` in a Spring Boot `application.properties` file.
+and {gemfire-name} properties from  `gemfire.properties` in a Spring Boot `application.properties` file.
 
-TIP: A complete list of valid {geode-name} (or {gemfire-name} properties) can be found in the
-{apache-geode-docs}/reference/topics/gemfire_properties.html[User Guide].
+TIP: A complete list of valid {geode-name} (or {gemfire-name}) properties (also known as "_Geode Properties_")
+can be found in the {apache-geode-docs}/reference/topics/gemfire_properties.html[User Guide].
 
-It should be well-known that only valid GemFire Properties can be declared in `gemfire.properties`.
+It should be known that only valid Geode Properties can be declared in `gemfire.properties`, or alternatively,
+`gfsecurity.properties`.
 
 For example:
 
-.Valid `gemfire.properties` file
+.Valid `gemfire.properties`
 [source,properties]
 ----
+# Geode Properties in gemfire.properties
+
 name=ExampleCacheName
 log-level=TRACE
 enable-time-statistics=true
@@ -23,21 +26,23 @@ durable-client-id=123
 # ...
 ----
 
-All of the Properties declared in the `gemfire.propertiese` file shown above correspond to valid GemFire Properties.
-It is illegal to declare Properties in a `gemfire.properties` file that are not valid GemFire Properties, even if those
-Properties are prefixed with a different qualifier (e.g. "`spring.`").  GemFire is very particular about this
-and will throw an `IllegalArgumentException`.
+All of the properties declared in the `gemfire.propertiese` file shown above correspond to valid Geode Properties.
+It is illegal to declare properties in a `gemfire.properties` file that are not valid Geode Properties, even if those
+properties are prefixed with a different qualifier (e.g. "_spring.*_").  Both {geode-name} and {gemfire-name} are
+very particular about this and will throw an `IllegalArgumentException` for invalid properties.
 
-For example, given the following `gemfire.properties` file with "`invalid-property`" declared:
+For example, given the following `gemfire.properties` file with "_invalid-property_" declared:
 
-.Invalid `gemfire.properties` file
+.Invalid `gemfire.properties`
 [source,properties]
 ----
+# Geode Properties in gemfire.properties
+
 name=ExampleCacheName
 invalid-property=TEST
 ----
 
-{geode-name} (or {gemfire-name}) throws the following `IllegalArgumentException`:
+{geode-name} and {gemfire-name} throw an `IllegalArgumentException`:
 
 .{geode-name} Exception for Invalid Property (Full Text Omitted)
 [source,txt]
@@ -62,28 +67,31 @@ Valid attribute names are: ack-severe-alert-threshold ack-wait-threshold archive
 	at org.example.app.ApacheGeodeClientCacheApplication.main(...)
 ----
 
-It is inconvenient to have to separate {geode-name} or {gemfire-name} Properties from other application properties,
-or to have to declare only GemFire Properties in a `gemfire.properties` file and application Properties in a separate
-Properties file, such as Spring Boot `application.properties`.
+It is inconvenient to have to separate {geode-name} or {gemfire-name} properties from other application properties,
+or to have to declare only Geode Properties in a `gemfire.properties` file and application properties in a separate
+properties file, such as Spring Boot `application.properties`.
 
-Additionally, because of {geode-name} and {gemfire-name}'s constraint on Properties, you are not able to leverage the
-full power of Spring Boot when composing `application.properties`. It is well-known that you can include certain
-Properties based on a Spring Profile while excluding other Properties. This is essential when Properties are environment
-specific.
+Additionally, because of {geode-name} and {gemfire-name}'s constraint on properties, you are not able to leverage the
+full power of Spring Boot when composing `application.properties`.
+
+It is well-known that you can include certain properties based on a Spring Profile while excluding other properties.
+This is essential when properties are environment or context specific.
 
 Of course, users should be aware that Spring Data for {geode-name} & {gemfire-name} (SDG) provide a wide range of
-Properties mapping to {geode-name} and {gemfire-name} Properties.
+properties mapping to {geode-name} and {gemfire-name} properties already.
 
-For example, the SDG `spring.data.gemfire.locators` Property maps to the `gemfire.locators` (or simply, `locators`
-in `gemfire.properties`) Property from {geode-name} and {gemfire-name}.  Likewise, there are a full set of SDG
-Properties mapping to the corresponding {geode-name} or {gemfire-name} Properties in the
+For example, the SDG `spring.data.gemfire.locators` property maps to the `gemfire.locators` property (or simply,
+`locators` in `gemfire.properties`) from {geode-name} and {gemfire-name}.  Likewise, there are a full set of SDG
+Properties mapping to the corresponding {geode-name} or {gemfire-name} properties in the
 <<geode-configuration-metadata-springdata,Appendix>>.
 
-The valid GemFire Properties file above can be expressed in Spring Boot `application.properties` as follows:
+The Geode Properties shown above can be expressed as SDG Properties in Spring Boot `application.properties` as follows:
 
-.`gemfire.properties` using SDG Properties
+.Configurring Geode Properties using SDG Properties
 [source,properties]
 ----
+# Spring Data GemFire properties in application.properties
+
 spring.data.gemfire.name=ExampleCacheName
 spring.data.gemfire.cache.log-level=TRACE
 spring.data.gemfire.stats.enable-time-statistics=true
@@ -91,58 +99,66 @@ spring.data.gemfire.cache.client.durable-client-id=123
 # ...
 ----
 
-However, there are some {geode-name} and {gemfire-name} Properties that have no equivalent SDG Property (yet), such as
+However, there are some {geode-name} and {gemfire-name} properties that have no equivalent SDG property, such as
 `gemfire.groups` (or simply, `groups` in `gemfire.properties`).  This is partly due to the fact that many {geode-name}
-and {gemfire-name} Properties are applicable only on the server (e.g. `groups` or `enforce-unique-host`).
+and {gemfire-name} Properties are applicable only configured on the server (e.g. `groups` or `enforce-unique-host`).
 
-TIP: See the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableGemFireProperties.html[`@EnableGemFireProperties`]
-annotation (attributes) from SDG for a complete list of {geode-name} and {gemfire-name} Properties, which have no
-corresponding SDG Property.
+TIP: See the `@EnableGemFireProperties` annotation
+({spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableGemFireProperties.html[attributes])
+from SDG for a complete list of {geode-name} and {gemfire-name} properties, which have no corresponding SDG property.
 
-Furthermore, many of the SDG Properties also correspond to API calls. For example, `spring.data.gemfire.cache.client.keep-alive`
+Furthermore, many of the SDG properties also correspond to API calls.
+
+For example, `spring.data.gemfire.cache.client.keep-alive`
 (see {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#keepAlive--[here])
-actually translates to the call, {apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html#close-boolean-[`ClientCache.close(boolean keepAlive)`].
+actually translates to the call, `ClientCache.close(boolean keepAlive)`
+(see {apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html#close-boolean-[here]).
 
 Still, it would be convenient to be able to declare application and {geode-name} or {gemfire-name} properties together,
-in a single Properties file, such as Spring Boot `application.properties`.  After all, it is not uncommon to declare
-JDBC Connection Properties in a Spring Boot `application.properties` file.
+in a single properties file, such as Spring Boot `application.properties`.  After all, it is not uncommon to declare
+JDBC Connection properties in a Spring Boot `application.properties` file.
 
-Therefore, as of SBDG 1.3, it is now possible to declare {geode-name} and {gemfire-name} Properties in Spring Boot
-`application.properties` directly.  For example:
+Therefore, as of SBDG 1.3, it is now possible to declare {geode-name} and {gemfire-name} properties in Spring Boot
+`application.properties` directly.
 
-.GemFire Properties declared with Application Properties
+For example:
+
+.Geode Properties declared in Spring Boot `application.properties`
 [source,properties]
 ----
 # Spring Boot application.properties
+
 server.port=8181
 spring.application.name=ExampleApp
 gemfire.durable-client-id=123
 gemfire.enable-time-statistics=true
 ----
 
-This is convenient for several reasons:
+This is convenient and ideal for several reasons:
 
-1. If you already have a large number of {geode-name} or {gemfire-name} Properties declared as GemFire Properties,
-either in a `gemfire.properties` file (or `gfsecurity.properties`), or declared on the Java command-line as JVM
-System Properties (e.g. `-Dgemfire.name=ExampleCacheName`), then you can reuse these Property declarations as is.
+1. If you already have a large number of {geode-name} or {gemfire-name} properties declared as Geode Properties,
+either in `gemfire.properties` or `gfsecurity.properties`, or declared on the Java command-line as JVM System Properties
+(e.g. `-Dgemfire.name=ExampleCacheName`), then you can reuse these property declarations as is.
 
-2. If you are not familiar with SDG's corresponding Properties, then you can simply declare the GemFire Property instead.
+2. If you are unfamiliar with SDG's corresponding properties, then you can simply declare Geode Properties instead.
 
 3. You can take advantage of Spring features, such as _Spring Profiles_.
 
-4. You can also use _Property Placeholders_ with GemFire Properties,
+4. You can also use _Property Placeholders_ with Geode Properties,
 e.g. `gemfire.log-level=${external.log-level.property}`
 
-TIP: As much as possible, we encourage users to use the SDG Properties.
+TIP: As much as possible, we encourage users to use the SDG provided properties.
 
-However, 1 strict requirement imposed by SBDG is that the GemFire Property must have the "`gemfire.`" prefix in a
-Spring Boot `application.properties` file.  This qualifies that the Property belongs to {geode-name} or {gemfire-name}.
+However, 1 strict requirement imposed by SBDG is that the Geode Property must have the "_gemfire._" prefix in a
+Spring Boot `application.properties` file.  This qualifies that the property belongs to {geode-name} or {gemfire-name}.
+Without, the "_gemfire._" prefix, the property will not be appropriately applied to the {geode-name} or {gemfire-name}
+cache instance.
 
 It would be ambiguous if your Spring Boot applications integrated with several technologies, including either
-{geode-name} or {gemfire-name}, and they had matching Properties, e.g. `bind-address` or `log-file`, perhaps.
+{geode-name} or {gemfire-name}, and they had matching properties, e.g. `bind-address` or `log-file`, perhaps.
 
-SBDG makes a best attempt to log warnings when the GemFire Property is invalid or not set.  For example, the following
-GemFire Property would result in a log warning:
+SBDG makes a best attempt to log warnings when the Geode Property is invalid or not set.  For example, the following
+Geode Property would result in a log warning:
 
 .Invalid GemFire Property
 [source,properties]
@@ -153,24 +169,24 @@ spring.application.name=ExampleApp
 gemfire.non-existing-property=TEST
 ----
 
-The resulting warning:
+The resulting warning appearing in the log would read:
 
 [source,text]
 ----
 [gemfire.non-existing-property] is not a valid Apache Geode property
 ----
 
-If a GemFire Property is not properly set, then the following warning will be logged:
+If a Geode Property is not properly set, then the following warning will be logged:
 
 [source,text]
 ----
 Apache Geode Property [gemfire.security-manager] was not set
 ----
 
-With regards to the 3rd point, you can now compose and declare GemFire Properties based on context (e.g. application
+With regards to the 3rd point, you can now compose and declare Geode Properties based on context (e.g. your application
 environment) with Spring Profiles.
 
-For example, you might start with a base set of Properties in Spring Boot `application.properties`:
+For example, you might start with a base set of properties in Spring Boot `application.properties`:
 
 .Base Properties
 [source,properties]
@@ -181,7 +197,7 @@ gemfire.durable-client-id=123
 gemfire.enable-time-statistics=false
 ----
 
-And then begin to vary the Properties by environment:
+And then begin to vary the properties by environment:
 
 .QA Properties
 [source,properties]
@@ -204,7 +220,7 @@ Or in production:
 # Spring Boot application-prod.properties
 
 server.port=80
-spring.application.name=ProdApp
+spring.application.name=ProductionApp
 gemfire.archive-disk-space-limit=1000
 gemfire.archive-file-size-limit=50
 gemfire.enforce-unique-host=true
@@ -212,16 +228,16 @@ gemfire.groups=PROD
 # ...
 ----
 
-It is then a simple matter to apply the appropriate set of Properties by configuring the Spring Profile using,
-for instance: `-Dspring.profiles.active=prod`. It is also possible to enable more than 1 Profile at a time using:
+It is then a simple matter to apply the appropriate set of properties by configuring the Spring Profile by using:
+`-Dspring.profiles.active=prod`. It is also possible to enable more than 1 profile at a time by using:
 `-Dspring.profiles.active=profile1,profile2,...,profileN`
 
-If both `spring.data.gemfire.*` Properties and the corresponding {geode-name} or {gemfire-name} Property is declared
-in Spring Boot `application.properties`, then the SDG Property will take precedence.
+If both `spring.data.gemfire.*` properties and the matching {geode-name} or {gemfire-name} properties are declared
+in Spring Boot `application.properties`, then the SDG properties take precedence.
 
-If a Property is specified more than once, such as would be the case when composing multiple `application.properties`
-files and you enable more than 1 Spring Profile, then the last Property declaration wins.  In the example shown above,
-the value for `gemfire.groups` would be "`PROD`" when "-Dspring.profiles.active=qa,prod" is configured.
+If a property is specified more than once, as would potentially be the case when composing multiple `application.properties`
+files and you enable more than 1 Spring Profile at time, then the last property declaration wins.  In the example shown
+above, the value for `gemfire.groups` would be `PROD` when `-Dspring.profiles.active=qa,prod` is configured.
 
 For example, given the following Spring Boot `application.properties`:
 
@@ -234,9 +250,48 @@ gemfire.durable-client-id=123
 spring.data.gemfire.cache.client.durable-client-id=987
 ----
 
-Then the `ClientCache`, `durable-client-id` will be `987`.  It does not matter which order the SDG or
-{geode-name}/{gemfire-name} Properties are declared in `application.properties`, the matching SDG Property
-will override the {geode-name} or {gemfire-name} Property when duplicates are found.
+Then the `durable-client-id` will be `987`.  It does not matter which order the SDG or {geode-name}/{gemfire-name}
+properties are declared in `application.properties`, the matching SDG property will override the {geode-name}
+or {gemfire-name} property when duplicates are found.
 
-TIP: Again, prefer SDG Properties over {geode-name} or {gemfire-name} Properties.
-See reference in the <<geode-configuration-metadata-springdata,Appendix>>.
+Finally, it is not possible to refer to Geode Properties declared in Spring Boot `application.properties` with the
+SBDG `GemFireProperties` class (See {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/configuration/GemFireProperties.html[Javadoc]).
+
+For example, given:
+
+.Geode Properties declared in Spring Boot `application.properties`
+[source,properties]
+----
+# Spring Boot application.properties
+
+gemfire.name=TestCacheName
+----
+
+The following assertion holds:
+
+[source,java]
+----
+import org.springframework.geode.boot.autoconfigure.configuration.GemFireProperties;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+class GemFirePropertiesTestSuite {
+
+	@Autowired
+    private GemFireProperties gemfireProperties;
+
+	@Test
+	public void gemfirePropertiesTestCase() {
+		assertThat(this.gemfireProperties.getCache().getName()).isNotEqualTo("TestCacheName");
+	}
+}
+----
+
+TIP: `application.properties` can be declared in the `@SpringBootTest` annotation.  For example, `gemfire.name`
+could have been declared in the annotation using the declaration, `@SpringBootTest(properties = { "gemfire.name=TestCacheName" })`,
+for testing purposes instead of declaring the property in a separate `application.properties` file.
+
+Only `spring.data.gemfire.*` prefixed properties are mapped to the SBDG `GemFireProperties` class hierarchy.
+
+TIP: Again, prefer SDG Properties over Geode Properties. See SDG properties reference
+in the <<geode-configuration-metadata-springdata,Appendix>>.
