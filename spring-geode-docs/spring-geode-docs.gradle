@@ -43,7 +43,7 @@ asciidoctorj {
 		'github-samples-url': "${githubUrl}/spring-geode-samples",
 		'highlightjsdir@': "js/highlight",
 		'docinfodir@': ".",
-		'master-apache-geode-version' : "19",
+		'master-apache-geode-version' : "112",
 		'master-pivotal-gemfire-version' : "910",
 		'master-pivotal-cloudcache-version' : "1-11",
 		'spring-version' : versions['org.springframework:spring-core'],
