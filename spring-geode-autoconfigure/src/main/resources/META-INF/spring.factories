@@ -5,6 +5,7 @@ org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.CachingProviderAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration,\
+org.springframework.geode.boot.autoconfigure.EnvironmentSourcedGemFirePropertiesAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.FunctionExecutionAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.GemFirePropertiesAutoConfiguration,\
 org.springframework.geode.boot.autoconfigure.LoggingAutoConfiguration,\
