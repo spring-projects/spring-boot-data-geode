@@ -124,9 +124,12 @@ This is convenient for several reasons:
 either in a `gemfire.properties` file (or `gfsecurity.properties`), or declared on the Java command-line as JVM
 System Properties (e.g. `-Dgemfire.name=ExampleCacheName`), then you can reuse these Property declarations as is.
 
-2. If you are not familiar with SDG's corresponding Properties, then you can simply declare the GemFire Property.
+2. If you are not familiar with SDG's corresponding Properties, then you can simply declare the GemFire Property instead.
 
-3. You can take advantage of Spring features, such as Spring Profiles.
+3. You can take advantage of Spring features, such as _Spring Profiles_.
+
+4. You can also use _Property Placeholders_ with GemFire Properties,
+e.g. `gemfire.log-level=${external.log-level.property}`
 
 TIP: As much as possible, we encourage users to use the SDG Properties.
 
@@ -210,3 +213,28 @@ gemfire.groups=PROD
 It is then a simple matter to apply the appropriate set of Properties by configuring the Spring Profile using,
 for instance: `-Dspring.profiles.active=prod`. It is also possible to enable more than 1 Profile at a time using:
 `-Dspring.profiles.active=profile1,profile2,...,profileN`
+
+If both `spring.data.gemfire.*` Properties and the corresponding Apache Geode or Pivotal GemFire Property is declared
+in Spring Boot `application.properties`, then the SDG Property will take precedence.
+
+If a Property is specified more than once, such as would be the case when composing multiple `application.properties`
+files and you enable more than 1 Spring Profile, then the last Property declaration wins.  In the example shown above,
+the value for `gemfire.groups` would be "`PROD`" when "-Dspring.profiles.active=qa,prod" is configured.
+
+For example, given the following Spring Boot `application.properties`:
+
+.Property Precedence
+[source,properties]
+----
+# Spring Boot application.properties
+
+gemfire.durable-client-id=123
+spring.data.gemfire.cache.client.durable-client-id=987
+----
+
+Then the `ClientCache`, `durable-client-id` will be `987`.  It does not matter which order the SDG or
+Apache Geode/Pivotal GemFire Properties are declared in `application.properties`, the matching SDG Property
+will override the Apache Geode or Pivotal GemFire Property when duplicates are found.
+
+TIP: Again, prefer SDG Properties over Apache Geode or Pivotal GemFire Properties.
+See reference in the <<geode-configuration-metadata-springdata,Appendix>>.
