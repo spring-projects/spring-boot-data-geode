@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.geode.boot.autoconfigure.EnvironmentSourcedGemFirePropertiesAutoConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -49,6 +50,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 1.3.0
  */
 @ActiveProfiles("application-gemfire-properties")
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
 	"gemfire.distributed-system-id=123",
