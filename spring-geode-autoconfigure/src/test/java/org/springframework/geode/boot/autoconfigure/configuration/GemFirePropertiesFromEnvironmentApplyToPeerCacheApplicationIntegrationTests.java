@@ -27,9 +27,12 @@ import org.apache.geode.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -49,6 +52,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.3.0
  */
+@ActiveProfiles("peer-application-gemfire-properties")
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
 	"spring.application.name=GemFirePropertiesFromEnvironmentApplyToPeerCacheApplicationIntegrationTests",
@@ -93,6 +98,7 @@ public class GemFirePropertiesFromEnvironmentApplyToPeerCacheApplicationIntegrat
 	@SpringBootApplication
 	@EnableGemFireMockObjects
 	@PeerCacheApplication
+	@Profile("peer-application-gemfire-properties")
 	static class TestGeodeConfiguration { }
 
 }
