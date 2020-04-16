@@ -61,13 +61,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 	"gemfire.name=NoName"
 })
 @SuppressWarnings("unused")
-public class GemFirePropertiesVsSpringDataGemFirePropertiesPrecedenceIntegrationTests extends IntegrationTestsSupport {
+public class GeodePropertiesVsSpringDataGeodePropertiesPrecedenceIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private ClientCache clientCache;
 
 	@Test
-	public void springDataGemFirePropertiesTakePrecedenceOverSpringAndGemFireProperties() {
+	public void springDataGeodePropertiesTakePrecedenceOverSpringAndGeodeProperties() {
 
 		assertThat(this.clientCache).isNotNull();
 		assertThat(this.clientCache.getName()).isEqualTo("MockName");
