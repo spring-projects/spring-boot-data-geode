@@ -102,8 +102,12 @@ at https://projects.spring.io/spring-boot/
 [[code-of-conduct]]
 == Code of Conduct
 
-This project adheres to the Contributor Covenant link:CODE_OF_CONDUCT.adoc[code of conduct].
-By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
+Please see our https://github.com/spring-projects/.github/blob/master/CODE_OF_CONDUCT.md[code of conduct]
+
+[[report-security-vulnerability]]
+== Reporting Security Vulnerabilities
+
+Please see our https://github.com/spring-projects/spring-boot-data-geode/security/policy[Security policy].
 
 [[license]]
 == License
