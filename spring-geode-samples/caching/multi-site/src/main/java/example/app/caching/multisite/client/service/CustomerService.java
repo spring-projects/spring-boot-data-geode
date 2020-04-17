@@ -42,6 +42,7 @@ import example.app.caching.multisite.client.util.ThreadUtils;
  * @see example.app.caching.multisite.client.model.Customer
  * @since 1.3.0
  */
+// tag::class[]
 @Service
 public class CustomerService {
 
@@ -53,12 +54,14 @@ public class CustomerService {
 
 	private volatile Long sleepInSeconds;
 
+	// tag::find-by-name[]
 	@Cacheable("CustomersByName")
 	public Customer findBy(String name) {
 		setCacheMiss();
 		ThreadUtils.safeSleep(name, Duration.ofSeconds(getSleepInSeconds()));
 		return Customer.newCustomer(this.customerId.incrementAndGet(), name);
 	}
+	// end::find-by-name[]
 
 	public boolean isCacheMiss() {
 		return this.cacheMiss.compareAndSet(true, false);
@@ -79,3 +82,4 @@ public class CustomerService {
 		this.sleepInSeconds = seconds;
 	}
 }
+// end::class[]

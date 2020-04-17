@@ -37,6 +37,7 @@ import example.app.caching.multisite.client.service.CustomerService;
  * @see example.app.caching.multisite.client.service.CustomerService
  * @since 1.3.0
  */
+// tag::class[]
 @RestController
 public class CustomerController {
 
@@ -46,12 +47,14 @@ public class CustomerController {
 	@Autowired
 	private Environment environment;
 
+	// tag::rest-api-endpoint[]
 	@GetMapping("/customers/{name}")
 	public CustomerHolder searchBy(@PathVariable String name) {
 
 		return CustomerHolder.from(this.customerService.findBy(name))
 			.setCacheMiss(this.customerService.isCacheMiss());
 	}
+	// end::rest-api-endpoint[]
 
 	@GetMapping("/ping")
 	public String pingPong() {
@@ -97,3 +100,4 @@ public class CustomerController {
 		}
 	}
 }
+// end::class[]

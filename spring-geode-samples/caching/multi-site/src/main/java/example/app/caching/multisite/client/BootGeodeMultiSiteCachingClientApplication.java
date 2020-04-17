@@ -34,6 +34,7 @@ import org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRe
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
  * @since 1.3.0
  */
+// tag::class[]
 @SpringBootApplication
 @SuppressWarnings("unused")
 public class BootGeodeMultiSiteCachingClientApplication {
@@ -47,3 +48,4 @@ public class BootGeodeMultiSiteCachingClientApplication {
 	static class GeodeClientConfiguration { }
 
 }
+// end::class[]

@@ -32,6 +32,7 @@ import lombok.ToString;
  * @see org.springframework.data.gemfire.mapping.annotation.Region
  * @since 1.3.0
  */
+// tag::class[]
 @Region("Customers")
 @EqualsAndHashCode
 @ToString(of = "name")
@@ -45,3 +46,4 @@ public class Customer {
 	private String name;
 
 }
+// end::class[]

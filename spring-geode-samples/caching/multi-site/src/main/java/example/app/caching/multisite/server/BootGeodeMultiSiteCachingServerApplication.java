@@ -77,6 +77,7 @@ import example.app.caching.multisite.client.model.Customer;
  * @see org.springframework.data.gemfire.wan.GatewaySenderFactoryBean
  * @since 1.3.0
  */
+// tag::class[]
 @SpringBootApplication
 @SuppressWarnings("unused")
 public class BootGeodeMultiSiteCachingServerApplication {
@@ -97,6 +98,7 @@ public class BootGeodeMultiSiteCachingServerApplication {
 			.run(args);
 	}
 
+	// tag::geode-server-configuration[]
 	@CacheServerApplication(name = "BootGeodeMultiSiteCachingServerApplication", port = 0)
 	static class GeodeServerConfiguration {
 
@@ -113,6 +115,7 @@ public class BootGeodeMultiSiteCachingServerApplication {
 			return customersByName;
 		}
 
+		// tag::server-application-runner[]
 		@Bean
 		ApplicationRunner geodeClusterObjectsBootstrappedAssertionRunner(Environment environment, Cache cache,
 				Region<?, ?> customersByName, GatewayReceiver gatewayReceiver, GatewaySender gatewaySender) {
@@ -140,14 +143,19 @@ public class BootGeodeMultiSiteCachingServerApplication {
 					environment.getProperty("spring.application.name", "UNKNOWN"));
 			};
 		}
+		// end::server-application-runner[]
 	}
+	// end::geode-server-configuration[]
 
+	// tag::locator-manager-configuration[]
 	@Configuration
 	@EnableLocator
 	@EnableManager(start = true)
 	@Profile("locator-manager")
 	static class GeodeLocatorManagerConfiguration { }
+	// end::locator-manager-configuration[]
 
+	// tag::gateway-receiver-configuration[]
 	@Configuration
 	@Profile("gateway-receiver")
 	static class GeodeGatewayReceiverConfiguration {
@@ -164,7 +172,9 @@ public class BootGeodeMultiSiteCachingServerApplication {
 			return gatewayReceiver;
 		}
 	}
+	// end::gateway-receiver-configuration[]
 
+	// tag::gateway-sender-configuration[]
 	@Configuration
 	@Profile("gateway-sender")
 	static class GeodeGatewaySenderConfiguration {
@@ -196,4 +206,6 @@ public class BootGeodeMultiSiteCachingServerApplication {
 			};
 		}
 	}
+	// end::gateway-sender-configuration[]
 }
+// end::class[]
