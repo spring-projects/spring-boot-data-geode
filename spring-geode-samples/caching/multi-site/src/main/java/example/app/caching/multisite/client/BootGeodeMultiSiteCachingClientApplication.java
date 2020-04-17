@@ -19,7 +19,7 @@ import org.apache.geode.cache.client.ClientCache;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions;
 
 /**
@@ -42,7 +42,7 @@ public class BootGeodeMultiSiteCachingClientApplication {
 		SpringApplication.run(BootGeodeMultiSiteCachingClientApplication.class, args);
 	}
 
-	@ClientCacheApplication
+	@Configuration
 	@EnableCachingDefinedRegions
 	static class GeodeClientConfiguration { }
 
