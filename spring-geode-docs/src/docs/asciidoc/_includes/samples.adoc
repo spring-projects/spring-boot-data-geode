@@ -36,9 +36,14 @@ This sample builds on the *_Look-Aside Caching_* sample above.
 
 | link:guides/caching-near.html[Near Caching with Spring's Cache Abstraction and Apache Geode]
 | Explains how to enable and use the Spring Cache Abstraction with Apache Geode as the caching provider for Near Caching.
-This sample builds on the *_Look-Aside Caching_* sample above and is the 3rd and final leg in our study
-on _caching patterns_.
+This sample builds on the *_Look-Aside Caching_* sample above
 | {github-samples-url}/caching/near[Near Caching]
+
+| link:guides/caching-multi-site.html[Multi-Site Caching with Spring's Cache Abstraction and Apache Geode]
+| Explains how to enable and use the Spring Cache Abstraction with Apache Geode as the caching provider for Multi-Site Caching.
+This sample builds on the *_Look-Aside Caching_* sample above and is the 4th and final leg in our study
+of _caching patterns_.
+| {github-samples-url}/caching/multi-site[Multi-Site Caching]
 
 | link:guides/caching-http-session.html[HTTP Session Caching with Spring Session and Apache Geode]
 | Explains how to enable and use Spring Session with Apache Geode to manage HTTP Session state.
