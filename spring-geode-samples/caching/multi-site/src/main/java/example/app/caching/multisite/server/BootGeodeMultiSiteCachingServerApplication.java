@@ -155,6 +155,7 @@ public class BootGeodeMultiSiteCachingServerApplication {
 	static class GeodeLocatorManagerConfiguration { }
 	// end::locator-manager-configuration[]
 
+	// tag::gateway-configuration[]
 	// tag::gateway-receiver-configuration[]
 	@Configuration
 	@Profile("gateway-receiver")
@@ -207,5 +208,6 @@ public class BootGeodeMultiSiteCachingServerApplication {
 		}
 	}
 	// end::gateway-sender-configuration[]
+	// end::gateway-configuration[]
 }
 // end::class[]
