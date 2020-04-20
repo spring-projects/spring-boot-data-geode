@@ -39,6 +39,7 @@ link:../index.html[Index]
 
 link:../index.html#geode-samples[Back to Samples]
 
+
 [[geode-samples-caching-multisite-background]]
 == Background
 
@@ -198,7 +199,7 @@ by using the _Multi-Site Caching_ pattern along with giving you the configuratio
 == Example
 
 For our example, we are going to build on the Spring code snippet above, using the `CustomerService` class with
-the _Look-Aside Caching_ pattern applied, then enhance the caching solution with an _Active-Active_, Multi-Site,
+the _Look-Aside Caching_ pattern applied, then enhance the caching solution with an _Active-Active_, Multi-Site
 WAN topology.
 
 However, instead of looking up `Customers` by `Account` number, we are simply going to lookup `Customers` by "name".
@@ -216,7 +217,7 @@ include::{samples-dir}/caching/multi-site/src/main/java/example/app/caching/mult
 NOTE: The `Customer` class uses https://projectlombok.org/[Project Lombok] to simplify the implementation.
 
 The `Customer` class is mapped to the "Customers" `Region` using the SDG `@Region` mapping annotation. The `@Region`
-annotation is very similar in purpose to the JPA `@Entity` and `@Table` annotation. A `Customer` is very simply defined
+annotation is very similar in purpose to the JPA `@Entity` and `@Table` annotations. A `Customer` is very simply defined
 in terms of an `id` and `name`, which will be used to lookup a `Customer`.
 
 [[geode-samples-caching-multisite-example-customerservice]]
@@ -244,24 +245,24 @@ cache the results of the `findBy(..)` method. Since a `Customer's` "name" is not
 candidate for caching.
 
 `@Cacheable` works by first searching for the `Customer` by "name" in the "CustomerByName" cache. If an entry is found,
-then the cached value (i.e. `Customer`) is returned. Otherwise, the `findBy(..)` method is invoked to lookup the
-`Customer` by "name". When the `findBy(..)` method returns, assuming it does not return a `null` value, then `@Cacheable`
-will store the `Customer` in the cache keyed by the `Customer's` "name" (i.e. the "name" argument passed to
-the `findBy(..)` method).
+then the cached value (i.e. `Customer`) is returned immediately, without invoking the `findBy(..)` method. Otherwise,
+the `findBy(..)` method is invoked to lookup the `Customer` by "name". When the `findBy(..)` method returns, assuming
+it does not return a `null` value, then `@Cacheable` logic will store the `Customer` in the cache keyed by the
+`Customer's` "name" (i.e. the "name" argument passed to the `findBy(..)` method).
 
 To make the `findBy(..)` operation appear to be expensive (either time or resource consuming), we add a safe Thread
 sleep call.  Otherwise, the `findBy(..)` method simply constructs a new `Customer` with the given "name" and returns it.
 
 The `CustomerService` class contains a `isCacheMiss()` method to determine whether the `Customer` was found in the cache
-mapped to the givne "name", or if the `findBy(..)` method had to be invoked (i.e. a _cache miss_).
+mapped to the given "name", or if the `findBy(..)` method had to be invoked (i.e. a _cache miss_).
 
 What is not apparent from looking at the `findBy(..)` service method is how the _Look-Aside Cache_ pattern is decorated,
-or enhanced with _Multi-Site (WAN) Caching_. It turns out to be all in the configuration as we will see further below.
+or enhanced by _Multi-Site (WAN) Caching_. It turns out to be all in the configuration as we will see further below.
 
 [[geode-samples-caching-multisite-example-customercontroller]]
 === `CustomerController` class
 
-Finally, we add `CustomerController` class exposing a simple REST interface for our application:
+Finally, we add `CustomerController` class exposing a simple REST interface to the Web application:
 
 .CustomerController class
 [source,java]
@@ -270,7 +271,7 @@ include::{samples-dir}/caching/multi-site/src/main/java/example/app/caching/mult
 ----
 
 The `CustomerController` is a Spring Web MVC `@RestController`, which uses the `CustomerService` class, and allows users
-to search for `Customers` using a Web browser.
+to search for `Customers` by "name" using a Web browser.
 
 [[geode-samples-caching-multisite-example-client-app]]
 === Spring Boot, {geode-name} `ClientCache` application
@@ -411,12 +412,12 @@ Compare and contrast this with the Spring Boot `application.properties` for clus
 [[geode-samples-caching-multisite-example-server-configuration]]
 === Cluster/Server Configuration
 
-Let's break down the `BootGeodeMultiSiteCachingServerApplication` class configuration a bit further.
+Let's break down the `BootGeodeMultiSiteCachingServerApplication` class configuration in more detail.
 
 [[geode-samples-caching-multisite-example-server-configuration-cacheserver-region]]
 ==== `CacheServer` and "_CustomersByName_" `Region` Configuration
 
-First, we have the configuration for the peer `Cache`, `CacheServer` and "CustomersByName" REPLICATE `Region`:
+This first bit of configuration creates a peer `Cache`, a `CacheServer` and the "CustomersByName" REPLICATE `Region`:
 
 .CacheServer & Region
 [source,java]
@@ -425,24 +426,24 @@ include::{samples-dir}/caching/multi-site/src/main/java/example/app/caching/mult
 ----
 
 The `CacheServer` port is set to the ephemeral port (i.e. `0`) to let the system allocate a port. Since the client is
-connecting to the cluster via a Locator, the Locator sends meta-data about the cluster to the client thereby informing
+connecting to the cluster via a Locator, the Locator sends meta-data about the cluster to the client informing
 the client of the available `CacheServers`, which server is hosting what data, the port(s) the `CacheServer(s)`
 are listening on, and so on.
 
-The name of the client and server-side Region backing the cache named in the `@Cacheable` annotation declared on
+The name of the client and server-side `Region` backing the cache named in the `@Cacheable` annotation declared on
 the `CustomerService.findBy(..)` method must match. The client-side "CustomersByName" `Region` is a PROXY, and
-therefore forwards all data access operations to the matching server-side REPLICATE Region by the same name
+therefore forwards all data access operations to the matching server-side REPLICATE `Region` by the same name
 (i.e. "CustomersByName").
 
-TIP: The `DataPolicy` of the server-side, "CustomersByName" `Region` could have been PARTITION, sharding the data across
-the servers in the cluster that host the "CustomersByName" `Region`. However, it is common for "reference" data, such as
-"cached" data, to be stored in a REPLICATE `Region`. However, if the data is transactional in anyway, then it is
-recommended that you use a PARTITION `Region`.
+TIP: The `DataPolicy` of the server-side, "CustomersByName" `Region` could have been PARTITION, thereby sharding the
+data across the servers in the cluster that host the "CustomersByName" `Region`. However, it is common for "reference"
+data, such as "cached" data, to be stored in a REPLICATE `Region`. Although, if the data is transactional in nature,
+then it is recommended that you use a PARTITION `Region`.
 
 [[geode-samples-caching-multisite-example-server-configuration-locator-manager]]
 ==== `Locator` and `Manager` Configuration
 
-The next bit of configuration involves enabling the embedded Locator and starting a Manager service inside the server:
+The next bit of configuration enables an embedded Locator and starts a Manager service inside the server:
 
 .Locator & Manager
 [source,java]
@@ -450,8 +451,8 @@ The next bit of configuration involves enabling the embedded Locator and startin
 include::{samples-dir}/caching/multi-site/src/main/java/example/app/caching/multisite/server/BootGeodeMultiSiteCachingServerApplication.java[tags=locator-manager-configuration]
 ----
 
-If you are starting up a multi-node cluster, then you can choose whether to start an embedded Locator & Manager
-on a node-by-node basis. If you do, you must vary the port numbers or configure the Locator & Manager using
+If you are starting up a multi-node cluster, then you can choose whether to start an embedded Locator and Manager
+on a node-by-node basis. If you do, you must vary the port numbers or configure the Locator and Manager using
 the ephemeral port.
 
 We'll see below how configuring a Manager can be useful for inspecting the cluster using _Gfsh_. But first, let's
@@ -460,9 +461,9 @@ talk about the final bit of configuration that enables _Multi-Site Caching_ with
 [[geode-samples-caching-multisite-example-server-configuration-gateway-sender-receiver]]
 ==== `GatewaySender` and `GatewayReceiver` Configuration
 
-The final bit of configuration configures a `GatewaySender` for sending `Region` operations from this cluster
-(e.g. cluster #1) to a remote cluster (e.g. cluster #2).  Gateways are an essential component for enabling
-_Multi-Site Caching_ using a WAN topology:
+The final bit of configuration configures a `GatewaySender` for sending `Region` events from this cluster
+(i.e. cluster #1) to a remote cluster (e.g. cluster #2).  {geode-name} (or {gemfire-name}) Gateways are the essential
+component for enabling _Multi-Site Caching_ using a WAN topology:
 
 .Gateway Sender & Receiver
 [source,java]
@@ -474,35 +475,37 @@ Just as the Locator communicates cluster meta-data to the clients allowing clien
 servers, and specifically `CacheServers` in the cluster, the remote Locator endpoint communicates cluster meta-data
 between sites.
 
-While a `GatewaySender` is configured per `Region`, a `GatewayReceiver` is setup for the entire cluster, and the Gateway
-events are then routed to the right cluster objects, typically `Regions`. `GatewaySenders` are `Region` specific since
-you might have different {apache-geode-javadoc}/org/apache/geode/cache/wan/GatewayEventFilter.html[event filters]
-combined with {apache-geode-javadoc}/org/apache/geode/cache/wan/GatewayEventSubstitutionFilter.html[event substitution filtering]
-or different {apache-geode-javadoc}/org/apache/geode/cache/wan/GatewayTransportFilter.html[transports], etc.
+While a `GatewaySender` is configured per `Region`, a `GatewayReceiver` is setup per server, and the Gateway events
+are routed to the appropriate server objects, such as `Regions`. `GatewaySenders` are `Region` specific since you might
+have different {apache-geode-javadoc}/org/apache/geode/cache/wan/GatewayEventFilter.html[event filters] coupled with
+{apache-geode-javadoc}/org/apache/geode/cache/wan/GatewayEventSubstitutionFilter.html[event substitution filtering],
+or be using different {apache-geode-javadoc}/org/apache/geode/cache/wan/GatewayTransportFilter.html[transports], etc.
 
 You can even control the _concurrency-level_ along with the {apache-geode-javadoc}/org/apache/geode/cache/wan/GatewaySender.OrderPolicy.html[order of events]
-passing through the Gateway(s). In fact, there are many aspects of Gateways you can control, different configurations to
-use, conflict resolution policies, etc, setup to properly address the unique requirements (or SLAs) of your application
-use case(s), that are quite frankly, well beyond the scope of this guide. Therefore, you are encouraged to follow the
-{apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[User Guide] for further guidance.
+passing through the Gateway(s). In fact, there are many aspects of Gateways you can control, different configurations
+you can use, conflict resolution policies, etc, in order to properly address the unique requirements (or SLAs) of your
+application use case(s), that are quite frankly, well beyond the scope of this guide. Therefore, you are encouraged to
+follow the {geode-name} {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[User Guide]
+for further guidance.
 
-Although, there is 1 aspect of the configuration we want to address here, and that is _Active-Active_
+Although, there is 1 aspect of the Gateway configuration we want to address here, and that is _Active-Active_
 vs. _Active-Passive_.
 
 Currently, the example is setup to use _Active-Active_ replication, where all clusters are actors in the overall
-system architecture. However, it is a simple matter to setup our system architecture using the _Active-Passive_ pattern.
+system architecture. However, it is a simple matter to setup the system architecture using an _Active-Passive_
+WAN Gateway pattern.
 
-You can do this by limiting the `GatewaySender` configuration to, for example, cluster/site #1.  That is, you do not
+You do this by limiting the `GatewaySender` configuration to cluster/site #1, for example.  That is, you do not
 configure a `GatewaySender` on the "CustomersByName" `Region` in cluster/site #2. Cluster #2 still requires a
-`GatewayReceiver` so events sent from cluster #1 are received by and replicated in cluster #2. This arrangement is used
-in cases where no clients can actively connect directly to cluster #2 thereby positioning cluster #2 for standby in the
-event the cluster #1 goes down.
+`GatewayReceiver` so Gateway events sent from cluster #1 are received by and replicated in cluster #2. This arrangement
+is commonly used to position cluster #2 for standby in the event that cluster #1 goes down. As such, no clients can
+connect directly to cluster #2.
 
-Therefore, we have declared Spring Profiles for each side of the Gateway, the receiving side (`GatewayReceiver`) along
+The configuration declares Spring Profiles for each side of the Gateway, the receiving side (`GatewayReceiver`) along
 with the sending side (`GatewaySender`). The sending side clearly does not require a `GatewayReceiver` when it is the
 "_Active_" cluster in the _Active-Passive_ architecture.  _Active-Passive_ replication is 1-way.
 
-Now that we have talked about the configuration in detail, let's run the example and have a look at the cluster
+Now that we have talked about the configuration in more detail, let's run the example and have a look at the cluster
 using _Gfsh_.
 
 [[geode-samples-caching-multisite-example-run]]
@@ -540,10 +543,11 @@ configuration. The configuration for each cluster has been neatly encapsulated i
 file denoted by a Spring Profile, i.e. `server-site1` for cluster #1 and `server-site2` for cluster #2.
 
 Therefore, to start a cluster, simply run the `BootGeodeMultiSiteCachingServerApplication` class from your IDE
-and enable the Spring Profile for the cluster you want start, e.g. cluster #1 using:
+and enable the Spring Profile for the cluster you want start, e.g. to start cluster #1 use:
 `-Dspring.profiles.active=server-site1`.
 
-To run cluster #2, simply create another run configuration with the Spring Profile set to `server-site2`.
+To start cluster #2, simply create another run configuration in your IDE with the
+`BootGeodeMultiSiteCachingServerApplication` class with the Spring Profile set to `server-site2`.
 
 When the cluster starts up, you should see log output similar to (log output formatted to fit this guide):
 
@@ -860,7 +864,7 @@ Region | data-policy       | REPLICATE
 ----
 
 Even though the `GatewaySender` and `GatewayReceiver` were configured correctly, _Gfsh_ apparently is not aware of it,
-at least not by `list gateways`:
+at least not by `list gateways` command, anyway:
 
 [source,text]
 ----
@@ -870,7 +874,7 @@ GatewaySenders or GatewayReceivers are not available in cluster
 ----
 
 Interestingly, the `describe region` command for the "CustomersByName" `Region` does appropriately show the `Region`
-has a `GatewaySender` identified as "customersByNameGatewaySender".
+has a `GatewaySender` identified as "customersByNameGatewaySender", as we expect!
 
 [[geode-samples-caching-multisite-example-run-clients]]
 === Start the Clients
@@ -1068,12 +1072,12 @@ After the client has successfully started, you can see that the client has conne
 .Client connected to cluster
 [source,text]
 ----
-Cluster-10 gfsh>list clients
+list clients
 Client List
 
- Client Name / ID                                                              | Server Name / ID
-------------------------------------------------------------------------------------------------------------------------
-10.99.199.24(BootGeodeMultiSiteCachingClientApplication-Site1:47756:loner):... | member=BootGeodeMultiSiteCachingServerApplication-Site1,port=51682
+                                                             Client Name / ID                                                              | Server Name / ID
+------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------
+10.99.199.24(BootGeodeMultiSiteCachingClientApplication-Site1:47756:loner):52447:333e0094:BootGeodeMultiSiteCachingClientApplication-Site1 | member=BootGeodeMultiSiteCachingServerApplication-Site1,port=51682
 
 ----
 
@@ -1096,17 +1100,16 @@ effects of a resource expensive operation, we add a 5 second delay, which if you
 include::{samples-dir}/caching/multi-site/src/main/java/example/app/caching/multisite/client/service/CustomerService.java[tags=find-by-name]
 ----
 
-On subsequent access, the operation results in a cache hit given the same argument (e.g. "JonDoe"), and we again witness
-the effects that caching now has on our application (i.e. no 5 second delay; the result is returned immediately).
+On subsequent access, the operation results in a cache hit when given the same argument (e.g. "JonDoe"), and we again
+witness the effects that caching now has on our application (i.e. no 5 second delay; the result is returned immediately).
 
 Simply hit refresh in your Web browser to resubmit the HTTP request and receive a response:
 
 image::{images-dir}/Multi-Site-Caching-Client-Application-1-Customer-JonDoe-CacheHit.png[]
 
-Of course, this only half of the equation. What happens when we access "JonDoe" from site #2 using client #2?
-
-Well, "JonDoe" has already been replicated from cluster #1 to cluster #2 and therefore, the operation results in
-a cache hit:
+This time, the access was a cache hit!  Of course, this is only half of the equation. What happens when we access
+"JonDoe" from site #2 using client #2?  Well, "JonDoe" has already been replicated from cluster #1 to cluster #2
+and therefore, the operation results in a cache hit:
 
 image::{images-dir}/Multi-Site-Caching-Client-Application-2-Customer-JonDoe-CacheHit.png[]
 
@@ -1117,14 +1120,13 @@ image::{images-dir}/Multi-Site-Caching-Client-Application-2-Customer-JaneDoe-Cac
 
 Of course, if we hit refresh in our Web browser, then the subsequent access of "JaneDoe" from client #2 should result
 in a cache hit. However, without hitting refresh, let's immediately go back to client #1 and try to access "JaneDoe".
-The result is already a cache hit since the "JaneDoe" has already been replicated between the 2 sites over the WAN
-Gateways:
+The result is a cache hit since the "JaneDoe" has already been replicated between the 2 sites over the WAN Gateways:
 
 image::{images-dir}/Multi-Site-Caching-Client-Application-1-Customer-JaneDoe-CacheHit.png[]
 
-After our testing, we can query the data in _Gfsh_:
+In addition to testing in a Web browser, you can also query the data using _Gfsh_:
 
-.Querying the Customers from Gfsh
+.Querying "CustomersByName" from Gfsh
 [source,text]
 ----
 Cluster-10 gfsh>describe region --name=CustomersByName
@@ -1162,10 +1164,11 @@ configured, SBDG will configure {geode-name}'s PDX Serialization framework.
 
 PDX allows you to query objects in serialized form, without causing a deserialization, as long as you know the structure
 of your application domain model types. Using PDX can be helpful in situations where your application domain model types
-refer to 3rd party library types you cannot control, and that may not be `java.io.Serializable`.
+refer to 3rd party library types you cannot control, and that may not implement `java.io.Serializable`.
 
-You should refer to the {geode-name} User Guide on more details on
-{apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX].
+TIP: You should refer to the {geode-name} User Guide on more details on
+{apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX]. You can also refer to SBDG's
+support of link:../index.html#geode-data-serialization[PDX Serialization].
 
 You can try other experiments, too. For example, you can rerun this example with the _Active-Passive_ pattern, which we
 leave as an exercise for the curious reader.
@@ -1175,7 +1178,7 @@ leave as an exercise for the curious reader.
 
 You have now just learned and witnessed first-hand the power of _Look-Aside Caching_ enhanced with _Multi-Site Caching_,
 implemented with {geode-name} (or {gemfire-name}) WAN Gateway functionality. This is but a simple example. WAN Gateway
-functionality can accommodate a wide-range of different use cases.
+functionality can accommodate a wide-range of different use cases and complex configuration.
 
 Imagine if timely and accurate (i.e. "consistent") information is a major concern for your application use case
 and your application is backed by an RDBMS for its _System of Record_ (SOR). How do you keep the remote database
@@ -1186,11 +1189,11 @@ between the clusters, like so:
 
 image::{images-dir}/Look-Aside--Near--Inline--Multi-Site-Caching.png[]
 
-In this image, we also depicted the use of _Near Caching_ to reduce network traffic. The system architecture could
-optionally use the _Active-Active_ WAN Gateway pattern and the cluster on the right, could optionally serve application
-clients, or not, which might be the case in an _Active-Passive_ configuration. The choice is yours and you are only
-limited by your imagination and constrained by your application requirements. Whatever the case, you have extreme power
-and flexibility at your fingertips.
+In this image, we also depicted the use of _Near Caching_ to reduce network traffic between the client(s)
+and the servers in the cluster. The system architecture could optionally use the _Active-Active_ WAN Gateway pattern
+and the cluster on the right could optionally serve application clients, or not, which might be the case in an
+_Active-Passive_ configuration. The choice is yours and you are only limited by your imagination and constrained by
+your application requirements. Whatever the case, you have extreme power and flexibility at your fingertips.
 
 Indeed, when you combine and apply multiple patterns of caching (_Look-Aside_, _Near_, _Inline_ and now,
 _Multi-Site Caching_) to your applications, you can greatly enhance your end-users experience.
