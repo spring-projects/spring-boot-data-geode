@@ -26,7 +26,7 @@ durable-client-id=123
 # ...
 ----
 
-All of the properties declared in the `gemfire.propertiese` file shown above correspond to valid Geode Properties.
+All of the properties declared in the `gemfire.properties` file shown above correspond to valid Geode Properties.
 It is illegal to declare properties in a `gemfire.properties` file that are not valid Geode Properties, even if those
 properties are prefixed with a different qualifier (e.g. "_spring.*_").  Both {geode-name} and {gemfire-name} are
 very particular about this and will throw an `IllegalArgumentException` for invalid properties.
