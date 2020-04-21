@@ -1,0 +1,237 @@
+[[geode-samples-boot-security]]
+= Spring Boot Security for Apache Geode & Pivotal GemFire
+Patrick Johnson
+:pcc-docs: https://docs.pivotal.io/p-cloud-cache/1-11
+:shiro-docs: https://shiro.apache.org/realm
+:gemfire-name: VMware Tanzu GemFire
+:geode-name: Apache Geode
+:toc: left
+:toclevels: 2
+:stylesdir: ../
+:highlightjsdir: ../js/highlight
+:docinfodir: guides
+
+This guide walks you through building a simple Spring Boot application with security, specifically auth and SSL. You
+should already be familiar with Spring Boot and Apache Geode/Tanzu GemFire.
+
+[#index-link]
+link:../index.html[Index]
+
+link:../index.html#geode-samples[Back to Samples]
+
+[[geode-samples-boot-security-background]]
+== Background
+
+Security is critical to most applications.
+It is important to be able to control who can access your application and what they are allowed to do, this is where
+auth (authentication and authorization) comes in. Authentication is used to verify a client’s identity (human or
+application) in exchange for some sort of credentials. Once authenticated, a client must be authorized before they can
+perform any actions. Authorization checks the permissions required to perform an action (read data, edit data, change
+configuration, etc.) against the permissions assigned to the client’s identity. Of course, sending passwords and other
+data as plain text isn’t very secure, so we also need to enable SSL/TLS to encrypt those things. Now, our apps are
+secure.
+
+TIP: See the Spring Boot for {geode-name} (SBDG) chapter on link:../index.html#geode-security[Security] for more information.
+
+[[geode-samples-boot-security-client]]
+== Securing a Client Application
+
+Enabling auth on the client is mostly taken care of by Spring Boot’s Auto-configuration. In the `application.properties`
+file, simply set the properties `spring.data.gemfire.security.username` and `spring.data.gemfire.security.password` to
+the username and password your app will use to authenticate.
+Enabling SSL on the client requires you to put your `trusted.keystore` file (a Java KeyStore) in a well-known place, such
+as your application’s working directory or your home directory, and auto-configuration will do the rest. If your
+`trusted.keystore` has a password (which it should), you will need to specify it using the
+`spring.data.gemfire.security.ssl.keystore.password` property in your `application.properties` file. You can generate a
+Keystore using Java Keytool.
+
+
+TIP: See the Spring Boot for {geode-name} (SBDG) chapter on link:../index.html#geode-security-auth-clients[Auth for Clients]
+for more information.
+
+[[geode-samples-boot-security-server]]
+== Securing a Server Application
+
+Auto-configuration doesn’t do as much for you when configuring auth on the server as it does on the client. In order to
+enable auth, you need to do two things. First, annotate your configuration class with `@EnableSecurity`. Second, because
+Apache Geode’s security is integrated with Apache Shiro, define at least one Shiro Realm as a bean in your Spring
+`ApplicationContext`.
+
+Below is an example Shiro Realm bean:
+
+[source,java]
+----
+include::{samples-dir}/boot/security/src/main/java/example/app/security/server/BootGeodeSecurityServerApplication.java[tags=realm]
+----
+
+You can find more information on Apache Shiro and how to set up a Realm link:{shiro-docs}[here].
+
+Enabling SSL on the server is essentially the same as for the client, just put your `trusted.keystore` file (a Java
+KeyStore) in a well-known place, like your application’s working directory or your home directory. If your
+`trusted.keystore` has a password (which it should), you will need to specify it using the
+`spring.data.gemfire.security.ssl.keystore.password` property in your `application.properties` file. You can generate a
+Keystore using Java Keytool.
+
+
+TIP: See the Spring Boot for {geode-name} (SBDG) chapter on link:../index.html#geode-security-auth-servers[Auth for Servers]
+for more information.
+
+[[geode-samples-boot-security-examle]]
+== Example
+
+To demonstrate the proper way to configure a Spring Boot application with security, we have put together a simple
+example. The example is made up of two main parts:
+
+A client - BootGeodeSecurityClientApplication.
+
+A server -  BootGeodeSecurityServerApplication.
+
+=== What it Does
+
+The example is very minimal and only performs some basic data operations. The server starts up, and the client then
+connects to the server and tries to do two things:
+
+1. Write a new value into Customers, which succeeds.
+2. Read a value from Customers, which fails because the user that the client authenticates with, is only authorized to
+write data, not read it.
+
+This behavior may change, depending on the credentials used to authenticate. For example, using “cluster_operator”
+credentials on the platform will result in both read and write operations succeeding.
+
+
+=== Classes
+
+[[geode-samples-boot-security-example-classes-client]]
+==== BootGeodeSecurityClientApplication
+
+This class is an Apache Geode client application that is configured to authenticate when connecting to a server and to
+communicate using SSL.
+
+[[geode-samples-boot-security-example-classes-server]]
+==== BootGeodeSecurityServerApplication
+
+This class is an Apache Geode server application that requires authentication for clients to connect to it and is
+configured to communicate using SSL.
+
+[[geode-samples-boot-security-example-classes-customer]]
+==== Customer
+
+This is a simple domain class to represent a customer. The `Customers` region will contain `Customer` objects that will
+be accessed from the client.
+
+[[geode-samples-boot-security-example-classes-controller]]
+==== SecurityController
+
+This class is a RestController that exposes an endpoint at “/message” that verifies the clients use of SSL.
+
+[[geode-samples-boot-security-example-run]]
+=== Running the Example
+
+[[geode-samples-boot-security-example-run-local]]
+==== Running Locally
+
+To run the example, first start the BootGeodeSecurityServerApplication and then run BootGeodeSecurityClientApplication.
+In the terminal you should see the following output:
+
+[source]
+----
+Successfully wrote data to region Customers
+Attempting to read data from region Customers
+Read failed because "jdoe not authorized for DATA:READ:Customers:2"
+----
+
+You can also hit the endpoint at https://localhost:8080/message[localhost:8080/message] to verify that the application
+is using SSL.
+
+[[geode-samples-boot-security-example-run-platform]]
+==== Running on VMware Tanzu GemFire
+
+In order for this sample to work, your Tanzu GemFire[VMs] tile must be set up to work with TLS. Instructions to enable
+TLS for the TanzuGemfire[VMs] can be found link: {pcc-docs}/prepare-TLS.html[here].
+
+Once TLS has been enabled, create your service instance with the `-c '{"tls":true}' flag`.
+
+For example:
+
+[source]
+----
+cf create-service p-cloudcache [plan-name] [service-instance-name] -c '{"tls":true}'
+----
+
+where `[plan-name]` is replaced with the plan you are selecting and `[service-instance-name]` is replaced with the
+desired name of your service.
+
+Update your `manifest.yml` file with the `[service-instance-name]`
+[source]
+----
+services:
+- [your-service-instance-name]
+----
+
+Before deploying the application to the platform, you must update the username and password in the
+`application.properties` file with the correct credentials for your service instance.
+
+Once your Service Instance is created you’ll need to create a service-key for the service.
+[source]
+----
+cf create-service-key [service-instance-name] [service-key-name]
+----
+
+where `[service-instance-name]` is replaced with the name of your service instance (from above) and `[service-key-name]`
+is what you would like to call this service key.
+
+Once the service key is created, access the credentials in the service with the following command
+[source]
+----
+cf service-key [service-instance-name] [service-key-name]
+----
+
+where `[service-instance-name]` is replaced with the name of your service instance and `[service-key-name]` is replaced
+with the name of your service key (from the previous step).
+
+In the output look for the “users” section. For this example, we used the “cluster_operator” user credentials.
+[source]
+----
+{
+...
+ "users": [
+  {
+   "password": "xxxxxxxxxxxxxxxxxxxxxxxx",
+   "roles": [
+    "cluster_operator"
+   ],
+   "username": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  {
+   "password": "xxxxxxxxxxxxxxxxxxxxxx",
+   "roles": [
+    "developer"
+   ],
+   "username": "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  {
+   "password": "xxxxxxxxxxxxxxxxxxxxx",
+   "roles": [
+    "readonly"
+   ],
+   "username": "xxxxxxxxxxxxxxxx"
+  }
+ ],
+ "wan": {}
+}
+----
+
+Now build the sample with Gradle and push the application to the platform using `cf push`.
+
+Once the app is running, check the logs with `cf logs security-app --recent` and you should see output like the
+following:
+[source]
+----
+Successfully wrote data to region Customers
+Attempting to read data from region Customers
+----
+
+You can also hit the endpoint at
+https://security-app.apps.{cf-instance}.cf-app.com/message[https://security-app.apps.{cf-instance}.cf-app.com/message],
+where `{cf-instance}` is replaced with the name of your Cloud Foundry instance, to verify that the application is using
+SSL.

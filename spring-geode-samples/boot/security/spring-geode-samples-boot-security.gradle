@@ -1,0 +1,22 @@
+plugins {
+	id "io.freefair.lombok" version "5.0.0-rc2"
+}
+
+apply plugin: 'io.spring.convention.spring-sample-boot'
+
+description = "Spring Geode Sample demonstrating Apache Geode security."
+
+dependencies {
+
+	compile project(":spring-geode-starter")
+	compile project(":spring-geode-starter-test")
+
+	compile "org.springframework.boot:spring-boot-starter-web"
+
+	compile "org.assertj:assertj-core"
+	compile "org.projectlombok:lombok"
+}
+
+bootJar {
+	mainClassName = 'example.app.security.client.BootGeodeSecurityClientApplication'
+}
