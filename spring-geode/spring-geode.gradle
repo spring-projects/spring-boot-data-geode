@@ -18,6 +18,8 @@ dependencies {
 		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
 
+	optional "org.springframework:spring-test"
+
 	testCompile "junit:junit"
 	testCompile "org.assertj:assertj-core"
 	testCompile "org.mockito:mockito-core"
