@@ -24,6 +24,8 @@ import java.util.Set;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -34,7 +36,10 @@ import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.annotation.ScopeMetadataResolver;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
+import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.util.ArrayUtils;
+import org.springframework.data.gemfire.util.SpringUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -43,8 +48,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@literal refreshable} {@link ApplicationContext} capable of loading {@link Class component classes} common
- * in {@link Annotation} based configuration as well as scanning {@link String configuration locations}.
+ * A {@literal refreshable} {@link ApplicationContext} capable of loading {@link Class component classes} used for
+ * {@link Annotation} based configuration in addition to scanning {@link String configuration locations}, and then
+ * providing the ability to reload/refresh the context at some point later during runtime.
+ *
+ * DISCLAIMER: Currently, this {@link ApplicationContext} implementation (and extension) is being used exclusively for
+ * testing and experimental (R&D) purposes. It was designed around Apache Geode & Pivotal GemFire's forced-disconnect
+ * / auto-reconnect functionality, providing support for this behavior inside a Spring context. Specifically, this
+ * concern is only applicable when using Spring Boot to configure and bootstrap Apache Geode or Pivotal GemFire peer
+ * member {@link org.apache.geode.cache.Cache} applications, such as when annotating your Spring Boot application with
+ * SDG's {@link PeerCacheApplication} annotation. This {@link ApplicationContext} implementation is not recommended for
+ * use in Production Systems/Applications (yet).
  *
  * @author John Blum
  * @see org.springframework.beans.factory.config.BeanDefinition
@@ -63,11 +77,13 @@ import org.slf4j.LoggerFactory;
 public class RefreshableAnnotationConfigApplicationContext extends AbstractRefreshableConfigApplicationContext
 		implements AnnotationConfigRegistry {
 
+	protected static final boolean DEFAULT_COPY_CONFIGURATION = false;
 	protected static final boolean USE_DEFAULT_FILTERS = true;
 
 	@Nullable
 	private BeanNameGenerator beanNameGenerator;
 
+	@Nullable
 	private volatile DefaultListableBeanFactory beanFactory;
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -78,27 +94,39 @@ public class RefreshableAnnotationConfigApplicationContext extends AbstractRefre
 	@Nullable
 	private ScopeMetadataResolver scopeMetadataResolver;
 
+	// TODO: WARNING - Calling refreshBeanFactory() in the constructor to eagerly create a BeanFactory is problematic.
+	//  However, it does follow the BeanFactory creation pattern used by the GenericApplicationContext (and extensions
+	//  like AnnotationConfigApplicationContext) that this RefreshableAnnotationConfigApplicationContext implementation
+	//  is trying to preserve. Although, the AnnotationConfigApplicationContext implementation is NOT refreshable either,
+	//  yet the AnnotationConfigWebApplicationContext is but doesn't eagerly create a BeanFactory during construction,
+	//  so... The main problem with eagerly creating the BeanFactory in the constructor is the BeanFactory will be
+	//  closed and reconstructed on refresh, as well as on each refresh thereafter.
+
 	/**
 	 * Constructs an new instance of the {@link RefreshableAnnotationConfigApplicationContext}
-	 * with default container state an no {@literal parent} {@link ApplicationContext}.
+	 * with default container state and no {@literal parent} {@link ApplicationContext}.
 	 *
-	 * @see #refreshBeanFactory()
+	 * @see #RefreshableAnnotationConfigApplicationContext(ApplicationContext)
 	 */
 	public RefreshableAnnotationConfigApplicationContext() {
-		refreshBeanFactory(); // TODO: Not certain this is a good idea; see comment below on createBeanFactory() method!
+		this(null);
 	}
 
 	/**
 	 * Constructs a new instance of the {@link RefreshableAnnotationConfigApplicationContext} initialized with
 	 * the {@literal parent} {@link ApplicationContext}.
 	 *
-	 * @param parent parent {@link ApplicationContext} to this context.
+	 * Additionally, this constructor eagerly initializes a {@link ConfigurableListableBeanFactory},
+	 * unlike {@link org.springframework.context.support.AbstractRefreshableApplicationContext} implementations,
+	 * but exactly like {@link org.springframework.context.support.GenericApplicationContext} implementations.
+	 *
+	 * @param parent parent {@link ApplicationContext} to this child context.
 	 * @see org.springframework.context.ApplicationContext
 	 * @see #refreshBeanFactory()
 	 */
 	public RefreshableAnnotationConfigApplicationContext(@Nullable ApplicationContext parent) {
 		super(parent);
-		refreshBeanFactory(); // TODO: Not certain this is a good idea; see comment below on createBeanFactory() method!
+		refreshBeanFactory();
 	}
 
 	/**
@@ -127,12 +155,12 @@ public class RefreshableAnnotationConfigApplicationContext extends AbstractRefre
 	}
 
 	/**
-	 * Returns the configured {@link Logger} used to log framework {@link String messages} to the application log.
+	 * Returns the configured {@link Logger} used to log framework messages to the application log.
 	 *
 	 * @return the configured {@link Logger}.
 	 * @see org.slf4j.Logger
 	 */
-	protected Logger getLogger() {
+	protected @NonNull Logger getLogger() {
 		return this.logger;
 	}
 
@@ -161,10 +189,26 @@ public class RefreshableAnnotationConfigApplicationContext extends AbstractRefre
 		return Optional.ofNullable(this.scopeMetadataResolver);
 	}
 
+	protected boolean isCopyConfigurationEnabled() {
+		return DEFAULT_COPY_CONFIGURATION;
+	}
+
 	protected boolean isUsingDefaultFilters() {
 		return USE_DEFAULT_FILTERS;
 	}
 
+	/**
+	 * Loads {@link BeanDefinition BeanDefinitions} from Annotation configuration (component) classes
+	 * as well as from other resource locations (e.g. XML).
+	 *
+	 * @param beanFactory {@link DefaultListableBeanFactory} to configure.
+	 * @throws BeansException if loading and configuring the {@link BeanDefinition BeanDefintions} for the target
+	 * {@link DefaultListableBeanFactory} fails.
+	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory
+	 * @see #newAnnotatedBeanDefinitionReader(BeanDefinitionRegistry)
+	 * @see #newClassBeanDefinitionScanner(BeanDefinitionRegistry)
+	 * @see #getConfigLocations()
+	 */
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException {
 
@@ -225,28 +269,53 @@ public class RefreshableAnnotationConfigApplicationContext extends AbstractRefre
 		return scanner;
 	}
 
-	// TODO: Not entirely certain this is a good idea (yet); However, it does follow the BeanFactory creation pattern
-	//  used by //  the GenericApplicationContext (& extensions, e.g. AnnotationConfigApplicationContext) that I am
-	//  trying to //  preserve in this RefreshableAnnotationConfigApplicationContext implementation. However, the
-	//  AnnotationConfigApplicationContext implementation is NOT refreshable either, although
-	//  AnnotationConfigWebApplicationContext is, so... hmm!
-	// This overridden createBeanFactory() method effectively maintains the BeanFactory as a Singleton!
-	@Override
-	protected synchronized DefaultListableBeanFactory createBeanFactory() {
-
-		if (this.beanFactory == null) {
-			this.beanFactory = super.createBeanFactory();
-		}
-
-		return this.beanFactory;
-	}
-
 	protected AnnotatedBeanDefinitionReader newAnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		return new AnnotatedBeanDefinitionReader(registry, getEnvironment());
 	}
 
 	protected ClassPathBeanDefinitionScanner newClassBeanDefinitionScanner(BeanDefinitionRegistry registry) {
 		return new ClassPathBeanDefinitionScanner(registry, isUsingDefaultFilters(), getEnvironment());
+	}
+
+	/**
+	 * Re-registers Singleton beans registered with the previous {@link ConfigurableListableBeanFactory BeanFactory}
+	 * (prior to refresh) with this {@link ApplicationContext}, iff this context was previously active
+	 * and subsequently refreshed.
+	 *
+	 * @see org.springframework.beans.factory.config.ConfigurableListableBeanFactory#copyConfigurationFrom(ConfigurableBeanFactory)
+	 * @see org.springframework.beans.factory.config.ConfigurableListableBeanFactory#registerSingleton(String, Object)
+	 * @see #getBeanFactory()
+	 */
+	@Override
+	protected void onRefresh() {
+
+		super.onRefresh();
+
+		ConfigurableListableBeanFactory currentBeanFactory = getBeanFactory();
+
+		if (this.beanFactory != null) {
+
+			Arrays.stream(ArrayUtils.nullSafeArray(this.beanFactory.getSingletonNames(), String.class))
+				.filter(singletonBeanName -> !currentBeanFactory.containsSingleton(singletonBeanName))
+				.forEach(singletonBeanName -> currentBeanFactory
+					.registerSingleton(singletonBeanName, this.beanFactory.getSingleton(singletonBeanName)));
+
+			if (isCopyConfigurationEnabled()) {
+				currentBeanFactory.copyConfigurationFrom(this.beanFactory);
+			}
+		}
+	}
+
+	/**
+	 * Stores a reference to the previous {@link ConfigurableListableBeanFactory} in order to copy its configuration
+	 * and state on {@link ApplicationContext} refresh invocations.
+	 *
+	 * @see #getBeanFactory()
+	 */
+	@Override
+	protected void prepareRefresh() {
+		this.beanFactory = (DefaultListableBeanFactory) SpringUtils.safeGetValue(this::getBeanFactory);
+		super.prepareRefresh();
 	}
 
 	/**
