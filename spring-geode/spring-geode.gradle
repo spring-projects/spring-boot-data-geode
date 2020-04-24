@@ -18,6 +18,8 @@ dependencies {
 		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
 
+	optional project(':apache-geode-extensions')
+
 	optional "org.springframework:spring-test"
 
 	testCompile "junit:junit"
