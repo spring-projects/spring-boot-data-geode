@@ -70,24 +70,24 @@ public abstract class GeodeAssertions {
 
 		T getSubject();
 
-		default void isInstanceOfInternalDistributedSystem() {
-			assertIsInstanceOf(getSubject(), InternalDistributedSystem.class);
-		}
-
 		default void isInstanceOfGemFireCacheImpl() {
 			assertIsInstanceOf(getSubject(), GemFireCacheImpl.class);
+		}
+
+		default void isInstanceOfInternalDistributedSystem() {
+			assertIsInstanceOf(getSubject(), InternalDistributedSystem.class);
 		}
 
 		default void isNotInstanceOfAbstractRegion() {
 			assertIsNotInstanceOf(getSubject(), AbstractRegion.class);
 		}
 
-		default void isNotInstanceOfInternalDistributedSystem() {
-			assertIsNotInstanceOf(getSubject(), InternalDistributedSystem.class);
-		}
-
 		default void isNotInstanceOfGemFireCacheImpl() {
 			assertIsNotInstanceOf(getSubject(), GemFireCacheImpl.class);
+		}
+
+		default void isNotInstanceOfInternalDistributedSystem() {
+			assertIsNotInstanceOf(getSubject(), InternalDistributedSystem.class);
 		}
 	}
 }
