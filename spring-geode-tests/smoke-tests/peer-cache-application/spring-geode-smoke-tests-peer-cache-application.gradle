@@ -1,0 +1,19 @@
+apply plugin: 'io.spring.convention.spring-test'
+
+description = "Smoke Tests asserting the proper function of a Spring Boot configured and bootstrapped Apache Geode peer Cache application in a simulated forced-disconnect/auto-reconnect scenairo."
+
+dependencies {
+
+	implementation "org.assertj:assertj-core"
+
+	implementation project(":apache-geode-extensions")
+	implementation project(':spring-geode-starter')
+//	implementation project(':spring-geode-starter-logging')
+
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+	testImplementation project(":spring-geode-starter-test")
+
+}
