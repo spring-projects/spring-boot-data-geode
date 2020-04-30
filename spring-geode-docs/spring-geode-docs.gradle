@@ -9,6 +9,8 @@ dependencies {
 
 	compile project(':spring-geode-starter')
 
+	optional project(":spring-geode-starter-logging")
+
 	testCompile "junit:junit"
 	testCompile "org.assertj:assertj-core"
 	testCompile "org.mockito:mockito-core"
