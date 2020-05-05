@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.geode.cache.Region;
@@ -37,6 +38,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class implementing the {@link CacheDataExporter} and {@link CacheDataImporter} interface in order to
@@ -71,6 +75,25 @@ public abstract class AbstractCacheDataImporterExporter
 	private ApplicationContext applicationContext;
 
 	private Environment environment;
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
+	private Predicate<Region<?, ?>> regionPredicate = newRegionPredicate();
+
+	/**
+	 * Constructs a new instance of {@link Predicate} used to filter {@link Region Regions} on data import/export.
+	 *
+	 * The default {@link Predicate} accepts all {@link Region Regions}. Override the {@link #getRegionPredicate()}
+	 * method to change the default behavior.
+	 *
+	 * @return a new instance of {@link Predicate} used to filter {@link Region Regions} on data import/export.
+	 * @see org.apache.geode.cache.Region
+	 * @see java.util.function.Predicate
+	 * @see #getRegionPredicate()
+	 */
+	private Predicate<Region<?, ?>> newRegionPredicate() {
+		return region -> true;
+	}
 
 	/**
 	 * Sets a reference to a {@link ApplicationContext} used by this data importer/exporter to perform its function.
@@ -154,6 +177,29 @@ public abstract class AbstractCacheDataImporterExporter
 	}
 
 	/**
+	 * Return the configured {@link Logger} to log messages.
+	 *
+	 * @return the configured {@link Logger}.
+	 * @see org.slf4j.Logger
+	 */
+	protected Logger getLogger() {
+		return this.logger;
+	}
+
+	/**
+	 * Returns the configured {@link Predicate} used to filter {@link Region Regions} on data import/export.
+	 *
+	 * @return the configured {@link Predicate} used to filter {@link Region Regions} on data import/export.
+	 * @see org.apache.geode.cache.Region
+	 * @see java.util.function.Predicate
+	 */
+	protected @NonNull Predicate<Region<?, ?>> getRegionPredicate() {
+
+		return Optional.ofNullable(this.regionPredicate)
+			.orElseGet(this::newRegionPredicate);
+	}
+
+	/**
 	 * Exports data contained in the given {@link Region}.
 	 *
 	 * @param region {@link Region} to export data from.
@@ -166,6 +212,7 @@ public abstract class AbstractCacheDataImporterExporter
 		Assert.notNull(region, "Region must not be null");
 
 		boolean exportEnabled = getEnvironment()
+			.filter(environment -> getRegionPredicate().test(region))
 			.filter(environment -> environment.getProperty(CACHE_DATA_EXPORT_ENABLED_PROPERTY_NAME, Boolean.class,
 				DEFAULT_CACHE_DATA_EXPORT_ENABLED))
 			.isPresent();
@@ -195,6 +242,7 @@ public abstract class AbstractCacheDataImporterExporter
 		Assert.notNull(region, "Region must not be null");
 
 		boolean importEnabled = getEnvironment()
+			.filter(environment -> getRegionPredicate().test(region))
 			.map(Environment::getActiveProfiles)
 			.map(CollectionUtils::asSet)
 			.map(this::getDefaultProfilesIfEmpty)
@@ -211,6 +259,15 @@ public abstract class AbstractCacheDataImporterExporter
 
 		return importEnabled ? doImportInto(region) : region;
 	}
+
+	/**
+	 * Imports data into the given {@link Region}.
+	 *
+	 * @param region {@link Region} to import data into.
+	 * @return the given {@link Region}.
+	 * @see org.apache.geode.cache.Region
+	 */
+	protected abstract @NonNull Region doImportInto(@NonNull Region region);
 
 	@Nullable Set<String> getDefaultProfilesIfEmpty(@Nullable Set<String> activeProfiles) {
 
@@ -259,14 +316,4 @@ public abstract class AbstractCacheDataImporterExporter
 	boolean isNotSet(String value) {
 		return !StringUtils.hasText((value));
 	}
-
-	/**
-	 * Imports data into the given {@link Region}.
-	 *
-	 * @param region {@link Region} to import data into.
-	 * @return the given {@link Region}.
-	 * @see org.apache.geode.cache.Region
-	 */
-	protected abstract @NonNull Region doImportInto(@NonNull Region region);
-
 }

@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.junit.Test;
 
@@ -55,6 +56,17 @@ import org.springframework.core.env.Environment;
  */
 public class AbstractCacheDataImporterExporterUnitTests {
 
+	private AbstractCacheDataImporterExporter mockAbstractCacheDataImporterExporter() {
+
+		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
+
+		doCallRealMethod().when(importerExporter).exportFrom(any());
+		doCallRealMethod().when(importerExporter).importInto(any());
+		doCallRealMethod().when(importerExporter).getLogger();
+		doCallRealMethod().when(importerExporter).getRegionPredicate();
+
+		return importerExporter;
+	}
 	@Test
 	public void setAndGetApplicationContext() {
 
@@ -62,24 +74,40 @@ public class AbstractCacheDataImporterExporterUnitTests {
 
 		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
 
-		doCallRealMethod().when(importerExporter).setApplicationContext(any());
 		doCallRealMethod().when(importerExporter).getApplicationContext();
 		doCallRealMethod().when(importerExporter).requireApplicationContext();
+		doCallRealMethod().when(importerExporter).setApplicationContext(any());
 
 		assertThat(importerExporter.getApplicationContext().orElse(null)).isNull();
 
 		importerExporter.setApplicationContext(mockApplicationContext);
 
 		assertThat(importerExporter.getApplicationContext().orElse(null)).isEqualTo(mockApplicationContext);
-		assertThat(importerExporter.requireApplicationContext()).isEqualTo(mockApplicationContext);
 
 		importerExporter.setApplicationContext(null);
 
 		assertThat(importerExporter.getApplicationContext().orElse(null)).isNull();
 	}
 
+	@Test
+	public void callRequireApplicationContextWhenPresent() {
+
+		ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
+
+		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
+
+		doCallRealMethod().when(importerExporter).getApplicationContext();
+		doCallRealMethod().when(importerExporter).requireApplicationContext();
+		doCallRealMethod().when(importerExporter).setApplicationContext(any());
+
+		importerExporter.setApplicationContext(mockApplicationContext);
+
+		assertThat(importerExporter.getApplicationContext().orElse(null)).isEqualTo(mockApplicationContext);
+		assertThat(importerExporter.requireApplicationContext()).isEqualTo(mockApplicationContext);
+	}
+
 	@Test(expected = IllegalStateException.class)
-	public void requireApplicationContextWhenAnApplicationContextIsNotConfiguredThrowsIllegalStateException() {
+	public void calRequireApplicationContextWhenNotPresentThrowsIllegalStateException() {
 
 		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
 
@@ -120,8 +148,25 @@ public class AbstractCacheDataImporterExporterUnitTests {
 		assertThat(importerExporter.getEnvironment().orElse(null)).isNull();
 	}
 
+	@Test
+	public void callRequireEnvironmentWhenPresent() {
+
+		Environment mockEnvironment = mock(Environment.class);
+
+		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
+
+		doCallRealMethod().when(importerExporter).getEnvironment();
+		doCallRealMethod().when(importerExporter).setEnvironment(any());
+		doCallRealMethod().when(importerExporter).requireEnvironment();
+
+		importerExporter.setEnvironment(mockEnvironment);
+
+		assertThat(importerExporter.getEnvironment().orElse(null)).isEqualTo(mockEnvironment);
+		assertThat(importerExporter.requireEnvironment()).isEqualTo(mockEnvironment);
+	}
+
 	@Test(expected = IllegalStateException.class)
-	public void requireEnvironmentWhenAnEnvironmentWasNotConfiguredThrowsIllegalStateException() {
+	public void callRequireEnvironmentWhenNotPresentThrowsIllegalStateException() {
 
 		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
 
@@ -141,7 +186,7 @@ public class AbstractCacheDataImporterExporterUnitTests {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void exportFromWhenEnvironmentIsPresentAndPropertyIsTrue() {
+	public void exportFromWhenEnvironmentIsPresentPropertyIsTrueAndPredicateSaysYes() {
 
 		Environment mockEnvironment = mock(Environment.class);
 
@@ -149,21 +194,26 @@ public class AbstractCacheDataImporterExporterUnitTests {
 			eq(Boolean.class), eq(AbstractCacheDataImporterExporter.DEFAULT_CACHE_DATA_EXPORT_ENABLED)))
 				.thenReturn(true);
 
+		Predicate<Region<?, ?>> mockPredicate = mock(Predicate.class);
+
+		doReturn(true).when(mockPredicate).test(any(Region.class));
+
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
+		AbstractCacheDataImporterExporter importerExporter = mockAbstractCacheDataImporterExporter();
 
-		doCallRealMethod().when(importerExporter).exportFrom(any());
 		doReturn(mockRegion).when(importerExporter).doExportFrom(eq(mockRegion));
 		doReturn(Optional.of(mockEnvironment)).when(importerExporter).getEnvironment();
+		doReturn(mockPredicate).when(importerExporter).getRegionPredicate();
 
 		assertThat(importerExporter.exportFrom(mockRegion)).isEqualTo(mockRegion);
 
+		verify(importerExporter, times(1)).getEnvironment();
+		verify(importerExporter, times(1)).doExportFrom(eq(mockRegion));
 		verify(mockEnvironment, times(1))
 			.getProperty(eq(AbstractCacheDataImporterExporter.CACHE_DATA_EXPORT_ENABLED_PROPERTY_NAME),
 				eq(Boolean.class), eq(AbstractCacheDataImporterExporter.DEFAULT_CACHE_DATA_EXPORT_ENABLED));
-		verify(importerExporter, times(1)).getEnvironment();
-		verify(importerExporter, times(1)).doExportFrom(eq(mockRegion));
+		verify(mockPredicate, times(1)).test(eq(mockRegion));
 		verifyNoInteractions(mockRegion);
 	}
 
@@ -173,9 +223,8 @@ public class AbstractCacheDataImporterExporterUnitTests {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
+		AbstractCacheDataImporterExporter importerExporter = mockAbstractCacheDataImporterExporter();
 
-		doCallRealMethod().when(importerExporter).exportFrom(any());
 		doReturn(Optional.empty()).when(importerExporter).getEnvironment();
 
 		assertThat(importerExporter.exportFrom(mockRegion)).isEqualTo(mockRegion);
@@ -197,27 +246,50 @@ public class AbstractCacheDataImporterExporterUnitTests {
 			eq(Boolean.class), eq(AbstractCacheDataImporterExporter.DEFAULT_CACHE_DATA_EXPORT_ENABLED)))
 				.thenReturn(AbstractCacheDataImporterExporter.DEFAULT_CACHE_DATA_EXPORT_ENABLED);
 
-		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
+		AbstractCacheDataImporterExporter importerExporter = mockAbstractCacheDataImporterExporter();
 
-		doCallRealMethod().when(importerExporter).exportFrom(any());
 		doReturn(Optional.of(mockEnvironment)).when(importerExporter).getEnvironment();
 
 		assertThat(importerExporter.exportFrom(mockRegion)).isEqualTo(mockRegion);
 
+		verify(importerExporter, times(1)).getEnvironment();
+		verify(importerExporter, never()).doExportFrom(any(Region.class));
 		verify(mockEnvironment, times(1))
 			.getProperty(eq(AbstractCacheDataImporterExporter.CACHE_DATA_EXPORT_ENABLED_PROPERTY_NAME),
 				eq(Boolean.class), eq(AbstractCacheDataImporterExporter.DEFAULT_CACHE_DATA_EXPORT_ENABLED));
+		verifyNoInteractions(mockRegion);
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void exportFromWhenPredicateSaysNo() {
+
+		Environment mockEnvironment = mock(Environment.class);
+
+		Predicate<Region<?, ?>> mockPredicate = mock(Predicate.class);
+
+		Region<?, ?> mockRegion = mock(Region.class);
+
+		AbstractCacheDataImporterExporter importerExporter = mockAbstractCacheDataImporterExporter();
+
+		doReturn(Optional.of(mockEnvironment)).when(importerExporter).getEnvironment();
+		doReturn(mockPredicate).when(importerExporter).getRegionPredicate();
+		doReturn(false).when(mockPredicate).test(any());
+
+		assertThat(importerExporter.exportFrom(mockRegion)).isEqualTo(mockRegion);
+
 		verify(importerExporter, times(1)).getEnvironment();
+		verify(importerExporter, times(1)).getRegionPredicate();
 		verify(importerExporter, never()).doExportFrom(any(Region.class));
+		verify(mockPredicate, times(1)).test(eq(mockRegion));
+		verifyNoInteractions(mockEnvironment);
 		verifyNoInteractions(mockRegion);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void exportFromNullRegionThrowsIllegalArgumentException() {
 
-		AbstractCacheDataImporterExporter importerExporter = mock(AbstractCacheDataImporterExporter.class);
-
-		doCallRealMethod().when(importerExporter).exportFrom(any());
+		AbstractCacheDataImporterExporter importerExporter = mockAbstractCacheDataImporterExporter();
 
 		try {
 			importerExporter.exportFrom(null);
@@ -239,11 +311,12 @@ public class AbstractCacheDataImporterExporterUnitTests {
 	private AbstractCacheDataImporterExporter callRealMethodsFor(AbstractCacheDataImporterExporter importerExporter) {
 
 		doCallRealMethod().when(importerExporter).importInto(any());
-		doCallRealMethod().when(importerExporter).getDefaultProfilesIfEmpty(any(Set.class));
-		doCallRealMethod().when(importerExporter).isNonDefaultProfileSet(any(Set.class));
-		doCallRealMethod().when(importerExporter).isImportEnabled(any(Set.class), anyString());
 		doCallRealMethod().when(importerExporter).commaDelimitedListOfStringsToSet(anyString());
 		doCallRealMethod().when(importerExporter).containsAny(any(Collection.class), any(Collection.class));
+		doCallRealMethod().when(importerExporter).getDefaultProfilesIfEmpty(any(Set.class));
+		doCallRealMethod().when(importerExporter).getRegionPredicate();
+		doCallRealMethod().when(importerExporter).isImportEnabled(any(Set.class), anyString());
+		doCallRealMethod().when(importerExporter).isNonDefaultProfileSet(any(Set.class));
 		doCallRealMethod().when(importerExporter).isNotSet(anyString());
 
 		return importerExporter;
@@ -251,9 +324,13 @@ public class AbstractCacheDataImporterExporterUnitTests {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void importIntoWhenEnvironmentIsPresentAndActiveProfilesPropertiesAreSetAndMatch() {
+	public void importIntoWhenEnvironmentIsPresentActiveProfilesAreSetAndMatchAndPredicateSaysYes() {
 
 		Region<?, ?> mockRegion = mock(Region.class);
+
+		Predicate<Region<?, ?>> mockPredicate = mock(Predicate.class);
+
+		doReturn(true).when(mockPredicate).test(eq(mockRegion));
 
 		Environment mockEnvironment = mock(Environment.class);
 
@@ -267,19 +344,21 @@ public class AbstractCacheDataImporterExporterUnitTests {
 
 		doReturn(mockRegion).when(importerExporter).doImportInto(eq(mockRegion));
 		doReturn(Optional.of(mockEnvironment)).when(importerExporter).getEnvironment();
+		doReturn(mockPredicate).when(importerExporter).getRegionPredicate();
 		doReturn(mockEnvironment).when(importerExporter).requireEnvironment();
 
 		assertThat(importerExporter.importInto(mockRegion)).isEqualTo(mockRegion);
 
-		verify(mockEnvironment, times(1)).getActiveProfiles();
-		verify(mockEnvironment, times(1))
-			.getProperty(eq(AbstractCacheDataImporterExporter.CACHE_DATA_IMPORT_ACTIVE_PROFILES_PROPERTY_NAME),
-				eq(AbstractCacheDataImporterExporter.DEFAULT_CACHE_DATA_IMPORT_ACTIVE_PROFILES));
 		verify(importerExporter, times(1)).getEnvironment();
 		verify(importerExporter, times(1)).requireEnvironment();
 		verify(importerExporter, times(1))
 			.isImportEnabled(eq(Collections.singleton("TEST")), eq("  DEV , TEST"));
 		verify(importerExporter, times(1)).doImportInto(eq(mockRegion));
+		verify(mockEnvironment, times(1)).getActiveProfiles();
+		verify(mockEnvironment, times(1))
+			.getProperty(eq(AbstractCacheDataImporterExporter.CACHE_DATA_IMPORT_ACTIVE_PROFILES_PROPERTY_NAME),
+				eq(AbstractCacheDataImporterExporter.DEFAULT_CACHE_DATA_IMPORT_ACTIVE_PROFILES));
+		verify(mockPredicate, times(1)).test(eq(mockRegion));
 		verifyNoInteractions(mockRegion);
 	}
 
@@ -364,7 +443,35 @@ public class AbstractCacheDataImporterExporterUnitTests {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void importIntoWhenImportActiveProfilesPropertyIsNotSetCallsDoImportInto() {
+	public void importIntoWhenPredicateSaysNo() {
+
+		Region<?, ?> mockRegion = mock(Region.class);
+
+		Predicate<Region<?, ?>> mockPredicate = mock(Predicate.class);
+
+		doReturn(false).when(mockPredicate).test(any());
+
+		Environment mockEnvironment = mock(Environment.class);
+
+		AbstractCacheDataImporterExporter importerExporter =
+			callRealMethodsFor(mock(AbstractCacheDataImporterExporter.class));
+
+		doReturn(Optional.of(mockEnvironment)).when(importerExporter).getEnvironment();
+		doReturn(mockPredicate).when(importerExporter).getRegionPredicate();
+
+		assertThat(importerExporter.importInto(mockRegion)).isEqualTo(mockRegion);
+
+		verify(importerExporter, times(1)).getEnvironment();
+		verify(importerExporter, times(1)).getRegionPredicate();
+		verify(importerExporter, never()).doImportInto(any(Region.class));
+		verify(mockPredicate, times(1)).test(eq(mockRegion));
+		verifyNoInteractions(mockEnvironment);
+		verifyNoInteractions(mockRegion);
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void importIntoWhenImportActiveProfilesAreNotSetCallsDoImportInto() {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
@@ -475,7 +582,7 @@ public class AbstractCacheDataImporterExporterUnitTests {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void importIntoWhenEnvironmentActiveProfilesNotSetDefaultProfilesContainImportActiveProfilesCallsDoImportInto() {
+	public void importIntoWhenEnvironmentActiveProfilesAreNotSetAndDefaultProfilesContainImportActiveProfilesCallsDoImportInto() {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
