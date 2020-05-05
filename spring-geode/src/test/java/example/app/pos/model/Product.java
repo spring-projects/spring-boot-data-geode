@@ -20,8 +20,10 @@ import java.math.BigDecimal;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -38,6 +40,7 @@ import lombok.ToString;
 @Getter
 @ToString(of = "name")
 @EqualsAndHashCode(of = "name")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(staticName = "newProduct")
 @SuppressWarnings("unused")
 public class Product {

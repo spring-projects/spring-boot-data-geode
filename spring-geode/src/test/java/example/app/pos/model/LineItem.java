@@ -19,7 +19,9 @@ import java.math.BigDecimal;
 
 import org.springframework.util.Assert;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +32,7 @@ import lombok.RequiredArgsConstructor;
  * @since 1.3.0
  */
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(staticName = "newLineItem")
 @SuppressWarnings("unused")
 public class LineItem {

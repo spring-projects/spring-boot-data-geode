@@ -16,11 +16,11 @@
 package example.app.pos.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.StreamSupport;
 
 import org.springframework.data.annotation.Id;
@@ -42,14 +42,17 @@ import lombok.Getter;
  * @see org.springframework.data.gemfire.mapping.annotation.Region
  * @since 1.3.0
  */
+@Getter
 @Region("PurchaseOrders")
 @SuppressWarnings("unused")
 public class PurchaseOrder implements Iterable<LineItem> {
 
-	@Id @Getter
+	@Id
 	private Long id;
 
-	private final Set<LineItem> lineItems = new LinkedHashSet<>();
+	//@Getter(AccessLevel.PROTECTED) // Ideally! However, Jackson ObjectMapper does not handle protected correctly!
+	// In fact, ideally, no getter at all; why can't Jackson's ObjectMapper handle field mapping(?); argh!
+	private List<LineItem> lineItems = new ArrayList<>();
 
 	public Optional<LineItem> findBy(String productName) {
 
@@ -77,7 +80,7 @@ public class PurchaseOrder implements Iterable<LineItem> {
 
 	@NotNull @Override
 	public Iterator<LineItem> iterator() {
-		return Collections.unmodifiableSet(this.lineItems).iterator();
+		return Collections.unmodifiableList(this.lineItems).iterator();
 	}
 
 	public int size() {
