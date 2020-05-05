@@ -116,7 +116,7 @@ public abstract class AbstractCacheDataImporterExporter
 	 * @see org.springframework.context.ApplicationContext
 	 * @see java.util.Optional
 	 */
-	protected Optional<ApplicationContext> getApplicationContext() {
+	public Optional<ApplicationContext> getApplicationContext() {
 		return Optional.ofNullable(this.applicationContext);
 	}
 
