@@ -48,10 +48,30 @@ public class Product {
 	@Id @NonNull
 	private String name;
 
+	// TODO Introduce a Price type, perhaps (?), encapsulating amount and currency (e.g. USD)
 	private BigDecimal price;
+
+	private Category category;
 
 	public Product havingPrice(BigDecimal price) {
 		this.price = price;
 		return this;
+	}
+
+	public Product in(Category category) {
+		this.category = category;
+		return this;
+	}
+
+	/**
+	 * @see <a href="https://www.marketingstudyguide.com/list-examples-classifying-consumer-products/">List of examples for classifying consumer products</a>
+	 */
+	public enum Category {
+
+		CONVENIENCE,
+		SHOPPING,
+		SPECIALTY,
+		UNSOUGHT
+
 	}
 }
