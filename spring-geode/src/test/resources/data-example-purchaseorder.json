@@ -1,0 +1,36 @@
+{
+  "@type": "example.app.pos.model.PurchaseOrder",
+  "id": 1,
+  "lineItems": [
+    {
+      "@type": "example.app.pos.model.LineItem",
+      "product": {
+        "@type": "example.app.pos.model.Product",
+        "name": "Apple iPad",
+        "price": 1499.00,
+        "category": "SHOPPING"
+      },
+      "quantity": 2
+    },
+    {
+      "@type": "example.app.pos.model.LineItem",
+      "product": {
+        "@type": "example.app.pos.model.Product",
+        "name": "Apple iPhone",
+        "price": 1249.00,
+        "category": "SHOPPING"
+      },
+      "quantity": 3
+    },
+    {
+      "@type": "example.app.pos.model.LineItem",
+      "product": {
+        "@type": "example.app.pos.model.Product",
+        "name": "Apple iPod",
+        "price": 599.00,
+        "category": "SHOPPING"
+      },
+      "quantity" : 1
+    }
+  ]
+}

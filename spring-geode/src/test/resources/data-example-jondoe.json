@@ -1,0 +1,5 @@
+{
+  "@type": "example.app.crm.model.Customer",
+  "id": 1,
+  "name": "Jon Doe"
+}

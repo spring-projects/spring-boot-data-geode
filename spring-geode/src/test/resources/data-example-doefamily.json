@@ -1,0 +1,47 @@
+[
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 1,
+    "name": "Jon Doe"
+  },
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 2,
+    "name": "Jane Doe"
+  },
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 3,
+    "name": "Cookie Doe"
+  },
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 4,
+    "name": "Fro Doe"
+  },
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 5,
+    "name": "Ginger Doe"
+  },
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 6,
+    "name": "Hoe Doe"
+  },
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 7,
+    "name": "Joe Doe"
+  },
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 8,
+    "name": "Pie Doe"
+  },
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 9,
+    "name": "Sour Doe"
+  }
+]
