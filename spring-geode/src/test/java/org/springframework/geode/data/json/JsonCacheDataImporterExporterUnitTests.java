@@ -52,6 +52,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.data.gemfire.util.ArrayUtils;
+import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
 import org.springframework.geode.data.json.converter.JsonToPdxConverter;
 import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
 
@@ -67,6 +69,7 @@ import example.app.pos.model.LineItem;
  * @see org.mockito.junit.MockitoJUnitRunner
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.pdx.PdxInstance
+ * @see org.springframework.context.ApplicationContext
  * @see org.springframework.core.io.Resource
  * @see org.springframework.geode.data.json.JsonCacheDataImporterExporter
  * @since 1.3.0
@@ -79,27 +82,27 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void doExportFromRegionLogsAndSavesJson() {
+	public void doExportFromRegionSavesJson() {
 
-		String json = "[{ \"name\": \"Jon Doe\"}]";
+		String json = "[{ \"name\": \"Jon Doe\"}, { \"name\": \"Jane Doe\" }]";
 
 		Resource mockResource = mock(Resource.class);
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
 		doReturn("TestRegion").when(mockRegion).getName();
-
-		doReturn(JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX).when(importer).getResourceLocation();
-		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion),
-			eq(JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX));
+		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion), anyString());
+		doReturn(JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX + "/path/to/data.json")
+			.when(importer).getResourceLocation();
 		doNothing().when(this.importer).save(anyString(), any(Resource.class));
 		doReturn(json).when(this.importer).toJson(any());
 
 		assertThat(this.importer.doExportFrom(mockRegion)).isEqualTo(mockRegion);
 
 		verify(this.importer, times(1)).toJson(eq(mockRegion));
-		verify(this.importer, times(1))
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX));
+		verify(this.importer, times(1)).getResource(eq(mockRegion),
+			eq(JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX + "/path/to/data.json"));
+		verify(this.importer, times(1)).getResourceLocation();
 		verify(this.importer, times(1)).save(eq(json), eq(mockResource));
 	}
 
@@ -134,6 +137,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 		assertThat(writer.toString()).isEqualTo(json);
 
 		verify(this.importer, times(1)).newWriter(eq(mockResource));
+		verifyNoInteractions(mockResource);
 	}
 
 	@Test(expected = DataAccessResourceFailureException.class)
@@ -146,7 +150,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		Resource mockResource = mock(Resource.class);
 
-		doReturn("/path/to/resource.json").when(mockResource).getDescription();
+		doReturn("/path/to/data.json").when(mockResource).getDescription();
 		doReturn(mockWriter).when(this.importer).newWriter(eq(mockResource));
 		doThrow(new IOException("TEST")).when(mockWriter).write(anyString(), anyInt(), anyInt());
 
@@ -156,7 +160,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 		catch (DataAccessResourceFailureException expected) {
 
 			assertThat(expected)
-				.hasMessageStartingWith("Failed to save content '%s' to Resource [/path/to/resource.json]",
+				.hasMessageStartingWith("Failed to save content '%s' to Resource [/path/to/data.json]",
 					this.importer.formatContentForPreview(json));
 			assertThat(expected).hasCauseInstanceOf(IOException.class);
 			assertThat(expected.getCause()).hasMessage("TEST");
@@ -167,10 +171,12 @@ public class JsonCacheDataImporterExporterUnitTests {
 		finally {
 			verify(this.importer, times(1)).newWriter(eq(mockResource));
 			verify(mockWriter, times(1)).write(eq(json), eq(0), eq(json.length()));
+			verify(mockWriter, never()).flush();
+			verify(mockWriter, times(1)).close();
 		}
 	}
 	@Test
-	public void saveWithNoContent() throws IOException {
+	public void saveWithNoContent() {
 
 		Resource mockResource = mock(Resource.class);
 
@@ -178,7 +184,8 @@ public class JsonCacheDataImporterExporterUnitTests {
 			this.importer.save("  ", mockResource);
 		}
 		finally {
-			verify(this.importer, never()).newWriter(any(Resource.class));
+			verify(this.importer, times(1)).save(eq("  "), eq(mockResource));
+			verifyNoMoreInteractions(this.importer);
 			verifyNoInteractions(mockResource);
 		}
 	}
@@ -196,6 +203,10 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 			throw expected;
 		}
+		finally {
+			verify(this.importer, times(1)).save(eq("{}"), isNull());
+			verifyNoMoreInteractions(this.importer);
+		}
 	}
 
 	@Test
@@ -206,26 +217,30 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		Region<Integer, PdxInstance> mockRegion = mock(Region.class);
 
-		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+		PdxInstance mockPdxInstanceOne = mock(PdxInstance.class);
+		PdxInstance mockPdxInstanceTwo = mock(PdxInstance.class);
 
-		byte[] json = "{ \"name\": \"Jon Doe\"}".getBytes();
+		byte[] json = "[{ \"name\": \"Jon Doe\"}, { \"name\": \"Jane Doe\" }]".getBytes();
 
 		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion),
 			eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
 		doReturn(true).when(mockResource).exists();
 		doReturn(json).when(this.importer).getContent(eq(mockResource));
-		doReturn(mockPdxInstance).when(this.importer).toPdx(eq(json));
-		doReturn(1).when(this.importer).getIdentifier(eq(mockPdxInstance));
+		doReturn(ArrayUtils.asArray(mockPdxInstanceOne, mockPdxInstanceTwo)).when(this.importer).toPdxArray(eq(json));
+		doReturn(1).when(this.importer).getIdentifier(eq(mockPdxInstanceOne));
+		doReturn(2).when(this.importer).getIdentifier(eq(mockPdxInstanceTwo));
 
 		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
 
 		verify(this.importer, times(1))
 			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
 		verify(this.importer, times(1)).getContent(eq(mockResource));
-		verify(this.importer, times(1)).toPdx(eq(json));
-		verify(this.importer, times(1)).getIdentifier(eq(mockPdxInstance));
+		verify(this.importer, times(1)).toPdxArray(eq(json));
+		verify(this.importer, times(1)).getIdentifier(eq(mockPdxInstanceOne));
+		verify(this.importer, times(1)).getIdentifier(eq(mockPdxInstanceTwo));
 		verify(mockResource, times(1)).exists();
-		verify(mockRegion, times(1)).put(eq(1), eq(mockPdxInstance));
+		verify(mockRegion, times(1)).put(eq(1), eq(mockPdxInstanceOne));
+		verify(mockRegion, times(1)).put(eq(2), eq(mockPdxInstanceTwo));
 	}
 
 	@Test
@@ -308,7 +323,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
 		doReturn(true).when(mockResource).exists();
 		doReturn(json).when(this.importer).getContent(eq(mockResource));
-		doReturn(null).when(this.importer).toPdx(eq(json));
+		doReturn(new PdxInstance[0]).when(this.importer).toPdxArray(eq(json));
 
 		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
 
@@ -316,7 +331,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 		verify(this.importer, times(1))
 			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
 		verify(this.importer, times(1)).getContent(eq(mockResource));
-		verify(this.importer, times(1)).toPdx(eq(json));
+		verify(this.importer, times(1)).toPdxArray(eq(json));
 		verify(mockResource, times(1)).exists();
 		verifyNoMoreInteractions(this.importer);
 		verifyNoMoreInteractions(mockResource);
@@ -434,9 +449,9 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		doReturn(Arrays.asList("", "age", null, "name", "  ")).when(mockPdxInstance).getFieldNames();
 		doReturn(false).when(mockPdxInstance).isIdentityField(anyString());
-		doReturn(101).when(this.importer).getIdField(eq(mockPdxInstance));
+		doReturn(99).when(this.importer).getIdField(eq(mockPdxInstance));
 
-		assertThat(this.importer.getIdentifier(mockPdxInstance)).isEqualTo(101);
+		assertThat(this.importer.getIdentifier(mockPdxInstance)).isEqualTo(99);
 
 		verify(this.importer, times(1)).getIdField(eq(mockPdxInstance));
 		verify(mockPdxInstance, times(1)).getFieldNames();
@@ -446,21 +461,6 @@ public class JsonCacheDataImporterExporterUnitTests {
 		verify(mockPdxInstance, never()).isIdentityField(eq(""));
 		verify(mockPdxInstance, never()).isIdentityField(eq("  "));
 		verify(mockPdxInstance, never()).getField(anyString());
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void getIdentifierFromNullPdxInstance() {
-
-		try {
-			this.importer.getIdentifier(null);
-		}
-		catch (IllegalArgumentException expected) {
-
-			assertThat(expected).hasMessage("PdxInstance must not be null");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -489,6 +489,21 @@ public class JsonCacheDataImporterExporterUnitTests {
 		}
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void getIdentifierFromNullPdxInstance() {
+
+		try {
+			this.importer.getIdentifier(null);
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("PdxInstance must not be null");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
 	@Test
 	public void getIdFieldFromPdxInstance() {
 
@@ -503,21 +518,6 @@ public class JsonCacheDataImporterExporterUnitTests {
 			.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
 		verify(mockPdxInstance, times(1))
 			.getField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void getIdFieldFromNullPdxInstance() {
-
-		try {
-			this.importer.getIdField(null);
-		}
-		catch (IllegalArgumentException expected) {
-
-			assertThat(expected).hasMessage("PdxInstance must not be null");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -573,6 +573,21 @@ public class JsonCacheDataImporterExporterUnitTests {
 				.getField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
 			verify(mockPdxInstance, times(2))
 				.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getIdFieldFromNullPdxInstance() {
+
+		try {
+			this.importer.getIdField(null);
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("PdxInstance must not be null");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
 		}
 	}
 
@@ -738,5 +753,27 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		verify(this.importer, times(1)).getJsonToPdxConverter();
 		verify(mockConverter, times(1)).convert(eq(json));
+	}
+
+	@Test
+	public void toPdxArrayFromJsonCallsJsonToPdxArrayConverter() {
+
+		byte[] json = "[{ \"name\": \"Jon Doe\" }, { \"name\": \"Jane Doe\" }]".getBytes();
+
+		JsonToPdxArrayConverter mockConverter = mock(JsonToPdxArrayConverter.class);
+
+		PdxInstance mockPdxInstanceOne = mock(PdxInstance.class);
+		PdxInstance mockPdxInstanceTwo = mock(PdxInstance.class);
+
+		PdxInstance[] pdxArray = ArrayUtils.asArray(mockPdxInstanceOne, mockPdxInstanceTwo);
+
+		doReturn(mockConverter).when(this.importer).getJsonToPdxArrayConverter();
+		doReturn(pdxArray).when(mockConverter).convert(eq(json));
+
+		assertThat(this.importer.toPdxArray(json)).isEqualTo(pdxArray);
+
+		verify(this.importer, times(1)).getJsonToPdxArrayConverter();
+		verify(mockConverter, times(1)).convert(eq(json));
+
 	}
 }

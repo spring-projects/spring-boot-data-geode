@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.apache.geode.cache.Region;
@@ -36,10 +37,12 @@ import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.geode.data.AbstractCacheDataImporterExporter;
 import org.springframework.geode.data.CacheDataExporter;
 import org.springframework.geode.data.CacheDataImporter;
+import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
 import org.springframework.geode.data.json.converter.JsonToPdxConverter;
 import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
-import org.springframework.geode.data.json.support.JSONFormatterJsonToPdxConverter;
-import org.springframework.geode.data.json.support.JSONFormatterPdxToJsonConverter;
+import org.springframework.geode.data.json.converter.support.JSONFormatterJsonToPdxConverter;
+import org.springframework.geode.data.json.converter.support.JSONFormatterPdxToJsonConverter;
+import org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -59,6 +62,7 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.geode.data.AbstractCacheDataImporterExporter
  * @see org.springframework.geode.data.CacheDataExporter
  * @see org.springframework.geode.data.CacheDataImporter
+ * @see org.springframework.geode.data.json.converter.JsonToPdxArrayConverter
  * @see org.springframework.geode.data.json.converter.JsonToPdxConverter
  * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
  * @see org.springframework.stereotype.Component
@@ -67,6 +71,8 @@ import org.springframework.util.StringUtils;
 @Component
 @SuppressWarnings("rawtypes")
 public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExporter {
+
+	private static final boolean APPEND_TO_FILE = false;
 
 	private static final int CONTENT_PREVIEW_LENGTH = 50;
 	private static final int DEFAULT_BUFFER_SIZE = 32768;
@@ -78,11 +84,18 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 
 	private JsonToPdxConverter toPdxConverter = newJsonToPdxConverter();
 
+	private JsonToPdxArrayConverter toPdxArrayConverter = newJsonToPdxArrayConverter();
+
 	private ObjectToJsonConverter toJsonConverter = newObjectToJsonConverter();
 
 	// TODO configure via an SPI
 	private @NonNull JsonToPdxConverter newJsonToPdxConverter() {
 		return new JSONFormatterJsonToPdxConverter();
+	}
+
+	// TODO configure via an SPI
+	private @NonNull JsonToPdxArrayConverter newJsonToPdxArrayConverter() {
+		return new JacksonJsonToPdxConverter();
 	}
 
 	// TODO configure via an SPI
@@ -98,6 +111,16 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 */
 	protected @NonNull JsonToPdxConverter getJsonToPdxConverter() {
 		return this.toPdxConverter;
+	}
+
+	/**
+	 * Returns a reference to the configured {@link JsonToPdxArrayConverter}.
+	 *
+	 * @return a reference to the configured {@link JsonToPdxArrayConverter}.
+	 * @see org.springframework.geode.data.json.converter.JsonToPdxArrayConverter
+	 */
+	protected @NonNull JsonToPdxArrayConverter getJsonToPdxArrayConverter() {
+		return this.toPdxArrayConverter;
 	}
 
 	/**
@@ -129,7 +152,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	}
 
 	/**
-	 * Saves the given {@link String content} (e.g. {@literal JSON}) to the specified {@link Resource}.
+	 * Saves the given {@link String content} (e.g. JSON) to the specified {@link Resource}.
 	 *
 	 * @param content {@link String} containing the content to save.
 	 * @param resource {@link Resource} to save the {@link String content} to; must not be {@literal null}.
@@ -156,7 +179,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	}
 
 	@NonNull Writer newWriter(@NonNull Resource resource) throws IOException {
-		return new BufferedWriter(new FileWriter(resource.getFile(), false));
+		return new BufferedWriter(new FileWriter(resource.getFile(), APPEND_TO_FILE));
 	}
 
 	@Nullable String formatContentForPreview(@Nullable String content) {
@@ -182,14 +205,16 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 		getResource(region, CLASSPATH_RESOURCE_PREFIX)
 			.filter(Resource::exists)
 			.map(this::getContent)
-			.map(this::toPdx)
-			.ifPresent(pdxInstance -> region.put(getIdentifier(pdxInstance), pdxInstance));
+			.map(this::toPdxArray)
+			.map(Arrays::stream)
+			.ifPresent(pdxInstances -> pdxInstances.forEach(pdxInstance ->
+				region.put(getIdentifier(pdxInstance), pdxInstance)));
 
 		return region;
 	}
 
 	/**
-	 * Gets the content of the given {@link Resource} as an array of {@literal Byte#TYPE bytes}.
+	 * Gets the contents of the given {@link Resource} as an array of {@literal Byte#TYPE bytes}.
 	 *
 	 * @param resource {@link Resource} from which to load the content; must not be {@literal null}.
 	 * @return an array of {@link Byte#TYPE bytes} containing the contents of the given {@link Resource}.
@@ -230,8 +255,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 * @param pdxInstance {@link PdxInstance} to evaluate; must not be {@literal null}.
 	 * @return the {@link Object identifier} for the given {@link PdxInstance}.
 	 * @throws IllegalArgumentException if {@link PdxInstance} is {@literal null}.
-	 * @throws IllegalStateException if the {@link Object identifier} for the {@link PdxInstance}
-	 * cannot be determined.
+	 * @throws IllegalStateException if the {@link Object identifier} for the {@link PdxInstance} cannot be determined.
 	 * @see org.apache.geode.pdx.PdxInstance
 	 * @see #getIdField(PdxInstance)
 	 */
@@ -250,13 +274,12 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	}
 
 	/**
-	 * Searches for a PDX {@link String field name} on the {@link PdxInstance} named {@literal id} and returns
-	 * its value as the {@link Object identifier} for the {@link PdxInstance}.
+	 * Searches for a PDX {@link String field name} called {@literal id} on the given {@link PdxInstance}
+	 * and returns its value as the {@link Object identifier} for the {@link PdxInstance}.
 	 *
 	 * @param pdxInstance {@link PdxInstance} to evaluate; must not be {@literal null}.
-	 * @return the value of the {@literal id} {@link String field name} of the {@link PdxInstance} if present.
-	 * @throws IllegalStateException if the {@link PdxInstance} does not have an {@literal id}
-	 * {@link String field name}.
+	 * @return the {@link Object value} of the {@literal id} {@link String field} on the {@link PdxInstance}.
+	 * @throws IllegalStateException if the {@link PdxInstance} does not have an id.
 	 * @see org.apache.geode.pdx.PdxInstance
 	 * @see #getIdentifier(PdxInstance)
 	 */
@@ -272,12 +295,12 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	}
 
 	/**
-	 * Returns a computed {@literal JSON} {@link Resource} containing {@literal JSON} data that will be loaded into
-	 * the given a {@link Region}.
+	 * Returns a computed JSON {@link Resource} containing JSON data to be loaded into the given {@link Region}.
 	 *
-	 * @param region target {@link Region} used to compute the {@literal JSON} {@link Resource} to load.
-	 * @return an {@link Optional} {@literal JSON} {@link Resource} containing {@literal JSON} data
-	 * to load into the given {@link Region}.
+	 * @param region target {@link Region} used to compute the JSON {@link Resource} to load.
+	 * @param resourcePrefix {@link String} containing a path prefix (e.g. {@literal classpath:} used to indicate
+	 * the location of the {@link Resource} to load.
+	 * @return an {@link Optional} JSON {@link Resource} containing JSON data to load into the given {@link Region}.
 	 * @see org.springframework.core.io.Resource
 	 * @see org.apache.geode.cache.Region
 	 * @see java.util.Optional
@@ -300,20 +323,19 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	}
 
 	/**
-	 * Returns the {@link String file system path} specifying the location for where to export the {@link Resource}.
+	 * Returns a {@link String file system path} specifying the location for where to export the {@link Resource}.
 	 *
-	 * @return the {@link String file system path} specifying the location for where to export the {@link Resource}.
+	 * @return a {@link String file system path} specifying the location for where to export the {@link Resource}.
 	 */
 	protected @NonNull String getResourceLocation() {
 		return String.format("%1$s%2$s", FILESYSTEM_RESOURCE_PREFIX, System.getProperty("user.dir"));
 	}
 
 	/**
-	 * Convert {@link Object values} contained in the {@link Region} to {@literal JSON}.
+	 * Convert {@link Object values} contained in the {@link Region} to JSON.
 	 *
 	 * @param region {@link Region} to process; must not be {@literal null}.
-	 * @return a {@literal JSON} {@link String} containing the {@link Object values}
-	 * from the given {@link Region}.
+	 * @return a JSON {@link String} containing the {@link Object values} from the given {@link Region}.
 	 * @see org.apache.geode.cache.Region
 	 * @see #toJson(Object)
 	 */
@@ -338,10 +360,10 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	}
 
 	/**
-	 * Converts the given {@link Object} into a {@literal JSON} {@link String}.
+	 * Converts the given {@link Object} into JSON.
 	 *
-	 * @param source {@link Object} to convert into {@literal JSON}.
-	 * @return a {@link String} containing the {@literal JSON} generated from the given {@link Object}.
+	 * @param source {@link Object} to convert into JSON.
+	 * @return a {@link String} containing the JSON generated from the given {@link Object}.
 	 * @see #getObjectToJsonConverter()
 	 */
 	protected @NonNull String toJson(@NonNull Object source) {
@@ -349,14 +371,27 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	}
 
 	/**
-	 * Converts the array of {@literal JSON} {@link Byte#TYPE bytes} into a {@link PdxInstance}.
+	 * Converts the given JSON object into a {@link PdxInstance}.
 	 *
-	 * @param json array of {@link Byte#TYPE} containing {@literal JSON} data.
-	 * @return a {@link PdxInstance} converted from the {@literal JSON} {@link Byte#TYPE bytes}.
+	 * @param json array of {@link Byte#TYPE bytes} containing JSON.
+	 * @return a {@link PdxInstance} converted from the JSON object.
 	 * @see org.apache.geode.pdx.PdxInstance
 	 * @see #getJsonToPdxConverter()
 	 */
 	protected @NonNull PdxInstance toPdx(@NonNull byte[] json) {
 		return getJsonToPdxConverter().convert(json);
+	}
+
+	/**
+	 * Converts the array of {@link Byte#TYPE bytes} containing multiple JSON objects
+	 * into an array of {@link PdxInstance PdxInstances}.
+	 *
+	 * @param json array of {@link Byte#TYPE bytes} containing the JSON to convert to PDX.
+	 * @return an array of {@link PdxInstance PdxInstances} for each JSON object.
+	 * @see org.apache.geode.pdx.PdxInstance
+	 * @see #getJsonToPdxArrayConverter()
+	 */
+	protected @NonNull PdxInstance[] toPdxArray(@NonNull byte[] json) {
+		return getJsonToPdxArrayConverter().convert(json);
 	}
 }
