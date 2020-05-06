@@ -19,7 +19,7 @@ import org.springframework.core.convert.converter.Converter;
 
 /**
  * A Spring {@link Converter} interface extension defining a contract to convert
- * from an {@link Object} into a {@literal JSON} {@link String}.
+ * from an {@link Object} into a {@link String JSON}.
  *
  * @author John Blum
  * @see java.lang.FunctionalInterface

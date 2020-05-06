@@ -22,10 +22,11 @@ import org.springframework.lang.NonNull;
 
 /**
  * A Spring {@link Converter} interface extension defining a contract to convert
- * from a {@literal JSON} {@link String} to a {@link PdxInstance}.
+ * from {@link String JSON} to a {@link PdxInstance}.
  *
  * @author John Blum
  * @see java.lang.FunctionalInterface
+ * @see java.lang.String
  * @see org.apache.geode.pdx.PdxInstance
  * @see org.springframework.core.convert.converter.Converter
  * @since 1.3.0
@@ -34,11 +35,11 @@ import org.springframework.lang.NonNull;
 public interface JsonToPdxConverter extends Converter<String, PdxInstance> {
 
 	/**
-	 * Converts the array of {@link Byte#TYPE bytes} containing {@literal JSON} into a {@link PdxInstance}.
+	 * Converts the array of {@link Byte#TYPE bytes} containing JSON into a {@link PdxInstance}.
 	 *
-	 * @param json array of {@link Byte#TYPE bytes} containing {@literal JSON}
-	 * to convert into a {@link PdxInstance}; must not be {@literal null}.
-	 * @return a {@link PdxInstance} converted from the array of {@link Byte#TYPE bytes} containing {@literal JSON}.
+	 * @param json array of {@link Byte#TYPE bytes} containing JSON to convert into a {@link PdxInstance};
+	 * must not be {@literal null}.
+	 * @return a {@link PdxInstance} converted from the array of {@link Byte#TYPE bytes} containing JSON.
 	 * @see #convert(Object)
 	 */
 	default @NonNull PdxInstance convert(@NonNull byte[] json) {
