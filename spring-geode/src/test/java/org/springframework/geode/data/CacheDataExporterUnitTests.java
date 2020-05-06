@@ -19,14 +19,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import org.junit.Test;
 
 import org.apache.geode.cache.Region;
+
+import org.springframework.data.gemfire.ResolvableRegionFactoryBean;
 
 /**
  * Unit Tests for {@link CacheDataExporter}
@@ -41,7 +45,7 @@ import org.apache.geode.cache.Region;
 public class CacheDataExporterUnitTests {
 
 	@Test
-	public void postProcessBeforeDestructionCallsExportFromGivenARegionArgument() {
+	public void postProcessBeforeDestructionCallsExportFromGivenARegion() {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
@@ -52,6 +56,26 @@ public class CacheDataExporterUnitTests {
 		exporter.postProcessBeforeDestruction(mockRegion, "TestRegion");
 
 		verify(exporter, times(1)).exportFrom(eq(mockRegion));
+		verifyNoInteractions(mockRegion);
+	}
+
+	@Test
+	public void postProcessBeforeDestructionCallsExportFromGivenAResolvableRegionFactoryBean() {
+
+		ResolvableRegionFactoryBean<?, ?> mockRegionFactoryBean = mock(ResolvableRegionFactoryBean.class);
+
+		Region<?, ?> mockRegion = mock(Region.class);
+
+		CacheDataExporter exporter = mock(CacheDataExporter.class);
+
+		doReturn(mockRegion).when(mockRegionFactoryBean).getRegion();
+		doCallRealMethod().when(exporter).postProcessBeforeDestruction(any(), anyString());
+
+		exporter.postProcessBeforeDestruction(mockRegionFactoryBean, "TestRegion");
+
+		verify(mockRegionFactoryBean, times(1)).getRegion();
+		verify(exporter, times(1)).exportFrom(eq(mockRegion));
+		verifyNoInteractions(mockRegion);
 	}
 
 	@Test
@@ -73,7 +97,7 @@ public class CacheDataExporterUnitTests {
 
 		doCallRealMethod().when(exporter).postProcessBeforeDestruction(any(), anyString());
 
-		exporter.postProcessBeforeDestruction(null, "TestRegion");
+		exporter.postProcessBeforeDestruction(null, "TestBean");
 
 		verify(exporter, never()).exportFrom(any(Region.class));
 	}

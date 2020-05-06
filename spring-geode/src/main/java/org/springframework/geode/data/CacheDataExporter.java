@@ -19,6 +19,7 @@ import org.apache.geode.cache.Region;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
+import org.springframework.data.gemfire.ResolvableRegionFactoryBean;
 import org.springframework.lang.NonNull;
 
 /**
@@ -29,6 +30,7 @@ import org.springframework.lang.NonNull;
  * @see java.lang.FunctionalInterface
  * @see org.apache.geode.cache.Region
  * @see org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor
+ * @see org.springframework.data.gemfire.ResolvableRegionFactoryBean
  * @since 1.3.0
  */
 @FunctionalInterface
@@ -49,6 +51,9 @@ public interface CacheDataExporter extends DestructionAwareBeanPostProcessor {
 
 		if (bean instanceof Region) {
 			exportFrom((Region) bean);
+		}
+		else if (bean instanceof ResolvableRegionFactoryBean) {
+			exportFrom(((ResolvableRegionFactoryBean) bean).getRegion());
 		}
 	}
 
