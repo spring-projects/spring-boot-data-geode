@@ -15,7 +15,6 @@
  */
 package org.springframework.geode.data.json.converter.support;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,9 +26,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
-import org.springframework.geode.data.json.jackson.databind.serializer.BigDecimalSerializer;
-import org.springframework.geode.data.json.jackson.databind.serializer.BigIntegerSerializer;
-import org.springframework.geode.data.json.jackson.databind.serializer.TypelessCollectionSerializer;
+import org.springframework.geode.jackson.databind.serializer.BigDecimalSerializer;
+import org.springframework.geode.jackson.databind.serializer.BigIntegerSerializer;
+import org.springframework.geode.jackson.databind.serializer.TypelessCollectionSerializer;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -87,9 +86,7 @@ public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 		ObjectMapper objectMapper = new ObjectMapper()
 			.activateDefaultTypingAsProperty(null, DEFAULT_TYPING, AT_TYPE_METADATA_PROPERTY_NAME)
 			.addMixIn(NonAccessibleType.class, ObjectTypeMetadataMixin.class)
-			.addMixIn(Object.class, IgnorePropertiesMixin.class)
 			.configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
-			.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
 			.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
 
 		objectMapper.registerModule(new SimpleModule(SPRING_BOOT_DATA_GEODE_JACKSON_MODULE_NAME, VERSION)
@@ -102,10 +99,6 @@ public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 
 	@SuppressWarnings("unused")
 	private interface NonAccessibleType { }
-
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	@SuppressWarnings("unused")
-	interface IgnorePropertiesMixin { }
 
 	@JsonTypeInfo(
 		use = JsonTypeInfo.Id.CLASS,
