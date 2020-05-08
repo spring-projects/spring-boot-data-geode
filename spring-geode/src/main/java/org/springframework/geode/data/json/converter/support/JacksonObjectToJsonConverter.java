@@ -15,12 +15,21 @@
  */
 package org.springframework.geode.data.json.converter.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
+import org.springframework.geode.data.json.jackson.databind.serializer.BigDecimalSerializer;
+import org.springframework.geode.data.json.jackson.databind.serializer.BigIntegerSerializer;
+import org.springframework.geode.data.json.jackson.databind.serializer.TypelessCollectionSerializer;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -35,17 +44,31 @@ import org.springframework.lang.Nullable;
  */
 public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 
+	protected static final ObjectMapper.DefaultTyping DEFAULT_TYPING = ObjectMapper.DefaultTyping.NON_FINAL;
+
+	protected static final String AT_TYPE_METADATA_PROPERTY_NAME = "@type";
+
+	private static final String SPRING_BOOT_DATA_GEODE_JACKSON_MODULE_NAME = "spring.boot.data.geode.module";
+
+	// Since SBDG Version
+	// Only change version when the Module definition changes since SimpleModule implements java.io.Serializable;
+	// Although, as of Jackson 2.5.0, SimpleModule defines a fixed serialVersionUID, so...
+	private static final Version VERSION = new Version(1, 3, 0, null,
+		"org.springframework.geode", "spring-geode-starter");
+
 	/**
-	 * @inheritDoc
+	 * Converts the given {@link Object} into {@link String JSON}.
+	 *
+	 * @param source {@link Object} to convert into {@link String JSON}.
+	 * @return {@link String JSON} generated from the given {@link Object} using Jackson's {@link ObjectMapper}.
+	 * @see com.fasterxml.jackson.databind.ObjectMapper
+	 * @see #newObjectMapper()
 	 */
 	@Nullable @Override
 	public String convert(Object source) {
 
 		try {
-
-			ObjectMapper objectMapper = newObjectMapper();
-
-			return objectMapper.writeValueAsString(source);
+			return newObjectMapper().writeValueAsString(source);
 		}
 		catch (JsonProcessingException cause) {
 			throw new ConversionFailedException(TypeDescriptor.forObject(source), TypeDescriptor.valueOf(String.class),
@@ -60,6 +83,36 @@ public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 	 * @see com.fasterxml.jackson.databind.ObjectMapper
 	 */
 	protected @NonNull ObjectMapper newObjectMapper() {
-		return new ObjectMapper();
+
+		ObjectMapper objectMapper = new ObjectMapper()
+			.activateDefaultTypingAsProperty(null, DEFAULT_TYPING, AT_TYPE_METADATA_PROPERTY_NAME)
+			.addMixIn(NonAccessibleType.class, ObjectTypeMetadataMixin.class)
+			.addMixIn(Object.class, IgnorePropertiesMixin.class)
+			.configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
+			.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+			.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+
+		objectMapper.registerModule(new SimpleModule(SPRING_BOOT_DATA_GEODE_JACKSON_MODULE_NAME, VERSION)
+			.addSerializer(BigDecimalSerializer.INSTANCE)
+			.addSerializer(BigIntegerSerializer.INSTANCE)
+			.addSerializer(new TypelessCollectionSerializer(objectMapper)));
+
+		return objectMapper;
 	}
+
+	@SuppressWarnings("unused")
+	private interface NonAccessibleType { }
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	@SuppressWarnings("unused")
+	interface IgnorePropertiesMixin { }
+
+	@JsonTypeInfo(
+		use = JsonTypeInfo.Id.CLASS,
+		include = JsonTypeInfo.As.PROPERTY,
+		property = AT_TYPE_METADATA_PROPERTY_NAME
+	)
+	@SuppressWarnings("all")
+	interface ObjectTypeMetadataMixin { }
+
 }
