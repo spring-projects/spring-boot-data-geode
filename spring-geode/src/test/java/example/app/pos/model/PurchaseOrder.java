@@ -31,6 +31,7 @@ import org.springframework.util.Assert;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * The {@link PurchaseOrder} class models an actual purchase agreement for {@link Product products}
@@ -43,16 +44,36 @@ import lombok.Getter;
  * @since 1.3.0
  */
 @Getter
+@ToString
 @Region("PurchaseOrders")
+//@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @SuppressWarnings("unused")
 public class PurchaseOrder implements Iterable<LineItem> {
 
 	@Id
 	private Long id;
 
-	//@Getter(AccessLevel.PROTECTED) // Ideally! However, Jackson ObjectMapper does not handle protected correctly!
+	/*
+	private LineItem[] lineItemArray = {
+		LineItem.newLineItem(Product.newProduct("Test Product")
+			.in(Product.Category.SPECIALTY)
+			.havingPrice(BigDecimal.valueOf(99.99)))
+			.withQuantity(2)
+	};
+	*/
+
+	//@Getter(AccessLevel.PROTECTED)
+	// Ideally! However, Jackson ObjectMapper does not handle protected correctly!
 	// In fact, ideally, no getter at all; why can't Jackson's ObjectMapper handle field mapping(?); argh!
 	private List<LineItem> lineItems = new ArrayList<>();
+
+	/*
+	private Map<Object, LineItem> lineItemMap = Collections.singletonMap("MockProduct",
+		LineItem.newLineItem(Product.newProduct("Mock Product")
+			.in(Product.Category.SPECIALTY)
+			.havingPrice(BigDecimal.valueOf(100.00)))
+			.withQuantity(2));
+	*/
 
 	public Optional<LineItem> findBy(String productName) {
 
@@ -75,6 +96,11 @@ public class PurchaseOrder implements Iterable<LineItem> {
 
 		this.lineItems.add(lineItem);
 
+		return this;
+	}
+
+	public PurchaseOrder identifiedAs(Long id) {
+		this.id = id;
 		return this;
 	}
 
