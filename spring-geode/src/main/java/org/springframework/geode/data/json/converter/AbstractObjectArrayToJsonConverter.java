@@ -18,7 +18,7 @@ package org.springframework.geode.data.json.converter;
 import java.util.Map;
 
 import org.springframework.data.gemfire.util.CollectionUtils;
-import org.springframework.geode.data.json.converter.support.JacksonObjectToJsonConverter;
+import org.springframework.geode.data.json.converter.support.JSONFormatterPdxToJsonConverter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -44,7 +44,7 @@ public abstract class AbstractObjectArrayToJsonConverter implements ObjectArrayT
 
 	// TODO configure via an SPI
 	private @NonNull ObjectToJsonConverter newObjectToJsonConverter() {
-		return new JacksonObjectToJsonConverter();
+		return new JSONFormatterPdxToJsonConverter();
 	}
 
 	/**
