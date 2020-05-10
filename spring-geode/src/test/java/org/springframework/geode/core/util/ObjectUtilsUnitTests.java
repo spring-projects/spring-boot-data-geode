@@ -13,10 +13,13 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.core.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newRuntimeException;
 
 import java.lang.reflect.Field;
@@ -25,15 +28,128 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import org.apache.geode.pdx.PdxInstance;
+
 /**
- * Unit tests for {@link ObjectUtils}.
+ * Unit Tests for {@link ObjectUtils}.
  *
  * @author John Blum
+ * @see java.lang.reflect.Field
+ * @see java.lang.reflect.Method
  * @see org.junit.Test
+ * @see org.mockito.Mockito
+ * @see org.apache.geode.pdx.PdxInstance
  * @see org.springframework.geode.core.util.ObjectUtils
  * @since 1.0.0
  */
 public class ObjectUtilsUnitTests {
+
+	@Test
+	public void asMatchingBaseType() {
+
+		B object = new B();
+		A value = ObjectUtils.asType(object, A.class);
+
+		assertThat(value).isNotNull();
+		assertThat(value).isSameAs(object);
+	}
+
+	@Test
+	public void asMatchingSubType() {
+
+		A object = new B();
+		B value = ObjectUtils.asType(object, B.class);
+
+		assertThat(value).isNotNull();
+		assertThat(value).isSameAs(object);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void asNonMatchingType() {
+
+		Object object = new B();
+
+		try {
+			ObjectUtils.asType(object, C.class);
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("Object [%s] is not an instance of type [%s]",
+				object.getClass().getName(), C.class.getName());
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test
+	public void asPdxInstanceType() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		doReturn(new B()).when(mockPdxInstance).getObject();
+
+		assertThat(ObjectUtils.asType(mockPdxInstance, B.class)).isInstanceOf(B.class);
+
+		verify(mockPdxInstance, times(1)).getObject();
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void asPdxInstanceTypeReturnNonMatchingType() {
+
+		C source = new C();
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		doReturn(source).when(mockPdxInstance).getObject();
+
+		try {
+			ObjectUtils.asType(mockPdxInstance, A.class);
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("Object [%s] is not an instance of type [%s]",
+				source.getClass().getName(), A.class.getName());
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockPdxInstance, times(1)).getObject();
+		}
+	}
+
+	@Test
+	public void asPdxInstanceTypeReturningNull() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		doReturn(null).when(mockPdxInstance).getObject();
+
+		assertThat(ObjectUtils.asType(mockPdxInstance, A.class)).isNull();
+
+		verify(mockPdxInstance, times(1)).getObject();
+	}
+
+	@Test
+	public void asTypeWithNullSource() {
+		assertThat(ObjectUtils.asType(null, A.class)).isNull();
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void asTypeWithNullType() {
+
+		try {
+			ObjectUtils.asType(new A(), null);
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("Class type must not be null");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
 
 	@Test
 	public void doOperationSafelyReturnsResult() {
@@ -135,7 +251,7 @@ public class ObjectUtilsUnitTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void getFieldWithNullFieldThrowsIllegalArgumentException() throws Exception {
+	public void getFieldWithNullFieldThrowsIllegalArgumentException() {
 
 		try {
 			ObjectUtils.get(new TestObject(), (Field) null);
@@ -265,4 +381,11 @@ public class ObjectUtilsUnitTests {
 			return "TEST";
 		}
 	}
+
+	static class A { }
+
+	static class B extends A { }
+
+	static class C { }
+
 }

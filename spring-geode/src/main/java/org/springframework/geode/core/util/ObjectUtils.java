@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.core.util;
 
 import static org.springframework.data.gemfire.util.ArrayUtils.nullSafeArray;
@@ -29,25 +28,62 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.geode.pdx.PdxInstance;
+
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link ObjectUtils} class is an abstract utility class with operations for {@link Object objects}.
  *
  * @author John Blum
  * @see java.lang.Object
+ * @see java.lang.reflect.Constructor
+ * @see java.lang.reflect.Field
  * @see java.lang.reflect.Method
+ * @see org.apache.geode.pdx.PdxInstance
  * @since 1.0.0
  */
 @SuppressWarnings("all")
 public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(ObjectUtils.class);
+
+	/**
+	 * Tries to cast the given source {@link Object} into an instance of the given {@link Class} type.
+	 *
+	 * This method is cable of handling GemFire/Geode {@link PdxInstance} types.
+	 *
+	 * @param <T> desired {@link Class type} of the source {@link Object}.
+	 * @param source {@link Object} to evaluate.
+	 * @param type desired target {@link Class} type; must not be {@literal null}.
+	 * @return the source {@link Object} cast to an instance of the given {@link Class} type.
+	 * @throws IllegalArgumentException if the source {@link Object} is not an instance of
+	 * the given {@link Class} type or the {@link Class} type is {@literal null}.
+	 * @see org.apache.geode.pdx.PdxInstance
+	 * @see java.lang.Class
+	 * @see java.lang.Object
+	 */
+	public static @Nullable <T> T asType(@Nullable Object source, @NonNull Class<T> type) {
+
+		Assert.notNull(type, "Class type must not be null");
+
+		Object target = source instanceof PdxInstance
+			? ((PdxInstance) source).getObject()
+			: source;
+
+		return target == null ? null
+			: Optional.of(target)
+				.filter(type::isInstance)
+				.map(type::cast)
+				.orElseThrow(() -> newIllegalArgumentException("Object [%s] is not an instance of type [%s]",
+					nullSafeClassName(target), type.getName()));
+	}
 
 	/**
 	 * Executes the given {@link ExceptionThrowingOperation} handling any checked {@link Exception} thrown during
