@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalArgumentException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -35,6 +34,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,6 +47,8 @@ import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.RegionService;
 import org.apache.geode.cache.Scope;
+import org.apache.geode.pdx.JSONFormatter;
+import org.apache.geode.pdx.JSONFormatterException;
 import org.apache.geode.pdx.PdxInstance;
 import org.apache.geode.pdx.PdxInstanceFactory;
 
@@ -59,8 +61,9 @@ import org.springframework.data.gemfire.LocalRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
+import org.springframework.geode.core.util.ObjectUtils;
+import org.springframework.geode.pdx.PdxInstanceBuilder;
 import org.springframework.lang.NonNull;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import example.app.crm.model.Customer;
@@ -73,17 +76,23 @@ import example.app.pos.model.PurchaseOrder;
  *
  * @author John Blum
  * @see org.junit.Test
+ * @see com.fasterxml.jackson.databind.ObjectMapper
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.Region
+ * @see org.apache.geode.cache.RegionService
+ * @see org.apache.geode.pdx.JSONFormatter
  * @see org.apache.geode.pdx.PdxInstance
+ * @see org.apache.geode.pdx.PdxInstanceFactory
  * @see org.springframework.context.ConfigurableApplicationContext
  * @see org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.core.io.ClassPathResource
  * @see org.springframework.core.io.Resource
  * @see org.springframework.data.gemfire.LocalRegionFactoryBean
+ * @see org.springframework.data.gemfire.config.annotation.EnablePdx
  * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.geode.pdx.PdxInstanceBuilder
  * @since 1.3.0
  */
 @SuppressWarnings("unused")
@@ -270,21 +279,6 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 		assertThat(actual.getPrice()).isEqualTo(expected.getPrice());
 	}
 
-	// TODO include in API
-	private <T> T asType(Object source, Class<T> type) {
-
-		Object target = source instanceof PdxInstance
-			? ((PdxInstance) source).getObject()
-			: source;
-
-		return target == null ? null
-			: Optional.of(target)
-			.filter(type::isInstance)
-			.map(type::cast)
-			.orElseThrow(() -> newIllegalArgumentException("Object [%s] is not an instance of type [%s]",
-				ObjectUtils.nullSafeClassName(source), type.getName()));
-	}
-
 	private void log(String message, Object... args) {
 		System.err.printf(message, args);
 		System.err.flush();
@@ -297,24 +291,27 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
-	// TODO include in API
 	private PdxInstance serializeToPdx(RegionService regionService, Object value) {
 
-		PdxInstanceFactory pdxFactory = regionService.createPdxInstanceFactory(value.getClass().getName());
+		return PdxInstanceBuilder.create(regionService)
+			.from(value)
+			.create();
+	}
 
-		pdxFactory.writeObject("target", value);
+	private PdxInstance serializeToPdx(RegionService regionService, Customer customer) {
 
-		PdxInstance pdxInstance = pdxFactory.create();
+		PdxInstanceFactory pdxFactory = regionService.createPdxInstanceFactory(customer.getClass().getName());
 
-		return Optional.ofNullable(pdxInstance.getField("target"))
-			.filter(PdxInstance.class::isInstance)
-			.map(PdxInstance.class::cast)
-			.orElseThrow(() -> newIllegalArgumentException("Expected to convert Object of type [%s] into PDX",
-				value.getClass().getName()));
+		//pdxFactory.writeString("@type", customer.getClass().getName());
+		pdxFactory.writeLong("id", customer.getId());
+		pdxFactory.writeString("name", customer.getName());
+		pdxFactory.markIdentityField("id");
+
+		return pdxFactory.create();
 	}
 
 	@Test
-	public void exampleRegionContainsPurchaseOrder() {
+	public void exampleRegionContainsComplexPurchaseOrderType() {
 
 		Region<?, ?> example =
 			getExampleRegion(newApplicationContext(withResource("data-example-purchaseorder.json")));
@@ -378,6 +375,7 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 	public void exportFromExampleRegionImportsIntoExampleRegion() throws IOException {
 
 		try {
+			// EXPORT
 			System.setProperty(EXPORT_ENABLED_PROPERTY, Boolean.TRUE.toString());
 
 			StringWriter writer = new StringWriter();
@@ -416,9 +414,10 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 			assertThat(json).isNotEmpty();
 
 			//log("JSON '%s'%n", json);
-			//log("PurchaseOrder [%s]%n",
+			//log("PurchaseOrder from JSON [%s]%n",
 			//	newObjectMapper().readValue(json.substring(1, json.length() - 1), PurchaseOrder.class));
 
+			// IMPORT
 			System.clearProperty(EXPORT_ENABLED_PROPERTY);
 
 			Resource mockResource = mock(Resource.class, withSettings().lenient());
@@ -438,12 +437,125 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 
 			assertThat(value).isInstanceOf(PdxInstance.class);
 
-			assertPurchaseOrder(asType(value, PurchaseOrder.class),
+			assertPurchaseOrder(ObjectUtils.asType(value, PurchaseOrder.class),
 				purchaseOrder.getId(), Collections.singletonList(lineItem), golfBalls.getPrice());
 		}
 		finally {
 			System.clearProperty(EXPORT_ENABLED_PROPERTY);
 		}
+	}
+
+	@Test
+	public void exportImportWithRegionContainingMixOfObjectsAndPdxInstances() throws IOException {
+
+		try {
+			// EXPORT
+			System.setProperty(EXPORT_ENABLED_PROPERTY, Boolean.TRUE.toString());
+
+			StringWriter writer = new StringWriter();
+
+			writerSupplier = () -> writer;
+
+			Region<Object, Object> example =
+				getExampleRegion(newApplicationContext(withResource("data-example.json")));
+
+			assertExampleRegion(example);
+			assertThat(example).isEmpty();
+
+			Customer jonDoe = Customer.newCustomer(1L, "Jon Doe");
+			Customer janeDoe = Customer.newCustomer(2L, "JaneDoe");
+
+			PdxInstance janeDoePdx = serializeToPdx(example.getRegionService(), janeDoe);
+
+			assertThat(example.put(jonDoe.getId(), jonDoe)).isNull();
+			assertThat(example.put(janeDoe.getId(), janeDoePdx)).isNull();
+			assertThat(example).hasSize(2);
+			assertThat(example.get(jonDoe.getId())).isEqualTo(jonDoe);
+			assertThat(example.get(janeDoe.getId())).isInstanceOf(PdxInstance.class);
+
+			closeApplicationContext();
+
+			String json = writer.toString();
+
+			assertThat(json).isNotEmpty();
+
+			// IMPORT
+			System.clearProperty(EXPORT_ENABLED_PROPERTY);
+
+			Resource mockResource = mock(Resource.class, withSettings().lenient());
+
+			doReturn(true).when(mockResource).exists();
+			doReturn("MOCK").when(mockResource).getDescription();
+			doReturn(new ByteArrayInputStream(json.getBytes())).when(mockResource).getInputStream();
+
+			resourceSupplier = () -> mockResource;
+
+			example = getExampleRegion(newApplicationContext(withResource(null)));
+
+			assertExampleRegion(example);
+			assertThat(example).hasSize(2);
+
+			for (Customer doe : Arrays.asList(jonDoe, janeDoe)) {
+
+				Object value = example.get(doe.getId().byteValue());
+
+				assertThat(value).isInstanceOf(PdxInstance.class);
+				assertThat(((PdxInstance) value).getObject()).isEqualTo(doe);
+			}
+		}
+		finally {
+			System.clearProperty(EXPORT_ENABLED_PROPERTY);
+		}
+	}
+
+	// APACHE GEODE BUG!!!
+	@Test(expected = JSONFormatterException.class)
+	public void geodeJsonFormatterCannotHandleTypedJsonObjects() throws JsonProcessingException {
+
+		Customer sourDoe = Customer.newCustomer(1L, "Sour Doe");
+
+		ObjectMapper objectMapper = newObjectMapper()
+			.activateDefaultTypingAsProperty(null, ObjectMapper.DefaultTyping.EVERYTHING, "$class");
+
+		String json = objectMapper.writeValueAsString(sourDoe);
+
+		assertThat(json).isNotEmpty();
+		assertThat(json).describedAs("Actual JSON [%s]", json)
+			.contains(String.format("\"$class\":\"%s\"", sourDoe.getClass().getName()));
+
+		JSONFormatter.fromJSON(json);
+	}
+
+	// APACHE GEODE BUG!!!
+	@Test
+	public void geodeJsonFormatterCannotRememberPdxInstanceClass() {
+
+		Cache peerCache = newApplicationContext(TestGeodeConfiguration.class).getBean(Cache.class);
+
+		assertThat(peerCache).isNotNull();
+
+		Customer doeDoe = Customer.newCustomer(13L, "Doe Doe");
+
+		PdxInstance pdx = serializeToPdx(peerCache, doeDoe);
+
+		assertThat(pdx).isNotNull();
+		assertThat(pdx.getClassName()).isEqualTo(doeDoe.getClass().getName());
+
+		String json = JSONFormatter.toJSON(pdx);
+
+		assertThat(json).isNotEmpty();
+		assertThat(json).contains("\"name\":\"Doe Doe\"");
+
+		PdxInstance pdxFromJson = JSONFormatter.fromJSON(json);
+
+		assertThat(pdxFromJson).isNotNull();
+		assertThat(pdxFromJson.getClassName()).isEqualTo(JSONFormatter.JSON_CLASSNAME);
+		assertThat(pdxFromJson.hasField("@type")).isFalse();
+
+		Object value = pdxFromJson.getObject();
+
+		assertThat(value).isInstanceOf(PdxInstance.class);
+		assertThat(value).isNotEqualTo(doeDoe);
 	}
 
 	@PeerCacheApplication

@@ -331,6 +331,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 		return String.format("%1$s%2$s", FILESYSTEM_RESOURCE_PREFIX, System.getProperty("user.dir"));
 	}
 
+	// TODO Replace implementation with AbstractObjectArrayToJsonConverter.convert(:Iterable) method.
 	/**
 	 * Convert {@link Object values} contained in the {@link Region} to JSON.
 	 *
