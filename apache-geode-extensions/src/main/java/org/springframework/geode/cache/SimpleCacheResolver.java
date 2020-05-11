@@ -21,9 +21,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.CacheFactory;
 import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.RegionService;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientCacheFactory;
-import org.apache.geode.internal.cache.GemFireCacheImpl;
+
+import org.springframework.geode.util.CacheUtils;
 
 /**
  * The {@link SimpleCacheResolver} abstract class contains utility functions for resolving GemFire/Geode
@@ -31,8 +33,11 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
  *
  * @author John Blum
  * @see org.apache.geode.cache.Cache
+ * @see org.apache.geode.cache.CacheFactory
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.RegionService
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.apache.geode.cache.client.ClientCacheFactory
  * @since 1.3.0
  */
 @SuppressWarnings("unused")
@@ -96,68 +101,40 @@ public abstract class SimpleCacheResolver {
 	 * Attempts to resolve an {@link Optional} {@link ClientCache} instance.
 	 *
 	 * @return an {@link Optional} {@link ClientCache} instance.
+	 * @see org.springframework.geode.util.CacheUtils#isClientCache(RegionService)
 	 * @see org.apache.geode.cache.client.ClientCacheFactory#getAnyInstance()
 	 * @see org.apache.geode.cache.client.ClientCache
 	 * @see java.util.Optional
-	 * @see #isClient(ClientCache)
 	 */
 	public Optional<ClientCache> resolveClientCache() {
 
 		try {
 			return Optional.ofNullable(ClientCacheFactory.getAnyInstance())
-				.filter(this::isClient);
+				.filter(CacheUtils::isClientCache);
 		}
 		catch (Throwable ignore) {
 			return Optional.empty();
 		}
-	}
-
-	/**
-	 * Determine whether the given cache instance is truly a {@link ClientCache}.
-	 *
-	 * The problem is, {@link GemFireCacheImpl} implements both the (peer) {@link Cache}
-	 * and {@link ClientCache} interfaces. #sigh
-	 *
-	 * @param clientCache {@link ClientCache} instance to evaluate.
-	 * @return a boolean value indicating whether the cache instance is truly a {@link ClientCache}.
-	 * @see org.apache.geode.cache.client.ClientCache
-	 */
-	private boolean isClient(ClientCache clientCache) {
-		return !(clientCache instanceof GemFireCacheImpl) || ((GemFireCacheImpl) clientCache).isClient();
 	}
 
 	/**
 	 * Attempts to resolve an {@link Optional} {@link Cache} instance.
 	 *
 	 * @return an {@link Optional} {@link Cache} instance.
+	 * @see org.springframework.geode.util.CacheUtils#isPeerCache(RegionService)
 	 * @see org.apache.geode.cache.CacheFactory#getAnyInstance()
 	 * @see org.apache.geode.cache.Cache
 	 * @see java.util.Optional
-	 * @see #isPeer(Cache)
 	 */
 	public Optional<Cache> resolvePeerCache() {
 
 		try {
 			return Optional.ofNullable(CacheFactory.getAnyInstance())
-				.filter(this::isPeer);
+				.filter(CacheUtils::isPeerCache);
 		}
 		catch (Throwable ignore) {
 			return Optional.empty();
 		}
-	}
-
-	/**
-	 * Determine whether the given cache instance is truly a {@literal peer} {@link Cache}.
-	 *
-	 * The problem is, {@link GemFireCacheImpl} implements both the (peer) {@link Cache}
-	 * and {@link ClientCache} interfaces. #sigh
-	 *
-	 * @param cache {@link Cache} instance to evaluate.
-	 * @return a boolean value indicating whether the cache instance is truly a {@literal peer} {@link Cache}.
-	 * @see org.apache.geode.cache.Cache
-	 */
-	private boolean isPeer(Cache cache) {
-		return !(cache instanceof GemFireCacheImpl) || !((GemFireCacheImpl) cache).isClient();
 	}
 
 	/**

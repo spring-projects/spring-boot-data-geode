@@ -43,6 +43,7 @@ import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
 import org.springframework.geode.data.json.converter.support.JSONFormatterJsonToPdxConverter;
 import org.springframework.geode.data.json.converter.support.JSONFormatterPdxToJsonConverter;
 import org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter;
+import org.springframework.geode.util.CacheUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -349,7 +350,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 
 		boolean addComma = false;
 
-		for (Object value : CollectionUtils.nullSafeCollection(region.values())) {
+		for (Object value : CollectionUtils.nullSafeCollection(CacheUtils.collectValues(region))) {
 			json.append(addComma ? ", " : "");
 			json.append(toJson(value));
 			addComma = true;
