@@ -1,0 +1,12 @@
+[
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 1,
+    "name": "Jon Doe"
+  },
+  {
+    "@type": "example.app.crm.model.Customer",
+    "id": 2,
+    "name": "Jane Doe"
+  }
+]
