@@ -15,6 +15,8 @@
  */
 package org.springframework.geode.util;
 
+import java.util.Objects;
+
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
@@ -33,6 +35,16 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 @SuppressWarnings("unused")
 public abstract class GeodeAssertions {
 
+	/**
+	 * Asserts that given {@link Object} upholds certain contractual obligations.
+	 *
+	 * @param <T> {@link Class type} of the given {@link Object}.
+	 * @param obj {@link Object} being evaluated in the assertion.
+	 * @return a new instance of {@link AssertThat} using the given {@link Object}
+	 * as the {@link AssertThat#getSubject() subject} of the assertion.
+	 * @see java.lang.Object
+	 * @see AssertThat
+	 */
 	public static <T> AssertThat<T> assertThat(T obj) {
 		return () -> obj;
 	}
@@ -53,6 +65,13 @@ public abstract class GeodeAssertions {
 		}
 	}
 
+	private static void assertIsNotNull(Object target) {
+
+		if (Objects.isNull(target)) {
+			throw new IllegalArgumentException("Argument must not be null");
+		}
+	}
+
 	private static Class<?> nullSafeType(Object obj) {
 		return obj != null ? obj.getClass() : null;
 	}
@@ -65,27 +84,61 @@ public abstract class GeodeAssertions {
 		return nullSafeTypeName(nullSafeType(obj));
 	}
 
+	/**
+	 * The {@link AssertThat} {@link FunctionalInterface interface} defines a contract for making assertion about
+	 * a given {@link Object} used as the {@link #getSubject() subject} of the assert statement.
+	 *
+	 * @param <T> {@link Class type} of the {@link Object} that is the {@link #getSubject() subject} of the assertion.
+	 */
 	@FunctionalInterface
 	public interface AssertThat<T> {
 
+		/**
+		 * Returns the {@link Object} used as the subject of this assertion.
+		 *
+		 * @return the {@link Object} used as the subject of this assertion.
+		 * @see java.lang.Object
+		 */
 		T getSubject();
 
+		/**
+		 * Asserts the {@link #getSubject() subject} is not {@literal null}.
+		 */
+		default void isNotNull() {
+			assertIsNotNull(getSubject());
+		}
+
+		/**
+		 * Asserts the {@link #getSubject()} is an instance of {@link GemFireCacheImpl}.
+		 */
 		default void isInstanceOfGemFireCacheImpl() {
 			assertIsInstanceOf(getSubject(), GemFireCacheImpl.class);
 		}
 
+		/**
+		 * Asserts the {@link #getSubject()} is an instance of {@link InternalDistributedSystem}.
+		 */
 		default void isInstanceOfInternalDistributedSystem() {
 			assertIsInstanceOf(getSubject(), InternalDistributedSystem.class);
 		}
 
+		/**
+		 * Asserts the {@link #getSubject()} is not an instance of {@link AbstractRegion}.
+		 */
 		default void isNotInstanceOfAbstractRegion() {
 			assertIsNotInstanceOf(getSubject(), AbstractRegion.class);
 		}
 
+		/**
+		 * Asserts the {@link #getSubject()} is not an instance of {@link GemFireCacheImpl}.
+		 */
 		default void isNotInstanceOfGemFireCacheImpl() {
 			assertIsNotInstanceOf(getSubject(), GemFireCacheImpl.class);
 		}
 
+		/**
+		 * Asserts the {@link #getSubject()} is not an instance of {@link InternalDistributedSystem}.
+		 */
 		default void isNotInstanceOfInternalDistributedSystem() {
 			assertIsNotInstanceOf(getSubject(), InternalDistributedSystem.class);
 		}
