@@ -77,12 +77,13 @@ public class JSONFormatterPdxToJsonConverter extends JacksonObjectToJsonConverte
 	}
 
 	/**
-	 * Converts the given {@link PdxInstance PDX} to JSON.
+	 * Converts the given {@link PdxInstance PDX} to {@link String JSON}.
 	 *
 	 * @param pdxInstance {@link PdxInstance} to convert to JSON; must not be {@literal null}.
 	 * @return JSON generated from the given {@link PdxInstance}.
 	 * @see org.apache.geode.pdx.JSONFormatter#toJSON(PdxInstance)
 	 * @see org.apache.geode.pdx.PdxInstance
+	 * @see #jsonFormatterToJson(PdxInstance)
 	 */
 	protected @NonNull String convertPdxToJson(@NonNull PdxInstance pdxInstance) {
 		//return JSONFormatter.toJSON(pdxInstance);
@@ -90,6 +91,14 @@ public class JSONFormatterPdxToJsonConverter extends JacksonObjectToJsonConverte
 		return decorate(pdxInstance, jsonFormatterToJson(pdxInstance));
 	}
 
+	/**
+	 * Converts {@link PdxInstance PDX} into {@link String JSON} using {@link JSONFormatter#toJSON(PdxInstance)}.
+	 *
+	 * @param pdxInstance {@link PdxInstance PDX} to convert to {@link String JSON}; must not be {@literal null}.
+	 * @return {@link String JSON} generated from the given, required {@link PdxInstance PDX}; never {@literal null}.
+	 * @see org.apache.geode.pdx.JSONFormatter#toJSON(PdxInstance)
+	 * @see org.apache.geode.pdx.PdxInstance
+	 */
 	@NonNull String jsonFormatterToJson(@NonNull PdxInstance pdxInstance) {
 		return JSONFormatter.toJSON(pdxInstance);
 	}
