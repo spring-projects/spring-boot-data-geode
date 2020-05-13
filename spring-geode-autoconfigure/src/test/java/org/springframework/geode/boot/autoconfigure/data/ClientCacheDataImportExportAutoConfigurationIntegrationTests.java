@@ -33,7 +33,6 @@ import org.junit.runner.RunWith;
 
 import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -43,8 +42,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.LocalRegionFactoryBean;
-import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
+import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.geode.boot.autoconfigure.DataImportExportAutoConfiguration;
 import org.springframework.geode.core.util.ObjectUtils;
@@ -166,19 +165,8 @@ public class ClientCacheDataImportExportAutoConfigurationIntegrationTests
 
 	@Profile("IMPORT")
 	@SpringBootApplication
-	static class TestGeodeClientConfiguration {
-
-		@Bean("Books")
-		ClientRegionFactoryBean<Object, Object> clientRegion(GemFireCache cache) {
-
-			ClientRegionFactoryBean<Object, Object> clientRegion = new ClientRegionFactoryBean<>();
-
-			clientRegion.setCache(cache);
-			clientRegion.setShortcut(ClientRegionShortcut.PROXY);
-
-			return clientRegion;
-		}
-	}
+	@EnableEntityDefinedRegions(basePackageClasses = Book.class)
+	static class TestGeodeClientConfiguration { }
 
 	@Profile("IMPORT-SERVER")
 	@CacheServerApplication(name = "ClientCacheDataImportExportAutoConfigurationIntegrationTestsServer")
