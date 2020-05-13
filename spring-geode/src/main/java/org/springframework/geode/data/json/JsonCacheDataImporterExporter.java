@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.geode.cache.Region;
@@ -43,6 +44,7 @@ import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
 import org.springframework.geode.data.json.converter.support.JSONFormatterJsonToPdxConverter;
 import org.springframework.geode.data.json.converter.support.JSONFormatterPdxToJsonConverter;
 import org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter;
+import org.springframework.geode.pdx.PdxInstanceWrapper;
 import org.springframework.geode.util.CacheUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -66,6 +68,10 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.geode.data.json.converter.JsonToPdxArrayConverter
  * @see org.springframework.geode.data.json.converter.JsonToPdxConverter
  * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
+ * @see org.springframework.geode.data.json.converter.support.JSONFormatterJsonToPdxConverter
+ * @see org.springframework.geode.data.json.converter.support.JSONFormatterPdxToJsonConverter
+ * @see org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter
+ * @see org.springframework.geode.pdx.PdxInstanceWrapper
  * @see org.springframework.stereotype.Component
  * @since 1.3.0
  */
@@ -78,9 +84,15 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	private static final int CONTENT_PREVIEW_LENGTH = 50;
 	private static final int DEFAULT_BUFFER_SIZE = 32768;
 
+	protected static final String ARRAY_BEGIN = "[";
+	protected static final String ARRAY_END = "]";
+	protected static final String AT_IDENTIFIER_FIELD_NAME = PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME;
 	protected static final String CLASSPATH_RESOURCE_PREFIX = ResourceLoader.CLASSPATH_URL_PREFIX;
+	protected static final String COMMA_SPACE = ", ";
+	protected static final String EMPTY_STRING = "";
 	protected static final String FILESYSTEM_RESOURCE_PREFIX = "file://";
-	protected static final String ID_FIELD_NAME = "id";
+	protected static final String ID_FIELD_NAME = PdxInstanceWrapper.ID_FIELD_NAME;
+	protected static final String NO_FIELD_NAME = "";
 	protected static final String RESOURCE_NAME_PATTERN = "data-%s.json";
 
 	private JsonToPdxConverter toPdxConverter = newJsonToPdxConverter();
@@ -208,8 +220,10 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 			.map(this::getContent)
 			.map(this::toPdxArray)
 			.map(Arrays::stream)
-			.ifPresent(pdxInstances -> pdxInstances.forEach(pdxInstance ->
-				region.put(getIdentifier(pdxInstance), pdxInstance)));
+			.ifPresent(pdxInstances -> pdxInstances.forEach(pdxInstance -> {
+				pdxInstance = postProcess(pdxInstance);
+				region.put(getIdentifier(pdxInstance), pdxInstance);
+			}));
 
 		return region;
 	}
@@ -251,14 +265,15 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	}
 
 	/**
-	 * Determines the {@link Object identifier} for the given {@link PdxInstance}.
+	 * Determines the {@link Object identifier} (a.k.a. {@link PdxInstance#isIdentityField(String) identity})
+	 * for the given {@link PdxInstance}.
 	 *
 	 * @param pdxInstance {@link PdxInstance} to evaluate; must not be {@literal null}.
-	 * @return the {@link Object identifier} for the given {@link PdxInstance}.
+	 * @return the {@link Object identifier} for the given {@link PdxInstance}; never {@literal null}.
 	 * @throws IllegalArgumentException if {@link PdxInstance} is {@literal null}.
-	 * @throws IllegalStateException if the {@link Object identifier} for the {@link PdxInstance} cannot be determined.
+	 * @throws IllegalStateException if the {@link PdxInstance} does not have an id.
 	 * @see org.apache.geode.pdx.PdxInstance
-	 * @see #getIdField(PdxInstance)
+	 * @see #getId(PdxInstance)
 	 */
 	protected @NonNull Object getIdentifier(@NonNull PdxInstance pdxInstance) {
 
@@ -271,28 +286,83 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 
 		return idFieldName
 			.map(pdxInstance::getField)
-			.orElseGet(() -> getIdField(pdxInstance));
+			.orElseGet(() -> getId(pdxInstance));
 	}
 
 	/**
 	 * Searches for a PDX {@link String field name} called {@literal id} on the given {@link PdxInstance}
-	 * and returns its value as the {@link Object identifier} for the {@link PdxInstance}.
+	 * and returns its {@link Object value} as the {@link Object identifier} for the {@link PdxInstance}.
 	 *
 	 * @param pdxInstance {@link PdxInstance} to evaluate; must not be {@literal null}.
 	 * @return the {@link Object value} of the {@literal id} {@link String field} on the {@link PdxInstance}.
 	 * @throws IllegalStateException if the {@link PdxInstance} does not have an id.
 	 * @see org.apache.geode.pdx.PdxInstance
-	 * @see #getIdentifier(PdxInstance)
+	 * @see #getAtIdentifier(PdxInstance)
 	 */
-	protected @NonNull Object getIdField(@NonNull PdxInstance pdxInstance) {
+	protected @NonNull Object getId(@NonNull PdxInstance pdxInstance) {
 
 		Assert.notNull(pdxInstance, "PdxInstance must not be null");
 
 		return Optional.of(pdxInstance)
 			.filter(it -> it.hasField(ID_FIELD_NAME))
 			.map(it -> it.getField(ID_FIELD_NAME))
-			.orElseThrow(() -> newIllegalStateException("PdxInstance for type [%1$s] has no %2$s",
-				pdxInstance.getClassName(), pdxInstance.hasField(ID_FIELD_NAME) ? "id" : "declared identity field"));
+			.orElseGet(() -> getAtIdentifier(pdxInstance));
+	}
+
+	/**
+	 * Searches for a PDX {@link String field} declared by the {@literal @identifier} metadata {@link String field}
+	 * on the given {@link PdxInstance} and returns the {@link Object value} of this {@link String field}
+	 * as the {@link Object identifier} for the {@link PdxInstance}.
+	 *
+	 * @param pdxInstance {@link PdxInstance} to evaluate; most not be {@literal null}.
+	 * @return the {@link Object value} of the {@link String field} declared in the {@literal @identifier} metadata
+	 * {@link String field} on the {@link PdxInstance}.
+	 * @throws IllegalArgumentException if {@link PdxInstance} is {@literal null}.
+	 * @throws IllegalStateException if the {@link PdxInstance} does not have an id.
+	 * @see org.apache.geode.pdx.PdxInstance
+	 */
+	protected @NonNull Object getAtIdentifier(@NonNull PdxInstance pdxInstance) {
+
+		Assert.notNull(pdxInstance, "PdxInstance must not be null");
+
+		return Optional.of(pdxInstance)
+			.filter(pdx -> pdx.hasField(AT_IDENTIFIER_FIELD_NAME))
+			.map(pdx -> pdx.getField(AT_IDENTIFIER_FIELD_NAME))
+			.map(String::valueOf)
+			.filter(pdxInstance::hasField)
+			.map(pdxInstance::getField)
+			.orElseThrow(() -> newIllegalStateException(String.format("PdxInstance for type [%1$s] has no %2$s",
+				pdxInstance.getClassName(), resolveMessageForIdentifierError(pdxInstance))));
+	}
+
+	private @NonNull String resolveMessageForIdentifierError(@NonNull PdxInstance pdxInstance) {
+
+		String message = "declared identifier";
+
+		if (pdxInstance.hasField(ID_FIELD_NAME)) {
+			message = "id";
+		}
+		else if (pdxInstance.hasField(AT_IDENTIFIER_FIELD_NAME)) {
+
+			Object atIdentifierFieldValue = pdxInstance.getField(AT_IDENTIFIER_FIELD_NAME);
+
+			String resolvedIdentifierFieldName = Objects.nonNull(atIdentifierFieldValue)
+				? atIdentifierFieldValue.toString().trim()
+				: NO_FIELD_NAME;
+
+			boolean identifierFieldNameWasDeclaredAndIsValid = pdxInstance.hasField(resolvedIdentifierFieldName);
+
+			Object identifier = identifierFieldNameWasDeclaredAndIsValid
+				? pdxInstance.getField(resolvedIdentifierFieldName)
+				: null;
+
+			message = identifierFieldNameWasDeclaredAndIsValid
+				? String.format("value [%s] for field [%s] declared in [%s]", identifier, resolvedIdentifierFieldName,
+				AT_IDENTIFIER_FIELD_NAME)
+				: String.format("field [%s] declared in [%s]", resolvedIdentifierFieldName, AT_IDENTIFIER_FIELD_NAME);
+		}
+
+		return message;
 	}
 
 	/**
@@ -332,6 +402,17 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 		return String.format("%1$s%2$s", FILESYSTEM_RESOURCE_PREFIX, System.getProperty("user.dir"));
 	}
 
+	/**
+	 * Post processes the given {{@link PdxInstance}.
+	 *
+	 * @param pdxInstance {@link PdxInstance} to process.
+	 * @return the {@link PdxInstance}.
+	 * @see org.apache.geode.pdx.PdxInstance
+	 */
+	protected PdxInstance postProcess(PdxInstance pdxInstance) {
+		return pdxInstance;
+	}
+
 	// TODO Replace implementation with AbstractObjectArrayToJsonConverter.convert(:Iterable) method.
 	/**
 	 * Convert {@link Object values} contained in the {@link Region} to JSON.
@@ -346,17 +427,17 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 
 		Assert.notNull(region, "Region must not be null");
 
-		StringBuilder json = new StringBuilder("[");
+		StringBuilder json = new StringBuilder(ARRAY_BEGIN);
 
 		boolean addComma = false;
 
 		for (Object value : CollectionUtils.nullSafeCollection(CacheUtils.collectValues(region))) {
-			json.append(addComma ? ", " : "");
+			json.append(addComma ? COMMA_SPACE : EMPTY_STRING);
 			json.append(toJson(value));
 			addComma = true;
 		}
 
-		json.append("]");
+		json.append(ARRAY_END);
 
 		return json.toString();
 	}

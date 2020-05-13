@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +38,9 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.junit.After;
 import org.junit.Before;
@@ -51,6 +55,7 @@ import org.apache.geode.pdx.JSONFormatter;
 import org.apache.geode.pdx.JSONFormatterException;
 import org.apache.geode.pdx.PdxInstance;
 import org.apache.geode.pdx.PdxInstanceFactory;
+import org.apache.geode.pdx.PdxSerializationException;
 
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -64,6 +69,7 @@ import org.springframework.data.gemfire.tests.integration.IntegrationTestsSuppor
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.geode.pdx.PdxInstanceBuilder;
 import org.springframework.lang.NonNull;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 
 import example.app.crm.model.Customer;
@@ -351,18 +357,19 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 			assertExampleRegion(example);
 			assertThat(example).isEmpty();
 
-			Customer jonDoe = Customer.newCustomer(42L, "Play Doe");
+			Customer playDoe = Customer.newCustomer(42L, "Play Doe");
 
-			example.put(jonDoe.getId(), jonDoe);
+			example.put(playDoe.getId(), playDoe);
 
 			assertThat(example).hasSize(1);
-			assertThat(example.get(42L)).isEqualTo(jonDoe);
+			assertThat(example.get(42L)).isEqualTo(playDoe);
 
 			closeApplicationContext();
 
 			String actualJson = writer.toString();
+
 			String expectedJson = String.format("[{\"@type\":\"%s\",\"id\":42,\"name\":\"Play Doe\"}]",
-				jonDoe.getClass().getName());
+				playDoe.getClass().getName());
 
 			assertThat(actualJson).isEqualTo(expectedJson);
 		}
@@ -446,7 +453,7 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 	}
 
 	@Test
-	public void exportImportWithRegionContainingMixOfObjectsAndPdxInstances() throws IOException {
+	public void exportImportWithRegionContainingObjectsAndPdxInstances() throws IOException {
 
 		try {
 			// EXPORT
@@ -508,27 +515,36 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 		}
 	}
 
-	// APACHE GEODE BUG!!!
+	// APACHE GEODE BUG 1!!!
 	@Test(expected = JSONFormatterException.class)
-	public void geodeJsonFormatterCannotHandleTypedJsonObjects() throws JsonProcessingException {
+	public void geodeJsonFormatterFromJsonCannotParseArrays() throws IOException {
 
-		Customer sourDoe = Customer.newCustomer(1L, "Sour Doe");
+		try {
 
-		ObjectMapper objectMapper = newObjectMapper()
-			.activateDefaultTypingAsProperty(null, ObjectMapper.DefaultTyping.EVERYTHING, "$class");
+			byte[] json = FileCopyUtils.copyToByteArray(
+				new ClassPathResource("data-example-doefamily.json").getInputStream());
 
-		String json = objectMapper.writeValueAsString(sourDoe);
+			assertThat(json).isNotNull();
+			assertThat(json).isNotEmpty();
 
-		assertThat(json).isNotEmpty();
-		assertThat(json).describedAs("Actual JSON [%s]", json)
-			.contains(String.format("\"$class\":\"%s\"", sourDoe.getClass().getName()));
+			JSONFormatter.fromJSON(json);
+		}
+		catch (JSONFormatterException expected) {
 
-		JSONFormatter.fromJSON(json);
+			// Caused because the JSONFormatter.fromJSON(..) method's JsonParser is not configured correctly!
+
+			assertThat(expected).hasMessageStartingWith("Could not parse JSON document");
+			assertThat(expected).hasCauseInstanceOf(IllegalStateException.class);
+			assertThat(expected.getCause()).hasMessageStartingWith("Array start called when state is NONE");
+			assertThat(expected.getCause()).hasNoCause();
+
+			throw expected;
+		}
 	}
 
-	// APACHE GEODE BUG!!!
+	// APACHE GEODE BUG 2!!!
 	@Test
-	public void geodeJsonFormatterCannotRememberPdxInstanceClass() {
+	public void geodeJsonFormatterToJsonDoesNotGenerateAtTypeJsonObjectPropertyFromPdxInstanceGetClassName() {
 
 		Cache peerCache = newApplicationContext(TestGeodeConfiguration.class).getBean(Cache.class);
 
@@ -556,6 +572,94 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 
 		assertThat(value).isInstanceOf(PdxInstance.class);
 		assertThat(value).isNotEqualTo(doeDoe);
+
+		// Causes ClassCastException!
+		// Bug caused by the JSONFormatter.toJSON(:PdxInstance) method not properly setting the '@type' JSON object
+		// property from the PdxInstance.getClassName() when the class name is a valid Java class!
+		//Customer jonDoeAgain = (Customer) value;
+	}
+
+	// APACHE GEODE BUG 3!!!
+	@Test(expected = PdxSerializationException.class)
+	public void geodePdxInstanceObjectMapperCannotDeserializeJava8Types() {
+
+		try {
+
+			Cache peerCache = newApplicationContext(TestGeodeConfiguration.class).getBean(Cache.class);
+
+			ObjectMapper objectMapper = newObjectMapper();
+
+			TimedType value = TimedType.create().with(LocalDate.now());
+
+			ObjectNode objectNode = objectMapper.valueToTree(value);
+
+			objectNode.put("@type", value.getClass().getName());
+
+			String json = objectNode.toString();
+
+			PdxInstance pdx = JSONFormatter.fromJSON(json);
+
+			// BOOM!
+			pdx.getObject();
+		}
+		catch (PdxSerializationException expected) {
+
+			// Caused because the PdxInstance ObjectMapper is not properly configured (to findAndRegisterModules()
+			// or Jackson Module Extensions on the classpath)!
+
+			assertThat(expected).hasMessageStartingWith("Could not deserialize as java class '%s'",
+				TimedType.class.getName());
+			assertThat(expected.getCause()).isInstanceOf(InvalidDefinitionException.class);
+			assertThat(expected.getCause()).hasMessageStartingWith("Cannot construct instance of `java.time.LocalDate`");
+			assertThat(expected.getCause()).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	// APACHE GEODE BUG 4!!!
+	@Test(expected = PdxSerializationException.class)
+	public void geodePdxInstanceObjectMapperCannotDeserializeTypedJsonObjects()
+			throws JsonProcessingException {
+
+		try {
+
+			Cache peerCache = newApplicationContext(TestGeodeConfiguration.class).getBean(Cache.class);
+
+			PurchaseOrder purchaseOrder = new PurchaseOrder()
+				.add(LineItem.newLineItem(Product.newProduct("Test Product")
+					.havingPrice(BigDecimal.valueOf(39.99))
+					.in(Product.Category.UNSOUGHT))
+					.withQuantity(2))
+				.identifiedAs(1L);
+
+			ObjectMapper objectMapper = newObjectMapper()
+				.activateDefaultTypingAsProperty(null, ObjectMapper.DefaultTyping.EVERYTHING, "@type");
+
+			String json = objectMapper.writeValueAsString(purchaseOrder);
+
+			assertThat(json).isNotEmpty();
+			assertThat(json).describedAs("Actual JSON [%s]", json)
+				.contains(String.format("\"@type\":\"%s\"", purchaseOrder.getClass().getName()));
+
+			PdxInstance pdx = JSONFormatter.fromJSON(json);
+
+			// BOOM!
+			pdx.getObject();
+		}
+		catch (PdxSerializationException expected) {
+
+			// Caused because the PdxInstance.getObject() method's ObjectMapper is not properly configured!
+
+			assertThat(expected).hasMessageStartingWith("Could not deserialize as java class '%s'",
+				PurchaseOrder.class.getName());
+			assertThat(expected.getCause()).isInstanceOf(MismatchedInputException.class);
+			assertThat(expected.getCause())
+				.hasMessageStartingWith("Cannot deserialize instance of `java.lang.Long` out of START_ARRAY token");
+			assertThat(expected.getCause()).hasNoCause();
+
+			throw expected;
+		}
 	}
 
 	@PeerCacheApplication
@@ -587,6 +691,24 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 					return writerSupplier.get();
 				}
 			};
+		}
+	}
+
+	public static class TimedType {
+
+		public static TimedType create() {
+			return new TimedType();
+		}
+
+		private LocalDate time;
+
+		public LocalDate getTime() {
+			return this.time;
+		}
+
+		public TimedType with(LocalDate time) {
+			this.time = time;
+			return this;
 		}
 	}
 }

@@ -70,8 +70,12 @@ import example.app.pos.model.LineItem;
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.pdx.PdxInstance
  * @see org.springframework.context.ApplicationContext
+ * @see org.springframework.core.io.ClassPathResource
  * @see org.springframework.core.io.Resource
  * @see org.springframework.geode.data.json.JsonCacheDataImporterExporter
+ * @see org.springframework.geode.data.json.converter.JsonToPdxArrayConverter
+ * @see org.springframework.geode.data.json.converter.JsonToPdxConverter
+ * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
  * @since 1.3.0
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -236,7 +240,9 @@ public class JsonCacheDataImporterExporterUnitTests {
 			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
 		verify(this.importer, times(1)).getContent(eq(mockResource));
 		verify(this.importer, times(1)).toPdxArray(eq(json));
+		verify(this.importer, times(1)).postProcess(eq(mockPdxInstanceOne));
 		verify(this.importer, times(1)).getIdentifier(eq(mockPdxInstanceOne));
+		verify(this.importer, times(1)).postProcess(eq(mockPdxInstanceTwo));
 		verify(this.importer, times(1)).getIdentifier(eq(mockPdxInstanceTwo));
 		verify(mockResource, times(1)).exists();
 		verify(mockRegion, times(1)).put(eq(1), eq(mockPdxInstanceOne));
@@ -408,7 +414,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 	}
 
 	@Test
-	public void getIdentifierFromPdxInstance() {
+	public void getIdentifierFromPdxInstanceHavingIdentity() {
 
 		PdxInstance mockPdxInstance = mock(PdxInstance.class);
 
@@ -418,7 +424,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		assertThat(this.importer.getIdentifier(mockPdxInstance)).isEqualTo(42);
 
-		verify(this.importer, never()).getIdField(any(PdxInstance.class));
+		verify(this.importer, never()).getId(any(PdxInstance.class));
 		verify(mockPdxInstance, times(1)).getFieldNames();
 		verify(mockPdxInstance, times(1)).isIdentityField(eq("age"));
 		verify(mockPdxInstance, times(1)).isIdentityField(eq("id"));
@@ -432,11 +438,11 @@ public class JsonCacheDataImporterExporterUnitTests {
 		PdxInstance mockPdxInstance = mock(PdxInstance.class);
 
 		doReturn(null).when(mockPdxInstance).getFieldNames();
-		doReturn(69).when(this.importer).getIdField(eq(mockPdxInstance));
+		doReturn(69).when(this.importer).getId(eq(mockPdxInstance));
 
 		assertThat(this.importer.getIdentifier(mockPdxInstance)).isEqualTo(69);
 
-		verify(this.importer, times(1)).getIdField(eq(mockPdxInstance));
+		verify(this.importer, times(1)).getId(eq(mockPdxInstance));
 		verify(mockPdxInstance, times(1)).getFieldNames();
 		verify(mockPdxInstance, never()).isIdentityField(anyString());
 		verify(mockPdxInstance, never()).getField(anyString());
@@ -448,12 +454,12 @@ public class JsonCacheDataImporterExporterUnitTests {
 		PdxInstance mockPdxInstance = mock(PdxInstance.class);
 
 		doReturn(Arrays.asList("", "age", null, "name", "  ")).when(mockPdxInstance).getFieldNames();
-		doReturn(false).when(mockPdxInstance).isIdentityField(anyString());
-		doReturn(99).when(this.importer).getIdField(eq(mockPdxInstance));
+		doReturn(false).when(mockPdxInstance).isIdentityField(any());
+		doReturn(99).when(this.importer).getId(eq(mockPdxInstance));
 
 		assertThat(this.importer.getIdentifier(mockPdxInstance)).isEqualTo(99);
 
-		verify(this.importer, times(1)).getIdField(eq(mockPdxInstance));
+		verify(this.importer, times(1)).getId(eq(mockPdxInstance));
 		verify(mockPdxInstance, times(1)).getFieldNames();
 		verify(mockPdxInstance, times(1)).isIdentityField(eq("age"));
 		verify(mockPdxInstance, times(1)).isIdentityField(eq("name"));
@@ -470,14 +476,14 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		doReturn(Collections.singletonList("name")).when(mockPdxInstance).getFieldNames();
 		doReturn(false).when(mockPdxInstance).isIdentityField(anyString());
-		doThrow(new IllegalStateException("TEST")).when(this.importer).getIdField(eq(mockPdxInstance));
+		doThrow(new IllegalStateException("NO ID")).when(this.importer).getId(eq(mockPdxInstance));
 
 		try {
 			this.importer.getIdentifier(mockPdxInstance);
 		}
 		catch (IllegalStateException expected) {
 
-			assertThat(expected).hasMessage("TEST");
+			assertThat(expected).hasMessage("NO ID");
 			assertThat(expected).hasNoCause();
 
 			throw expected;
@@ -505,35 +511,122 @@ public class JsonCacheDataImporterExporterUnitTests {
 	}
 
 	@Test
-	public void getIdFieldFromPdxInstance() {
+	public void getIdFromPdxInstanceHavingIdField() {
 
 		PdxInstance mockPdxInstance = mock(PdxInstance.class);
 
 		doReturn(true).when(mockPdxInstance).hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
 		doReturn(42).when(mockPdxInstance).getField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
 
-		assertThat(this.importer.getIdField(mockPdxInstance)).isEqualTo(42);
+		assertThat(this.importer.getId(mockPdxInstance)).isEqualTo(42);
 
 		verify(mockPdxInstance, times(1))
 			.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
 		verify(mockPdxInstance, times(1))
 			.getField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		verify(this.importer, never()).getAtIdentifier(any());
+	}
+
+	@Test
+	public void getIdFromPdxInstanceHavingIdFieldWithNoValueCallsGetAtIdentifier() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		doReturn(true).when(mockPdxInstance).hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		doReturn(null).when(mockPdxInstance).getField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		doReturn(69).when(this.importer).getAtIdentifier(eq(mockPdxInstance));
+
+		assertThat(this.importer.getId(mockPdxInstance)).isEqualTo(69);
+
+		verify(mockPdxInstance, times(1))
+			.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		verify(mockPdxInstance, times(1))
+			.getField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		verify(this.importer, times(1)).getAtIdentifier(any());
+	}
+
+	@Test
+	public void getIdFromPdxInstanceWithNoIdFieldCallsGetAtIdentifier() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		doReturn(false).when(mockPdxInstance).hasField(any());
+		doReturn(99).when(this.importer).getAtIdentifier(eq(mockPdxInstance));
+
+		assertThat(this.importer.getId(mockPdxInstance)).isEqualTo(99);
+
+		verify(mockPdxInstance, times(1))
+			.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		verify(mockPdxInstance, never()).getField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		verify(this.importer, times(1)).getAtIdentifier(eq(mockPdxInstance));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getIdFromNullPdxInstance() {
+
+		try {
+			this.importer.getId(null);
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("PdxInstance must not be null");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test
+	public void getAtIdentifierFromPdxInstance() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		doReturn(true).when(mockPdxInstance)
+			.hasField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+		doReturn(true).when(mockPdxInstance).hasField(eq("isbn"));
+		doReturn("isbn").when(mockPdxInstance)
+			.getField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+		doReturn("123456789").when(mockPdxInstance).getField(eq("isbn"));
+
+		assertThat(this.importer.getAtIdentifier(mockPdxInstance)).isEqualTo("123456789");
+
+		verify(mockPdxInstance, times(1))
+			.hasField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+		verify(mockPdxInstance, times(1))
+			.getField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+		verify(mockPdxInstance, times(1)).hasField(eq("isbn"));
+		verify(mockPdxInstance, times(1)).getField(eq("isbn"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getAtIdentifierWithNullPdxInstance() {
+
+		try {
+			this.importer.getAtIdentifier(null);
+		}
+		catch (IllegalArgumentException expected) {
+
+			assertThat(expected).hasMessage("PdxInstance must not be null");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void getIdFieldFromPdxInstanceWithNoIdField() {
+	public void getAtIdentifierFromPdxInstanceWithNoDeclaredIdentity() {
 
 		PdxInstance mockPdxInstance = mock(PdxInstance.class);
 
 		doReturn(LineItem.class.getName()).when(mockPdxInstance).getClassName();
-		doReturn(false).when(mockPdxInstance).hasField(anyString());
+		doReturn(false).when(mockPdxInstance).hasField(any());
 
 		try {
-			this.importer.getIdField(mockPdxInstance);
+			this.importer.getAtIdentifier(mockPdxInstance);
 		}
 		catch (IllegalStateException expected) {
 
-			assertThat(expected).hasMessage("PdxInstance for type [%s] has no declared identity field",
+			assertThat(expected).hasMessage("PdxInstance for type [%s] has no declared identifier",
 				LineItem.class.getName());
 			assertThat(expected).hasNoCause();
 
@@ -542,22 +635,23 @@ public class JsonCacheDataImporterExporterUnitTests {
 		finally {
 			verify(mockPdxInstance, times(1)).getClassName();
 			verify(mockPdxInstance, times(2))
+				.hasField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(1))
 				.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
 			verify(mockPdxInstance, never()).getField(anyString());
 		}
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void getIdFieldFromPdxInstanceWithNoId() {
+	public void getAtIdentifierFromPdxInstanceWithNoId() {
 
 		PdxInstance mockPdxInstance = mock(PdxInstance.class);
 
-		doReturn(true).when(mockPdxInstance).hasField(anyString());
-		doReturn(null).when(mockPdxInstance).getField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
 		doReturn(LineItem.class.getName()).when(mockPdxInstance).getClassName();
+		doReturn(true).when(mockPdxInstance).hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
 
 		try {
-			this.importer.getIdField(mockPdxInstance);
+			this.importer.getAtIdentifier(mockPdxInstance);
 		}
 		catch (IllegalStateException expected) {
 
@@ -570,24 +664,91 @@ public class JsonCacheDataImporterExporterUnitTests {
 		finally {
 			verify(mockPdxInstance, times(1)).getClassName();
 			verify(mockPdxInstance, times(1))
-				.getField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
-			verify(mockPdxInstance, times(2))
+				.hasField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(1))
 				.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+			verify(mockPdxInstance, never()).getField(any());
 		}
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void getIdFieldFromNullPdxInstance() {
+	@Test(expected = IllegalStateException.class)
+	public void getAtIdentifierFromPdxInstanceWithValidAtIdentifierAndIdentifierFieldButNoId() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		doReturn(Customer.class.getName()).when(mockPdxInstance).getClassName();
+		doReturn(true).when(mockPdxInstance)
+			.hasField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+		doReturn(false).when(mockPdxInstance)
+			.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		doReturn(true).when(mockPdxInstance).hasField(eq("ssn"));
+		doReturn("ssn").when(mockPdxInstance)
+			.getField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+		doReturn(null).when(mockPdxInstance).getField(eq("ssn"));
 
 		try {
-			this.importer.getIdField(null);
+			this.importer.getAtIdentifier(mockPdxInstance);
 		}
-		catch (IllegalArgumentException expected) {
+		catch (IllegalStateException expected) {
 
-			assertThat(expected).hasMessage("PdxInstance must not be null");
+			assertThat(expected)
+				.hasMessage("PdxInstance for type [%s] has no value [null] for field [ssn] declared in [%s]",
+					Customer.class.getName(), JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME);
 			assertThat(expected).hasNoCause();
 
 			throw expected;
+		}
+		finally {
+			verify(mockPdxInstance, times(1)).getClassName();
+			verify(mockPdxInstance, times(2))
+				.hasField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(1))
+				.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+			verify(mockPdxInstance, times(2)).hasField(eq("ssn"));
+			verify(mockPdxInstance, times(2))
+				.getField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(2)).getField(eq("ssn"));
+			verifyNoMoreInteractions(mockPdxInstance);
+		}
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void getAtIdentifierFromPdxInstanceWithAtIdentifierReferringToInvalidIdentifierField() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		doReturn(Customer.class.getName()).when(mockPdxInstance).getClassName();
+		doReturn(true).when(mockPdxInstance)
+			.hasField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+		doReturn(false).when(mockPdxInstance)
+			.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+		doReturn(false).when(mockPdxInstance).hasField(eq("ssn"));
+		doReturn("ssn").when(mockPdxInstance)
+			.getField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+
+		try {
+			this.importer.getAtIdentifier(mockPdxInstance);
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected)
+				.hasMessage("PdxInstance for type [%s] has no field [ssn] declared in [%s]",
+					Customer.class.getName(), JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME);
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockPdxInstance, times(1)).getClassName();
+			verify(mockPdxInstance, times(2))
+				.hasField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(1))
+				.hasField(eq(JsonCacheDataImporterExporter.ID_FIELD_NAME));
+			verify(mockPdxInstance, times(2)).hasField(eq("ssn"));
+			verify(mockPdxInstance, times(2))
+				.getField(eq(JsonCacheDataImporterExporter.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, never()).getField(eq("ssn"));
+			verifyNoMoreInteractions(mockPdxInstance);
 		}
 	}
 
