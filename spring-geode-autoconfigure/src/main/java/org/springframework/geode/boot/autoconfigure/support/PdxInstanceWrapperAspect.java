@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 import org.apache.geode.cache.CacheStatistics;
 import org.apache.geode.cache.Region;
 
-import org.apache.shiro.util.Assert;
-
 import org.springframework.geode.pdx.PdxInstanceWrapper;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -33,20 +33,25 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
 /**
- * The PdxInstanceWrapperAspect class...
+ * A Spring, AspectJ {@link Aspect} advising GemFire/Geode cache {@link Region} data access operations.
  *
  * @author John Blum
- * @since 1.0.0
+ * @see org.apache.geode.cache.Region
+ * @see org.aspectj.lang.annotation.Around
+ * @see org.aspectj.lang.annotation.Aspect
+ * @see org.aspectj.lang.annotation.Pointcut
+ * @see org.springframework.geode.pdx.PdxInstanceWrapper
+ * @since 1.3.0
  */
 @Aspect
 @SuppressWarnings("unused")
 public class PdxInstanceWrapperAspect {
 
-	private Collection<?> asCollection(Object value) {
+	private static Collection<?> asCollection(Object value) {
 		return value instanceof Collection ? (Collection<?>) value : Collections.emptyList();
 	}
 
-	private Map<?, ?> asMap(Object value) {
+	private static Map<?, ?> asMap(Object value) {
 		return value instanceof Map ? (Map<?, ?>) value : Collections.emptyMap();
 	}
 
@@ -98,26 +103,26 @@ public class PdxInstanceWrapperAspect {
 			.collect(Collectors.toList());
 	}
 
-	protected static class RegionEntryWrapper<K, V> implements Region.Entry<K, V> {
+	public static class RegionEntryWrapper<K, V> implements Region.Entry<K, V> {
 
 		@SuppressWarnings("unchecked")
-		protected static <T, K, V> T from(T value) {
+		public static <T, K, V> T from(T value) {
 
 			return value instanceof Region.Entry
-				? (T) new RegionEntryWrapper<K, V>((Region.Entry<K, V>) value)
+				? (T) new RegionEntryWrapper<>((Region.Entry<K, V>) value)
 				: value;
 		}
 
 		private final Region.Entry<K, V> delegate;
 
-		protected RegionEntryWrapper(Region.Entry<K, V> regionEntry) {
+		protected RegionEntryWrapper(@NonNull Region.Entry<K, V> regionEntry) {
 
 			Assert.notNull(regionEntry, "Region.Entry must not be null");
 
 			this.delegate = regionEntry;
 		}
 
-		protected Region.Entry<K, V> getDelegate() {
+		protected @NonNull Region.Entry<K, V> getDelegate() {
 			return this.delegate;
 		}
 
