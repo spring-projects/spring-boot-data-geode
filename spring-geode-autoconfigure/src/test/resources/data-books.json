@@ -1,0 +1,24 @@
+[
+  {
+    "@type": "example.app.books.model.Book",
+    "@identifier": "isbn",
+    "author": {
+      "id": 1,
+      "name": "Josh Long"
+    },
+    "isbn": "978-1-449-374640-8",
+    "publishedDate": "2017-08-01",
+    "title": "Cloud Native Java"
+  },
+  {
+    "@type": "example.app.books.model.Book",
+    "@identifier": "isbn",
+    "author": {
+      "id": 2,
+      "name": "Alex Petrov"
+    },
+    "isbn": "978-1-492-04034-7",
+    "publishedDate": "2019-10-01",
+    "title": "Database Internals"
+  }
+]
