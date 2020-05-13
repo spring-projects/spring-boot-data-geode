@@ -37,7 +37,9 @@ import org.springframework.util.Assert;
  * @see com.fasterxml.jackson.core.JsonGenerator
  * @see com.fasterxml.jackson.databind.ObjectMapper
  * @see com.fasterxml.jackson.databind.MapperFeature
+ * @see org.springframework.core.convert.TypeDescriptor
  * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
+ * @see org.springframework.geode.pdx.PdxInstanceWrapper
  * @since 1.3.0
  */
 public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
@@ -49,8 +51,11 @@ public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 	 *
 	 * @param source {@link Object} to convert into {@link String JSON}.
 	 * @return {@link String JSON} generated from the given {@link Object} using Jackson's {@link ObjectMapper}.
+	 * @throws IllegalArgumentException if {@link Object source} is {@literal null}.
+	 * @throws ConversionFailedException if a {@link JsonProcessingException} is thrown or another error occurs
+	 * while trying to convert the given {@link Object} to {@link String JSON}.
 	 * @see com.fasterxml.jackson.databind.ObjectMapper
-	 * @see #newObjectMapper(Object)
+	 * @see #convertObjectToJson(Object)
 	 */
 	@Override
 	public @NonNull String convert(@NonNull Object source) {
