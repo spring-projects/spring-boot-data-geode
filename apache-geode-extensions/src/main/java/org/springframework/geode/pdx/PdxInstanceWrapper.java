@@ -118,7 +118,7 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 	 * never {@literal null}.
 	 * @see org.apache.geode.pdx.PdxInstance
 	 */
-	protected PdxInstance getDelegate() {
+	public PdxInstance getDelegate() {
 		return this.delegate;
 	}
 

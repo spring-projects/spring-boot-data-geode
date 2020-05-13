@@ -27,6 +27,8 @@ import org.junit.Test;
 
 import org.apache.geode.pdx.PdxInstance;
 
+import org.springframework.geode.pdx.PdxInstanceWrapper;
+
 /**
  * Unit Tests for {@link JSONFormatterJsonToPdxConverter}.
  *
@@ -35,6 +37,7 @@ import org.apache.geode.pdx.PdxInstance;
  * @see org.mockito.Mockito
  * @see org.apache.geode.pdx.PdxInstance
  * @see org.springframework.geode.data.json.converter.support.JSONFormatterJsonToPdxConverter
+ * @see org.springframework.geode.pdx.PdxInstanceWrapper
  * @since 1.3.0
  */
 public class JSONFormatterJsonToPdxConverterUnitTests {
@@ -48,10 +51,15 @@ public class JSONFormatterJsonToPdxConverterUnitTests {
 
 		JSONFormatterJsonToPdxConverter converter = spy(new JSONFormatterJsonToPdxConverter());
 
-		doReturn(mockPdxInstance).when(converter).convertJsonToPdx(json);
+		doReturn(mockPdxInstance).when(converter).jsonFormatterFromJson(json);
 
-		assertThat(converter.convert(json)).isEqualTo(mockPdxInstance);
+		PdxInstance pdx = converter.convert(json);
+
+		assertThat(pdx).isInstanceOf(PdxInstanceWrapper.class);
+		assertThat(((PdxInstanceWrapper) pdx).getDelegate()).isEqualTo(mockPdxInstance);
 
 		verify(converter, times(1)).convertJsonToPdx(eq(json));
+		verify(converter, times(1)).jsonFormatterFromJson(eq(json));
+		verify(converter, times(1)).wrap(eq(mockPdxInstance));
 	}
 }

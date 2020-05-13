@@ -19,6 +19,7 @@ import org.apache.geode.pdx.JSONFormatter;
 import org.apache.geode.pdx.PdxInstance;
 
 import org.springframework.geode.data.json.converter.JsonToPdxConverter;
+import org.springframework.geode.pdx.PdxInstanceWrapper;
 import org.springframework.lang.NonNull;
 
 /**
@@ -42,14 +43,41 @@ public class JSONFormatterJsonToPdxConverter implements JsonToPdxConverter {
 	}
 
 	/**
-	 * Converts the given JSON to {@link PdxInstance PDX}.
+	 * Converts the given {@link String JSON} to {@link PdxInstance PDX}.
 	 *
 	 * @param json {@link String} containing JSON to convert to PDX; must not be {@literal null}.
 	 * @return JSON for the given {@link PdxInstance PDX}.
+	 * @see org.springframework.geode.pdx.PdxInstanceWrapper#from(PdxInstance)
+	 * @see org.apache.geode.pdx.JSONFormatter#fromJSON(String)
+	 * @see org.apache.geode.pdx.PdxInstance
+	 * @see #jsonFormatterFromJson(String)
+	 * @see #wrap(PdxInstance)
+	 */
+	protected @NonNull PdxInstance convertJsonToPdx(@NonNull String json) {
+		return wrap(jsonFormatterFromJson(json));
+	}
+
+	/**
+	 * Converts {@link String JSON} into {@link PdxInstance PDX} using {@link JSONFormatter#fromJSON(String)}.
+	 *
+	 * @param json {@link String JSON} to convert to {@link PdxInstance PDX}; must not be {@literal null}.
+	 * @return {@link PdxInstance PDX} generated from the given, required {@link String JSON}; never {@literal null}.
 	 * @see org.apache.geode.pdx.JSONFormatter#fromJSON(String)
 	 * @see org.apache.geode.pdx.PdxInstance
 	 */
-	protected @NonNull PdxInstance convertJsonToPdx(@NonNull String json) {
+	protected @NonNull PdxInstance jsonFormatterFromJson(@NonNull String json) {
 		return JSONFormatter.fromJSON(json);
+	}
+
+	/**
+	 * Wraps the given {@link PdxInstance} in a new instance of {@link PdxInstanceWrapper}.
+	 *
+	 * @param pdxInstance {@link PdxInstance} to wrap.
+	 * @return a new instance of {@link PdxInstanceWrapper} wrapping the given {@link PdxInstance}.
+	 * @see org.springframework.geode.pdx.PdxInstanceWrapper
+	 * @see org.apache.geode.pdx.PdxInstance
+	 */
+	protected @NonNull PdxInstanceWrapper wrap(@NonNull PdxInstance pdxInstance) {
+		return PdxInstanceWrapper.from(pdxInstance);
 	}
 }
