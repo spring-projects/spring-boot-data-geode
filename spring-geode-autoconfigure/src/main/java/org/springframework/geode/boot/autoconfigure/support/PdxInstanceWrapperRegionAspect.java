@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.geode.cache.CacheStatistics;
 import org.apache.geode.cache.Region;
+import org.apache.geode.pdx.PdxInstance;
 
 import org.springframework.geode.pdx.PdxInstanceWrapper;
 import org.springframework.lang.NonNull;
@@ -35,8 +36,13 @@ import org.aspectj.lang.annotation.Pointcut;
 /**
  * A Spring, AspectJ {@link Aspect} advising GemFire/Geode cache {@link Region} data access operations.
  *
+ * Specifically, this {@link Aspect} wraps all {@link PdxInstance} objects returned from cache {@link Region}
+ * read data access operations inside a new instance of {@link PdxInstanceWrapper}.
+ *
  * @author John Blum
+ * @see java.util.Map
  * @see org.apache.geode.cache.Region
+ * @see org.apache.geode.pdx.PdxInstance
  * @see org.aspectj.lang.annotation.Around
  * @see org.aspectj.lang.annotation.Aspect
  * @see org.aspectj.lang.annotation.Pointcut
@@ -45,7 +51,7 @@ import org.aspectj.lang.annotation.Pointcut;
  */
 @Aspect
 @SuppressWarnings("unused")
-public class PdxInstanceWrapperAspect {
+public class PdxInstanceWrapperRegionAspect {
 
 	private static Collection<?> asCollection(Object value) {
 		return value instanceof Collection ? (Collection<?>) value : Collections.emptyList();

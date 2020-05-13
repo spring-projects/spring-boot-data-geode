@@ -37,14 +37,14 @@ import org.apache.geode.cache.CacheStatistics;
 import org.apache.geode.cache.Region;
 import org.apache.geode.pdx.PdxInstance;
 
-import org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperAspect;
-import org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperAspect.RegionEntryWrapper;
+import org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperRegionAspect;
+import org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperRegionAspect.RegionEntryWrapper;
 import org.springframework.geode.pdx.PdxInstanceWrapper;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 
 /**
- * Unit Tests for {@link PdxInstanceWrapperAspect}
+ * Unit Tests for {@link PdxInstanceWrapperRegionAspect}
  *
  * @author John Blum
  * @see java.util.Map
@@ -52,14 +52,14 @@ import org.aspectj.lang.ProceedingJoinPoint;
  * @see org.mockito.Mockito
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.pdx.PdxInstance
- * @see org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperAspect
- * @see org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperAspect.RegionEntryWrapper
+ * @see PdxInstanceWrapperRegionAspect
+ * @see PdxInstanceWrapperRegionAspect.RegionEntryWrapper
  * @see org.springframework.geode.pdx.PdxInstanceWrapper
  * @since 1.3.0
  */
-public class PdxInstanceWrapperAspectUnitTests {
+public class PdxInstanceWrapperRegionAspectUnitTests {
 
-	private PdxInstanceWrapperAspect aspect = new PdxInstanceWrapperAspect();
+	private PdxInstanceWrapperRegionAspect aspect = new PdxInstanceWrapperRegionAspect();
 
 	@Test
 	public void regionGetAdviceWrapsPdx() throws Throwable {

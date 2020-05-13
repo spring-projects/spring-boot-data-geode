@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.data.gemfire.CacheFactoryBean;
-import org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperAspect;
+import org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperRegionAspect;
 import org.springframework.geode.cache.SimpleCacheResolver;
 import org.springframework.geode.data.json.JsonCacheDataImporterExporter;
 import org.springframework.lang.NonNull;
@@ -54,7 +54,7 @@ import org.springframework.lang.NonNull;
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.type.AnnotatedTypeMetadata
  * @see org.springframework.data.gemfire.CacheFactoryBean
- * @see org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperAspect
+ * @see PdxInstanceWrapperRegionAspect
  * @see org.springframework.geode.cache.SimpleCacheResolver
  * @see org.springframework.geode.data.json.JsonCacheDataImporterExporter
  * @since 1.3.0
@@ -76,8 +76,8 @@ public class DataImportExportAutoConfiguration {
 
 	@Bean
 	@Conditional(RegionAdviceConditions.class)
-	PdxInstanceWrapperAspect pdxInstanceWrapperAspect() {
-		return new PdxInstanceWrapperAspect();
+	PdxInstanceWrapperRegionAspect pdxInstanceWrapperAspect() {
+		return new PdxInstanceWrapperRegionAspect();
 	}
 
 	static class RegionAdviceConditions extends AnyNestedCondition {
