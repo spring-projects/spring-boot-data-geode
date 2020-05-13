@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.NumberSerializers;
 
 /**
- * The {@link BigIntegerSerializer} class is a {@link NumberSerializers.Base} serializer
+ * The {@link BigIntegerSerializer} class is a {@link NumberSerializers NumberSerializers.Base} serializer
  * for serializing {@link BigInteger} values.
  *
  * @author John Blum

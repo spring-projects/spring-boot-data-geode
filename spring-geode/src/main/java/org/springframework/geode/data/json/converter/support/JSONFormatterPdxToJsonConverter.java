@@ -168,9 +168,9 @@ public class JSONFormatterPdxToJsonConverter extends JacksonObjectToJsonConverte
 	 * @return the decorated {@link String JSON} including the {@literal @type} metadata property.
 	 * @throws DataRetrievalFailureException if {@link String JSON} cannot be decorated with type metadata
 	 * and the {@link PdxInstance} is not based on a valid {@link Class} type.
+	 * @see JacksonObjectToJsonConverter#convert(Object)
 	 * @see org.apache.geode.pdx.PdxInstance
 	 * @see #newObjectMapper(Object)
-	 * @see super#convert(Object)
 	 */
 	@SuppressWarnings("unused")
 	protected @NonNull String decorate(@NonNull PdxInstance pdxInstance, @NonNull String json) {
