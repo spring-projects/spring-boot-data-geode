@@ -42,6 +42,8 @@ public class ISBN implements Comparable<ISBN> {
 
 	private String number;
 
+	protected ISBN() { }
+
 	private ISBN(String number) {
 		this.number = number;
 	}
@@ -51,7 +53,6 @@ public class ISBN implements Comparable<ISBN> {
 	}
 
 	@Override
-	@SuppressWarnings("all")
 	public int compareTo(ISBN other) {
 		return this.getNumber().compareTo(other.getNumber());
 	}

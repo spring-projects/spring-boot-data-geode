@@ -18,7 +18,9 @@ package example.app.books.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +35,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Data
 @Region("Authors")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(staticName = "newAuthor")
 @SuppressWarnings("unused")
 public class Author {
@@ -41,7 +44,7 @@ public class Author {
 	private Long id;
 
 	@NonNull
-	private final String name;
+	private String name;
 
 	public boolean isNew() {
 		return getId() == null;

@@ -21,7 +21,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +40,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Data
 @Region("Books")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(staticName = "newBook")
 public class Book {
 
@@ -49,7 +52,7 @@ public class Book {
 	private LocalDate publishedDate;
 
 	@NonNull
-	private final String title;
+	private String title;
 
 	@Transient
 	public boolean isNew() {
