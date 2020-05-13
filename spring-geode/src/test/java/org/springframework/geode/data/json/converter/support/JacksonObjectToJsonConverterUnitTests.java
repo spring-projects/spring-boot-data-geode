@@ -17,6 +17,7 @@ package org.springframework.geode.data.json.converter.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -44,6 +46,7 @@ import example.app.crm.model.Customer;
  * @author John Blum
  * @see org.junit.Test
  * @see org.mockito.Mockito
+ * @see com.fasterxml.jackson.databind.ObjectMapper
  * @see org.springframework.geode.data.json.converter.support.JacksonObjectToJsonConverter
  * @since 1.3.0
  */
@@ -139,12 +142,29 @@ public class JacksonObjectToJsonConverterUnitTests {
 
 		Object target = Customer.newCustomer(1L, "Jon Doe");
 
-		ObjectMapper objectMapper = new JacksonObjectToJsonConverter().newObjectMapper(target);
+		ObjectMapper mockObjectMapper = mock(ObjectMapper.class);
+
+		JacksonObjectToJsonConverter converter = spy(new JacksonObjectToJsonConverter());
+
+		doReturn(mockObjectMapper).when(converter).newObjectMapper();
+		doReturn(mockObjectMapper).when(mockObjectMapper).addMixIn(any(), any());
+		doReturn(mockObjectMapper).when(mockObjectMapper).configure(any(JsonGenerator.Feature.class), anyBoolean());
+		doReturn(mockObjectMapper).when(mockObjectMapper).configure(any(MapperFeature.class), anyBoolean());
+		doReturn(mockObjectMapper).when(mockObjectMapper).findAndRegisterModules();
+
+		ObjectMapper objectMapper = converter.newObjectMapper(target);
 
 		assertThat(objectMapper).isNotNull();
-		assertThat(objectMapper.isEnabled(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)).isTrue();
-		assertThat(objectMapper.isEnabled(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)).isTrue();
-		assertThat(objectMapper.getSerializationConfig().findMixInClassFor(target.getClass()))
-			.isEqualTo(JacksonObjectToJsonConverter.ObjectTypeMetadataMixin.class);
+
+		verify(converter, times(1)).newObjectMapper();
+
+		verify(mockObjectMapper, times(1))
+			.addMixIn(eq(target.getClass()), eq(JacksonObjectToJsonConverter.ObjectTypeMetadataMixin.class));
+		verify(mockObjectMapper, times(1))
+			.configure(eq(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN), eq(true));
+		verify(mockObjectMapper, times(1))
+			.configure(eq(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY), eq(true));
+		verify(mockObjectMapper, times(1)).findAndRegisterModules();
+		verifyNoMoreInteractions(mockObjectMapper);
 	}
 }

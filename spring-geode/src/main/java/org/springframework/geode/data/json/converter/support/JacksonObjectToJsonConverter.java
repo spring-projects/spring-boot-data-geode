@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
+import org.springframework.geode.pdx.PdxInstanceWrapper;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
@@ -41,7 +42,7 @@ import org.springframework.util.Assert;
  */
 public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 
-	protected static final String AT_TYPE_METADATA_PROPERTY_NAME = "@type";
+	protected static final String AT_TYPE_METADATA_PROPERTY_NAME = PdxInstanceWrapper.AT_TYPE_FIELD_NAME;
 
 	/**
 	 * Converts the given {@link Object} into {@link String JSON}.
@@ -57,12 +58,30 @@ public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 		Assert.notNull(source, "Source object to convert must not be null");
 
 		try {
-			return newObjectMapper(source).writeValueAsString(source);
+			return convertObjectToJson(source);
 		}
 		catch (JsonProcessingException cause) {
 			throw new ConversionFailedException(TypeDescriptor.forObject(source), TypeDescriptor.valueOf(String.class),
 				source, cause);
 		}
+	}
+
+	/**
+	 * Converts the given {@link Object} into {@link String JSON}.
+	 *
+	 * @param source {@link Object} to convert to {@link String JSON}; must not be {@literal null}.
+	 * @return {@link String JSON} generated from the given {@link Object}.
+	 * @throws IllegalArgumentException if {@link Object source} is {@literal null}.
+	 * @throws JsonProcessingException if the generation of {@link String JSON} from the given {@link Object}
+	 * results in an error.
+	 * @see com.fasterxml.jackson.databind.ObjectMapper#writeValueAsString(Object)
+	 * @see #newObjectMapper(Object)
+	 */
+	protected @NonNull String convertObjectToJson(@NonNull Object source) throws JsonProcessingException {
+
+		Assert.notNull(source, "Source object to convert must not be null");
+
+		return newObjectMapper(source).writeValueAsString(source);
 	}
 
 	/**
@@ -75,10 +94,21 @@ public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 
 		Assert.notNull(target, "Target object must not be null");
 
-		return new ObjectMapper()
+		return newObjectMapper()
 			.addMixIn(target.getClass(), ObjectTypeMetadataMixin.class)
 			.configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
-			.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+			.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+			.findAndRegisterModules();
+	}
+
+	/**
+	 * Constructs a new instance of Jackson's {@link ObjectMapper}.
+	 *
+	 * @return a new instance of Jackson's {@link ObjectMapper}; never {@literal null}.
+	 * @see com.fasterxml.jackson.databind.ObjectMapper
+	 */
+	@NonNull ObjectMapper newObjectMapper() {
+		return new ObjectMapper();
 	}
 
 	@JsonTypeInfo(
