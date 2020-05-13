@@ -38,6 +38,7 @@ dependencies {
 	testRuntime "org.apache.geode:geode-web:$apacheGeodeVersion"
 	testRuntime "org.springframework.boot:spring-boot-starter-web"
 	testRuntime "org.springframework.boot:spring-boot-starter-jetty"
+	testRuntime "org.springframework.boot:spring-boot-starter-json"
 	testRuntime "org.springframework.shell:spring-shell:$springShellVersion"
 
 	// Runtime Test dependency on Spring Cloud Services (SCS) to verify workaround to SCS problem!
