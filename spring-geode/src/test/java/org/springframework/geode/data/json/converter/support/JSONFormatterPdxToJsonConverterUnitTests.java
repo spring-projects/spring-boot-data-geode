@@ -74,11 +74,11 @@ public class JSONFormatterPdxToJsonConverterUnitTests {
 
 		JSONFormatterPdxToJsonConverter converter = spy(new JSONFormatterPdxToJsonConverter());
 
-		doReturn(json).when(converter).convertObjectToJson(eq(object));
+		doReturn(json).when(converter).convertPojoToJson(eq(object));
 
 		assertThat(converter.convert(object)).isEqualTo(json);
 
-		verify(converter, times(1)).convertObjectToJson(eq(object));
+		verify(converter, times(1)).convertPojoToJson(eq(object));
 		verify(converter, never()).convertPdxToJson(any());
 	}
 
@@ -96,7 +96,7 @@ public class JSONFormatterPdxToJsonConverterUnitTests {
 		assertThat(converter.convert(mockPdxInstance)).isEqualTo(json);
 
 		verify(converter, times(1)).convertPdxToJson(eq(mockPdxInstance));
-		verify(converter, never()).convertObjectToJson(any());
+		verify(converter, never()).convertPojoToJson(any());
 		verifyNoInteractions(mockPdxInstance);
 	}
 
@@ -370,7 +370,7 @@ public class JSONFormatterPdxToJsonConverterUnitTests {
 		doReturn(false).when(mockPdxInstance).hasField(anyString());
 		doReturn(mockObjectMapper).when(converter).newObjectMapper(eq(json));
 		doThrow(new JsonGenerationException("TEST", (JsonGenerator) null)).when(mockObjectMapper).readTree(eq(json));
-		doReturn(json).when(converter).convertObjectToJson(eq(jonDoe));
+		doReturn(json).when(converter).convertPojoToJson(eq(jonDoe));
 
 		assertThat(converter.decorate(mockPdxInstance, json)).isEqualTo(json);
 
@@ -380,7 +380,7 @@ public class JSONFormatterPdxToJsonConverterUnitTests {
 		verify(mockObjectMapper, times(1)).readTree(eq(json));
 		verify(mockPdxInstance, times(1)).getClassName();
 		verify(mockPdxInstance, times(1)).getObject();
-		verify(converter, times(1)).convertObjectToJson(eq(jonDoe));
+		verify(converter, times(1)).convertPojoToJson(eq(jonDoe));
 		verifyNoMoreInteractions(mockPdxInstance, mockObjectMapper);
 	}
 

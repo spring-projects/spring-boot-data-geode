@@ -62,7 +62,7 @@ public class JSONFormatterPdxToJsonConverter extends JacksonObjectToJsonConverte
 			.filter(PdxInstance.class::isInstance)
 			.map(PdxInstance.class::cast)
 			.map(this::convertPdxToJson)
-			.orElseGet(() -> convertObjectToJson(source));
+			.orElseGet(() -> convertPojoToJson(source));
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class JSONFormatterPdxToJsonConverter extends JacksonObjectToJsonConverte
 	 * @return the JSON generated from the given {@link Object}.
 	 * @see JacksonObjectToJsonConverter#convert(Object)
 	 */
-	protected @Nullable String convertObjectToJson(Object source) {
+	protected @Nullable String convertPojoToJson(Object source) {
 		return super.convert(source);
 	}
 
@@ -86,8 +86,8 @@ public class JSONFormatterPdxToJsonConverter extends JacksonObjectToJsonConverte
 	 * @see #jsonFormatterToJson(PdxInstance)
 	 */
 	protected @NonNull String convertPdxToJson(@NonNull PdxInstance pdxInstance) {
-		//return JSONFormatter.toJSON(pdxInstance);
-		//return JSONFormatter.toJSON(decorate(pdxInstance));
+		//return jsonFormatterToJson(pdxInstance);
+		//return jsonFormatterToJson(decorate(pdxInstance));
 		return decorate(pdxInstance, jsonFormatterToJson(pdxInstance));
 	}
 
@@ -192,7 +192,7 @@ public class JSONFormatterPdxToJsonConverter extends JacksonObjectToJsonConverte
 			catch (JsonProcessingException cause) {
 
 				if (hasValidClassName(pdxInstance)) {
-					return convertObjectToJson(pdxInstance.getObject());
+					return convertPojoToJson(pdxInstance.getObject());
 				}
 
 				String message = String.format("Failed to parse JSON [%s]", json);
