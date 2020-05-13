@@ -9,6 +9,8 @@ description = "Spring Boot for Apache Geode"
 
 dependencies {
 
+	compile project(':apache-geode-extensions')
+
 	compile "org.springframework:spring-context-support"
 	compile "org.springframework:spring-jcl"
 	compile "org.springframework.boot:spring-boot-starter"
@@ -17,8 +19,6 @@ dependencies {
 		exclude group: "javax.servlet", module: "javax.servlet-api"
 		exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	}
-
-	optional project(':apache-geode-extensions')
 
 	optional "org.springframework:spring-test"
 
