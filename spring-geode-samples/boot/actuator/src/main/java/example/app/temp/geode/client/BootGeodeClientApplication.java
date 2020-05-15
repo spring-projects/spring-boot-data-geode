@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
+import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.geode.config.annotation.UseGroups;
 import org.springframework.geode.config.annotation.UseMemberName;
 
@@ -33,6 +34,7 @@ import example.app.temp.service.TemperatureMonitor;
 
 // tag::class[]
 @SpringBootApplication
+@EnableClusterAware
 @EnableEntityDefinedRegions(basePackageClasses = TemperatureReading.class)
 @UseGroups("TemperatureMonitors")
 @UseMemberName("TemperatureMonitoringService")
