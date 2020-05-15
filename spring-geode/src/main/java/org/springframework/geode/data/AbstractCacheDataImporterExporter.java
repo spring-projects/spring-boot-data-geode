@@ -61,12 +61,16 @@ public abstract class AbstractCacheDataImporterExporter
 		implements ApplicationContextAware, CacheDataImporterExporter, EnvironmentAware {
 
 	protected static final boolean DEFAULT_CACHE_DATA_EXPORT_ENABLED = false;
+	protected static final boolean DEFAULT_CACHE_DATA_IMPORT_ENABLED = true;
 
 	protected static final String CACHE_DATA_EXPORT_ENABLED_PROPERTY_NAME =
 		"spring.boot.data.gemfire.cache.data.export.enabled";
 
 	protected static final String CACHE_DATA_IMPORT_ACTIVE_PROFILES_PROPERTY_NAME =
 		"spring.boot.data.gemfire.cache.data.import.active-profiles";
+
+	protected static final String CACHE_DATA_IMPORT_ENABLED_PROPERTY_NAME =
+		"spring.boot.data.gemfire.cache.data.import.enabled";
 
 	protected static final String DEFAULT_CACHE_DATA_IMPORT_ACTIVE_PROFILES = "";
 
@@ -200,11 +204,26 @@ public abstract class AbstractCacheDataImporterExporter
 	}
 
 	/**
+	 * Null-safe method to determine whether export has been explicitly configured and enabled or disabled.
+	 *
+	 * @param environment {@link Environment} used to assess the configuration of export.
+	 * @return a boolean value indicating whether the export is enabled ({@literal true})
+	 * or disabled ({@literal false}); {@literal false} by default.
+	 * @see org.springframework.core.env.Environment
+	 */
+	protected boolean isExportEnabled(@Nullable Environment environment) {
+		return environment != null && Boolean.TRUE.equals(environment
+			.getProperty(CACHE_DATA_EXPORT_ENABLED_PROPERTY_NAME, Boolean.class, DEFAULT_CACHE_DATA_EXPORT_ENABLED));
+	}
+
+	/**
 	 * Exports data contained in the given {@link Region}.
 	 *
 	 * @param region {@link Region} to export data from.
 	 * @return the given {@link Region}.
 	 * @see org.apache.geode.cache.Region
+	 * @see #isExportEnabled(Environment)
+	 * @see #getRegionPredicate()
 	 */
 	@NonNull @Override
 	public Region exportFrom(@NonNull Region region) {
@@ -212,9 +231,8 @@ public abstract class AbstractCacheDataImporterExporter
 		Assert.notNull(region, "Region must not be null");
 
 		boolean exportEnabled = getEnvironment()
+			.filter(this::isExportEnabled)
 			.filter(environment -> getRegionPredicate().test(region))
-			.filter(environment -> environment.getProperty(CACHE_DATA_EXPORT_ENABLED_PROPERTY_NAME, Boolean.class,
-				DEFAULT_CACHE_DATA_EXPORT_ENABLED))
 			.isPresent();
 
 		return exportEnabled ? doExportFrom(region) : region;
@@ -230,11 +248,26 @@ public abstract class AbstractCacheDataImporterExporter
 	protected abstract @NonNull Region doExportFrom(@NonNull Region region);
 
 	/**
+	 * Null-safe method to determine whether import has been explicitly configured and enabled or disabled.
+	 *
+	 * @param environment {@link Environment} used to assess the configuration of the import.
+	 * @return a boolean value indicating whether the import is enabled ({@literal true})
+	 * or disabled ({@literal false}).
+	 * @see org.springframework.core.env.Environment
+	 */
+	protected boolean isImportEnabled(@Nullable Environment environment) {
+		return environment != null && Boolean.TRUE.equals(environment
+			.getProperty(CACHE_DATA_IMPORT_ENABLED_PROPERTY_NAME, Boolean.class, DEFAULT_CACHE_DATA_IMPORT_ENABLED));
+	}
+
+	/**
 	 * Imports data into the given {@link Region}.
 	 *
 	 * @param region {@link Region} to import data into.
 	 * @return the given {@link Region}.
 	 * @see org.apache.geode.cache.Region
+	 * @see #isImportEnabled(Environment)
+	 * @see #getRegionPredicate()
 	 */
 	@NonNull @Override
 	public Region importInto(@NonNull Region region) {
@@ -242,6 +275,7 @@ public abstract class AbstractCacheDataImporterExporter
 		Assert.notNull(region, "Region must not be null");
 
 		boolean importEnabled = getEnvironment()
+			.filter(this::isImportEnabled)
 			.filter(environment -> getRegionPredicate().test(region))
 			.map(Environment::getActiveProfiles)
 			.map(CollectionUtils::asSet)
