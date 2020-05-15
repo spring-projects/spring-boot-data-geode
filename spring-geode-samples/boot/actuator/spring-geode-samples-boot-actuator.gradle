@@ -19,6 +19,17 @@ dependencies {
 
 }
 
+task runServer(type: JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	jvmArgs '-Dspring.profiles.active=server'
+	main = "example.app.temp.geode.server.BootGeodeServerApplication"
+}
+
 bootJar {
 	mainClassName = 'example.app.temp.geode.client.BootGeodeClientApplication'
+}
+
+bootRun {
+	main = 'example.app.temp.geode.client.BootGeodeClientApplication'
+	args "--spring.profiles.active=client", "--spring.data.gemfire.management.use-http=false"
 }
