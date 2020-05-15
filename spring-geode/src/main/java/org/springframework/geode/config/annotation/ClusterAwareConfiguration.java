@@ -122,7 +122,6 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 		}
 
 		@Override
-		@SuppressWarnings("all")
 		public synchronized boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
 			if (clusterAvailable.get() == null) {
@@ -183,7 +182,6 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			);
 		}
 
-		@SuppressWarnings("all")
 		List<ConnectionEndpoint> getConfiguredConnectionEndpoints(Environment environment) {
 
 			List<ConnectionEndpoint> connectionEndpoints = new ArrayList<>();
