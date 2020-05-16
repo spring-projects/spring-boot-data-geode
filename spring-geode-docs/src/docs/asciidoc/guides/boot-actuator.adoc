@@ -220,7 +220,32 @@ the `TemperatureReadings` to `System.err`.
 
 It is time to run the example.
 
-First, we start the server:
+First, we need to start the server.
+
+You can run the server from your IDE (e.g. IntelliJ IDEA) by creating a run profile configuration for the
+`example.app.temp.geode.server.BootGeodeServerApplication` class. Make sure to set the JVM argument to activate the
+"_server_" Spring Profile: `-Dspring.profiles.active=server`.
+
+Alternatively, you can run the server from the command-line using the `gradlew` command:
+
+`$ gradlew :spring-geode-samples-boot-actuator:runServer`
+
+The `gradlew` command and `runServer` Gradle Task sets the configuration (e.g. Spring Profile) for you. The `gradlew`
+command is ran in the directory where you cloned the `spring-boot-data-geode` project (**not** in
+`spring-boot-data-geode/spring-geode-samples/boot/actuator/`).
+
+If you wish to adjust the log levels of Apache Geode or Spring Boot while running the client and server applications,
+then you can set the log levels of the individual Loggers (i.e. `org.apache` and `org.springframework`)
+in `src/main/resources/logback.xml`:
+
+.spring-geode-samples/boot/actuator/src/main/resources/logback.xml
+[source,java]
+----
+include::{samples-dir}/boot/actuator/src/main/resources/logback.xml[]
+----
+
+
+Running the server from your IDE:
 
 .Run the server
 [source,txt]
@@ -245,7 +270,23 @@ TEMPERATURE READING [10 °F]
 ...
 ----
 
-After the server starts and begins to log temperature readings (as shown above), then start the client:
+After the server starts and begins to log temperature readings (as shown above), then start the client.
+
+The client can be ran in the same manner as the server, from your IDE or from the command-line using `gradlew`.
+
+To run the client in your IDE (e.g. IntelliJ IDEA) then create a run profile configuration for the
+`example.app.temp.geode.client.BootGeodeClientApplication` and set the JVM argument to activate the "_client_"
+Spring Profile: `-Dspring.profiles.active=client".
+
+Alternatively, you can run the client from the command-line using the following command:
+
+`$ gradlew :spring-geode-samples-boot-actuator:bootRun`
+
+NOTE: The client must be run in a separate terminal, unless you ran the server as a background process with the `&`
+on Linux/UNIX based systems.  See https://linuxize.com/post/how-to-run-linux-commands-in-background/[here]
+for more details.
+
+Running the client from your IDE:
 
 .Run the client
 [source,txt]
@@ -273,7 +314,7 @@ COLD TEMPERATURE READING [-4 °F]
 ----
 
 You should only see boiling and freezing temperatures logged to the client's console. This is because our client
-only "monitors" and logs temperature readings above or below our thresholds (boiling/freezing), as defined by
+only "monitors" and logs temperature readings above or below a certain threshold (boiling/freezing), as defined by
 the Continuous Queries (CQ).
 
 Both the server and client will continue to run, generating and logging temperatures, until you stop the JVM processes.
