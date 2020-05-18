@@ -72,7 +72,7 @@ public class CalculatorConfiguration {
 
 		return (target, method, arguments) -> {
 
-			int operand = Integer.valueOf(String.valueOf(arguments[0]));
+			int operand = Integer.parseInt(String.valueOf(arguments[0]));
 
 			Operator operator = "sqrt".equals(method.getName())
 				? Operator.SQUARE_ROOT
