@@ -20,8 +20,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 /**
- * {@link SpringBootApplication} to configure and bootstrap the example application using the Look-Aside Caching pattern,
- * and specifically Spring's Cache Abstraction with Apache Geode as the caching provider.
+ * {@link SpringBootApplication} to configure and bootstrap the example application using the
+ * {@literal Look-Aside Caching pattern}, and specifically Spring's Cache Abstraction along with
+ * Apache Geode as the caching provider.
  *
  * @author John Blum
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
