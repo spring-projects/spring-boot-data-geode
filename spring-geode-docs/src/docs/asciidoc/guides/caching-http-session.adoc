@@ -167,11 +167,12 @@ The main Spring Boot application class is not particularly interesting other tha
 .Spring Boot, Web Application Configuration
 [source,java]
 ----
-include::{samples-dir}/caching/http-session/src/main/example.app.cache.session.http.BootGeodeHttpSessionCachingApplication[]
+include::{samples-dir}/caching/http-session/src/main/java/example/app/caching/session/http/BootGeodeHttpSessionCachingApplication.java[]
 ----
 
-See the <<geode-configuration-declarative-annotations-productivity-enableclusteraware,reference documentation>> on the
-`@EnableClusterAware` annotation for more details.
+Refer to SBDG's documentation to learn about the
+link:../index.html#geode-configuration-declarative-annotations-productivity-enableclusteraware[`@EnableClusterAware`]
+annotation.
 
 [[geode-samples-caching-http-session-example-classpath]]
 === Classpath
