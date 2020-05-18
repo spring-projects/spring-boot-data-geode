@@ -17,3 +17,7 @@ dependencies {
 bootJar {
 	mainClassName = 'example.app.caching.lookaside.BootGeodeLookAsideCachingApplication'
 }
+
+bootRun {
+	main = 'example.app.caching.lookaside.BootGeodeLookAsideCachingApplication'
+}
