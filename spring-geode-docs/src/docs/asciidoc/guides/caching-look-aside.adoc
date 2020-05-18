@@ -70,7 +70,7 @@ class CustomerService {
 
   @Cacheable("CustomersByAccountNumber")
   Customer findBy(AccountNumber accountNumber) {
-    ...
+    // ...
   }
 }
 ----
@@ -264,7 +264,7 @@ include::{samples-dir}/caching/look-aside/src/main/java/example/app/caching/look
 ----
 
 The only thing of real significance here is the `@EnableCachingDefinedRegions` annotation. This Spring Data
-for Apache Geode/Pivotal GemFire (PCC), SDG, annotation is responsible for introspecting our Spring Boot application
+for Apache Geode/Pivotal GemFire (SDG) annotation is responsible for introspecting our Spring Boot application
 on Spring container startup, identifying all the caching annotations (both Spring Cache annotations as wells JSR-107,
 JCache annotations) used in our application components, and creating the appropriate caches.
 
@@ -274,16 +274,19 @@ using the equivalent _JavaConfig_:
 ."Counters" Region definition using JavaConfig
 [source,java]
 ----
-@Bean("Counters")
-public ClientRegionFactoryBean<Object, Object> countersRegion(GemFireCache gemfireCache) {
+@Configuration
+class GeodeConfiguration {
+
+  @Bean("Counters")
+  public ClientRegionFactoryBean<Object, Object> countersRegion(GemFireCache gemfireCache) {
 
     ClientRegionFactoryBean<Object, Object> countersRegion = new ClientRegionFactoryBean<>();
 
     countersRegion.setCache(gemfireCache);
-    countersRegion.setClose(false);
     countersRegion.setShortcut(ClientRegionShortcut.LOCAL);
 
     return countersRegion;
+  }
 }
 ----
 
@@ -298,23 +301,23 @@ Or using XML:
 In Apache Geode terminology, each cache identified in 1 of the caching annotations by name, will have an Apache Geode
 Region created for it.
 
-In our case, SBDG provides us a `ClientCache` instance by default, so we will be creating client `LOCAL`-only Regions.
-The client "Counters" Region is `LOCAL` since we do not (yet) have a server backend running.
+In our case, SBDG provides us a `ClientCache` instance by default, so we will be creating client `LOCAL` Regions.
+The client "Counters" Region is `LOCAL` since we do not (yet) have a cluster of servers running.
 
-However, it would be very simple to convert this application into using a client/server topology.
+However, it would be very simple to convert this application into using a client/server topology by simply starting
+a cluster of servers.
 
 [[geode-samples-caching-lookaside-example-counterservice-configuration-clientserver]]
 ==== Client/Server Configuration
 
-To use the client/server topology, essentially you only need to remove the `shortcut` attribute from the
-`@EnableCachingDefinedRegions` annotation (since the default is a client `PROXY` Region), start a Locator/Server
-using _Gfsh_ and create the "Counters" Region on the server.
+To use the client/server topology, you need to start a cluster with 1 or more servers using the default configuration.
+You can start the cluster using the GemFire/Geode Shell tool (_Gfsh_) and create the "Counters" Region on the servers.
 
-Of course, you technically do not even need to create the "Counters" Region on the server.  You can also leverage
-SDG's `@EnableClusterConfiguration(..)` annotation, which will create the necessary server-side, "Counters" Region
-for you.
+Of course, you technically do not even need to create the "Counters" Region on the server.  The `@EnableClusterAware`
+annotation is meta-annotated with SDG's `@EnableClusterConfiguration(..)` annotation, which will create the necessary
+server-side, "Counters" Region for you.
 
-After starting a Locator/Server using _Gfsh_:
+After starting a cluster with a Locator & Server using _Gfsh_:
 
 [source,txt]
 ----
@@ -348,18 +351,19 @@ gfsh>list regions
 No Regions Found
 ----
 
-You only need to modify your application configuration as follows:
+The application configuration (i.e. `GeodeConfiguration`) is already set to go:
 
 .Using client/server
 [source,java]
 ----
 @Configuration
+@EnableClusterAware
 @EnableCachingDefinedRegions
-@EnableClusterConfiguration(useHttp = true)
 public class GeodeConfiguration { }
 ----
 
-After (re-)starting the application, we will see that the "Counters" Region on the server has been created:
+After (re-)starting the application, we will see that the "Counters" Region has been created in the cluster,
+and specifically on "_ServerOne_":
 
 ."Counters" Region
 [source,txt]
@@ -392,15 +396,30 @@ Refer to Apache Geode's documentation to learn more about the
 Refer to SDG's documentation to learn more about
 {spring-data-geode-docs}/#bootstrap-annotation-config-cluster[Cluster Configuration].
 
+Refer to SBDG's documentation to learn about the
+link:../index.html#geode-configuration-declarative-annotations-productivity-enableclusteraware[`@EnableClusterAware`]
+annotation.
+
 [[geode-samples-caching-lookaside-example-run]]
 == Run the Example
 
-Now, it is time to run the example.
+Now it is time to run the example.
 
-If you are just running in local mode (provided configuration), then start the `BootGeodeLookAsideCachingApplication`
-from your IDE, or from the command-line, as is:
+You can run the `BootGeodeLookAsideCachingApplication` class from your IDE (e.g. IntelliJ IDEA) by creating a simple
+run profile configuration. No additional JVM arguments, System Properties or program argument are required to run
+the example.
 
-.Run `BootGeodeLookAsideCachingApplication` class
+Alternatively, you can run the example using the `gradlew` command from the command-line as follows:
+
+.Run the example with `gradlew`
+[source,text]
+----
+$ gradlew :spring-geode-samples-caching-lookaside:bootRun
+----
+
+The program output will appear as follows:
+
+.Run the `BootGeodeLookAsideCachingApplication` class
 [source,txt]
 ----
 /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/bin/java -server -ea ...
@@ -440,7 +459,8 @@ from your IDE, or from the command-line, as is:
 2019-05-06 12:10:26.116  INFO 40871 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring FrameworkServlet 'dispatcherServlet'
 ----
 
-Then open your Web browser and navigate to `http://localhost:8080/ping`:
+Then open your Web browser and navigate to http://locahost:8080[] or `ping` Web service endpoint at
+http://localhost:8080/ping[]:
 
 image::{images-dir}/LookAsideCachingApplication-Ping.png[]
 
@@ -523,13 +543,13 @@ B   | 2
 
 As you have learned, Spring makes enabling and using caching in your application really easy.
 
-With SBDG, using either Apache Geode or Pivotal GemFire (PCC) as your caching provider in Spring's _Cache Abstraction_
+With SBDG, using either Apache Geode or Pivotal GemFire as your caching provider in Spring's _Cache Abstraction_
 is as easy as making sure `org.springframework.geode:spring-geode-starter` is on your application's classpath. You just
 need to focus on areas of your application that would benefit from caching.
 
-You now have successfully used the _**Look-Aside Caching**_ pattern in your Spring Boot application.
+You have now successfully used the _**Look-Aside Caching**_ pattern in your Spring Boot application.
 
 Later we will cover more advanced forms of the _Look-Aside Caching_ pattern (e.g. using Eviction/Expiration policies)
-as well as take a look at other caching patterns, like _Inline Caching_ and _Near Caching_.
+as well as take a look at other caching patterns, like _Inline Caching_, _Multi-Site Caching_ and _Near Caching_.
 
 link:../index.html#geode-samples[Back to Samples]
