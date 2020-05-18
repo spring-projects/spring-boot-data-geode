@@ -148,21 +148,30 @@ The configuration is quite simple.  In this case, we have set the HTTP Session `
 `server.servlet.session.timeout` property, to *15 seconds*.  This property is used to configure the HTTP Session timeout
 regardless of whether the HTTP Session is being managed by the Servlet Container or by Spring Session.
 
-Additionally, we have configured the data management policy used by Apache Geode to manage the HTTP Session state
-in a `LOCAL` only cache (a.k.a. Region).  This was done by setting the
-`spring.session.data.gemfire.cache.client.region.shortcut` property to `LOCAL`.
+Though not strictly necessary, we configured name for the Pool of connections used by Spring Session Data Geode in case
+the application is switched to a client/server topology to the "_DEFAULT_" Pool.  We also explicitly named the Region
+used to store HTTP Session state as "_Sessions_" (default name is "_ClusteredSpringSessions_").
 
-The other configuration properties in Spring Boot's `application.properties` file were not strictly necessary.
-
-TIP: In most production deployments, you will likely be using a client/server topology, where the HTTP Session
-is managed by a cluster of Apache Geode or Pivotal GemFire servers so that the HTTP Session can be shared across
-multiple instances of the Spring Boot, Web application. This would be especially true in a cloud environment
-when utilizing a Microservices architecture.  However, for example purposes, we tried to keep the sample
-as simple as possible.
+TIP: In most production deployments, you will likely be using a client/server topology, where the HTTP Session is
+managed by a cluster of Apache Geode or Pivotal GemFire servers so that the HTTP Session can be shared across multiple
+instances of the Spring Boot, Web application. This would be especially true in a cloud environment when utilizing a
+Microservices architecture.  However, for example purposes, we tried to keep the sample as simple as possible.
 
 NOTE: The default data management policy for the client cache (a.k.a. Region) used to manage HTTP Session state is a
 `PROXY`, which is the basis for the client/server topology.  Therefore, the default configuration assumes you will be
-using the client/server topology in most of your arrangements.
+using the client/server topology in most of your applications.
+
+The main Spring Boot application class is not particularly interesting other than we have annotated the class with the
+`@EnableClusterAware` annotation to seamlessly switch between a client local context and a client/server topology:
+
+.Spring Boot, Web Application Configuration
+[source,java]
+----
+include::{samples-dir}/caching/http-session/src/main/example.app.cache.session.http.BootGeodeHttpSessionCachingApplication[]
+----
+
+See the <<geode-configuration-declarative-annotations-productivity-enableclusteraware,reference documentation>> on the
+`@EnableClusterAware` annotation for more details.
 
 [[geode-samples-caching-http-session-example-classpath]]
 === Classpath
@@ -178,8 +187,8 @@ The only essential components of the application classpath is a compile-time dep
 </dependency>
 ----
 
-Along with a runtime dependency on `spring-boot-starter-tomcat` (or another Servlet Container, e.g.
-`spring-boot-starter-jetty`):
+Along with a runtime dependency on `spring-boot-starter-tomcat`.  You may choose to use another Servlet Container,
+such as Eclipse Jetty by declaring the  `spring-boot-starter-jetty` runtime dependency.
 
 .`spring-boot-starter-tomcat` runtime dependency declaration
 [source,xml]
@@ -196,7 +205,24 @@ Container using a derived `WebApplicationContext`.
 [[geode-samples-caching-http-session-example-run]]
 == Run the Example
 
-Let's run the example:
+Now its time to run the example.
+
+You can run the `BootGeodeHttpSessionCachingApplication` class in your IDE (e.g. IntelliJ IDEA).  Simply create a run
+profile configuration and run it.  No additional JVM arguments, System Properties or program arguments are required.
+
+Alternatively, you can run the `BootGeodeHttpSessionCachingApplication` class from the command-line with the `gradlew`
+command as follows:
+
+.Run the example with `gradlew`
+[source,text]
+----
+$ gradlew :spring-geode-samples-caching-httpsession:bootRun
+----
+
+[[geode-samples-caching-http-session-example-tomcat]]
+== Run the Example with Apache Tomcat
+
+After the application starts, open your Web browser to http://localhost:8080[]
 
 image::{images-dir}/HttpSessionCachingApplication.png[]
 
