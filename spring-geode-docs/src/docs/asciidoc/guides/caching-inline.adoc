@@ -289,15 +289,17 @@ as the backend data store for _Inline Caching_, like so:
 .Dependencies declaration
 [source,xml]
 ----
-<dependency>
+<dependencies>
+  <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-<dependency>
+  </dependency>
+  <dependency>
     <groupId>org.hsqldb</groupId>
     <artifactId>hsqldb</artifactId>
     <scope>runtime</scope>
-</dependency>
+  </dependency>
+</dependencies>
 ----
 
 The `spring-jdbc` dependency is transitively pulled in by `org.springframework.boot:spring-boot-starter-data-jpa`,
@@ -369,12 +371,11 @@ This custom `KeyGenerator` was applied in the caching annotations of the service
 [source,java]
 ----
 @Service
-class CalcultorService ... {
+class CalcultorService {
 
-  @Cacheable(... keyGenerator="resultKeyGenerator")
-  public int factorial(int number) { .. }
+  @Cacheable(keyGenerator="resultKeyGenerator")
+  public int factorial(int number) {  }
 
-  ...
 }
 ----
 
@@ -396,13 +397,13 @@ in the `@Cacheable annotation on the individual service methods:
 [source,java]
 ----
 @Service
-class CalcultorService ... {
+class CalculatorService {
 
-  @Cacheable(name = "Factorials" ...)
-  public int factorial(int number) { .. }
+  @Cacheable(name = "Factorials")
+  public int factorial(int number) {  }
 
-  @Cacheable(name = "SquareRoots" ...)
-  public int sqrt(int number) { .. }
+  @Cacheable(name = "SquareRoots")
+  public int sqrt(int number) {  }
 
 }
 ----
@@ -429,7 +430,19 @@ The point is, you have options, and you can make the best choice for your applic
 [[geode-samples-caching-inline-example-run]]
 == Run the Example
 
-Now, it is time for us to run the example.
+Now it is time to run the example.
+
+The example can be run from the command-line using the `gradlew` command as follows:
+
+.Running the example with `gradlew`
+[source,text]
+----
+$ gradlew :spring-geode-samples-caching-inline:bootRun
+----
+
+Alternatively, you can run the `BootGeodeInlineCachingApplication` class in your IDE (e.g. IntelliJ IDEA). Simply create
+a run profile configuration and run it. No additional JVM arguments, System Properties or program arguments
+are required.
 
 WARNING: The observant reader will have noticed that the `CalculatorService` uses `int` as the data type for the input
 and output of the mathematical functions.  You should never use `int` to implement any mathematical calculations for any
@@ -441,7 +454,7 @@ limited in its utility.  `int` was used primarily to minimize type conversions b
 as simple as possible.
 
 The Calculator application includes a `CalculatorController`, which is a Spring Web MVC `@RestController`,
-containing the following web service endpoints:
+containing the following Web service endpoints:
 
 .Calculator Web Service Endpoints
 |===
