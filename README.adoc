@@ -53,8 +53,8 @@ This, along with many other benefits, are provided by this project.
 | `current` | https://docs.spring.io/spring-boot-data-geode-build/current/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/current/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/current/reference/html5/#geode-samples[Samples]
 | `1.0.1.RELEASE` | https://docs.spring.io/spring-boot-data-geode-build/1.0.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.0.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.0.x/reference/html5/#geode-samples[Samples]
 | `1.0.2.BUILD-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.0.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.0.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.0.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
-| `1.1.6.RELEASE` | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/reference/html5/#geode-samples[Samples]
-| `1.1.7.BUILD-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
+| `1.1.7.RELEASE` | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x/reference/html5/#geode-samples[Samples]
+| `1.1.8.BUILD-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.1.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
 
 |===
 
