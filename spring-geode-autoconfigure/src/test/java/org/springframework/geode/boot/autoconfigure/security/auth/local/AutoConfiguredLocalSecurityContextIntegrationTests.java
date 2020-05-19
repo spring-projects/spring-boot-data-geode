@@ -25,27 +25,23 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration test testing the auto-configuration of Apache Geode/Pivotal GemFire Security
+ * Integration Tests testing the auto-configuration of Apache Geode/Pivotal GemFire Security
  * authentication/authorization in a local, non-managed context.
  *
  * @author John Blum
  * @see java.security.Principal
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
- * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @see org.springframework.boot.test.context.SpringBootTest
- * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
- * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
- * @see org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration
  * @see org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration
  * @see org.springframework.geode.boot.autoconfigure.PeerSecurityAutoConfiguration
  * @see org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests
@@ -65,8 +61,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AutoConfiguredLocalSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
 
-	private static final String GEMFIRE_LOG_LEVEL = "error";
-
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
 		startGemFireServer(GemFireServerConfiguration.class,
@@ -74,11 +68,10 @@ public class AutoConfiguredLocalSecurityContextIntegrationTests
 	}
 
 	@SpringBootApplication
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class GemFireClientConfiguration extends BaseGemFireClientConfiguration { }
 
 	@SpringBootApplication
-	@CacheServerApplication(name = "AutoConfiguredLocalSecurityContextIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
+	@CacheServerApplication(name = "AutoConfiguredLocalSecurityContextIntegrationTestsServer")
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {

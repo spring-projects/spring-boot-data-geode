@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.geode.boot.autoconfigure.repository.model.Customer;
@@ -58,8 +57,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
 public class AutoConfiguredRepositoriesIntegrationTests extends IntegrationTestsSupport {
-
-	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Autowired
 	private CustomerService customerService;
@@ -101,9 +98,7 @@ public class AutoConfiguredRepositoriesIntegrationTests extends IntegrationTests
 	}
 
 	@SpringBootApplication
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
-	@EnableEntityDefinedRegions(basePackageClasses = Customer.class,
-		clientRegionShortcut = ClientRegionShortcut.LOCAL)
+	@EnableEntityDefinedRegions(basePackageClasses = Customer.class, clientRegionShortcut = ClientRegionShortcut.LOCAL)
 	static class TestConfiguration { }
 
 }

@@ -32,7 +32,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
@@ -42,7 +41,7 @@ import org.springframework.session.events.AbstractSessionEvent;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests to assert the property configuration of the Session state management provider
+ * Integration Tests to assert the property configuration of the Session state management provider
  * with respect to Session expiration timeout.
  *
  * @author John Blum
@@ -50,23 +49,27 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.context.ApplicationListener
+ * @see org.springframework.context.annotation.Bean
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.session.Session
  * @see org.springframework.session.SessionRepository
  * @see org.springframework.session.data.gemfire.GemFireOperationsSessionRepository
  * @see org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration
  * @see org.springframework.session.events.AbstractSessionEvent
+ * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = {
-	"spring.session.data.gemfire.cache.client.region.shortcut=LOCAL",
-	"spring.session.timeout=1",
-}, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(
+	properties = {
+		"spring.session.data.gemfire.cache.client.region.shortcut=LOCAL",
+		"spring.session.timeout=1",
+	},
+	webEnvironment = SpringBootTest.WebEnvironment.MOCK
+)
 @SuppressWarnings("unused")
 public class SessionExpirationIntegrationTests extends IntegrationTestsSupport {
-
-	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Resource(name = GemFireHttpSessionConfiguration.DEFAULT_SESSION_REGION_NAME)
 	private Region<Object, Session> sessionRegion;
@@ -140,7 +143,6 @@ public class SessionExpirationIntegrationTests extends IntegrationTestsSupport {
 	}
 
 	@SpringBootApplication
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class TestConfiguration {
 
 		@Bean

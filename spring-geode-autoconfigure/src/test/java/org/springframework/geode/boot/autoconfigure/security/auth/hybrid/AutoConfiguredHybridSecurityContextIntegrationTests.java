@@ -31,7 +31,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLocator;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration;
 import org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests;
 import org.springframework.test.annotation.DirtiesContext;
@@ -55,7 +54,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableLocator
- * @see org.springframework.data.gemfire.config.annotation.EnableLogging
  * @see org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration
  * @see org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests
  * @see org.springframework.test.annotation.DirtiesContext
@@ -76,7 +74,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AutoConfiguredHybridSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
 
-	private static final String GEMFIRE_LOG_LEVEL = "error";
 	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap-hybrid.properties";
 
 	private static Properties vcapApplicationProperties = new Properties();
@@ -107,12 +104,11 @@ public class AutoConfiguredHybridSecurityContextIntegrationTests
 	}
 
 	@SpringBootApplication
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class GemFireClientConfiguration extends BaseGemFireClientConfiguration { }
 
 	@SpringBootApplication
 	@EnableLocator(port = 54441)
-	@CacheServerApplication(name = "AutoConfiguredHybridSecurityContextIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
+	@CacheServerApplication(name = "AutoConfiguredHybridSecurityContextIntegrationTestsServer")
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {

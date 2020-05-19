@@ -35,7 +35,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.config.annotation.EnableGemFireProperties;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.function.annotation.GemfireFunction;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.geode.boot.autoconfigure.function.executions.Calculator;
@@ -53,6 +52,7 @@ import org.springframework.util.Assert;
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.data.gemfire.config.annotation.EnableGemFireProperties
  * @see org.springframework.data.gemfire.function.annotation.GemfireFunction
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.function.executions.Calculator
@@ -65,8 +65,6 @@ import org.springframework.util.Assert;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
 public class AutoConfiguredFunctionExecutionsIntegrationTests extends IntegrationTestsSupport {
-
-	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Autowired
 	private GemFireCache gemfireCache;
@@ -120,7 +118,6 @@ public class AutoConfiguredFunctionExecutionsIntegrationTests extends Integratio
 
 	@SpringBootApplication
 	@EnableGemFireProperties(groups = "test")
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class TestConfiguration {
 
 		@Bean

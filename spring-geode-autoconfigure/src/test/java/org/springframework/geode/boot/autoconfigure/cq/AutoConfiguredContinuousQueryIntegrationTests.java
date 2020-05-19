@@ -44,7 +44,6 @@ import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.PartitionedRegionFactoryBean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
@@ -66,7 +65,10 @@ import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.context.annotation.Import
+ * @see org.springframework.data.gemfire.GemfireTemplate
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
+ * @see org.springframework.data.gemfire.config.annotation.EnablePdx
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.ContinuousQueryAutoConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -81,8 +83,6 @@ import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
 )
 @SuppressWarnings("unused")
 public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
-
-	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
@@ -122,7 +122,6 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 	}
 
 	@SpringBootApplication
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	@Import(ClientServerIntegrationTestsConfiguration.class)
 	public static class GemFireClientConfiguration {
 
@@ -133,7 +132,6 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 				new ClientRegionFactoryBean<>();
 
 			temperatureReadingsRegion.setCache(gemfireCache);
-			temperatureReadingsRegion.setClose(false);
 			temperatureReadingsRegion.setShortcut(ClientRegionShortcut.PROXY);
 
 			return temperatureReadingsRegion;
@@ -153,7 +151,7 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 	}
 
 	@EnablePdx
-	@CacheServerApplication(name = "AutoConfiguredContinuousQueryIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
+	@CacheServerApplication(name = "AutoConfiguredContinuousQueryIntegrationTestsServer")
 	public static class GemFireServerConfiguration {
 
 		public static void main(String[] args) {
@@ -172,7 +170,6 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 
 			temperatureReadingsRegion.setCache(gemfireCache);
 			temperatureReadingsRegion.setCacheLoader(temperatureReadingsLoader());
-			temperatureReadingsRegion.setClose(false);
 			temperatureReadingsRegion.setPersistent(false);
 
 			return temperatureReadingsRegion;
@@ -208,7 +205,6 @@ public class AutoConfiguredContinuousQueryIntegrationTests extends ForkingClient
 					temperatureReadings.put(key, TemperatureReading.of(temperature));
 				}
 
-				@SuppressWarnings("all")
 				private void sleep(long milliseconds) {
 
 					try {

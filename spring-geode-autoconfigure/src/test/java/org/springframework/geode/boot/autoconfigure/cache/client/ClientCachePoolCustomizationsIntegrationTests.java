@@ -38,7 +38,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
 import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.config.annotation.EnablePool;
 import org.springframework.data.gemfire.config.annotation.PoolConfigurer;
 import org.springframework.data.gemfire.tests.integration.SpringBootApplicationIntegrationTestsSupport;
@@ -53,7 +52,7 @@ import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockO
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.apache.geode.cache.client.Pool
  * @see org.apache.geode.cache.client.PoolManager
- * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.ConfigurableApplicationContext
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer
@@ -68,7 +67,6 @@ import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockO
 public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApplicationIntegrationTestsSupport {
 
 	private static final String DEFAULT_POOL_NAME = "DEFAULT";
-	private static final String GEMFIRE_LOG_LEVEL = "off";
 	private static final String SPRING_DATA_GEMFIRE_PROPERTY_PREFIX = "spring.data.gemfire.";
 
 	@BeforeClass @AfterClass
@@ -267,7 +265,6 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 	@Configuration
 	@EnableAutoConfiguration
 	@EnableGemFireMockObjects
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class WithAutoConfiguredClientCacheConfiguration { }
 
 	@ClientCacheApplication(serverGroup = "TestServerGroup", threadLocalConnections = true)

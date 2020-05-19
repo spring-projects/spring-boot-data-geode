@@ -29,13 +29,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableLocator;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration test testing the auto-configuration of Apache Geode/Pivotal GemFire Security
+ * Integration Tests testing the auto-configuration of Apache Geode/Pivotal GemFire Security
  * authentication/authorization in a cloud, managed context (e.g. Pivotal CloudFoundry)
  *
  * @author John Blum
@@ -43,12 +42,12 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see java.util.Properties
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
- * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.core.io.ClassPathResource
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableLocator
- * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
  * @see org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration
  * @see org.springframework.geode.boot.autoconfigure.PeerSecurityAutoConfiguration
  * @see org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests
@@ -66,7 +65,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AutoConfiguredCloudSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
 
-	private static final String GEMFIRE_LOG_LEVEL = "error";
 	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap.properties";
 
 	private static Properties vcapApplicationProperties = new Properties();
@@ -97,12 +95,11 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 	}
 
 	@SpringBootApplication
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class GemFireClientConfiguration extends BaseGemFireClientConfiguration { }
 
 	@SpringBootApplication
-	@CacheServerApplication(name = "AutoConfiguredCloudSecurityContextIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
 	@EnableLocator(port = 55221)
+	@CacheServerApplication(name = "AutoConfiguredCloudSecurityContextIntegrationTestsServer")
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
 		public static void main(String[] args) {

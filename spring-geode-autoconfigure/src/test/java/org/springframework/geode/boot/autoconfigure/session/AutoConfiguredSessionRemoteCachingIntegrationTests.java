@@ -41,7 +41,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -63,25 +62,25 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author John Blum
  * @see java.net.URI
+ * @see javax.servlet.http.HttpSession
  * @see org.junit.Test
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.boot.web.server.LocalServerPort
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
- * @see org.springframework.data.gemfire.config.annotation.EnableLogging
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.SpringSessionAutoConfiguration
+ * @see org.springframework.http.RequestEntity
+ * @see org.springframework.http.ResponseEntity
  * @see org.springframework.session.data.gemfire.config.annotation.web.http.EnableGemFireHttpSession
- * @see org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration
+ * @see org.springframework.session.web.http.HeaderHttpSessionIdResolver
  * @see org.springframework.session.web.http.HttpSessionIdResolver
  * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
- * @see org.springframework.web.bind.annotation.GetMapping
- * @see org.springframework.web.bind.annotation.RequestMapping
- * @see org.springframework.web.bind.annotation.RequestParam
  * @see org.springframework.web.bind.annotation.RestController
  * @see org.springframework.web.client.RestTemplate
  * @since 1.0.0
@@ -171,7 +170,6 @@ public class AutoConfiguredSessionRemoteCachingIntegrationTests extends ForkingC
 	}
 
 	@SpringBootApplication
-	@EnableLogging(logLevel = "error")
 	static class SessionGemFireClientConfiguration {
 
 		@Bean
@@ -214,7 +212,7 @@ public class AutoConfiguredSessionRemoteCachingIntegrationTests extends ForkingC
 		}
 	}
 
-	@CacheServerApplication(name = "AutoConfiguredSessionRemoteCachingIntegrationTests", logLevel = "error")
+	@CacheServerApplication(name = "AutoConfiguredSessionRemoteCachingIntegrationTests")
 	@EnableGemFireHttpSession
 	static class SessionGemFireServerConfiguration {
 

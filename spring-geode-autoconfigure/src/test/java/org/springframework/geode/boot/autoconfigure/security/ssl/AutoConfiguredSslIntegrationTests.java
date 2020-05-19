@@ -43,7 +43,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -54,20 +53,19 @@ import example.echo.config.EchoClientConfiguration;
 import example.echo.config.EchoServerConfiguration;
 
 /**
- * Integration tests testing the auto-configuration of Apache Geode/Pivotal GemFire SSL.
+ * Integration Tests testing the auto-configuration of Apache Geode/Pivotal GemFire SSL.
  *
  * @author John Blum
  * @see org.junit.Test
- * @see org.apache.geode.cache.GemFireCache
- * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.annotation.Import
+ * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.data.gemfire.GemfireTemplate
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableSsl
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
- * @see org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration
  * @see org.springframework.test.annotation.DirtiesContext
  * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -77,13 +75,12 @@ import example.echo.config.EchoServerConfiguration;
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-	webEnvironment = SpringBootTest.WebEnvironment.NONE,
-	classes = AutoConfiguredSslIntegrationTests.GemFireClientConfiguration.class
+	classes = AutoConfiguredSslIntegrationTests.GemFireClientConfiguration.class,
+	webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
 @SuppressWarnings("unused")
 public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
-	private static final String GEMFIRE_LOG_LEVEL = "error";
 	private static final String TRUSTED_KEYSTORE_FILENAME = "test-trusted.keystore";
 
 	@BeforeClass
@@ -155,12 +152,11 @@ public class AutoConfiguredSslIntegrationTests extends ForkingClientServerIntegr
 	}
 
 	@SpringBootApplication
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	@Import(EchoClientConfiguration.class)
 	static class GemFireClientConfiguration extends ClientServerIntegrationTestsConfiguration { }
 
 	@SpringBootApplication
-	@CacheServerApplication(name = "AutoConfiguredSslIntegrationTests", logLevel = GEMFIRE_LOG_LEVEL)
+	@CacheServerApplication(name = "AutoConfiguredSslIntegrationTestsServer")
 	@Import(EchoServerConfiguration.class)
 	static class GemFireServerConfiguration {
 

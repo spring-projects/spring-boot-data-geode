@@ -34,7 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.GemfireUtils;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -49,6 +48,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.data.gemfire.client.ClientRegionFactoryBean
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -58,8 +59,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
 public class SpringBootApacheGeodeClientCacheApplicationIntegrationTests extends IntegrationTestsSupport {
-
-	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Autowired
 	private ClientCache clientCache;
@@ -83,7 +82,6 @@ public class SpringBootApacheGeodeClientCacheApplicationIntegrationTests extends
 	}
 
 	@SpringBootApplication
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	static class TestConfiguration {
 
 		@Bean("Example")
@@ -92,7 +90,6 @@ public class SpringBootApacheGeodeClientCacheApplicationIntegrationTests extends
 			ClientRegionFactoryBean<Object, Object> clientRegion = new ClientRegionFactoryBean<>();
 
 			clientRegion.setCache(gemfireCache);
-			clientRegion.setClose(false);
 			clientRegion.setShortcut(ClientRegionShortcut.LOCAL);
 
 			return clientRegion;

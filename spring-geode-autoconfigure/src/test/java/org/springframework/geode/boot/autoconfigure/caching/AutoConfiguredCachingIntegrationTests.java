@@ -27,17 +27,16 @@ import org.junit.runners.MethodSorters;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
-import org.assertj.core.api.Assertions;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions;
-import org.springframework.data.gemfire.config.annotation.EnableLogging;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import org.assertj.core.api.Assertions;
 
 import example.app.books.NonBeanType;
 import example.app.books.model.Book;
@@ -55,6 +54,7 @@ import example.app.books.service.support.CachingBookService;
  * @see org.springframework.data.gemfire.config.annotation.EnableCachingDefinedRegions
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.CachingProviderAutoConfiguration
+ * @see org.springframework.test.annotation.DirtiesContext
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
@@ -64,8 +64,6 @@ import example.app.books.service.support.CachingBookService;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
 public class AutoConfiguredCachingIntegrationTests extends IntegrationTestsSupport {
-
-	private static final String GEMFIRE_LOG_LEVEL = "error";
 
 	@Autowired
 	private CachingBookService bookService;
@@ -125,7 +123,6 @@ public class AutoConfiguredCachingIntegrationTests extends IntegrationTestsSuppo
 	}
 
 	@SpringBootApplication(scanBasePackageClasses = NonBeanType.class)
-	@EnableLogging(logLevel = GEMFIRE_LOG_LEVEL)
 	@EnableCachingDefinedRegions(clientRegionShortcut = ClientRegionShortcut.LOCAL)
 	static class TestConfiguration {  }
 
