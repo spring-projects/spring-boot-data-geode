@@ -20,6 +20,7 @@ import org.apache.geode.cache.GemFireCache;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
@@ -31,6 +32,7 @@ import org.springframework.data.gemfire.config.annotation.EnableLogging;
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnBean
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+ * @see org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.EnableLogging
@@ -39,8 +41,14 @@ import org.springframework.data.gemfire.config.annotation.EnableLogging;
 @Configuration
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass(CacheFactoryBean.class)
+@ConditionalOnMissingBean(name = {
+	"org.springframework.data.gemfire.config.annotation.LoggingConfiguration.ClientGemFirePropertiesConfigurer",
+	"org.springframework.data.gemfire.config.annotation.LoggingConfiguration.LocatorGemFirePropertiesConfigurer",
+	"org.springframework.data.gemfire.config.annotation.LoggingConfiguration.PeerGemFirePropertiesConfigurer",
+})
 @EnableLogging
 @SuppressWarnings("unused")
+// TODO Find a more reliable way to refer to the LoggingConfiguration Configurer beans defined above other than by name!
 public class LoggingAutoConfiguration {
 
 }
