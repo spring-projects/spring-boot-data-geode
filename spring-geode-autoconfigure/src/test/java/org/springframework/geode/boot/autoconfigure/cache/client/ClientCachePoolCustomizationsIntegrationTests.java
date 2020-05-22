@@ -36,6 +36,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
 import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
 import org.springframework.data.gemfire.config.annotation.EnablePool;
@@ -264,7 +265,7 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableGemFireMockObjects
+	@EnableGemFireMockObjects(destroyOnEvent = ContextClosedEvent.class)
 	static class WithAutoConfiguredClientCacheConfiguration { }
 
 	@ClientCacheApplication(serverGroup = "TestServerGroup", threadLocalConnections = true)
