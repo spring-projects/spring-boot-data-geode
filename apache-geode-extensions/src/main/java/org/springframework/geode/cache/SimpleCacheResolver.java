@@ -142,6 +142,7 @@ public abstract class SimpleCacheResolver {
 	 *
 	 * @param <T> {@link Class subclass} of {@link GemFireCache} to resolve.
 	 * @return an instance of either a {@link ClientCache} or a {@literal peer} {@link Cache}.
+	 * @throws IllegalStateException if a cache instance cannot be resolved.
 	 * @see org.apache.geode.cache.client.ClientCache
 	 * @see org.apache.geode.cache.Cache
 	 * @see org.apache.geode.cache.GemFireCache
