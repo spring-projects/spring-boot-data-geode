@@ -11,6 +11,7 @@ John Blum
 :source-highlighter: prettify
 :toc: left
 :toclevels: 1
+:apache-geode-name: Apache Geode
 :apache-geode-version: {master-apache-geode-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
@@ -21,6 +22,7 @@ John Blum
 :pivotal-cloudfoundry-version: 2-9
 :pivotal-cloudfoundry-docs: https://docs.pivotal.io/platform/application-service/{pivotal-cloudfoundry-version}
 :pivotal-cloudfoundry-website: https://pivotal.io/platform
+:pivotal-gemfire-name: VMware GemFire
 :pivotal-gemfire-version: {master-pivotal-gemfire-version}
 :pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference
 :pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
@@ -57,94 +59,99 @@ John Blum
 
 
 [[abstract]]
-Welcome to _Spring Boot for Apache Geode & Pivotal GemFire_.
+Welcome to _Spring Boot for {apache-geode-name} & {pivotal-gemfire-name}_.
 
-Spring Boot for Apache Geode & Pivotal GemFire provides the convenience of Spring Boot's _convention over configuration_
+Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} provides the convenience of Spring Boot's _convention over configuration_
 approach using _auto-configuration_ with the Spring Framework's powerful abstractions and highly consistent programming
-model to truly simplify the development of Apache Geode or Pivotal GemFire applications in a Spring context.
+model to truly simplify the development of {apache-geode-name} or {pivotal-gemfire-name} applications in a Spring context.
 
-Secondarily, Spring Boot for Apache Geode & Pivotal GemFire aims to provide developers with a consistent experience
-whether building and running Spring Boot, Apache Geode/Pivotal GemFire applications locally or in a managed environment,
-such as with https://pivotal.io/platform[Pivotal CloudFoundry] (PCF).
+Secondarily, Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} aims to provide developers with a consistent
+experience whether building and running Spring Boot, {apache-geode-name} & {pivotal-gemfire-name} applications locally
+or in a managed environment, such as with https://pivotal.io/platform[Pivotal CloudFoundry] (PCF).
 
-This project is a continuation and a logical extension to Spring Data for Apache Geode/Pivotal GemFire's
-{spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model] and the goals
-set forth in that model: _To enable application developers to *get up and running* as *quickly* and as *easily*
-as possible_.  In fact, Spring Boot for Apache Geode/Pivotal GemFire builds on this very
-{spring-data-geode-docs-html}/#bootstrap-annotation-config[foundation] cemented in
-Spring Data for Apache Geode/Pivotal GemFire
-(SDG footnote:SDG[Spring Data for Apache Geode and Spring Data for Pivotal GemFire are commonly known as SDG.])
-since the Spring Data Kay Release Train.
+This project is a continuation and a logical extension to Spring Data for {apache-geode-name} & {pivotal-gemfire-name}'s
+{spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model] and the goals set forth
+in that model: _To enable application developers to *get up and running* as *quickly* and as *easily* as possible_.
+In fact, Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} builds on this very {spring-data-geode-docs-html}/#bootstrap-annotation-config[foundation]
+cemented in Spring Data for {apache-geode-name} & {pivotal-gemfire-name} (SDG footnote:SDG[Spring Data for {apache-geode-name}
+and Spring Data for {pivotal-gemfire-name} are commonly known as SDG.]) since the Spring Data Kay Release Train.
 
 [[introduction]]
 == Introduction
 
-Spring Boot for Apache Geode & Pivotal GemFire automatically applies _auto-configuration_ to several key
+Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} automatically applies _auto-configuration_ to several key
 application concerns (_Use Cases_) including, but not limited to:
 
-* _Look-Aside Caching_, using either Apache Geode or Pivotal GemFire as a caching provider in
+* _Look-Aside, Inline, Near_ and _Multi-Site Caching_, using {apache-geode-name} as a caching provider in
 {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction].
-* {wikipedia-docs}/System_of_record[_System of Record_ (SOR)], persisting application state reliably in Apache Geode
-or Pivotal GemFire using {spring-data-commons-docs-html}/#repositories[Spring Data Repositories].
+<<geode-caching-provider,Learn more>>.
+* {wikipedia-docs}/System_of_record[_System of Record_ (SOR)], persisting application state reliably in {apache-geode-name}
+using {spring-data-commons-docs-html}/#repositories[Spring Data Repositories].
+<<geode-repositories,Learn more>>.
 * _Transactions_, managing application state consistently with {spring-framework-docs}/data-access.html#transaction[Spring Transaction Management]
-and SDGfootnote:SDG[]
-support for both {spring-data-geode-docs-html}/#apis:transaction-management[Local Cache]
+and SDGfootnote:SDG[] with support for both {spring-data-geode-docs-html}/#apis:transaction-management[Local Cache]
 and {spring-data-geode-docs-html}/#apis:global-transaction-management[Global JTA] Transactions.
-* _Distributed Computations_, run with Apache Geode/Pivotal GemFire's {apache-geode-docs}/developing/function_exec/chapter_overview.html[Function Executions] framework
+* _Distributed Computations_, ran with {apache-geode-name}'s {apache-geode-docs}/developing/function_exec/chapter_overview.html[Function Execution] framework,
 and conveniently implemented and executed with SDGfootnote:SDG[] {spring-data-geode-docs-html}/#function-annotations[POJO-based, annotation support for Functions].
-* _Continuous Queries_, expressing interests in a stream of events, where applications are able to react to and process changes to data in near real-time
-using Apache Geode/Pivotal GemFire {apache-geode-docs}/developing/continuous_querying/chapter_overview.html[Continuous Query (CQ)].
+<<geode-functions,Learn more>>.
+* _Continuous Queries_, expressing interests in a stream of events, allowing applications to react to and process changes to data in near real-time
+with {apache-geode-name}'s {apache-geode-docs}/developing/continuous_querying/chapter_overview.html[Continuous Query (CQ)].
 Handlers are defined as simple Message-Driven POJOs (MDP) using Spring's {spring-framework-docs}/integration.html#jms-mdp[Message Listener Container],
-which has been {spring-data-geode-docs-html}/#apis:continuous-query[extended] by SDGfootnote:SDG[] with its
+which has been {spring-data-geode-docs-html}/#apis:continuous-query[extended] in SDGfootnote:SDG[] with its
 {spring-data-geode-docs-html}/#bootstrap-annotation-config-continuous-queries[configurable] CQ support.
-* _Data Serialization_ with Apache Geode/Pivotal GemFire {apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX],
+<<geode-continuous-query,Learn more>>.
+* _Data Serialization_ with {apache-geode-name} {apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX],
 including first-class {spring-data-geode-docs-html}/#bootstrap-annotation-config-pdx[configuration]
 and {spring-data-geode-docs-html}/#mapping.pdx-serializer[support] in SDGfootnote:SDG[].
+<<geode-data-serialization,Learn more>>.
+* _Logging_ - quickly and conveniently enable or adjust {apache-geode-name} log levels in your Spring Boot application
+to gain insight into the runtime operations of the app as they occur.
+<<geode-logging,Learn more>>.
 * _Security_, including {apache-geode-docs}/managing/security/authentication_overview.html[Authentication]
 & {apache-geode-docs}/managing/security/authorization_overview.html[Authorization] as well as Transport Layer Security (TLS)
-using Apache Geode/Pivotal GemFire's {apache-geode-docs}/managing/security/ssl_overview.html[Secure Socket Layer (SSL)].
-Once again, SDGfootnote:SDG[] includes first-class support for configuring {spring-data-geode-docs-html}/#bootstrap-annotation-config-security[Auth]
+using {apache-geode-name} {apache-geode-docs}/managing/security/ssl_overview.html[Secure Socket Layer (SSL)]. Once more,
+SDGfootnote:SDG[] includes first-class support for configuring {spring-data-geode-docs-html}/#bootstrap-annotation-config-security[Auth]
 and {spring-data-geode-docs-html}/#bootstrap-annotation-config-ssl[SSL].
-* _HTTP Session state management_, by including Spring Session for Apache Geode/Pivotal GemFire on your application's
-classpath.
+<<geode-security,Learn more>>.
+* _HTTP Session state management_, by including Spring Session for {apache-geode-name} on your application's classpath.
+<<geode-session,Learn more>>.
 
-While Spring Data for Apache Geode & Pivotal GemFire offers a simple, convenient and declarative approach to configure
-all these powerful Apache Geode/Pivotal GemFire features, Spring Boot for Apache Geode & Pivotal Gemfire makes it even
-easier to do as we will explore throughout this Reference Documentation.
+While Spring Data for {apache-geode-name} & {pivotal-gemfire-name} offers a simple, consistent, convenient
+and declarative approach to configure all these powerful {apache-geode-name} features, Spring Boot for {apache-geode-name}
+& {pivotal-gemfire-name} makes it even easier to do as we will explore throughout this reference documentation.
 
 [[getting-started]]
 == Getting Started
 
-In order to be immediately productive and as effective as possible using Spring Boot for Apache Geode/Pivotal GemFire,
-it is helpful to understand the foundation on which this project was built.
+In order to be immediately productive and as effective as possible using Spring Boot for {apache-geode-name}
+& {pivotal-gemfire-name}, it is helpful to understand the foundation on which this project was built.
 
 Of course, our story begins with the Spring Framework and the {spring-framework-docs}/core.html#spring-core[core technologies and concepts]
 built into the Spring container.
 
-Then, our journey continues with the extensions built into Spring Data for Apache Geode & Pivotal GemFire
-(SDGfootnote:SDG[])
-to truly simplify the development of Apache Geode & Pivotal GemFire applications in a Spring context, using Spring's
-powerful abstractions and highly consistent programming model.  This part of the story was greatly enhanced in
-Spring Data Kay, with the SDGfootnote:SDG[] {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model].
-Though this new configuration approach using annotations provides sensible defaults out-of-the-box, its use
-is also very explicit and assumes nothing.  If any part of the configuration is ambiguous, SDG will fail fast.
-SDG gives you "_choice_", so you still must tell SDGfootnote:SDG[] what you want.
+Then, our journey continues with the extensions built into Spring Data for {apache-geode-name} & {pivotal-gemfire-name}
+(SDGfootnote:SDG[]) to truly simplify the development of {apache-geode-name} & {pivotal-gemfire-name} applications in a
+Spring context, using Spring's powerful abstractions and highly consistent programming model. This part of the story
+was greatly enhanced in Spring Data Kay, with the SDGfootnote:SDG[] {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model].
+Though this new configuration approach using annotations provides sensible defaults out-of-the-box, its use is also very
+explicit and assumes nothing.  If any part of the configuration is ambiguous, SDG will fail fast. SDG gives you
+"_choice_", so you still must tell SDGfootnote:SDG[] what you want.
 
 Next, we venture into Spring Boot and all of its wonderfully expressive and highly opinionated "_convention over configuration_"
-approach for getting the most out of your Spring, Apache Geode/Pivotal GemFire based applications in the easiest,
-quickest and most reliable way possible.  We accomplish this by combining Spring Data for Apache Geode/Pivotal GemFire's
-{spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration] with Spring Boot's
-{spring-boot-docs-html}/#using-boot-auto-configuration[auto-configuration] to get you up and running even faster
-and more reliably so that you are productive from the start.
+approach for getting the most out of your Spring, {apache-geode-name}/{pivotal-gemfire-name} based applications in the
+easiest, quickest and most reliable way possible.  We accomplish this by combining Spring Data for {apache-geode-name}
+& {pivotal-gemfire-name}'s {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration]
+with Spring Boot's {spring-boot-docs-html}/#using-boot-auto-configuration[auto-configuration] to get you up and running
+even faster and more reliably so that you are productive from the start.
 
 As such, it would be pertinent to begin your Spring Boot education {spring-boot-docs-html}/#getting-started[here].
 
-Finally, we arrive at Spring Boot for Apache Geode & Pivotal GemFire (SBDG).
+Finally, we arrive at Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} (SBDG).
 
 [[maven-gradle]]
-== Using Spring Boot for Apache Geode and Pivotal GemFire
+== Using Spring Boot for {apache-geode-name} & {pivotal-gemfire-name}
 
-To use Spring Boot for Apache Geode, declare the `spring-geode-starter` on your application classpath:
+To use Spring Boot for {apache-geode-name}, declare the `spring-geode-starter` on your application classpath:
 
 .Maven
 [source,xml]
@@ -156,11 +163,11 @@ To use Spring Boot for Apache Geode, declare the `spring-geode-starter` on your 
         <artifactId>spring-geode-starter</artifactId>
         <version>{spring-boot-data-geode-version}</version>
     </dependency>
-</dependencies
+</dependencies>
 ----
 
 .Gradle
-[source,java]
+[source,gradle]
 [subs="verbatim,attributes"]
 ----
 dependencies {
@@ -168,8 +175,8 @@ dependencies {
 }
 ----
 
-TIP: To use Pivotal GemFire in place of Apache Geode, simply change the `artifactId` from `spring-geode-starter`
-to `spring-gemfire-starter`.
+TIP: To use {pivotal-gemfire-name} in place of {apache-geode-name}, simply change the `artifactId`
+from `spring-geode-starter` to `spring-gemfire-starter`.
 
 ifeval::["{version-snapshot}" == "true"]
 Since you are using a SNAPSHOT version, you need to add the Spring Snapshot Maven Repository.
