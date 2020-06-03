@@ -29,7 +29,7 @@ John Blum
 :spring-boot-docs-html: {spring-boot-docs}/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
 :spring-boot-website: https://spring.io/projects/spring-boot
-:spring-boot-data-geode-javadoc: https://docs.spring.io/autorepo/docs/spring-boot-data-geode-build/current/api/
+:spring-boot-data-geode-javadoc: https://docs.spring.io/spring-boot-data-geode-build/current/api/
 :spring-data-commons-docs: https://docs.spring.io/spring-data/commons/docs/current/reference
 :spring-data-commons-docs-html: {spring-data-commons-docs}/html
 :spring-data-commons-javadoc: https://docs.spring.io/spring-data/commons/docs/current/api
@@ -237,8 +237,9 @@ include::{include-dir}/functions.adoc[]
 include::{include-dir}/continuous-query.adoc[]
 include::{include-dir}/data.adoc[]
 include::{include-dir}/data-serialization.adoc[]
-include::{include-dir}/security.adoc[]
 include::{include-dir}/logging.adoc[]
+include::{include-dir}/security.adoc[]
+include::{include-dir}/geode-api-ext.adoc[]
 include::{include-dir}/actuator.adoc[]
 include::{include-dir}/session.adoc[]
 include::{include-dir}/cloudfoundry.adoc[]
