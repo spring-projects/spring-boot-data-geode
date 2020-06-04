@@ -1,3 +1,7 @@
+plugins {
+	id "io.freefair.lombok" version "5.0.0-rc2"
+}
+
 import org.apache.tools.ant.filters.ReplaceTokens
 
 apply plugin: 'io.spring.convention.docs'
@@ -11,10 +15,11 @@ dependencies {
 
 	optional project(":spring-geode-starter-logging")
 
+	compile "org.assertj:assertj-core"
+	compile "org.projectlombok:lombok"
+
 	testCompile "junit:junit"
-	testCompile "org.assertj:assertj-core"
 	testCompile "org.mockito:mockito-core"
-	testCompile "org.projectlombok:lombok"
 	testCompile "org.springframework:spring-test"
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
 
