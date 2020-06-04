@@ -16,6 +16,7 @@ John Blum
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
+:apache-geode-wiki: https://cwiki.apache.org/confluence/display/GEODE
 :pivotal-cloudcache-version: {master-pivotal-cloudcache-version}
 :pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}
 :pivotal-cloudcache-website: https://pivotal.io/pivotal-cloud-cache
@@ -250,5 +251,6 @@ include::{include-dir}/geode-api-ext.adoc[]
 include::{include-dir}/actuator.adoc[]
 include::{include-dir}/session.adoc[]
 include::{include-dir}/cloudfoundry.adoc[]
+include::{include-dir}/docker.adoc[]
 include::{include-dir}/samples.adoc[]
 include::{include-dir}/appendix.adoc[]
