@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 
-import org.apache.geode.cache.client.ClientCache;
+import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -33,11 +33,11 @@ import org.springframework.geode.docs.example.app.docker.model.Customer;
 import org.springframework.geode.docs.example.app.docker.repo.CustomerRepository;
 
 /**
- * A Spring Boot, Apache Geode {@link ClientCache} application used to connect to an Apache Geode cluster running in a
+ * A Spring Boot, Apache Geode {@link GemFireCache} application used to connect to an Apache Geode cluster running in a
  * Docker Container.
  *
  * @author John Blum
- * @see org.apache.geode.cache.client.ClientCache
+ * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.ApplicationRunner
  * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
@@ -61,11 +61,11 @@ public class SpringBootApacheGeodeDockerClientCacheApplication {
 
 	@Bean
 	@SuppressWarnings("unused")
-	ApplicationRunner runner(ClientCache clientCache, CustomerRepository customerRepository) {
+	ApplicationRunner runner(GemFireCache cache, CustomerRepository customerRepository) {
 
 		return args -> {
 
-			assertClientCacheAndConfigureMappingPdxSerializer(clientCache);
+			assertClientCacheAndConfigureMappingPdxSerializer(cache);
 			assertThat(customerRepository.count()).isEqualTo(0);
 
 			Customer jonDoe = Customer.newCustomer(1L, "Jon Doe");
@@ -89,14 +89,14 @@ public class SpringBootApacheGeodeDockerClientCacheApplication {
 		};
 	}
 
-	private void assertClientCacheAndConfigureMappingPdxSerializer(ClientCache clientCache) {
+	private void assertClientCacheAndConfigureMappingPdxSerializer(GemFireCache cache) {
 
-		assertThat(clientCache).isNotNull();
-		assertThat(clientCache.getName())
+		assertThat(cache).isNotNull();
+		assertThat(cache.getName())
 			.isEqualTo(SpringBootApacheGeodeDockerClientCacheApplication.class.getSimpleName());
-		assertThat(clientCache.getPdxSerializer()).isInstanceOf(MappingPdxSerializer.class);
+		assertThat(cache.getPdxSerializer()).isInstanceOf(MappingPdxSerializer.class);
 
-		MappingPdxSerializer serializer = (MappingPdxSerializer) clientCache.getPdxSerializer();
+		MappingPdxSerializer serializer = (MappingPdxSerializer) cache.getPdxSerializer();
 
 		serializer.setIncludeTypeFilters(type -> Optional.ofNullable(type)
 			.map(Class::getPackage)
