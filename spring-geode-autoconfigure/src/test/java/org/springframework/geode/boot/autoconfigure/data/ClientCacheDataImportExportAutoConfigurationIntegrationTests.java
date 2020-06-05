@@ -140,7 +140,7 @@ public class ClientCacheDataImportExportAutoConfigurationIntegrationTests
 	}
 
 	@Test
-	public void booksWasLoaded() {
+	public void booksWereLoaded() {
 
 		Collection<Object> bookValues = getRegionValues(this.booksTemplate);
 
