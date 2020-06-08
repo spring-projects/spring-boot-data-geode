@@ -33,6 +33,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -826,8 +827,8 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 	@Test
 	public void getResourceLocationIsInWorkingDirectory() {
-		assertThat(this.importer.getResourceLocation()).isEqualTo(String.format("%1$s%2$s",
-			JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX, System.getProperty("user.dir")));
+		assertThat(this.importer.getResourceLocation()).isEqualTo(String.format("%1$s%2$s%3$s",
+			JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX, System.getProperty("user.dir"), File.separator));
 	}
 
 	@Test

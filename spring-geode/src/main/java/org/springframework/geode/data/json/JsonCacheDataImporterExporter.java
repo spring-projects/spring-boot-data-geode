@@ -19,6 +19,7 @@ import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newI
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -399,7 +400,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 * @return a {@link String file system path} specifying the location for where to export the {@link Resource}.
 	 */
 	protected @NonNull String getResourceLocation() {
-		return String.format("%1$s%2$s", FILESYSTEM_RESOURCE_PREFIX, System.getProperty("user.dir"));
+		return String.format("%1$s%2$s%3$s", FILESYSTEM_RESOURCE_PREFIX, System.getProperty("user.dir"), File.separator);
 	}
 
 	/**
