@@ -181,14 +181,14 @@ public class ClientCacheDataImportExportAutoConfigurationIntegrationTests
 		}
 
 		@Bean("Books")
-		LocalRegionFactoryBean<Object, Object> peerRegion(GemFireCache cache) {
+		LocalRegionFactoryBean<Object, Object> booksRegion(GemFireCache cache) {
 
-			LocalRegionFactoryBean<Object, Object> peerRegion = new LocalRegionFactoryBean<>();
+			LocalRegionFactoryBean<Object, Object> booksRegion = new LocalRegionFactoryBean<>();
 
-			peerRegion.setCache(cache);
-			peerRegion.setPersistent(false);
+			booksRegion.setCache(cache);
+			booksRegion.setPersistent(false);
 
-			return peerRegion;
+			return booksRegion;
 		}
 	}
 }
