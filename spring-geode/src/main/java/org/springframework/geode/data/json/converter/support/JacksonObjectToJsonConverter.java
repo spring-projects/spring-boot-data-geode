@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
@@ -103,6 +104,7 @@ public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 			.addMixIn(target.getClass(), ObjectTypeMetadataMixin.class)
 			.configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
 			.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+			.configure(SerializationFeature.INDENT_OUTPUT, true)
 			.findAndRegisterModules();
 	}
 

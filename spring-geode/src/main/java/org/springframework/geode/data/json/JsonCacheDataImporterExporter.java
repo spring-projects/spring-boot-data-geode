@@ -96,11 +96,11 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	protected static final String NO_FIELD_NAME = "";
 	protected static final String RESOURCE_NAME_PATTERN = "data-%s.json";
 
-	private JsonToPdxConverter toPdxConverter = newJsonToPdxConverter();
+	private JsonToPdxConverter jsonToPdxConverter = newJsonToPdxConverter();
 
-	private JsonToPdxArrayConverter toPdxArrayConverter = newJsonToPdxArrayConverter();
+	private JsonToPdxArrayConverter jsonToPdxArrayConverter = newJsonToPdxArrayConverter();
 
-	private ObjectToJsonConverter toJsonConverter = newObjectToJsonConverter();
+	private ObjectToJsonConverter objectToJsonConverter = newObjectToJsonConverter();
 
 	// TODO configure via an SPI
 	private @NonNull JsonToPdxConverter newJsonToPdxConverter() {
@@ -124,7 +124,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 * @see org.springframework.geode.data.json.converter.JsonToPdxConverter
 	 */
 	protected @NonNull JsonToPdxConverter getJsonToPdxConverter() {
-		return this.toPdxConverter;
+		return this.jsonToPdxConverter;
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 * @see org.springframework.geode.data.json.converter.JsonToPdxArrayConverter
 	 */
 	protected @NonNull JsonToPdxArrayConverter getJsonToPdxArrayConverter() {
-		return this.toPdxArrayConverter;
+		return this.jsonToPdxArrayConverter;
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
 	 */
 	protected @NonNull ObjectToJsonConverter getObjectToJsonConverter() {
-		return this.toJsonConverter;
+		return this.objectToJsonConverter;
 	}
 
 	/**

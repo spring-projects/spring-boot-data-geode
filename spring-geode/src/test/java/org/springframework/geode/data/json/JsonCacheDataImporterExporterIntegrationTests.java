@@ -366,9 +366,9 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 
 			closeApplicationContext();
 
-			String actualJson = writer.toString();
+			String actualJson = StringUtils.trimAllWhitespace(writer.toString());
 
-			String expectedJson = String.format("[{\"@type\":\"%s\",\"id\":42,\"name\":\"Play Doe\"}]",
+			String expectedJson = String.format("[{\"@type\":\"%s\",\"id\":42,\"name\":\"PlayDoe\"}]",
 				playDoe.getClass().getName());
 
 			assertThat(actualJson).isEqualTo(expectedJson);

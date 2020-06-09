@@ -33,6 +33,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.junit.Test;
 
@@ -150,6 +151,7 @@ public class JacksonObjectToJsonConverterUnitTests {
 		doReturn(mockObjectMapper).when(mockObjectMapper).addMixIn(any(), any());
 		doReturn(mockObjectMapper).when(mockObjectMapper).configure(any(JsonGenerator.Feature.class), anyBoolean());
 		doReturn(mockObjectMapper).when(mockObjectMapper).configure(any(MapperFeature.class), anyBoolean());
+		doReturn(mockObjectMapper).when(mockObjectMapper).configure(any(SerializationFeature.class), anyBoolean());
 		doReturn(mockObjectMapper).when(mockObjectMapper).findAndRegisterModules();
 
 		ObjectMapper objectMapper = converter.newObjectMapper(target);
@@ -164,6 +166,8 @@ public class JacksonObjectToJsonConverterUnitTests {
 			.configure(eq(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN), eq(true));
 		verify(mockObjectMapper, times(1))
 			.configure(eq(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY), eq(true));
+		verify(mockObjectMapper, times(1))
+			.configure(eq(SerializationFeature.INDENT_OUTPUT), eq(true));
 		verify(mockObjectMapper, times(1)).findAndRegisterModules();
 		verifyNoMoreInteractions(mockObjectMapper);
 	}

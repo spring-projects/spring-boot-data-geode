@@ -281,7 +281,7 @@ public class JSONFormatterPdxToJsonConverterUnitTests {
 	public void decorateJsonForReal() {
 
 		String json = "{ \"name\": \"Jon Doe\" }";
-		String expectedJson = String.format("{\"name\":\"Jon Doe\",\"%s\":\"%s\"}",
+		String expectedJson = String.format("{\n  \"name\" : \"Jon Doe\",\n  \"%s\" : \"%s\"\n}",
 			JSONFormatterPdxToJsonConverter.AT_TYPE_METADATA_PROPERTY_NAME, Customer.class.getName());
 
 		PdxInstance mockPdxInstance = mock(PdxInstance.class);
