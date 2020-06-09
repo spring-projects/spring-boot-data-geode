@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,6 +44,7 @@ import org.springframework.data.gemfire.config.annotation.CacheServerApplication
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.geode.boot.autoconfigure.DataImportExportAutoConfiguration;
+import org.springframework.geode.config.annotation.ClusterAwareConfiguration;
 import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.geode.util.CacheUtils;
@@ -87,6 +89,11 @@ import example.app.books.model.ISBN;
 @SuppressWarnings("unused")
 public class ClientCacheDataImportExportAutoConfigurationIntegrationTests
 		extends ForkingClientServerIntegrationTestsSupport {
+
+	@AfterClass
+	public static void resetClusterAwareCondition() {
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
+	}
 
 	@BeforeClass
 	public static void startGeodeServer() throws IOException {

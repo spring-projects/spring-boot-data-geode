@@ -17,6 +17,7 @@ package org.springframework.geode.boot.autoconfigure.cluster;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,6 +29,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.config.annotation.ClusterConfigurationConfiguration;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.geode.config.annotation.ClusterAwareConfiguration;
 import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.test.context.ActiveProfiles;
@@ -58,6 +60,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SuppressWarnings("unused")
 public class ClusterConfigurationWithClusterAwareWhenNonSecureClusterAvailableIntegrationTests
 		extends IntegrationTestsSupport {
+
+	@AfterClass
+	public static void resetClusterAwareCondition() {
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
+	}
 
 	@Autowired
 	private Environment environment;

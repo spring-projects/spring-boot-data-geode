@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -88,8 +89,8 @@ public class AutoConfiguredSessionLocalCachingIntegrationTests extends Integrati
 
 	private static final String HTTP_HEADER_AUTHENTICATION_INFO = "Authentication-Info";
 
-	@BeforeClass
-	public static void cleanClusterAwareState() {
+	@BeforeClass @AfterClass
+	public static void resetClusterAwareCondition() {
 		ClusterAwareConfiguration.ClusterAwareCondition.reset();
 	}
 

@@ -46,6 +46,7 @@ import org.springframework.data.gemfire.tests.process.ProcessWrapper;
 import org.springframework.data.gemfire.tests.util.FileSystemUtils;
 import org.springframework.data.gemfire.tests.util.FileUtils;
 import org.springframework.geode.boot.autoconfigure.DataImportExportAutoConfiguration;
+import org.springframework.geode.config.annotation.ClusterAwareConfiguration;
 import org.springframework.geode.config.annotation.EnableClusterAware;
 
 import example.app.golf.model.Golfer;
@@ -71,6 +72,11 @@ public class CacheDataExportAutoConfigurationIntegrationTests extends ForkingCli
 	private static ProcessWrapper process;
 
 	private static final String DATA_GOLFERS_JSON = "data-golfers.json";
+
+	@BeforeClass @AfterClass
+	public static void resetClusterAwareCondition() {
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
+	}
 
 	@BeforeClass
 	public static void runGeodeProcess() throws IOException {
