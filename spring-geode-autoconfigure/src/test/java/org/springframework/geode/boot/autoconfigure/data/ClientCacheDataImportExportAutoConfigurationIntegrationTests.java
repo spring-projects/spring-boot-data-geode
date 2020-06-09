@@ -32,20 +32,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.apache.geode.cache.DataPolicy;
-import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.GemfireTemplate;
-import org.springframework.data.gemfire.LocalRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.geode.boot.autoconfigure.DataImportExportAutoConfiguration;
+import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.geode.util.CacheUtils;
 import org.springframework.test.context.ActiveProfiles;
@@ -76,12 +74,13 @@ import example.app.books.model.ISBN;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.3.0
  */
-@ActiveProfiles("IMPORT")
+@ActiveProfiles("IMPORT-CLIENT")
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes = ClientCacheDataImportExportAutoConfigurationIntegrationTests.TestGeodeClientConfiguration.class,
 	properties = {
-		"spring.boot.data.gemfire.cache.data.import.active-profiles=IMPORT",
+		"spring.data.gemfire.management.use-http=false",
+		"spring.boot.data.gemfire.cache.data.import.active-profiles=IMPORT-CLIENT",
 		"spring.boot.data.gemfire.cache.region.advice.enabled=true"
 	}
 )
@@ -163,8 +162,9 @@ public class ClientCacheDataImportExportAutoConfigurationIntegrationTests
 			ISBN.of("978-1-492-04034-7"), Author.newAuthor("Alex Petrov").identifiedBy(2L));
 	}
 
-	@Profile("IMPORT")
+	@Profile("IMPORT-CLIENT")
 	@SpringBootApplication
+	@EnableClusterAware
 	@EnableEntityDefinedRegions(basePackageClasses = Book.class)
 	static class TestGeodeClientConfiguration { }
 
@@ -178,17 +178,6 @@ public class ClientCacheDataImportExportAutoConfigurationIntegrationTests
 				new AnnotationConfigApplicationContext(TestGeodeServerConfiguration.class);
 
 			applicationContext.registerShutdownHook();
-		}
-
-		@Bean("Books")
-		LocalRegionFactoryBean<Object, Object> booksRegion(GemFireCache cache) {
-
-			LocalRegionFactoryBean<Object, Object> booksRegion = new LocalRegionFactoryBean<>();
-
-			booksRegion.setCache(cache);
-			booksRegion.setPersistent(false);
-
-			return booksRegion;
 		}
 	}
 }

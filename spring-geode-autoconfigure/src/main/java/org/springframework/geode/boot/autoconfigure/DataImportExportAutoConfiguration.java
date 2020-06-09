@@ -39,7 +39,9 @@ import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperRegionAspect;
 import org.springframework.geode.cache.SimpleCacheResolver;
 import org.springframework.geode.data.AbstractCacheDataImporterExporter;
+import org.springframework.geode.data.CacheDataImporterExporter;
 import org.springframework.geode.data.json.JsonCacheDataImporterExporter;
+import org.springframework.geode.data.support.LifecycleAwareCacheDataImporterExporter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -78,8 +80,8 @@ public class DataImportExportAutoConfiguration {
 		"spring.boot.data.gemfire.cache.region.advice.enabled";
 
 	@Bean
-	JsonCacheDataImporterExporter jsonCacheDataImporterExporter() {
-		return new JsonCacheDataImporterExporter();
+	CacheDataImporterExporter jsonCacheDataImporterExporter() {
+		return new LifecycleAwareCacheDataImporterExporter(new JsonCacheDataImporterExporter());
 	}
 
 	@Bean
