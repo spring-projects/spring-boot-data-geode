@@ -181,10 +181,8 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 			.map(this::getContent)
 			.map(this::toPdx)
 			.map(Arrays::stream)
-			.ifPresent(pdxInstances -> pdxInstances.forEach(pdxInstance -> {
-				pdxInstance = postProcess(pdxInstance);
-				region.put(getIdentifier(pdxInstance), pdxInstance);
-			}));
+			.ifPresent(pdxInstances -> pdxInstances.forEach(pdxInstance ->
+				region.put(getIdentifier(pdxInstance), postProcess(pdxInstance))));
 
 		return region;
 	}
