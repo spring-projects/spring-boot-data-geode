@@ -55,7 +55,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
-import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
 
 import example.app.crm.model.Customer;
 import example.app.pos.model.LineItem;
@@ -830,33 +829,6 @@ public class JsonCacheDataImporterExporterUnitTests {
 	}
 
 	@Test
-	public void toJsonFromRegion() {
-
-		String jonDoeJson = "{ \"name\": \"Jon Doe\" }";
-		String janeDoeJson = "{ \"name\": \"Jane Doe\" }";
-		String pieDoeJson = "{ \"name\": \"Pie Doe\" }";
-		String expectedJson = String.format("[%1$s, %2$s, %3$s]", jonDoeJson, janeDoeJson, pieDoeJson);
-
-		Customer jonDoe = Customer.newCustomer(1L, "Jon Doe");
-		Customer janeDoe = Customer.newCustomer(2L, "Jane Doe");
-		Customer pieDoe = Customer.newCustomer(3L, "Pie Doe");
-
-		Region<?, ?> customers = mock(Region.class);
-
-		doReturn(Arrays.asList(jonDoe, janeDoe, pieDoe)).when(customers).values();
-		doReturn(jonDoeJson).when(this.importer).toJson(eq(jonDoe));
-		doReturn(janeDoeJson).when(this.importer).toJson(eq(janeDoe));
-		doReturn(pieDoeJson).when(this.importer).toJson(eq(pieDoe));
-
-		assertThat(this.importer.toJson(customers)).isEqualTo(expectedJson);
-
-		verify(this.importer, times(1)).toJson(eq(jonDoe));
-		verify(this.importer, times(1)).toJson(eq(janeDoe));
-		verify(this.importer, times(1)).toJson(eq(pieDoe));
-		verify(customers, times(1)).values();
-	}
-
-	@Test
 	public void toJsonFromEmptyRegion() {
 
 		Region<?, ?> mockRegion = mock(Region.class);
@@ -879,22 +851,6 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 			throw expected;
 		}
-	}
-
-	@Test
-	public void toJsonFromObjectCallsObjectToJsonConverter() {
-
-		String json = "{ \"name\": \"Jon Doe\" }";
-
-		ObjectToJsonConverter mockConverter = mock(ObjectToJsonConverter.class);
-
-		doReturn(mockConverter).when(this.importer).getObjectToJsonConverter();
-		doReturn(json).when(mockConverter).convert(eq("TEST"));
-
-		assertThat(this.importer.toJson("TEST")).isEqualTo(json);
-
-		verify(this.importer, times(1)).getObjectToJsonConverter();
-		verify(mockConverter, times(1)).convert(eq("TEST"));
 	}
 
 	@Test

@@ -39,9 +39,8 @@ import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.geode.data.AbstractCacheDataImporterExporter;
 import org.springframework.geode.data.CacheDataExporter;
 import org.springframework.geode.data.CacheDataImporter;
+import org.springframework.geode.data.json.converter.AbstractObjectArrayToJsonConverter;
 import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
-import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
-import org.springframework.geode.data.json.converter.support.JSONFormatterPdxToJsonConverter;
 import org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter;
 import org.springframework.geode.pdx.PdxInstanceWrapper;
 import org.springframework.geode.util.CacheUtils;
@@ -82,12 +81,8 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	private static final int CONTENT_PREVIEW_LENGTH = 50;
 	private static final int DEFAULT_BUFFER_SIZE = 32768;
 
-	protected static final String ARRAY_BEGIN = "[";
-	protected static final String ARRAY_END = "]";
 	protected static final String AT_IDENTIFIER_FIELD_NAME = PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME;
 	protected static final String CLASSPATH_RESOURCE_PREFIX = ResourceLoader.CLASSPATH_URL_PREFIX;
-	protected static final String COMMA_SPACE = ", ";
-	protected static final String EMPTY_STRING = "";
 	protected static final String FILESYSTEM_RESOURCE_PREFIX = "file://";
 	protected static final String ID_FIELD_NAME = PdxInstanceWrapper.ID_FIELD_NAME;
 	protected static final String NO_FIELD_NAME = "";
@@ -95,16 +90,11 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 
 	private JsonToPdxArrayConverter jsonToPdxArrayConverter = newJsonToPdxArrayConverter();
 
-	private ObjectToJsonConverter objectToJsonConverter = newObjectToJsonConverter();
+	private final RegionValuesToJsonConverter regionValuesToJsonConverter = new RegionValuesToJsonConverter();
 
 	// TODO configure via an SPI
 	private @NonNull JsonToPdxArrayConverter newJsonToPdxArrayConverter() {
 		return new JacksonJsonToPdxConverter();
-	}
-
-	// TODO configure via an SPI
-	private @NonNull ObjectToJsonConverter newObjectToJsonConverter() {
-		return new JSONFormatterPdxToJsonConverter();
 	}
 
 	/**
@@ -115,16 +105,6 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 */
 	protected @NonNull JsonToPdxArrayConverter getJsonToPdxArrayConverter() {
 		return this.jsonToPdxArrayConverter;
-	}
-
-	/**
-	 * Gets a reference to the configured {@link ObjectToJsonConverter}.
-	 *
-	 * @return a reference to the configured {@link ObjectToJsonConverter}.
-	 * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
-	 */
-	protected @NonNull ObjectToJsonConverter getObjectToJsonConverter() {
-		return this.objectToJsonConverter;
 	}
 
 	/**
@@ -394,56 +374,38 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 		return pdxInstance;
 	}
 
-	// TODO Replace implementation with AbstractObjectArrayToJsonConverter.convert(:Iterable) method.
 	/**
-	 * Convert {@link Object values} contained in the {@link Region} to JSON.
+	 * Convert {@link Object values} contained in the {@link Region} to {@link String JSON}.
 	 *
 	 * @param region {@link Region} to process; must not be {@literal null}.
-	 * @return a JSON {@link String} containing the {@link Object values} from the given {@link Region}.
+	 * @return {@link String JSON} containing the {@link Object values} from the given {@link Region}.
 	 * @see org.apache.geode.cache.Region
-	 * @see #toJson(Object)
 	 */
 	@SuppressWarnings("unchecked")
 	protected @NonNull String toJson(@NonNull Region region) {
-
-		Assert.notNull(region, "Region must not be null");
-
-		StringBuilder json = new StringBuilder(ARRAY_BEGIN);
-
-		boolean addComma = false;
-
-		for (Object value : CollectionUtils.nullSafeCollection(CacheUtils.collectValues(region))) {
-			json.append(addComma ? COMMA_SPACE : EMPTY_STRING);
-			json.append(toJson(value));
-			addComma = true;
-		}
-
-		json.append(ARRAY_END);
-
-		return json.toString();
+		return this.regionValuesToJsonConverter.convert(region);
 	}
 
 	/**
-	 * Converts the given {@link Object} into JSON.
-	 *
-	 * @param source {@link Object} to convert into JSON.
-	 * @return a {@link String} containing the JSON generated from the given {@link Object}.
-	 * @see #getObjectToJsonConverter()
-	 */
-	protected @NonNull String toJson(@NonNull Object source) {
-		return getObjectToJsonConverter().convert(source);
-	}
-
-	/**
-	 * Converts the array of {@link Byte#TYPE bytes} containing multiple JSON objects
+	 * Converts the array of {@link Byte#TYPE bytes} containing multiple {@link String JSON} objects
 	 * into an array of {@link PdxInstance PdxInstances}.
 	 *
-	 * @param json array of {@link Byte#TYPE bytes} containing the JSON to convert to PDX.
-	 * @return an array of {@link PdxInstance PdxInstances} for each JSON object.
+	 * @param json array of {@link Byte#TYPE bytes} containing the {@link String JSON} to convert to PDX.
+	 * @return an array of {@link PdxInstance PdxInstances} for each {@link String JSON} object.
 	 * @see org.apache.geode.pdx.PdxInstance
 	 * @see #getJsonToPdxArrayConverter()
 	 */
 	protected @NonNull PdxInstance[] toPdxArray(@NonNull byte[] json) {
 		return getJsonToPdxArrayConverter().convert(json);
+	}
+
+	static class RegionValuesToJsonConverter extends AbstractObjectArrayToJsonConverter {
+
+		@NonNull <K, V> String convert(@NonNull Region<K, V> region) {
+
+			Assert.notNull(region, "Region must not be null");
+
+			return super.convert(CollectionUtils.nullSafeCollection(CacheUtils.collectValues(region)));
+		}
 	}
 }
