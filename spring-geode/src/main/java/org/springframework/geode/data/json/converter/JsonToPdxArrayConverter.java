@@ -35,12 +35,11 @@ import org.springframework.lang.NonNull;
 public interface JsonToPdxArrayConverter extends Converter<String, PdxInstance[]> {
 
 	/**
-	 * Converts the array of {@link Byte#TYPE bytes} containing {@link String JSON}
-	 * into an array of {@link PdxInstance} objects.
+	 * Converts the array of {@link Byte#TYPE bytes} containing JSON into an array of {@link PdxInstance} objects.
 	 *
-	 * @param json array of {@link Byte#TYPE bytes} containing the {@link String JSON};
-	 * must not be {@literal null}.
-	 * @return an array of {@link PdxInstance} objects for the given {@link String JSON}.
+	 * @param json array of {@link Byte#TYPE bytes} containing the JSON to convert; must not be {@literal null}.
+	 * @return an array of {@link PdxInstance} objects converted from the array of {@link Byte#TYPE bytes}
+	 * containing JSON.
 	 * @see org.apache.geode.pdx.PdxInstance
 	 * @see #convert(Object)
 	 */
