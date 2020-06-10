@@ -228,7 +228,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 			eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
 		doReturn(true).when(mockResource).exists();
 		doReturn(json).when(this.importer).getContent(eq(mockResource));
-		doReturn(ArrayUtils.asArray(mockPdxInstanceOne, mockPdxInstanceTwo)).when(this.importer).toPdxArray(eq(json));
+		doReturn(ArrayUtils.asArray(mockPdxInstanceOne, mockPdxInstanceTwo)).when(this.importer).toPdx(eq(json));
 		doReturn(1).when(this.importer).getIdentifier(eq(mockPdxInstanceOne));
 		doReturn(2).when(this.importer).getIdentifier(eq(mockPdxInstanceTwo));
 
@@ -237,7 +237,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 		verify(this.importer, times(1))
 			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
 		verify(this.importer, times(1)).getContent(eq(mockResource));
-		verify(this.importer, times(1)).toPdxArray(eq(json));
+		verify(this.importer, times(1)).toPdx(eq(json));
 		verify(this.importer, times(1)).postProcess(eq(mockPdxInstanceOne));
 		verify(this.importer, times(1)).getIdentifier(eq(mockPdxInstanceOne));
 		verify(this.importer, times(1)).postProcess(eq(mockPdxInstanceTwo));
@@ -327,7 +327,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
 		doReturn(true).when(mockResource).exists();
 		doReturn(json).when(this.importer).getContent(eq(mockResource));
-		doReturn(new PdxInstance[0]).when(this.importer).toPdxArray(eq(json));
+		doReturn(new PdxInstance[0]).when(this.importer).toPdx(eq(json));
 
 		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
 
@@ -335,7 +335,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 		verify(this.importer, times(1))
 			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
 		verify(this.importer, times(1)).getContent(eq(mockResource));
-		verify(this.importer, times(1)).toPdxArray(eq(json));
+		verify(this.importer, times(1)).toPdx(eq(json));
 		verify(mockResource, times(1)).exists();
 		verifyNoMoreInteractions(this.importer);
 		verifyNoMoreInteractions(mockResource);
@@ -868,7 +868,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 		doReturn(mockConverter).when(this.importer).getJsonToPdxArrayConverter();
 		doReturn(pdxArray).when(mockConverter).convert(eq(json));
 
-		assertThat(this.importer.toPdxArray(json)).isEqualTo(pdxArray);
+		assertThat(this.importer.toPdx(json)).isEqualTo(pdxArray);
 
 		verify(this.importer, times(1)).getJsonToPdxArrayConverter();
 		verify(mockConverter, times(1)).convert(eq(json));

@@ -179,7 +179,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 		getResource(region, CLASSPATH_RESOURCE_PREFIX)
 			.filter(Resource::exists)
 			.map(this::getContent)
-			.map(this::toPdxArray)
+			.map(this::toPdx)
 			.map(Arrays::stream)
 			.ifPresent(pdxInstances -> pdxInstances.forEach(pdxInstance -> {
 				pdxInstance = postProcess(pdxInstance);
@@ -395,7 +395,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 * @see org.apache.geode.pdx.PdxInstance
 	 * @see #getJsonToPdxArrayConverter()
 	 */
-	protected @NonNull PdxInstance[] toPdxArray(@NonNull byte[] json) {
+	protected @NonNull PdxInstance[] toPdx(@NonNull byte[] json) {
 		return getJsonToPdxArrayConverter().convert(json);
 	}
 
