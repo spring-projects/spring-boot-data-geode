@@ -15,8 +15,6 @@
  */
 package org.springframework.geode.data.json;
 
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
-
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -25,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.geode.cache.Region;
@@ -42,6 +39,7 @@ import org.springframework.geode.data.CacheDataImporter;
 import org.springframework.geode.data.json.converter.AbstractObjectArrayToJsonConverter;
 import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
 import org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter;
+import org.springframework.geode.pdx.ObjectPdxInstanceAdapter;
 import org.springframework.geode.pdx.PdxInstanceWrapper;
 import org.springframework.geode.util.CacheUtils;
 import org.springframework.lang.NonNull;
@@ -81,11 +79,8 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	private static final int CONTENT_PREVIEW_LENGTH = 50;
 	private static final int DEFAULT_BUFFER_SIZE = 32768;
 
-	protected static final String AT_IDENTIFIER_FIELD_NAME = PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME;
 	protected static final String CLASSPATH_RESOURCE_PREFIX = ResourceLoader.CLASSPATH_URL_PREFIX;
 	protected static final String FILESYSTEM_RESOURCE_PREFIX = "file://";
-	protected static final String ID_FIELD_NAME = PdxInstanceWrapper.ID_FIELD_NAME;
-	protected static final String NO_FIELD_NAME = "";
 	protected static final String RESOURCE_NAME_PATTERN = "data-%s.json";
 
 	private JsonToPdxArrayConverter jsonToPdxArrayConverter = newJsonToPdxArrayConverter();
@@ -182,7 +177,7 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 			.map(this::toPdx)
 			.map(Arrays::stream)
 			.ifPresent(pdxInstances -> pdxInstances.forEach(pdxInstance ->
-				region.put(getIdentifier(pdxInstance), postProcess(pdxInstance))));
+				region.put(resolveKey(pdxInstance), resolveValue(pdxInstance))));
 
 		return region;
 	}
@@ -221,107 +216,6 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 			throw new DataAccessResourceFailureException(String.format("Failed to read from Resource [%s]",
 				resource.getDescription()), cause);
 		}
-	}
-
-	/**
-	 * Determines the {@link Object identifier} (a.k.a. {@link PdxInstance#isIdentityField(String) identity})
-	 * for the given {@link PdxInstance}.
-	 *
-	 * @param pdxInstance {@link PdxInstance} to evaluate; must not be {@literal null}.
-	 * @return the {@link Object identifier} for the given {@link PdxInstance}; never {@literal null}.
-	 * @throws IllegalArgumentException if {@link PdxInstance} is {@literal null}.
-	 * @throws IllegalStateException if the {@link PdxInstance} does not have an id.
-	 * @see org.apache.geode.pdx.PdxInstance
-	 * @see #getId(PdxInstance)
-	 */
-	protected @NonNull Object getIdentifier(@NonNull PdxInstance pdxInstance) {
-
-		Assert.notNull(pdxInstance, "PdxInstance must not be null");
-
-		Optional<String> idFieldName = CollectionUtils.nullSafeList(pdxInstance.getFieldNames()).stream()
-			.filter(StringUtils::hasText)
-			.filter(pdxInstance::isIdentityField)
-			.findFirst();
-
-		return idFieldName
-			.map(pdxInstance::getField)
-			.orElseGet(() -> getId(pdxInstance));
-	}
-
-	/**
-	 * Searches for a PDX {@link String field name} called {@literal id} on the given {@link PdxInstance}
-	 * and returns its {@link Object value} as the {@link Object identifier} for the {@link PdxInstance}.
-	 *
-	 * @param pdxInstance {@link PdxInstance} to evaluate; must not be {@literal null}.
-	 * @return the {@link Object value} of the {@literal id} {@link String field} on the {@link PdxInstance}.
-	 * @throws IllegalStateException if the {@link PdxInstance} does not have an id.
-	 * @see org.apache.geode.pdx.PdxInstance
-	 * @see #getAtIdentifier(PdxInstance)
-	 */
-	protected @NonNull Object getId(@NonNull PdxInstance pdxInstance) {
-
-		Assert.notNull(pdxInstance, "PdxInstance must not be null");
-
-		return Optional.of(pdxInstance)
-			.filter(it -> it.hasField(ID_FIELD_NAME))
-			.map(it -> it.getField(ID_FIELD_NAME))
-			.orElseGet(() -> getAtIdentifier(pdxInstance));
-	}
-
-	/**
-	 * Searches for a PDX {@link String field} declared by the {@literal @identifier} metadata {@link String field}
-	 * on the given {@link PdxInstance} and returns the {@link Object value} of this {@link String field}
-	 * as the {@link Object identifier} for the {@link PdxInstance}.
-	 *
-	 * @param pdxInstance {@link PdxInstance} to evaluate; most not be {@literal null}.
-	 * @return the {@link Object value} of the {@link String field} declared in the {@literal @identifier} metadata
-	 * {@link String field} on the {@link PdxInstance}.
-	 * @throws IllegalArgumentException if {@link PdxInstance} is {@literal null}.
-	 * @throws IllegalStateException if the {@link PdxInstance} does not have an id.
-	 * @see org.apache.geode.pdx.PdxInstance
-	 */
-	protected @NonNull Object getAtIdentifier(@NonNull PdxInstance pdxInstance) {
-
-		Assert.notNull(pdxInstance, "PdxInstance must not be null");
-
-		return Optional.of(pdxInstance)
-			.filter(pdx -> pdx.hasField(AT_IDENTIFIER_FIELD_NAME))
-			.map(pdx -> pdx.getField(AT_IDENTIFIER_FIELD_NAME))
-			.map(String::valueOf)
-			.filter(pdxInstance::hasField)
-			.map(pdxInstance::getField)
-			.orElseThrow(() -> newIllegalStateException(String.format("PdxInstance for type [%1$s] has no %2$s",
-				pdxInstance.getClassName(), resolveMessageForIdentifierError(pdxInstance))));
-	}
-
-	private @NonNull String resolveMessageForIdentifierError(@NonNull PdxInstance pdxInstance) {
-
-		String message = "declared identifier";
-
-		if (pdxInstance.hasField(ID_FIELD_NAME)) {
-			message = "id";
-		}
-		else if (pdxInstance.hasField(AT_IDENTIFIER_FIELD_NAME)) {
-
-			Object atIdentifierFieldValue = pdxInstance.getField(AT_IDENTIFIER_FIELD_NAME);
-
-			String resolvedIdentifierFieldName = Objects.nonNull(atIdentifierFieldValue)
-				? atIdentifierFieldValue.toString().trim()
-				: NO_FIELD_NAME;
-
-			boolean identifierFieldNameWasDeclaredAndIsValid = pdxInstance.hasField(resolvedIdentifierFieldName);
-
-			Object identifier = identifierFieldNameWasDeclaredAndIsValid
-				? pdxInstance.getField(resolvedIdentifierFieldName)
-				: null;
-
-			message = identifierFieldNameWasDeclaredAndIsValid
-				? String.format("value [%s] for field [%s] declared in [%s]", identifier, resolvedIdentifierFieldName,
-				AT_IDENTIFIER_FIELD_NAME)
-				: String.format("field [%s] declared in [%s]", resolvedIdentifierFieldName, AT_IDENTIFIER_FIELD_NAME);
-		}
-
-		return message;
 	}
 
 	/**
@@ -370,6 +264,41 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 */
 	protected PdxInstance postProcess(PdxInstance pdxInstance) {
 		return pdxInstance;
+	}
+
+	/**
+	 * Resolves the {@link Object key} used to map the given {@link PdxInstance} as the {@link Object value}
+	 * for the {@link Region.Entry entry} stored in the {@link Region}.
+	 *
+	 * @param pdxInstance {@link PdxInstance} used to resolve the {@link Object key}.
+	 * @return the resolved {@link Object key}.
+	 * @see org.springframework.geode.pdx.PdxInstanceWrapper#getIdentifier()
+	 * @see org.apache.geode.pdx.PdxInstance
+	 */
+	protected @NonNull Object resolveKey(@NonNull PdxInstance pdxInstance) {
+		return PdxInstanceWrapper.from(pdxInstance).getIdentifier();
+	}
+
+	/**
+	 * Resolves the {@link Object value} to store in the {@link Region} from the given {@link PdxInstance}.
+	 *
+	 * If the given {@link PdxInstance} is an instance of {@link PdxInstanceWrapper} then this method will return
+	 * the underlying, {@link PdxInstanceWrapper#getDelegate() delegate} {@link PdxInstance}.
+	 *
+	 * If the given {@link PdxInstance} is an instance of {@link ObjectPdxInstanceAdapter} then this method will return
+	 * the underlying, {@link ObjectPdxInstanceAdapter#getObject() Object}.
+	 *
+	 * Otherwise, the given {@link PdxInstance} is returned.
+	 *
+	 * @param pdxInstance {@link PdxInstance} to unwrap.
+	 * @return the resolved {@link Object value}.
+	 * @see org.springframework.geode.pdx.ObjectPdxInstanceAdapter#unwrap(PdxInstance)
+	 * @see org.springframework.geode.pdx.PdxInstanceWrapper#unwrap(PdxInstance)
+	 * @see org.apache.geode.pdx.PdxInstance
+	 * @see #postProcess(PdxInstance)
+	 */
+	protected @Nullable Object resolveValue(@Nullable PdxInstance pdxInstance) {
+		return ObjectPdxInstanceAdapter.unwrap(PdxInstanceWrapper.unwrap(postProcess(pdxInstance)));
 	}
 
 	/**

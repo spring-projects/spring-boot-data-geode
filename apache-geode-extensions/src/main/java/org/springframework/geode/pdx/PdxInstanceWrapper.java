@@ -51,6 +51,7 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 	public static final String AT_TYPE_FIELD_NAME = "@type";
 	public static final String CLASS_NAME_PROPERTY = "className";
 	public static final String ID_FIELD_NAME = "id";
+	protected static final String NO_FIELD_NAME = "";
 
 	protected static final String ARRAY_BEGIN = "[";
 	protected static final String ARRAY_END = "]";
@@ -206,14 +207,6 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 	 * @inheritDoc
 	 */
 	@Override
-	public boolean isIdentityField(String fieldName) {
-		return getDelegate().isIdentityField(fieldName);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	@Override
 	public Object getField(String fieldName) {
 		return getDelegate().getField(fieldName);
 	}
@@ -227,7 +220,120 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 	}
 
 	/**
+	 * Determines the {@link Object identifier} for, or {@link PdxInstance#isIdentityField(String) identity} of,
+	 * this {@link PdxInstance}.
+	 *
+	 * @return the {@link Object identifier} for this {@link PdxInstance}; never {@literal null}.
+	 * @throws IllegalStateException if the {@link PdxInstance} does not have an id.
+	 * @see #isIdentityField(String)
+	 * @see #getField(String)
+	 * @see #getFieldNames()
+	 * @see #getId()
+	 */
+	public Object getIdentifier() {
+
+		Optional<String> identityFieldName = nullSafeList(getFieldNames()).stream()
+			.filter(this::hasText)
+			.filter(this::isIdentityField)
+			.findFirst();
+
+		return identityFieldName
+			.map(this::getField)
+			.orElseGet(this::getId);
+	}
+
+	/**
+	 * Searches for a PDX {@link String field name} called {@literal id} on this {@link PdxInstance}
+	 * and returns its {@link Object value} as the {@link Object identifier} for,
+	 * or {@link PdxInstance#isIdentityField(String) identity} of, this {@link PdxInstance}.
+	 *
+	 * @return the {@link Object value} of the {@literal id} {@link String field} on this {@link PdxInstance}.
+	 * @throws IllegalStateException if this {@link PdxInstance} does not have an id.
+	 * @see #getAtIdentifier()
+	 * @see #getField(String)
+	 * @see #hasField(String)
+	 */
+	protected Object getId() {
+
+		return hasField(ID_FIELD_NAME)
+			? getField(ID_FIELD_NAME)
+			: getAtIdentifier();
+	}
+
+	/**
+	 * Searches for a PDX {@link String field} declared by the {@literal @identifier} metadata {@link String field}
+	 * on this {@link PdxInstance} and returns the {@link Object value} of this {@link String field}
+	 * as the {@link Object identifier} for, or {@link PdxInstance#isIdentityField(String) identity} of,
+	 * this {@link PdxInstance}.
+	 *
+	 * @return the {@link Object value} of the {@link String field} declared in the {@literal @identifier} metadata
+	 * {@link String field} on this {@link PdxInstance}.
+	 * @throws IllegalStateException if the {@link PdxInstance} does not have an id.
+	 * @see org.apache.geode.pdx.PdxInstance
+	 */
+	protected Object getAtIdentifier() {
+
+		return Optional.of(AT_IDENTIFIER_FIELD_NAME)
+			.filter(this::hasField)
+			.map(this::getField)
+			.map(String::valueOf)
+			.filter(this::hasField)
+			.map(this::getField)
+			.orElseThrow(() -> new IllegalStateException(String.format("PdxInstance for type [%1$s] has no %2$s",
+				getClassName(), resolveMessageForIdentifierError(this))));
+	}
+
+	private String resolveMessageForIdentifierError(PdxInstance pdxInstance) {
+
+		String message = "declared identifier";
+
+		if (pdxInstance.hasField(ID_FIELD_NAME)) {
+			message = "id";
+		}
+		else if (pdxInstance.hasField(AT_IDENTIFIER_FIELD_NAME)) {
+
+			Object atIdentifierFieldValue = pdxInstance.getField(AT_IDENTIFIER_FIELD_NAME);
+
+			String resolvedIdentifierFieldName = Objects.nonNull(atIdentifierFieldValue)
+				? atIdentifierFieldValue.toString().trim()
+				: NO_FIELD_NAME;
+
+			boolean identifierFieldNameWasDeclaredAndIsValid = pdxInstance.hasField(resolvedIdentifierFieldName);
+
+			Object identifier = identifierFieldNameWasDeclaredAndIsValid
+				? pdxInstance.getField(resolvedIdentifierFieldName)
+				: null;
+
+			String ifMessage = "value [%s] for field [%s] declared in [%s]";
+			String elseMessage = "field [%s] declared in [%s]";
+
+			message = identifierFieldNameWasDeclaredAndIsValid
+				? String.format(ifMessage, identifier, resolvedIdentifierFieldName, AT_IDENTIFIER_FIELD_NAME)
+				: String.format(elseMessage, resolvedIdentifierFieldName, AT_IDENTIFIER_FIELD_NAME);
+		}
+
+		return message;
+	}
+
+	/**
 	 * @inheritDoc
+	 */
+	@Override
+	public boolean isIdentityField(String fieldName) {
+		return getDelegate().isIdentityField(fieldName);
+	}
+
+	/**
+	 * Materializes an {@link Object} from the PDX bytes described by this {@link PdxInstance}.
+	 *
+	 * If these PDX bytes describe an {@link Object} parsed from JSON, then the JSON is reconstructed from
+	 * this {@link PdxInstance} and mapped to an instance of the {@link Class type} identified by
+	 * the {@literal @type} metadata PDX {@link String field} using Jackson's {@link ObjectMapper}.
+	 *
+	 * @return an {@link Object} constructed from the PDX bytes described by this {@link PdxInstance}.
+	 * @see com.fasterxml.jackson.databind.ObjectMapper
+	 * @see java.lang.Object
+	 * @see #getObjectMapper()
 	 */
 	@Override
 	public Object getObject() {
@@ -247,7 +353,7 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 					return objectMapper.readValue(json, type);
 				}
 				catch (Throwable ignore) {
-					// TODO Add log statement
+					// TODO Log Throwable?
 					return null;
 				}
 			})
@@ -368,6 +474,10 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 
 	private String formatFieldValue(String fieldName, Object fieldValue) {
 		return String.format(FIELD_TYPE_VALUE, fieldName, nullSafeType(fieldValue), fieldValue);
+	}
+
+	private boolean hasText(String value) {
+		return value != null && !value.trim().isEmpty();
 	}
 
 	private boolean isArray(Object value) {

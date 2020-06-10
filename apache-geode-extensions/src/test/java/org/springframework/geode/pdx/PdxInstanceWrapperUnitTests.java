@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -265,6 +267,315 @@ public class PdxInstanceWrapperUnitTests {
 	}
 
 	@Test
+	public void getIdentifierFromPdxInstanceHavingAnIdentity() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		doReturn(Arrays.asList("age", "id", "name")).when(mockPdxInstance).getFieldNames();
+		doReturn(true).when(mockPdxInstance).isIdentityField(eq("id"));
+		doReturn(42).when(mockPdxInstance).getField(eq("id"));
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		assertThat(wrapper.getIdentifier()).isEqualTo(42);
+
+		verify(wrapper, never()).getId();
+		verify(mockPdxInstance, times(1)).getFieldNames();
+		verify(mockPdxInstance, times(1)).isIdentityField(eq("age"));
+		verify(mockPdxInstance, times(1)).isIdentityField(eq("id"));
+		verify(mockPdxInstance, never()).isIdentityField(eq("name"));
+		verify(mockPdxInstance, times(1)).getField(eq("id"));
+		verifyNoMoreInteractions(mockPdxInstance);
+	}
+
+	@Test
+	public void getIdentifierFromPdxInstanceHavingNoFields() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(null).when(mockPdxInstance).getFieldNames();
+		doReturn(69).when(wrapper).getId();
+
+		assertThat(wrapper.getIdentifier()).isEqualTo(69);
+
+		verify(wrapper, times(1)).getId();
+		verify(mockPdxInstance, times(1)).getFieldNames();
+		verify(mockPdxInstance, never()).isIdentityField(anyString());
+		verify(mockPdxInstance, never()).getField(anyString());
+		verifyNoMoreInteractions(mockPdxInstance);
+	}
+
+	@Test
+	public void getIdentifierFromPdxInstanceHavingNoIdentityFields() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(Arrays.asList("", "age", null, "name", "  ")).when(mockPdxInstance).getFieldNames();
+		doReturn(false).when(mockPdxInstance).isIdentityField(any());
+		doReturn(99).when(wrapper).getId();
+
+		assertThat(wrapper.getIdentifier()).isEqualTo(99);
+
+		verify(wrapper, times(1)).getId();
+		verify(mockPdxInstance, times(1)).getFieldNames();
+		verify(mockPdxInstance, times(1)).isIdentityField(eq("age"));
+		verify(mockPdxInstance, times(1)).isIdentityField(eq("name"));
+		verify(mockPdxInstance, never()).isIdentityField(isNull());
+		verify(mockPdxInstance, never()).isIdentityField(eq(""));
+		verify(mockPdxInstance, never()).isIdentityField(eq("  "));
+		verify(mockPdxInstance, never()).getField(anyString());
+		verifyNoMoreInteractions(mockPdxInstance);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void getIdentifierFromPdxInstanceWithNoIdentifier() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(Collections.singletonList("name")).when(mockPdxInstance).getFieldNames();
+		doReturn(false).when(mockPdxInstance).isIdentityField(anyString());
+		doThrow(new IllegalStateException("NO ID")).when(wrapper).getId();
+
+		try {
+			wrapper.getIdentifier();
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("NO ID");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockPdxInstance, times(1)).getFieldNames();
+			verify(mockPdxInstance, times(1)).isIdentityField(eq("name"));
+			verify(mockPdxInstance, never()).getField(anyString());
+			verify(wrapper, times(1)).getId();
+			verifyNoMoreInteractions(mockPdxInstance);
+		}
+	}
+
+	@Test
+	public void getIdFromPdxInstanceHavingIdField() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(true).when(mockPdxInstance).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		doReturn(42).when(mockPdxInstance).getField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+
+		assertThat(wrapper.getId()).isEqualTo(42);
+
+		verify(mockPdxInstance, times(1)).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		verify(mockPdxInstance, times(1)).getField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		verify(wrapper, never()).getAtIdentifier();
+		verifyNoMoreInteractions(mockPdxInstance);
+	}
+
+	@Test
+	public void getIdFromPdxInstanceHavingIdFieldWithNoValueReturnsNull() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(true).when(mockPdxInstance).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		doReturn(null).when(mockPdxInstance).getField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+
+		assertThat(wrapper.getId()).isNull();
+
+		verify(mockPdxInstance, times(1)).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		verify(mockPdxInstance, times(1)).getField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		verify(wrapper, never()).getAtIdentifier();
+		verifyNoMoreInteractions(mockPdxInstance);
+	}
+
+	@Test
+	public void getIdFromPdxInstanceWithNoIdFieldCallsGetAtIdentifier() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(false).when(mockPdxInstance).hasField(any());
+		doReturn(99).when(wrapper).getAtIdentifier();
+
+		assertThat(wrapper.getId()).isEqualTo(99);
+
+		verify(mockPdxInstance, times(1)).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		verify(mockPdxInstance, never()).getField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		verify(wrapper, times(1)).getAtIdentifier();
+		verifyNoMoreInteractions(mockPdxInstance);
+	}
+
+	@Test
+	public void getAtIdentifierFromPdxInstance() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(true).when(mockPdxInstance).hasField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+		doReturn(true).when(mockPdxInstance).hasField(eq("isbn"));
+		doReturn("isbn").when(mockPdxInstance).getField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+		doReturn("123456789").when(mockPdxInstance).getField(eq("isbn"));
+
+		assertThat(wrapper.getAtIdentifier()).isEqualTo("123456789");
+
+		verify(mockPdxInstance, times(1))
+			.hasField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+		verify(mockPdxInstance, times(1))
+			.getField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+		verify(mockPdxInstance, times(1)).hasField(eq("isbn"));
+		verify(mockPdxInstance, times(1)).getField(eq("isbn"));
+		verifyNoMoreInteractions(mockPdxInstance);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void getAtIdentifierFromPdxInstanceWithNoDeclaredIdentity() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(Account.class.getName()).when(mockPdxInstance).getClassName();
+		doReturn(false).when(mockPdxInstance).hasField(any());
+
+		try {
+			wrapper.getAtIdentifier();
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("PdxInstance for type [%s] has no declared identifier",
+				Account.class.getName());
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockPdxInstance, times(1)).getClassName();
+			verify(mockPdxInstance, times(2))
+				.hasField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(1))
+				.hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+			verify(mockPdxInstance, never()).getField(anyString());
+			verifyNoMoreInteractions(mockPdxInstance);
+		}
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void getAtIdentifierFromPdxInstanceWithNoId() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(Account.class.getName()).when(mockPdxInstance).getClassName();
+		doReturn(true).when(mockPdxInstance).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+
+		try {
+			wrapper.getAtIdentifier();
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("PdxInstance for type [%s] has no id",
+				Account.class.getName());
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockPdxInstance, times(1)).getClassName();
+			verify(mockPdxInstance, times(1))
+				.hasField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(1))
+				.hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+			verify(mockPdxInstance, never()).getField(any());
+			verifyNoMoreInteractions(mockPdxInstance);
+		}
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void getAtIdentifierFromPdxInstanceWithValidAtIdentifierAndIdentifierFieldButNoId() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(Person.class.getName()).when(mockPdxInstance).getClassName();
+		doReturn(true).when(mockPdxInstance).hasField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+		doReturn(false).when(mockPdxInstance).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		doReturn(true).when(mockPdxInstance).hasField(eq("ssn"));
+		doReturn("ssn").when(mockPdxInstance).getField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+		doReturn(null).when(mockPdxInstance).getField(eq("ssn"));
+
+		try {
+			wrapper.getAtIdentifier();
+		}
+		catch (IllegalStateException expected) {
+
+			String expectedMessage = "PdxInstance for type [%s] has no value [null] for field [ssn] declared in [%s]";
+
+			assertThat(expected).hasMessage(expectedMessage, Person.class.getName(),
+				PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME);
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockPdxInstance, times(1)).getClassName();
+			verify(mockPdxInstance, times(2)).hasField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(1)).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+			verify(mockPdxInstance, times(2)).hasField(eq("ssn"));
+			verify(mockPdxInstance, times(2)).getField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(2)).getField(eq("ssn"));
+			verifyNoMoreInteractions(mockPdxInstance);
+		}
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void getAtIdentifierFromPdxInstanceWithAtIdentifierReferringToInvalidIdentifierField() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(new PdxInstanceWrapper(mockPdxInstance));
+
+		doReturn(Person.class.getName()).when(mockPdxInstance).getClassName();
+		doReturn(true).when(mockPdxInstance).hasField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+		doReturn(false).when(mockPdxInstance).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+		doReturn(false).when(mockPdxInstance).hasField(eq("ssn"));
+		doReturn("ssn").when(mockPdxInstance).getField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+
+		try {
+			wrapper.getAtIdentifier();
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("PdxInstance for type [%s] has no field [ssn] declared in [%s]",
+				Person.class.getName(), PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME);
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockPdxInstance, times(1)).getClassName();
+			verify(mockPdxInstance, times(2)).hasField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, times(1)).hasField(eq(PdxInstanceWrapper.ID_FIELD_NAME));
+			verify(mockPdxInstance, times(2)).hasField(eq("ssn"));
+			verify(mockPdxInstance, times(2)).getField(eq(PdxInstanceWrapper.AT_IDENTIFIER_FIELD_NAME));
+			verify(mockPdxInstance, never()).getField(eq("ssn"));
+			verifyNoMoreInteractions(mockPdxInstance);
+		}
+	}
+
+	@Test
 	public void getObjectReturnsObject() throws JsonProcessingException {
 
 		Account mockAccount = mock(Account.class);
@@ -480,6 +791,8 @@ public class PdxInstanceWrapperUnitTests {
 	interface Account {
 		String getName();
 	}
+
+	interface Person { }
 
 	interface SendablePdxInstance extends PdxInstance, Sendable { }
 
