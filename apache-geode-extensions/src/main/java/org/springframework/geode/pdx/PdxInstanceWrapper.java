@@ -77,7 +77,10 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 	 * @see #from(PdxInstance)
 	 */
 	public static Object from(Object target) {
-		return target instanceof PdxInstance ? from((PdxInstance) target) : target;
+
+		return target instanceof PdxInstance
+			? from((PdxInstance) target)
+			: target;
 	}
 
 	/**
@@ -91,7 +94,10 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 	 * @see #PdxInstanceWrapper(PdxInstance)
 	 */
 	public static PdxInstanceWrapper from(PdxInstance pdxInstance) {
-		return new PdxInstanceWrapper(pdxInstance);
+
+		return pdxInstance instanceof PdxInstanceWrapper
+			? (PdxInstanceWrapper) pdxInstance
+			: new PdxInstanceWrapper(pdxInstance);
 	}
 
 	/**

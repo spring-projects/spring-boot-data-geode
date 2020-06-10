@@ -118,6 +118,16 @@ public class PdxInstanceWrapperUnitTests {
 	}
 
 	@Test
+	public void fromPdxInstanceWrapperIsSameWrapper() {
+
+		PdxInstanceWrapper mockWrapper = mock(PdxInstanceWrapper.class);
+
+		assertThat(PdxInstanceWrapper.from(mockWrapper)).isSameAs(mockWrapper);
+
+		verifyNoInteractions(mockWrapper);
+	}
+
+	@Test
 	public void unwrapPdxInstanceWrapperReturnsPdxInstanceDelegate() {
 
 		PdxInstance mockPdxInstance = mock(PdxInstance.class);
