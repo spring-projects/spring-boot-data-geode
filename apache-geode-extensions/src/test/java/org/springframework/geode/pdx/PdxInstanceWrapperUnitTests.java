@@ -118,6 +118,35 @@ public class PdxInstanceWrapperUnitTests {
 	}
 
 	@Test
+	public void unwrapPdxInstanceWrapperReturnsPdxInstanceDelegate() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = PdxInstanceWrapper.from(mockPdxInstance);
+
+		assertThat(wrapper).isNotNull();
+		assertThat(wrapper.getDelegate()).isEqualTo(mockPdxInstance);
+		assertThat(PdxInstanceWrapper.unwrap(wrapper)).isEqualTo(mockPdxInstance);
+
+		verifyNoInteractions(mockPdxInstance);
+	}
+
+	@Test
+	public void unwrapPdxInstanceReturnsPdxInstance() {
+
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		assertThat(PdxInstanceWrapper.unwrap(mockPdxInstance)).isEqualTo(mockPdxInstance);
+
+		verifyNoInteractions(mockPdxInstance);
+	}
+
+	@Test
+	public void unwrapNullIsNullSafeAndReturnsNull() {
+		assertThat(PdxInstanceWrapper.unwrap(null)).isNull();
+	}
+
+	@Test
 	public void objectMapperConfigurationIsCorrect() {
 
 		PdxInstanceWrapper wrapper = spy(PdxInstanceWrapper.from(mock(PdxInstance.class)));

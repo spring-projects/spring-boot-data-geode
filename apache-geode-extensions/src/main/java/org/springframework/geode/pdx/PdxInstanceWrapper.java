@@ -94,6 +94,25 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 		return new PdxInstanceWrapper(pdxInstance);
 	}
 
+	/**
+	 * Null-safe factory method used to unwrap the given {@link PdxInstance}.
+	 *
+	 * If the given {@link PdxInstance} is an instance of {@link PdxInstanceWrapper} then this factory method will
+	 * unwrap the {@link PdxInstanceWrapper} returning the underlying, {@link PdxInstanceWrapper#getDelegate() delegate}
+	 * {@link PdxInstance}.  Otherwise, the given {@link PdxInstance} is returned.
+	 *
+	 * @param pdxInstance {@link PdxInstance} to unwrap; may be {@literal null}.
+	 * @return the unwrapped {@link PdxInstance}.
+	 * @see org.apache.geode.pdx.PdxInstance
+	 * @see #getDelegate()
+	 */
+	public static PdxInstance unwrap(PdxInstance pdxInstance) {
+
+		return pdxInstance instanceof PdxInstanceWrapper
+			? ((PdxInstanceWrapper) pdxInstance).getDelegate()
+			: pdxInstance;
+	}
+
 	private final PdxInstance delegate;
 
 	/**
