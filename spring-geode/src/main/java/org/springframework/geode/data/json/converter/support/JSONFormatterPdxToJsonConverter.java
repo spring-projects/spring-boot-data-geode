@@ -86,8 +86,6 @@ public class JSONFormatterPdxToJsonConverter extends JacksonObjectToJsonConverte
 	 * @see #jsonFormatterToJson(PdxInstance)
 	 */
 	protected @NonNull String convertPdxToJson(@NonNull PdxInstance pdxInstance) {
-		//return jsonFormatterToJson(pdxInstance);
-		//return jsonFormatterToJson(decorate(pdxInstance));
 		return decorate(pdxInstance, jsonFormatterToJson(pdxInstance));
 	}
 

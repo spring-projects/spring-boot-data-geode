@@ -55,7 +55,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
-import org.springframework.geode.data.json.converter.JsonToPdxConverter;
 import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
 
 import example.app.crm.model.Customer;
@@ -75,7 +74,6 @@ import example.app.pos.model.LineItem;
  * @see org.springframework.core.io.Resource
  * @see org.springframework.geode.data.json.JsonCacheDataImporterExporter
  * @see org.springframework.geode.data.json.converter.JsonToPdxArrayConverter
- * @see org.springframework.geode.data.json.converter.JsonToPdxConverter
  * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
  * @since 1.3.0
  */
@@ -897,24 +895,6 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		verify(this.importer, times(1)).getObjectToJsonConverter();
 		verify(mockConverter, times(1)).convert(eq("TEST"));
-	}
-
-	@Test
-	public void toPdxFromJsonCallsJsonToPdxConverter() {
-
-		byte[] json = "{ \"name\": \"Jon Doe\" }".getBytes();
-
-		JsonToPdxConverter mockConverter = mock(JsonToPdxConverter.class);
-
-		PdxInstance mockPdxInstance = mock(PdxInstance.class);
-
-		doReturn(mockConverter).when(this.importer).getJsonToPdxConverter();
-		doReturn(mockPdxInstance).when(mockConverter).convert(eq(json));
-
-		assertThat(this.importer.toPdx(json)).isEqualTo(mockPdxInstance);
-
-		verify(this.importer, times(1)).getJsonToPdxConverter();
-		verify(mockConverter, times(1)).convert(eq(json));
 	}
 
 	@Test

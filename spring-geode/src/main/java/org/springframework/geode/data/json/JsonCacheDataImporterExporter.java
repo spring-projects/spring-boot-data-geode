@@ -40,9 +40,7 @@ import org.springframework.geode.data.AbstractCacheDataImporterExporter;
 import org.springframework.geode.data.CacheDataExporter;
 import org.springframework.geode.data.CacheDataImporter;
 import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
-import org.springframework.geode.data.json.converter.JsonToPdxConverter;
 import org.springframework.geode.data.json.converter.ObjectToJsonConverter;
-import org.springframework.geode.data.json.converter.support.JSONFormatterJsonToPdxConverter;
 import org.springframework.geode.data.json.converter.support.JSONFormatterPdxToJsonConverter;
 import org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter;
 import org.springframework.geode.pdx.PdxInstanceWrapper;
@@ -58,6 +56,7 @@ import org.springframework.util.StringUtils;
  * implementation that can export/import JSON data to/from a {@link Resource} given a target {@link Region}.
  *
  * @author John Blum
+ * @see java.io.File
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.pdx.PdxInstance
  * @see org.springframework.core.io.ClassPathResource
@@ -67,9 +66,7 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.geode.data.CacheDataExporter
  * @see org.springframework.geode.data.CacheDataImporter
  * @see org.springframework.geode.data.json.converter.JsonToPdxArrayConverter
- * @see org.springframework.geode.data.json.converter.JsonToPdxConverter
  * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
- * @see org.springframework.geode.data.json.converter.support.JSONFormatterJsonToPdxConverter
  * @see org.springframework.geode.data.json.converter.support.JSONFormatterPdxToJsonConverter
  * @see org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter
  * @see org.springframework.geode.pdx.PdxInstanceWrapper
@@ -96,16 +93,9 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	protected static final String NO_FIELD_NAME = "";
 	protected static final String RESOURCE_NAME_PATTERN = "data-%s.json";
 
-	private JsonToPdxConverter jsonToPdxConverter = newJsonToPdxConverter();
-
 	private JsonToPdxArrayConverter jsonToPdxArrayConverter = newJsonToPdxArrayConverter();
 
 	private ObjectToJsonConverter objectToJsonConverter = newObjectToJsonConverter();
-
-	// TODO configure via an SPI
-	private @NonNull JsonToPdxConverter newJsonToPdxConverter() {
-		return new JSONFormatterJsonToPdxConverter();
-	}
 
 	// TODO configure via an SPI
 	private @NonNull JsonToPdxArrayConverter newJsonToPdxArrayConverter() {
@@ -115,16 +105,6 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	// TODO configure via an SPI
 	private @NonNull ObjectToJsonConverter newObjectToJsonConverter() {
 		return new JSONFormatterPdxToJsonConverter();
-	}
-
-	/**
-	 * Gets a reference to the configured {@link JsonToPdxConverter}.
-	 *
-	 * @return a reference to the configured {@link JsonToPdxConverter}.
-	 * @see org.springframework.geode.data.json.converter.JsonToPdxConverter
-	 */
-	protected @NonNull JsonToPdxConverter getJsonToPdxConverter() {
-		return this.jsonToPdxConverter;
 	}
 
 	/**
@@ -452,18 +432,6 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 */
 	protected @NonNull String toJson(@NonNull Object source) {
 		return getObjectToJsonConverter().convert(source);
-	}
-
-	/**
-	 * Converts the given JSON object into a {@link PdxInstance}.
-	 *
-	 * @param json array of {@link Byte#TYPE bytes} containing JSON.
-	 * @return a {@link PdxInstance} converted from the JSON object.
-	 * @see org.apache.geode.pdx.PdxInstance
-	 * @see #getJsonToPdxConverter()
-	 */
-	protected @NonNull PdxInstance toPdx(@NonNull byte[] json) {
-		return getJsonToPdxConverter().convert(json);
 	}
 
 	/**
