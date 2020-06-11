@@ -1,0 +1,6 @@
+{
+  "@type" : "example.app.golf.model.Golfer",
+  "id" : 1,
+  "name" : "John Blum",
+  "handicap" : 9
+}

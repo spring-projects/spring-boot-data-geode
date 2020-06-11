@@ -16,9 +16,12 @@
 package org.springframework.geode.data.json.converter.support;
 
 import org.apache.geode.pdx.JSONFormatter;
+import org.apache.geode.pdx.JSONFormatterException;
 import org.apache.geode.pdx.PdxInstance;
 
+import org.springframework.geode.data.json.converter.JsonToObjectConverter;
 import org.springframework.geode.data.json.converter.JsonToPdxConverter;
+import org.springframework.geode.pdx.ObjectPdxInstanceAdapter;
 import org.springframework.geode.pdx.PdxInstanceWrapper;
 import org.springframework.lang.NonNull;
 
@@ -34,12 +37,62 @@ import org.springframework.lang.NonNull;
  */
 public class JSONFormatterJsonToPdxConverter implements JsonToPdxConverter {
 
+	private JsonToObjectConverter converter = newJsonToObjectConverter();
+
+	// TODO configure via an SPIs
+	private JsonToObjectConverter newJsonToObjectConverter() {
+		return new JacksonJsonToObjectConverter();
+	}
+
+	/**
+	 * Returns a reference to the configured {@link JsonToObjectConverter} used to convert from {@link String JSON}
+	 * to an {@link Object}.
+	 *
+	 * @return a reference to the configured {@link JsonToObjectConverter}; never {@literal null}.
+	 * @see org.springframework.geode.data.json.converter.JsonToObjectConverter
+	 */
+	protected @NonNull JsonToObjectConverter getJsonToObjectConverter() {
+		return this.converter;
+	}
+
 	/**
 	 * @inheritDoc
 	 */
 	@Override
 	public final @NonNull PdxInstance convert(@NonNull String json) {
-		return convertJsonToPdx(json);
+
+		try {
+			return convertJsonToPdx(json);
+		}
+		catch (JSONFormatterException cause) {
+			return convertJsonToObjectToPdx(json);
+		}
+	}
+
+	/**
+	 * Adapts the given {@link Object} as a {@link PdxInstance}.
+	 *
+	 * @param target {@link Object} to adapt as PDX; must not be {@literal null}.
+	 * @return a {@link PdxInstance} representing the given {@link Object}.
+	 * @see org.springframework.geode.pdx.ObjectPdxInstanceAdapter#from(Object)
+	 * @see org.apache.geode.pdx.PdxInstance
+	 */
+	protected @NonNull PdxInstance adapt(@NonNull Object target) {
+		return ObjectPdxInstanceAdapter.from(target);
+	}
+
+	/**
+	 * Converts the given {@link String JSON} into a {@link Object} and then adapts the {@link Object}
+	 * as a {@link PdxInstance}.
+	 *
+	 * @param json {@link String JSON} to convert into an {@link Object} into PDX.
+	 * @return a {@link PdxInstance} converted from the given {@link String JSON}.
+	 * @see org.apache.geode.pdx.PdxInstance
+	 * @see #getJsonToObjectConverter()
+	 * @see #adapt(Object)
+	 */
+	protected @NonNull PdxInstance convertJsonToObjectToPdx(@NonNull String json) {
+		return adapt(getJsonToObjectConverter().convert(json));
 	}
 
 	/**
@@ -47,8 +100,6 @@ public class JSONFormatterJsonToPdxConverter implements JsonToPdxConverter {
 	 *
 	 * @param json {@link String} containing JSON to convert to PDX; must not be {@literal null}.
 	 * @return JSON for the given {@link PdxInstance PDX}.
-	 * @see org.springframework.geode.pdx.PdxInstanceWrapper#from(PdxInstance)
-	 * @see org.apache.geode.pdx.JSONFormatter#fromJSON(String)
 	 * @see org.apache.geode.pdx.PdxInstance
 	 * @see #jsonFormatterFromJson(String)
 	 * @see #wrap(PdxInstance)
@@ -74,6 +125,7 @@ public class JSONFormatterJsonToPdxConverter implements JsonToPdxConverter {
 	 *
 	 * @param pdxInstance {@link PdxInstance} to wrap.
 	 * @return a new instance of {@link PdxInstanceWrapper} wrapping the given {@link PdxInstance}.
+	 * @see org.springframework.geode.pdx.PdxInstanceWrapper#from(PdxInstance)
 	 * @see org.springframework.geode.pdx.PdxInstanceWrapper
 	 * @see org.apache.geode.pdx.PdxInstance
 	 */
