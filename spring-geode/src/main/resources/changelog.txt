@@ -4,6 +4,39 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.3.0.RELEASE (2020-06-11)
+---------------------------------------------
+Upgrades SBDG to Spring Boot 2.3.0.RELEASE. Includes new documentation on SBDG's, Apache Geode API extensions
+as well as running and using Apache Geode in Docker.
+
+* Adds new configuration property to enable/disable cache data imports.
+* Adds support to format JSON on cache data export.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/89.
+* Fixes bug in Logging auto-configuration to back away when the user explicitly configures Apache Geode logging.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/85.
+* Fixes bug in cache data export caused by Apache Geode JVM Shutdown Hook.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/88.
+* Fixes bug with cache data import when using the @EnableClusterAware annotation.
+https://github.com/spring-projects/spring-boot-data-geode/issues/90.
+* Fixes bug with cache data import when using client LOCAL Regions and no PDX type registry exists.
+https://github.com/spring-projects/spring-boot-data-geode/issues/91.
+* Includes documentation on how to run the Samples from the IDE as well as the command-line using Gradle.
+* Includes new chapter in reference documentation on SBDG's, Apache Geode API extensions.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/84.
+* Includes new chapter in reference documentation on running and using Apache Geode in Docker.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/86.
+* Upgrades to Byte Buddy 1.10.11.
+* Upgrades to Gradle 6.5.
+* Upgrades to Spring Build Conventions Gradle Plugin 0.0.32.RELEASE.
+* Upgrades to Spring Boot 2.3.0.RELEASE.
+* Upgrades to Spring Data for Apache Geode & Pivotal GemFire 2.3.0.RELEASE.
+* Upgrades to Spring Data Release Train Neumann-RELEASE.
+* Upgrades to Spring Session for Apache Geode & Pivotal GemFire 2.3.0.RELEASE
+* Upgrades to Spring Session BOM Dragonfruit-RELEASE.
+* Upgrades to Spring Test for Apache Geode & Pivotal GemFire 0.0.16.RELEASE.
+* Upgrades to Testcontainers 1.14.3.
+
+
 Changes in version 1.2.7.RELEASE (2020-05-19)
 ---------------------------------------------
 Aligns SBDG with the latest versions of Spring Framework, Spring Boot, Spring Data
