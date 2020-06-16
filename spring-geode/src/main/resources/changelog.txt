@@ -4,7 +4,7 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
-Changes in version 1.1.8.RELEASE (2020-03-04)
+Changes in version 1.1.8.RELEASE (2020-06-16)
 ---------------------------------------------
 Aligns SBDG with Spring Boot 2.1.15.RELEASE along with the latest versions of Spring Framework and Spring Data.
 
@@ -16,7 +16,7 @@ Aligns SBDG with Spring Boot 2.1.15.RELEASE along with the latest versions of Sp
 * Upgrades to Testcontainers 1.14.3.
 
 
-Changes in version 1.1.7.RELEASE (2020-03-04)
+Changes in version 1.1.7.RELEASE (2020-05-18)
 ---------------------------------------------
 Aligns SBDG with the latest versions of Spring Framework, Spring Boot, Spring Data
 and Spring Session for Apache Geode & Pivotal GemFire.
