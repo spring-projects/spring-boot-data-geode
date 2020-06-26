@@ -18,7 +18,6 @@ package org.springframework.geode.data;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +31,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.lang.NonNull;
@@ -43,15 +43,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract base class implementing the {@link CacheDataExporter} and {@link CacheDataImporter} interface in order to
- * simply import/export data operation implementations in a consistent way.
+ * Abstract base class implementing the {@link CacheDataExporter} and {@link CacheDataImporter} interfaces in order to
+ * simply import/export data access operation implementations in a consistent way.
  *
  * @author John Blum
+ * @see java.util.function.Predicate
  * @see org.apache.geode.cache.Region
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ApplicationContextAware
  * @see org.springframework.context.EnvironmentAware
  * @see org.springframework.core.env.Environment
+ * @see org.springframework.core.io.ResourceLoader
  * @see org.springframework.geode.data.CacheDataExporter
  * @see org.springframework.geode.data.CacheDataImporter
  * @since 1.3.0
@@ -72,7 +74,11 @@ public abstract class AbstractCacheDataImporterExporter
 	protected static final String CACHE_DATA_IMPORT_ENABLED_PROPERTY_NAME =
 		"spring.boot.data.gemfire.cache.data.import.enabled";
 
+	protected static final String CLASSPATH_RESOURCE_PREFIX = ResourceLoader.CLASSPATH_URL_PREFIX;
 	protected static final String DEFAULT_CACHE_DATA_IMPORT_ACTIVE_PROFILES = "";
+	protected static final String FILESYSTEM_RESOURCE_PREFIX = "file:";
+	protected static final String RESOURCE_NAME_PATTERN = "data-%s.json";
+	protected static final String RESOURCE_PATH_SEPARATOR = "/";
 
 	private static final String RESERVED_DEFAULT_PROFILE_NAME = "default";
 
@@ -212,8 +218,10 @@ public abstract class AbstractCacheDataImporterExporter
 	 * @see org.springframework.core.env.Environment
 	 */
 	protected boolean isExportEnabled(@Nullable Environment environment) {
-		return environment != null && Boolean.TRUE.equals(environment
-			.getProperty(CACHE_DATA_EXPORT_ENABLED_PROPERTY_NAME, Boolean.class, DEFAULT_CACHE_DATA_EXPORT_ENABLED));
+
+		return environment != null
+			&& Boolean.TRUE.equals(environment.getProperty(CACHE_DATA_EXPORT_ENABLED_PROPERTY_NAME, Boolean.class,
+				DEFAULT_CACHE_DATA_EXPORT_ENABLED));
 	}
 
 	/**
@@ -256,8 +264,10 @@ public abstract class AbstractCacheDataImporterExporter
 	 * @see org.springframework.core.env.Environment
 	 */
 	protected boolean isImportEnabled(@Nullable Environment environment) {
-		return environment != null && Boolean.TRUE.equals(environment
-			.getProperty(CACHE_DATA_IMPORT_ENABLED_PROPERTY_NAME, Boolean.class, DEFAULT_CACHE_DATA_IMPORT_ENABLED));
+
+		return environment != null
+			&& Boolean.TRUE.equals(environment.getProperty(CACHE_DATA_IMPORT_ENABLED_PROPERTY_NAME, Boolean.class,
+				DEFAULT_CACHE_DATA_IMPORT_ENABLED));
 	}
 
 	/**
@@ -277,18 +287,7 @@ public abstract class AbstractCacheDataImporterExporter
 		boolean importEnabled = getEnvironment()
 			.filter(this::isImportEnabled)
 			.filter(environment -> getRegionPredicate().test(region))
-			.map(Environment::getActiveProfiles)
-			.map(CollectionUtils::asSet)
-			.map(this::getDefaultProfilesIfEmpty)
-			.filter(activeProfiles -> {
-
-				String cacheDataImportActiveProfiles = requireEnvironment()
-					.getProperty(CACHE_DATA_IMPORT_ACTIVE_PROFILES_PROPERTY_NAME,
-						DEFAULT_CACHE_DATA_IMPORT_ACTIVE_PROFILES);
-
-				return isImportEnabled(activeProfiles, cacheDataImportActiveProfiles);
-
-			})
+			.filter(this::isImportProfilesActive)
 			.isPresent();
 
 		return importEnabled ? doImportInto(region) : region;
@@ -303,16 +302,75 @@ public abstract class AbstractCacheDataImporterExporter
 	 */
 	protected abstract @NonNull Region doImportInto(@NonNull Region region);
 
-	@Nullable Set<String> getDefaultProfilesIfEmpty(@Nullable Set<String> activeProfiles) {
+	/**
+	 * Determines whether the Cache Data Import data access operation is enabled based on the configured, active/default
+	 * {@literal Profiles} as declared in the Spring {@link Environment}.
+	 *
+	 * @param environment {@link Environment} used to evaluate the configured, active {@literal Profiles};
+	 * must not be {@literal null}.
+	 * @return a boolean value indicating whether the the Cache Data Import data access operation is enabled based on
+	 * the configured, active/default {@literal Profiles}.
+	 * @throws IllegalArgumentException if {@link Environment} is {@literal null}.
+	 * @see org.springframework.core.env.Environment
+	 * @see #useDefaultProfilesIfEmpty(Environment, Set)
+	 * @see #getActiveProfiles(Environment)
+	 */
+	protected boolean isImportProfilesActive(@NonNull Environment environment) {
 
-		Set<String> resolvedProfiles = activeProfiles;
+		Assert.notNull(environment, "Environment must not be null");
 
-		if (CollectionUtils.nullSafeSet(activeProfiles).isEmpty()) {
+		boolean importProfilesActive = true;
 
-			Set<String> defaultProfiles =
-				CollectionUtils.asSet(ArrayUtils.nullSafeArray(requireEnvironment().getDefaultProfiles(), String.class));
+		String cacheDataImportActiveProfiles =
+			environment.getProperty(CACHE_DATA_IMPORT_ACTIVE_PROFILES_PROPERTY_NAME,
+				DEFAULT_CACHE_DATA_IMPORT_ACTIVE_PROFILES);
 
-			if (isNonDefaultProfileSet(defaultProfiles)) {
+		Set<String> cacheDataImportProfiles = commaDelimitedStringToSet(cacheDataImportActiveProfiles);
+
+		if (!cacheDataImportProfiles.isEmpty()) {
+
+			Set<String> configuredProfiles = useDefaultProfilesIfEmpty(environment, getActiveProfiles(environment));
+
+			// The configured, "Active Profiles" must contain at least 1 of the configured cacheDataImportProfiles.
+			importProfilesActive = CollectionUtils.containsAny(configuredProfiles, cacheDataImportProfiles);
+		}
+
+		return importProfilesActive;
+	}
+
+	@NonNull Set<String> commaDelimitedStringToSet(@Nullable String commaDelimitedString) {
+
+		return StringUtils.hasText(commaDelimitedString)
+			? Arrays.stream(commaDelimitedString.split(","))
+				.map(String::trim)
+				.filter(StringUtils::hasText)
+				.collect(Collectors.toSet())
+			: Collections.emptySet();
+	}
+
+	@NonNull Set<String> getActiveProfiles(@NonNull Environment environment) {
+
+		return environment != null
+			? toSet(environment.getActiveProfiles(), String.class)
+			: Collections.emptySet();
+	}
+
+	@NonNull Set<String> useDefaultProfilesIfEmpty(@NonNull Environment environment,
+			@Nullable Set<String> activeProfiles) {
+
+		Set<String> resolvedProfiles = CollectionUtils.nullSafeSet(activeProfiles).stream()
+			.filter(StringUtils::hasText)
+			.collect(Collectors.toSet());
+
+		if (resolvedProfiles.isEmpty()) {
+
+			Set<String> defaultProfiles = environment != null
+				? toSet(environment.getDefaultProfiles(), String.class).stream()
+					.filter(StringUtils::hasText)
+					.collect(Collectors.toSet())
+				: Collections.emptySet();
+
+			if (isNotDefaultProfileOnlySet(defaultProfiles)) {
 				resolvedProfiles = defaultProfiles;
 			}
 		}
@@ -320,34 +378,15 @@ public abstract class AbstractCacheDataImporterExporter
 		return resolvedProfiles;
 	}
 
-	// The Set of Profiles cannot be null, empty or contain only the "default" Profile.
-	boolean isNonDefaultProfileSet(@Nullable Set<String> profiles) {
+	// The Set of configured Profiles cannot be null, empty or contain only the "default" Profile.
+	boolean isNotDefaultProfileOnlySet(@Nullable Set<String> profiles) {
 
 		return Objects.nonNull(profiles)
 			&& !profiles.isEmpty()
 			&& !Collections.singleton(RESERVED_DEFAULT_PROFILE_NAME).containsAll(profiles);
 	}
 
-	// Active Spring Profiles must contain at least 1 of the configured cacheDataImportActiveProfiles unless unset.
-	boolean isImportEnabled(Set<String> activeProfiles, String cacheDataImportActiveProfiles) {
-		return isNotSet(cacheDataImportActiveProfiles)
-			|| containsAny(activeProfiles, commaDelimitedListOfStringsToSet(cacheDataImportActiveProfiles));
-	}
-
-	Set<String> commaDelimitedListOfStringsToSet(@NonNull String commaDelimitedListOfStrings) {
-
-		return StringUtils.hasText(commaDelimitedListOfStrings)
-			? Arrays.stream(commaDelimitedListOfStrings.split(","))
-				.map(String::trim)
-				.collect(Collectors.toSet())
-			: Collections.emptySet();
-	}
-
-	boolean containsAny(Collection<?> source, Collection<?> elements) {
-		return CollectionUtils.containsAny(source, elements);
-	}
-
-	boolean isNotSet(String value) {
-		return !StringUtils.hasText((value));
+	private static <T> Set<T> toSet(T[] array, Class<T> type) {
+		return CollectionUtils.asSet(ArrayUtils.nullSafeArray(array, type));
 	}
 }

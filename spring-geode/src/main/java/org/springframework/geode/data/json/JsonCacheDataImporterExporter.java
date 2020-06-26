@@ -30,7 +30,6 @@ import org.apache.geode.pdx.PdxInstance;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.geode.data.AbstractCacheDataImporterExporter;
@@ -79,15 +78,11 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	private static final int CONTENT_PREVIEW_LENGTH = 50;
 	private static final int DEFAULT_BUFFER_SIZE = 32768;
 
-	protected static final String CLASSPATH_RESOURCE_PREFIX = ResourceLoader.CLASSPATH_URL_PREFIX;
-	protected static final String FILESYSTEM_RESOURCE_PREFIX = "file://";
-	protected static final String RESOURCE_NAME_PATTERN = "data-%s.json";
-
 	private JsonToPdxArrayConverter jsonToPdxArrayConverter = newJsonToPdxArrayConverter();
 
 	private final RegionValuesToJsonConverter regionValuesToJsonConverter = new RegionValuesToJsonConverter();
 
-	// TODO configure via an SPI
+	// TODO configure via an SPI or DI
 	private @NonNull JsonToPdxArrayConverter newJsonToPdxArrayConverter() {
 		return new JacksonJsonToPdxConverter();
 	}
@@ -252,7 +247,8 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 * @return a {@link String file system path} specifying the location for where to export the {@link Resource}.
 	 */
 	protected @NonNull String getResourceLocation() {
-		return String.format("%1$s%2$s%3$s", FILESYSTEM_RESOURCE_PREFIX, System.getProperty("user.dir"), File.separator);
+		return String.format("%1$s%2$s%2$s%3$s%4$s", FILESYSTEM_RESOURCE_PREFIX, RESOURCE_PATH_SEPARATOR,
+			System.getProperty("user.dir"), File.separator);
 	}
 
 	/**

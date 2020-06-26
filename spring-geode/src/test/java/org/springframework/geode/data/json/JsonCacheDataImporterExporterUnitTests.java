@@ -89,8 +89,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		doReturn("TestRegion").when(mockRegion).getName();
 		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion), anyString());
-		doReturn(JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX + "/path/to/data.json")
-			.when(importer).getResourceLocation();
+		doReturn( "file:///path/to/data.json").when(importer).getResourceLocation();
 		doNothing().when(this.importer).save(anyString(), any(Resource.class));
 		doReturn(json).when(this.importer).toJson(any());
 
@@ -98,7 +97,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		verify(this.importer, times(1)).toJson(eq(mockRegion));
 		verify(this.importer, times(1)).getResource(eq(mockRegion),
-			eq(JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX + "/path/to/data.json"));
+			eq("file:///path/to/data.json"));
 		verify(this.importer, times(1)).getResourceLocation();
 		verify(this.importer, times(1)).save(eq(json), eq(mockResource));
 	}
@@ -219,8 +218,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		byte[] json = "[{ \"name\": \"Jon Doe\"}, { \"name\": \"Jane Doe\" }]".getBytes();
 
-		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion),
-			eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion),eq("classpath:"));
 		doReturn(true).when(mockResource).exists();
 		doReturn(json).when(this.importer).getContent(eq(mockResource));
 		doReturn(ArrayUtils.asArray(mockPdxInstanceOne, mockPdxInstanceTwo)).when(this.importer).toPdx(eq(json));
@@ -229,8 +227,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
 
-		verify(this.importer, times(1))
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
 		verify(this.importer, times(1)).getContent(eq(mockResource));
 		verify(this.importer, times(1)).toPdx(eq(json));
 		verify(this.importer, times(1)).resolveKey(eq(mockPdxInstanceOne));
@@ -250,14 +247,12 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		doReturn(Optional.empty()).when(this.importer)
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		doReturn(Optional.empty()).when(this.importer).getResource(eq(mockRegion), eq("classpath:"));
 
 		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
 
 		verify(this.importer, times(1)).doImportInto(eq(mockRegion));
-		verify(this.importer, times(1))
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
 		verifyNoMoreInteractions(this.importer);
 		verifyNoInteractions(mockRegion);
 	}
@@ -270,15 +265,13 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		doReturn(Optional.of(mockResource)).when(this.importer)
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion), eq("classpath:"));
 		doReturn(false).when(mockResource).exists();
 
 		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
 
 		verify(this.importer, times(1)).doImportInto(eq(mockRegion));
-		verify(this.importer, times(1))
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
 		verify(mockResource, times(1)).exists();
 		verifyNoMoreInteractions(this.importer);
 		verifyNoMoreInteractions(mockResource);
@@ -293,16 +286,14 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		doReturn(Optional.of(mockResource)).when(this.importer)
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion), eq("classpath:"));
 		doReturn(true).when(mockResource).exists();
 		doReturn(null).when(this.importer).getContent(eq(mockResource));
 
 		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
 
 		verify(this.importer, times(1)).doImportInto(eq(mockRegion));
-		verify(this.importer, times(1))
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
 		verify(this.importer, times(1)).getContent(eq(mockResource));
 		verify(mockResource, times(1)).exists();
 		verifyNoMoreInteractions(this.importer);
@@ -320,8 +311,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		byte[] json = "[]".getBytes();
 
-		doReturn(Optional.of(mockResource)).when(this.importer)
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion), eq("classpath:"));
 		doReturn(true).when(mockResource).exists();
 		doReturn(json).when(this.importer).getContent(eq(mockResource));
 		doReturn(new PdxInstance[0]).when(this.importer).toPdx(eq(json));
@@ -329,8 +319,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
 
 		verify(this.importer, times(1)).doImportInto(eq(mockRegion));
-		verify(this.importer, times(1))
-			.getResource(eq(mockRegion), eq(JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX));
+		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
 		verify(this.importer, times(1)).getContent(eq(mockResource));
 		verify(this.importer, times(1)).toPdx(eq(json));
 		verify(mockResource, times(1)).exists();
@@ -469,7 +458,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 	public void getResourceFromNullRegion() {
 
 		try {
-			this.importer.getResource(null, JsonCacheDataImporterExporter.CLASSPATH_RESOURCE_PREFIX);
+			this.importer.getResource(null, "classpath:");
 		}
 		catch (IllegalArgumentException expected) {
 
@@ -482,8 +471,8 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 	@Test
 	public void getResourceLocationIsInWorkingDirectory() {
-		assertThat(this.importer.getResourceLocation()).isEqualTo(String.format("%1$s%2$s%3$s",
-			JsonCacheDataImporterExporter.FILESYSTEM_RESOURCE_PREFIX, System.getProperty("user.dir"), File.separator));
+		assertThat(this.importer.getResourceLocation()).isEqualTo(String.format("file://%1$s%2$s",
+			System.getProperty("user.dir"), File.separator));
 	}
 
 	@Test
