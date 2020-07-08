@@ -95,7 +95,7 @@ public class ObjectUtilsUnitTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void asPdxInstanceTypeReturnNonMatchingType() {
+	public void asPdxInstanceTypeReturningNonMatchingType() {
 
 		C source = new C();
 
@@ -298,6 +298,16 @@ public class ObjectUtilsUnitTests {
 
 			throw expected;
 		}
+	}
+
+	@Test
+	public void initializeWithNonNullTarget() {
+		assertThat(ObjectUtils.initialize("test", () -> "mock")).isEqualTo("test");
+	}
+
+	@Test
+	public void initializeWithNullTarget() {
+		assertThat(ObjectUtils.initialize(null, () -> "mock")).isEqualTo("mock");
 	}
 
 	@Test

@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.apache.geode.pdx.PdxInstance;
 
@@ -259,6 +260,33 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	}
 
 	/**
+	 * An initialization operator used to evalutate a given {@link Object target} and conditionally
+	 * {@link Supplier supply} a new value if the {@link Object target} is {@literal null}.
+	 *
+	 * The {@code initialize} operator simplifies a common initialization safety pattern that appears in code as:
+	 *
+	 * <code>
+	 *   target = target != null ? target : new Target();
+	 * </code>
+	 *
+	 * While the expression uses Java's ternary operator, users could very well use a if-then-else statement instead.
+	 * Either way, since Java is {@literal call-by-value} then the above statement and expression can be replaced with:
+	 *
+	 * <code>
+	 *   target = initialize(target, Target::new);
+	 * </code>
+	 *
+	 * @param <T> {@link Class type} of the {@link Object target}.
+	 * @param target {@link Object} to evaluate and initialize; must not be {@literal null}.
+	 * @param supplier {@link Supplier} used to initialize the {@link Object target} on return.
+	 * @return the existing {@link Object target} if not {@literal null}, otherwise invoke the {@link Supplier}
+	 * to supply a new instance of {@link T}.
+	 */
+	public static <T> T initialize(@Nullable T target, @NonNull Supplier<T> supplier) {
+		return target != null ? target : supplier.get();
+	}
+
+	/**
 	 * Invokes a {@link Method} on an {@link Object} with the given {@link String name}.
 	 *
 	 * @param <T> {@link Class type} of the {@link Method} return value.
@@ -281,13 +309,27 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 				methodName, org.springframework.util.ObjectUtils.nullSafeClassName(obj)));
 	}
 
-	public static Constructor makeAccessible(Constructor<?> constructor) {
+	/**
+	 * Makes the {@link Constructor} accessible.
+	 *
+	 * @param constructor {@link Constructor} to make accessible; must not be {@literal null}.
+	 * @return the given {@link Constructor}.
+	 * @see java.lang.reflect.Constructor
+	 */
+	public static Constructor makeAccessible(@NonNull Constructor<?> constructor) {
 
 		ReflectionUtils.makeAccessible(constructor);
 
 		return constructor;
 	}
 
+	/**
+	 * Makes the {@link Field} accessible.
+	 *
+	 * @param field {@link Field} to make accessible; must not be {@literal null}.
+	 * @return the given {@link Field}.
+	 * @see java.lang.reflect.Field
+	 */
 	public static Field makeAccessible(Field field) {
 
 		ReflectionUtils.makeAccessible(field);
@@ -295,6 +337,13 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 		return field;
 	}
 
+	/**
+	 * Makes the {@link Method} accessible.
+	 *
+	 * @param constructor {@link Method} to make accessible; must not be {@literal null}.
+	 * @return the given {@link Method}.
+	 * @see java.lang.reflect.Method
+	 */
 	public static Method makeAccessible(Method method) {
 
 		ReflectionUtils.makeAccessible(method);
