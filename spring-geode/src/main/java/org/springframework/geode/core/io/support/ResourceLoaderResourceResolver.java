@@ -15,6 +15,8 @@
  */
 package org.springframework.geode.core.io.support;
 
+import static org.springframework.geode.core.util.ObjectUtils.initialize;
+
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -94,7 +96,7 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 	 */
 	protected @NonNull ResourceLoader getResourceLoader() {
 		return this.resolvedResourceLoader.updateAndGet(resourceLoader ->
-			resourceLoader != null ? resourceLoader : newResourceLoader());
+			initialize(resourceLoader, this::newResourceLoader));
 	}
 
 	/**

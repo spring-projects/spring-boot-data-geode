@@ -20,7 +20,6 @@ import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newI
 import java.util.Optional;
 
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ClassUtils;
 
@@ -33,10 +32,6 @@ import org.springframework.util.ClassUtils;
  */
 @FunctionalInterface
 public interface ResourceResolver {
-
-	String CLASSPATH_URL_PREFIX = ResourceLoader.CLASSPATH_URL_PREFIX;
-	String FILESYSTEM_URL_PREFIX = "file:";
-	String RESOURCE_PATH_SEPARATOR = "/";
 
 	/**
 	 * Gets the {@link ClassLoader} used by this {@link ResourceResolver} to resolve {@literal classpath}
