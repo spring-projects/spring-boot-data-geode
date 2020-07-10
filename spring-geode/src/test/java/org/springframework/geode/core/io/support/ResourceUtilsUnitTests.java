@@ -20,6 +20,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.junit.Test;
@@ -39,6 +40,78 @@ import org.springframework.core.io.WritableResource;
  * @since 1.3.1
  */
 public class ResourceUtilsUnitTests {
+
+	@Test
+	public void isReadableWithReadableResourceReturnsTrue() {
+
+		Resource mockResource = mock(Resource.class);
+
+		doReturn(true).when(mockResource).isReadable();
+
+		assertThat(ResourceUtils.isReadable(mockResource)).isTrue();
+
+		verify(mockResource, times(1)).isReadable();
+		verifyNoMoreInteractions(mockResource);
+	}
+
+	@Test
+	public void isReadableWithNonReadableResourceReturnsFalse() {
+
+		Resource mockResource = mock(Resource.class);
+
+		doReturn(false).when(mockResource).isReadable();
+
+		assertThat(ResourceUtils.isReadable(mockResource)).isFalse();
+
+		verify(mockResource, times(1)).isReadable();
+		verifyNoMoreInteractions(mockResource);
+	}
+
+	@Test
+	public void isReadableWithNullResourceIsNullSafeReturnsFalse() {
+		assertThat(ResourceUtils.isReadable(null)).isFalse();
+	}
+
+	@Test
+	public void isWritableWithWritableResourceReturnsTrue() {
+
+		WritableResource mockResource = mock(WritableResource.class);
+
+		doReturn(true).when(mockResource).isWritable();
+
+		assertThat(ResourceUtils.isWritable(mockResource)).isTrue();
+
+		verify(mockResource, times(1)).isWritable();
+		verifyNoMoreInteractions(mockResource);
+	}
+
+	@Test
+	public void isWritableWithNonWritableResourceReturnsFalse() {
+
+		WritableResource mockResource = mock(WritableResource.class);
+
+		doReturn(false).when(mockResource).isWritable();
+
+		assertThat(ResourceUtils.isWritable(mockResource)).isFalse();
+
+		verify(mockResource, times(1)).isWritable();
+		verifyNoMoreInteractions(mockResource);
+	}
+
+	@Test
+	public void isWritableWithNonWritableResourceTypeReturnsFalse() {
+
+		Resource mockResource = mock(Resource.class);
+
+		assertThat(ResourceUtils.isWritable(mockResource)).isFalse();
+
+		verifyNoInteractions(mockResource);
+	}
+
+	@Test
+	public void isWritableWithNullResourceIsNullSafeReturnsFalse() {
+		assertThat(ResourceUtils.isWritable(null)).isFalse();
+	}
 
 	@Test
 	public void getWritableResourceReturnsWritableResourceFromResource() {

@@ -35,6 +35,41 @@ import org.springframework.lang.Nullable;
 public abstract class ResourceUtils {
 
 	/**
+	 * Determines whether the given byte array is {@literal null} or {@literal empty}.
+	 *
+	 * @param array byte array to evaluate.
+	 * @return a boolean value indicating whether the given byte array is {@literal null} or {@literal empty}.
+	 */
+	public static boolean isNotEmpty(@Nullable byte[] array) {
+		return array != null && array.length > 0;
+	}
+
+	/**
+	 * Null-safe operation to determine whether the given {@link Resource} is readable.
+	 *
+	 * @param resource {@link Resource} to evaluate.
+	 * @return a boolean value indicating whether the given {@link Resource} is readable.
+	 * @see org.springframework.core.io.Resource#isReadable()
+	 * @see org.springframework.core.io.Resource
+	 */
+	public static boolean isReadable(@Nullable Resource resource) {
+		return resource != null && resource.isReadable();
+	}
+
+	/**
+	 * Null-safe operation to determine whether the given {@link Resource} is writable.
+	 *
+	 * @param resource {@link Resource} to evaluate.
+	 * @return a boolean value indicating whether the given {@link Resource} is writable.
+	 * @see org.springframework.core.io.WritableResource#isWritable()
+	 * @see org.springframework.core.io.WritableResource
+	 * @see org.springframework.core.io.Resource
+	 */
+	public static boolean isWritable(@Nullable Resource resource) {
+		return resource instanceof WritableResource && ((WritableResource) resource).isWritable();
+	}
+
+	/**
 	 * Returns the {@link Resource} as a {@link WritableResource} if possible.
 	 *
 	 * This method makes a best effort to determine whether the target {@link Resource} is actually {@literal writable}.
@@ -54,16 +89,6 @@ public abstract class ResourceUtils {
 			.filter(WritableResource::isWritable)
 			.orElseThrow(() -> newIllegalStateException("Resource [%s] is not writable",
 				ResourceUtils.nullSafeGetDescription(resource)));
-	}
-
-	/**
-	 * Determines whether the given byte array is {@literal null} or {@literal empty}.
-	 *
-	 * @param array byte array to evaluate.
-	 * @return a boolean value indicating whether the given byte array is {@literal null} or {@literal empty}.
-	 */
-	public static boolean isNotEmpty(@Nullable byte[] array) {
-		return array != null && array.length > 0;
 	}
 
 	/**
