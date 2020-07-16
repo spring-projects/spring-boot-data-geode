@@ -31,7 +31,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.lang.NonNull;
@@ -43,8 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract base class implementing the {@link CacheDataExporter} and {@link CacheDataImporter} interfaces in order to
- * simply import/export data access operation implementations in a consistent way.
+ * Abstract base class implementing the {@link CacheDataImporter} and {@link CacheDataExporter} interfaces in order to
+ * simplify import/export data access operation implementations in a consistent way.
  *
  * @author John Blum
  * @see java.util.function.Predicate
@@ -53,9 +52,7 @@ import org.slf4j.LoggerFactory;
  * @see org.springframework.context.ApplicationContextAware
  * @see org.springframework.context.EnvironmentAware
  * @see org.springframework.core.env.Environment
- * @see org.springframework.core.io.ResourceLoader
- * @see org.springframework.geode.data.CacheDataExporter
- * @see org.springframework.geode.data.CacheDataImporter
+ * @see org.springframework.geode.data.CacheDataImporterExporter
  * @since 1.3.0
  */
 @SuppressWarnings({ "rawtypes", "unused" })
@@ -74,11 +71,7 @@ public abstract class AbstractCacheDataImporterExporter
 	protected static final String CACHE_DATA_IMPORT_ENABLED_PROPERTY_NAME =
 		"spring.boot.data.gemfire.cache.data.import.enabled";
 
-	protected static final String CLASSPATH_RESOURCE_PREFIX = ResourceLoader.CLASSPATH_URL_PREFIX;
 	protected static final String DEFAULT_CACHE_DATA_IMPORT_ACTIVE_PROFILES = "";
-	protected static final String FILESYSTEM_RESOURCE_PREFIX = "file:";
-	protected static final String RESOURCE_NAME_PATTERN = "data-%s.json";
-	protected static final String RESOURCE_PATH_SEPARATOR = "/";
 
 	private static final String RESERVED_DEFAULT_PROFILE_NAME = "default";
 
@@ -126,7 +119,7 @@ public abstract class AbstractCacheDataImporterExporter
 	 * @see org.springframework.context.ApplicationContext
 	 * @see java.util.Optional
 	 */
-	public Optional<ApplicationContext> getApplicationContext() {
+	protected Optional<ApplicationContext> getApplicationContext() {
 		return Optional.ofNullable(this.applicationContext);
 	}
 
