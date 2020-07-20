@@ -15,29 +15,21 @@
  */
 package org.springframework.geode.data.json;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
 import java.util.Arrays;
-import java.util.Optional;
 
 import org.apache.geode.cache.Region;
 import org.apache.geode.pdx.PdxInstance;
 
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.data.gemfire.util.CollectionUtils;
-import org.springframework.geode.data.AbstractCacheDataImporterExporter;
 import org.springframework.geode.data.CacheDataExporter;
 import org.springframework.geode.data.CacheDataImporter;
 import org.springframework.geode.data.json.converter.AbstractObjectArrayToJsonConverter;
 import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
 import org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter;
+import org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter;
 import org.springframework.geode.pdx.ObjectPdxInstanceAdapter;
 import org.springframework.geode.pdx.PdxInstanceWrapper;
 import org.springframework.geode.util.CacheUtils;
@@ -45,44 +37,65 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * The {@link JsonCacheDataImporterExporter} class is a {@link CacheDataImporter} and {@link CacheDataExporter}
  * implementation that can export/import JSON data to/from a {@link Resource} given a target {@link Region}.
  *
  * @author John Blum
- * @see java.io.File
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.pdx.PdxInstance
- * @see org.springframework.core.io.ClassPathResource
  * @see org.springframework.core.io.Resource
- * @see org.springframework.core.io.ResourceLoader
- * @see org.springframework.geode.data.AbstractCacheDataImporterExporter
  * @see org.springframework.geode.data.CacheDataExporter
  * @see org.springframework.geode.data.CacheDataImporter
  * @see org.springframework.geode.data.json.converter.JsonToPdxArrayConverter
- * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
- * @see org.springframework.geode.data.json.converter.support.JSONFormatterPdxToJsonConverter
+ * @see org.springframework.geode.data.json.converter.ObjectArrayToJsonConverter
  * @see org.springframework.geode.data.json.converter.support.JacksonJsonToPdxConverter
+ * @see org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter
+ * @see org.springframework.geode.pdx.ObjectPdxInstanceAdapter
  * @see org.springframework.geode.pdx.PdxInstanceWrapper
  * @see org.springframework.stereotype.Component
  * @since 1.3.0
  */
 @Component
 @SuppressWarnings("rawtypes")
-public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExporter {
+public class JsonCacheDataImporterExporter extends ResourceCapableCacheDataImporterExporter {
 
-	private static final boolean APPEND_TO_FILE = false;
+	protected static final PdxInstance[] EMPTY_PDX_INSTANCE_ARRAY = {};
 
-	private static final int CONTENT_PREVIEW_LENGTH = 50;
-	private static final int DEFAULT_BUFFER_SIZE = 32768;
-
-	private JsonToPdxArrayConverter jsonToPdxArrayConverter = newJsonToPdxArrayConverter();
+	@Autowired(required = false)
+	private JsonToPdxArrayConverter jsonToPdxArrayConverter;
 
 	private final RegionValuesToJsonConverter regionValuesToJsonConverter = new RegionValuesToJsonConverter();
 
-	// TODO configure via an SPI or DI
+	/**
+	 * Determines whether the given array is empty or not. An array is not empty if the array reference
+	 * is not {@literal null} and contains at least 1 element.
+	 *
+	 * @param <T> {@link Class type} of the array elements.
+	 * @param array {@link Object} array to evaluate.
+	 * @return a boolean value indicating whether the array is empty or not.
+	 */
+	@SuppressWarnings("unchecked")
+	private static <T> boolean isNotEmpty(T... array) {
+		return array != null && array.length > 0;
+	}
+
+	/**
+	 * Initializes the JSON to PDX (array) converter.
+	 *
+	 * @see #newJsonToPdxArrayConverter()
+	 */
+	@Override
+	public void afterPropertiesSet() {
+
+		super.afterPropertiesSet();
+
+		this.jsonToPdxArrayConverter = this.jsonToPdxArrayConverter != null
+			? this.jsonToPdxArrayConverter
+			: newJsonToPdxArrayConverter();
+	}
+
 	private @NonNull JsonToPdxArrayConverter newJsonToPdxArrayConverter() {
 		return new JacksonJsonToPdxConverter();
 	}
@@ -105,150 +118,52 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 
 		Assert.notNull(region, "Region must not be null");
 
-		String json = toJson(region);
+		getExportResourceResolver()
+			.resolve(region)
+			.ifPresent(resource -> {
 
-		getLogger().debug("Saving JSON [{}] from Region [{}]", json, region.getName());
+				String json = toJson(region);
 
-		getResource(region, getResourceLocation())
-			.ifPresent(resource -> save(json, resource));
+				getLogger().debug("Saving JSON [{}] from Region [{}]", json, region.getName());
+
+				getResourceWriter().write(resource, json.getBytes());
+			});
 
 		return region;
-	}
-
-	/**
-	 * Saves the given {@link String content} (e.g. JSON) to the specified {@link Resource}.
-	 *
-	 * @param content {@link String} containing the content to save.
-	 * @param resource {@link Resource} to save the {@link String content} to; must not be {@literal null}.
-	 * @throws IllegalArgumentException if {@link Resource} is {@literal null}.
-	 * @see org.springframework.core.io.Resource
-	 */
-	protected void save(@Nullable String content, @NonNull Resource resource) {
-
-		Assert.notNull(resource, "Resource must not be null");
-
-		if (StringUtils.hasText(content)) {
-			try (Writer writer = newWriter(resource)) {
-				writer.write(content, 0, content.length());
-				writer.flush();
-			}
-			catch (IOException cause) {
-
-				String message = String.format("Failed to save content '%s' to Resource [%s]",
-					formatContentForPreview(content), resource.getDescription());
-
-				throw new DataAccessResourceFailureException(message, cause);
-			}
-		}
-	}
-
-	@NonNull Writer newWriter(@NonNull Resource resource) throws IOException {
-		return new BufferedWriter(new FileWriter(resource.getFile(), APPEND_TO_FILE));
-	}
-
-	@Nullable String formatContentForPreview(@Nullable String content) {
-
-		if (StringUtils.hasText(content)) {
-
-			int length = Math.min(content.length(), CONTENT_PREVIEW_LENGTH);
-
-			content = content.substring(0, length).concat(length < content.length() ? "..." : "");
-		}
-
-		return content;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	@NonNull @Override @SuppressWarnings("unchecked")
+	@NonNull @Override
 	public Region doImportInto(@NonNull Region region) {
 
 		Assert.notNull(region, "Region must not be null");
 
-		getResource(region, CLASSPATH_RESOURCE_PREFIX)
-			.filter(Resource::exists)
-			.map(this::getContent)
+		getImportResourceResolver()
+			.resolve(region)
+			.map(this.getResourceReader()::read)
 			.map(this::toPdx)
-			.map(Arrays::stream)
-			.ifPresent(pdxInstances -> pdxInstances.forEach(pdxInstance ->
-				region.put(resolveKey(pdxInstance), resolveValue(pdxInstance))));
+			.ifPresent(pdxInstances -> regionPutPdx(region, pdxInstances));
 
 		return region;
 	}
 
 	/**
-	 * Gets the contents of the given {@link Resource} as an array of {@literal Byte#TYPE bytes}.
+	 * Puts all PDX data from the {@link PdxInstance} array into the target {@link Region} mapped to
+	 * the PDX {@link PdxInstance#isIdentityField(String) identifier} as the {@literal key}.
 	 *
-	 * @param resource {@link Resource} from which to load the content; must not be {@literal null}.
-	 * @return an array of {@link Byte#TYPE bytes} containing the contents of the given {@link Resource}.
-	 * @throws IllegalArgumentException if {@link Resource} is {@literal null}.
-	 * @throws DataAccessResourceFailureException if an {@link IOException} occurs while reading from
-	 * and loading the contents of the given {@link Resource}.
-	 * @see org.springframework.core.io.Resource
-	 */
-	protected @NonNull byte[] getContent(@NonNull Resource resource) {
-
-		Assert.notNull(resource, "Resource must not be null");
-
-		try (InputStream in = resource.getInputStream()){
-
-			ByteArrayOutputStream out = new ByteArrayOutputStream(in.available());
-
-			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-
-			for (int bytesRead = in.read(buffer); bytesRead != -1; bytesRead = in.read(buffer)) {
-				out.write(buffer, 0, bytesRead);
-				out.flush();
-			}
-
-			out.flush();
-			out.close();
-
-			return out.toByteArray();
-		}
-		catch (IOException cause) {
-			throw new DataAccessResourceFailureException(String.format("Failed to read from Resource [%s]",
-				resource.getDescription()), cause);
-		}
-	}
-
-	/**
-	 * Returns a computed JSON {@link Resource} containing JSON data to be loaded into the given {@link Region}.
-	 *
-	 * @param region target {@link Region} used to compute the JSON {@link Resource} to load.
-	 * @param resourcePrefix {@link String} containing a path prefix (e.g. {@literal classpath:} used to indicate
-	 * the location of the {@link Resource} to load.
-	 * @return an {@link Optional} JSON {@link Resource} containing JSON data to load into the given {@link Region}.
-	 * @see org.springframework.core.io.Resource
+	 * @param region target {@link Region} to store the PDX data; must not be {@literal null}
+	 * @param pdx {@link PdxInstance} array containing the PDX data to store in the target {@link Region}.
 	 * @see org.apache.geode.cache.Region
-	 * @see java.util.Optional
+	 * @see org.apache.geode.cache.Region#put(Object, Object)
+	 * @see org.apache.geode.pdx.PdxInstance
 	 */
-	protected Optional<Resource> getResource(@NonNull Region region, @Nullable String resourcePrefix) {
+	@SuppressWarnings("unchecked")
+	void regionPutPdx(@NonNull Region region, @Nullable PdxInstance[] pdx) {
 
-		Assert.notNull(region, "Region must not be null");
-
-		String regionName = region.getName().toLowerCase();
-		String resourceName = String.format(RESOURCE_NAME_PATTERN, regionName);
-		String resolvedResourcePrefix = StringUtils.hasText(resourcePrefix)
-			? resourcePrefix
-			: CLASSPATH_RESOURCE_PREFIX;
-
-		Resource resource = getApplicationContext()
-			.map(it -> it.getResource(String.format("%1$s%2$s", resolvedResourcePrefix, resourceName)))
-			.orElseGet((() -> new ClassPathResource(resourceName)));
-
-		return Optional.of(resource);
-	}
-
-	/**
-	 * Returns a {@link String file system path} specifying the location for where to export the {@link Resource}.
-	 *
-	 * @return a {@link String file system path} specifying the location for where to export the {@link Resource}.
-	 */
-	protected @NonNull String getResourceLocation() {
-		return String.format("%1$s%2$s%2$s%3$s%4$s", FILESYSTEM_RESOURCE_PREFIX, RESOURCE_PATH_SEPARATOR,
-			System.getProperty("user.dir"), File.separator);
+		Arrays.stream(ArrayUtils.nullSafeArray(pdx, PdxInstance.class)).forEach(pdxInstance ->
+			region.put(resolveKey(pdxInstance), resolveValue(pdxInstance)));
 	}
 
 	/**
@@ -319,9 +234,19 @@ public class JsonCacheDataImporterExporter extends AbstractCacheDataImporterExpo
 	 * @see #getJsonToPdxArrayConverter()
 	 */
 	protected @NonNull PdxInstance[] toPdx(@NonNull byte[] json) {
-		return getJsonToPdxArrayConverter().convert(json);
+
+		return isNotEmpty(json)
+			? getJsonToPdxArrayConverter().convert(json)
+			: EMPTY_PDX_INSTANCE_ARRAY;
 	}
 
+	/**
+	 * Converts all {@link Region#values() values} in the targeted {@link Region} into {@literal JSON}.
+	 *
+	 * The converter is capable of handling both {@link Object Objects} and PDX.
+	 *
+	 * @see org.springframework.geode.data.json.converter.AbstractObjectArrayToJsonConverter
+	 */
 	static class RegionValuesToJsonConverter extends AbstractObjectArrayToJsonConverter {
 
 		@NonNull <K, V> String convert(@NonNull Region<K, V> region) {

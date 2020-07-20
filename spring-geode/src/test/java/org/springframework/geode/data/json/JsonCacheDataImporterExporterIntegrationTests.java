@@ -42,7 +42,6 @@ import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,17 +57,21 @@ import org.apache.geode.pdx.PdxInstanceFactory;
 import org.apache.geode.pdx.PdxSerializationException;
 
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.gemfire.LocalRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
-import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
+import org.springframework.data.gemfire.tests.integration.SpringApplicationContextIntegrationTestsSupport;
+import org.springframework.geode.core.io.ResourceWriteException;
+import org.springframework.geode.core.io.ResourceWriter;
 import org.springframework.geode.core.util.ObjectUtils;
+import org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter.ImportResourceResolver;
 import org.springframework.geode.pdx.PdxInstanceBuilder;
-import org.springframework.lang.NonNull;
+import org.springframework.mock.env.MockPropertySource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 
@@ -78,11 +81,12 @@ import example.app.pos.model.Product;
 import example.app.pos.model.PurchaseOrder;
 
 /**
- * Integration Test for {@link JsonCacheDataImporterExporter}.
+ * Integration Tests for {@link JsonCacheDataImporterExporter}.
  *
  * @author John Blum
  * @see org.junit.Test
  * @see com.fasterxml.jackson.databind.ObjectMapper
+ * @see com.fasterxml.jackson.databind.node.ObjectNode
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.cache.RegionService
@@ -90,63 +94,56 @@ import example.app.pos.model.PurchaseOrder;
  * @see org.apache.geode.pdx.PdxInstance
  * @see org.apache.geode.pdx.PdxInstanceFactory
  * @see org.springframework.context.ConfigurableApplicationContext
- * @see org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.core.io.ClassPathResource
  * @see org.springframework.core.io.Resource
  * @see org.springframework.data.gemfire.LocalRegionFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.EnablePdx
  * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
- * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.data.gemfire.tests.integration.SpringApplicationContextIntegrationTestsSupport
  * @see org.springframework.geode.pdx.PdxInstanceBuilder
  * @since 1.3.0
  */
 @SuppressWarnings("unused")
-public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTestsSupport {
+public class JsonCacheDataImporterExporterIntegrationTests extends SpringApplicationContextIntegrationTestsSupport {
 
 	private static final String EXPORT_ENABLED_PROPERTY = "spring.boot.data.gemfire.cache.data.export.enabled";
+	private static final String EXPORT_RESOURCE_LOCATION_PROPERTY = "spring.boot.data.gemfire.cache.data.export.resource.location";
+	private static final String IMPORT_ENABLED_PROPERTY = "spring.boot.data.gemfire.cache.data.import.enabled";
+	private static final String IMPORT_RESOURCE_LOCATION_PROPERTY = "spring.boot.data.gemfire.cache.data.import.resource.location";
 
-	private static volatile Supplier<Resource> resourceSupplier;
-
-	private static volatile Supplier<StringWriter> writerSupplier;
-
-	private ConfigurableApplicationContext applicationContext;
+	private static volatile Supplier<Boolean> exportEnabledSupplier;
+	private static volatile Supplier<Boolean> importEnabledSupplier;
+	private static volatile Supplier<ImportResourceResolver> importResourceResolverSupplier;
+	private static volatile Supplier<String> resourceLocationSupplier;
+	private static volatile Supplier<StringWriter> resourceWriterSupplier;
 
 	@Before
 	public void initializeSuppliers() {
-		resourceSupplier = () -> null;
-		writerSupplier = StringWriter::new;
+
+		exportEnabledSupplier = () -> false;
+		importEnabledSupplier = () -> true;
+		importResourceResolverSupplier = () -> null;
+		resourceLocationSupplier = () -> "";
+		resourceWriterSupplier = StringWriter::new;
 	}
 
-	@After
-	public void closeApplicationContext() {
+	@Override
+	protected ConfigurableApplicationContext processBeforeRefresh(ConfigurableApplicationContext applicationContext) {
 
-		Optional.ofNullable(this.applicationContext)
-			.ifPresent(ConfigurableApplicationContext::close);
+		applicationContext = super.processBeforeRefresh(applicationContext);
 
-		this.applicationContext = null;
-	}
+		MutablePropertySources propertySources = applicationContext.getEnvironment().getPropertySources();
 
-	private ConfigurableApplicationContext newApplicationContext(Class<?>... componentClasses) {
+		MockPropertySource mockPropertySource = new MockPropertySource(getClass().getName().concat(".MockPropertySource"))
+			.withProperty(EXPORT_ENABLED_PROPERTY, exportEnabledSupplier.get())
+			.withProperty(EXPORT_RESOURCE_LOCATION_PROPERTY, resourceLocationSupplier.get())
+			.withProperty(IMPORT_ENABLED_PROPERTY, importEnabledSupplier.get())
+			.withProperty(IMPORT_RESOURCE_LOCATION_PROPERTY, resourceLocationSupplier.get());
 
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
-
-		applicationContext.register(componentClasses);
-		applicationContext.registerShutdownHook();
-		applicationContext.refresh();
-
-		this.applicationContext = applicationContext;
+		propertySources.addFirst(mockPropertySource);
 
 		return applicationContext;
-	}
-
-	private Class<?>[] withResource(String path) {
-
-		if (StringUtils.hasText(path)) {
-			resourceSupplier = () -> new ClassPathResource(path);
-		}
-
-		return new Class[] { TestGeodeConfiguration.class };
 	}
 
 	private <K, V> Region<K, V> assertExampleRegion(Region<K, V> example) {
@@ -168,7 +165,9 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 	@Test
 	public void exampleRegionContainsJonDoe() {
 
-		Region<?, ?> example = getExampleRegion(newApplicationContext(withResource("data-example-jondoe.json")));
+		resourceLocationSupplier = () -> "classpath:data-#{#regionName}-jondoe.json";
+
+		Region<?, ?> example = getExampleRegion(newApplicationContext(TestGeodeConfiguration.class));
 
 		assertThat(example).hasSize(1);
 
@@ -194,8 +193,9 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 	@Test
 	public void exampleRegionContainsDoeFamily() {
 
-		Region<?, ?> example =
-			getExampleRegion(newApplicationContext(withResource("data-example-doefamily.json")));
+		resourceLocationSupplier = () -> "classpath:data-#{#regionName}-doefamily.json";
+
+		Region<?, ?> example = getExampleRegion(newApplicationContext(TestGeodeConfiguration.class));
 
 		assertThat(example).hasSize(9);
 
@@ -319,8 +319,9 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 	@Test
 	public void exampleRegionContainsComplexPurchaseOrderType() {
 
-		Region<?, ?> example =
-			getExampleRegion(newApplicationContext(withResource("data-example-purchaseorder.json")));
+		resourceLocationSupplier = () -> "classpath:data-#{#regionName}-purchaseorder.json";
+
+		Region<?, ?> example = getExampleRegion(newApplicationContext(TestGeodeConfiguration.class));
 
 		assertThat(example).hasSize(1);
 
@@ -345,14 +346,14 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 	public void exportFromExampleRegionToJson() {
 
 		try {
-			System.setProperty(EXPORT_ENABLED_PROPERTY, Boolean.TRUE.toString());
 
 			StringWriter writer = new StringWriter();
 
-			writerSupplier = () -> writer;
+			exportEnabledSupplier = () -> true;
+			importEnabledSupplier = () -> false;
+			resourceWriterSupplier = () -> writer;
 
-			Region<Long, Customer> example =
-				getExampleRegion(newApplicationContext(withResource("data-example.json")));
+			Region<Long, Customer> example = getExampleRegion(newApplicationContext(TestGeodeConfiguration.class));
 
 			assertExampleRegion(example);
 			assertThat(example).isEmpty();
@@ -381,137 +382,125 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 	@Test
 	public void exportFromExampleRegionImportsIntoExampleRegion() throws IOException {
 
-		try {
-			// EXPORT
-			System.setProperty(EXPORT_ENABLED_PROPERTY, Boolean.TRUE.toString());
+		// EXPORT
+		StringWriter writer = new StringWriter();
 
-			StringWriter writer = new StringWriter();
+		exportEnabledSupplier = () -> true;
+		importEnabledSupplier = () -> false;
+		resourceWriterSupplier = () -> writer;
 
-			writerSupplier = () -> writer;
+		Region<Long, PurchaseOrder> example = getExampleRegion(newApplicationContext(TestGeodeConfiguration.class));
 
-			Region<Long, PurchaseOrder> example =
-				getExampleRegion(newApplicationContext(withResource("data-example.json")));
+		assertExampleRegion(example);
+		assertThat(example).isEmpty();
 
-			assertExampleRegion(example);
-			assertThat(example).isEmpty();
+		Product golfBalls = Product.newProduct("Titliest ProV1x Golf Balls")
+			.havingPrice(BigDecimal.valueOf(34.99d))
+			.in(Product.Category.SPECIALTY);
 
-			Product golfBalls = Product.newProduct("Titliest ProV1x Golf Balls")
-				.havingPrice(BigDecimal.valueOf(34.99d))
-				.in(Product.Category.SPECIALTY);
+		LineItem lineItem = LineItem.newLineItem(golfBalls)
+			.withQuantity(1);
 
-			LineItem lineItem = LineItem.newLineItem(golfBalls)
-				.withQuantity(1);
+		PurchaseOrder purchaseOrder = new PurchaseOrder()
+			.identifiedAs(72L)
+			.add(lineItem);
 
-			PurchaseOrder purchaseOrder = new PurchaseOrder()
-				.identifiedAs(72L)
-				.add(lineItem);
+		assertThat(example.put(purchaseOrder.getId(), purchaseOrder)).isNull();
+		assertThat(example).hasSize(1);
+		assertPurchaseOrder(example.get(purchaseOrder.getId()), purchaseOrder.getId(),
+			Collections.singletonList(lineItem), golfBalls.getPrice());
 
-			assertThat(example.put(purchaseOrder.getId(), purchaseOrder)).isNull();
-			assertThat(example).hasSize(1);
-			assertPurchaseOrder(example.get(purchaseOrder.getId()), purchaseOrder.getId(),
-				Collections.singletonList(lineItem), golfBalls.getPrice());
+		//log("JSON from JSONFormatter '%s'%n",
+		//	JSONFormatter.toJSON(serializeToPdx(example.getRegionService(), purchaseOrder)));
 
-			//log("JSON from JSONFormatter '%s'%n",
-			//	JSONFormatter.toJSON(serializeToPdx(example.getRegionService(), purchaseOrder)));
+		closeApplicationContext();
 
-			closeApplicationContext();
+		String json = writer.toString();
 
-			String json = writer.toString();
+		assertThat(json).isNotEmpty();
 
-			assertThat(json).isNotEmpty();
+		//log("JSON '%s'%n", json);
+		//log("PurchaseOrder from JSON [%s]%n",
+		//	newObjectMapper().readValue(json.substring(1, json.length() - 1), PurchaseOrder.class));
 
-			//log("JSON '%s'%n", json);
-			//log("PurchaseOrder from JSON [%s]%n",
-			//	newObjectMapper().readValue(json.substring(1, json.length() - 1), PurchaseOrder.class));
+		// IMPORT
+		Resource mockResource = mock(Resource.class, withSettings().lenient());
 
-			// IMPORT
-			System.clearProperty(EXPORT_ENABLED_PROPERTY);
+		doReturn("MOCK").when(mockResource).getDescription();
+		doReturn(new ByteArrayInputStream(json.getBytes())).when(mockResource).getInputStream();
 
-			Resource mockResource = mock(Resource.class, withSettings().lenient());
+		exportEnabledSupplier = () -> false;
+		importEnabledSupplier = () -> true;
+		importResourceResolverSupplier = () -> (ImportResourceResolver) region -> Optional.of(mockResource);
 
-			doReturn(true).when(mockResource).exists();
-			doReturn("MOCK").when(mockResource).getDescription();
-			doReturn(new ByteArrayInputStream(json.getBytes())).when(mockResource).getInputStream();
+		example = getExampleRegion(newApplicationContext(TestGeodeConfiguration.class,
+			TestImportResourceResolverGeodeConfiguration.class));
 
-			resourceSupplier = () -> mockResource;
+		assertExampleRegion(example);
+		assertThat(example).hasSize(1);
 
-			example = getExampleRegion(newApplicationContext(withResource(null)));
+		Object value = example.values().stream().findFirst().orElse(null);
 
-			assertExampleRegion(example);
-			assertThat(example).hasSize(1);
+		assertThat(value).isInstanceOf(PdxInstance.class);
 
-			Object value = example.values().stream().findFirst().orElse(null);
-
-			assertThat(value).isInstanceOf(PdxInstance.class);
-
-			assertPurchaseOrder(ObjectUtils.asType(value, PurchaseOrder.class),
-				purchaseOrder.getId(), Collections.singletonList(lineItem), golfBalls.getPrice());
-		}
-		finally {
-			System.clearProperty(EXPORT_ENABLED_PROPERTY);
-		}
+		assertPurchaseOrder(ObjectUtils.asType(value, PurchaseOrder.class),
+			purchaseOrder.getId(), Collections.singletonList(lineItem), golfBalls.getPrice());
 	}
 
 	@Test
 	public void exportImportWithRegionContainingObjectsAndPdxInstances() throws IOException {
 
-		try {
-			// EXPORT
-			System.setProperty(EXPORT_ENABLED_PROPERTY, Boolean.TRUE.toString());
+		// EXPORT
+		StringWriter writer = new StringWriter();
 
-			StringWriter writer = new StringWriter();
+		exportEnabledSupplier = () -> true;
+		importEnabledSupplier = () -> false;
+		resourceWriterSupplier = () -> writer;
 
-			writerSupplier = () -> writer;
+		Region<Object, Object> example = getExampleRegion(newApplicationContext(TestGeodeConfiguration.class));
 
-			Region<Object, Object> example =
-				getExampleRegion(newApplicationContext(withResource("data-example.json")));
+		assertExampleRegion(example);
+		assertThat(example).isEmpty();
 
-			assertExampleRegion(example);
-			assertThat(example).isEmpty();
+		Customer jonDoe = Customer.newCustomer(1L, "Jon Doe");
+		Customer janeDoe = Customer.newCustomer(2L, "JaneDoe");
 
-			Customer jonDoe = Customer.newCustomer(1L, "Jon Doe");
-			Customer janeDoe = Customer.newCustomer(2L, "JaneDoe");
+		PdxInstance janeDoePdx = serializeToPdx(example.getRegionService(), janeDoe);
 
-			PdxInstance janeDoePdx = serializeToPdx(example.getRegionService(), janeDoe);
+		assertThat(example.put(jonDoe.getId(), jonDoe)).isNull();
+		assertThat(example.put(janeDoe.getId(), janeDoePdx)).isNull();
+		assertThat(example).hasSize(2);
+		assertThat(example.get(jonDoe.getId())).isEqualTo(jonDoe);
+		assertThat(example.get(janeDoe.getId())).isInstanceOf(PdxInstance.class);
 
-			assertThat(example.put(jonDoe.getId(), jonDoe)).isNull();
-			assertThat(example.put(janeDoe.getId(), janeDoePdx)).isNull();
-			assertThat(example).hasSize(2);
-			assertThat(example.get(jonDoe.getId())).isEqualTo(jonDoe);
-			assertThat(example.get(janeDoe.getId())).isInstanceOf(PdxInstance.class);
+		closeApplicationContext();
 
-			closeApplicationContext();
+		String json = writer.toString();
 
-			String json = writer.toString();
+		assertThat(json).isNotEmpty();
 
-			assertThat(json).isNotEmpty();
+		// IMPORT
+		Resource mockResource = mock(Resource.class, withSettings().lenient());
 
-			// IMPORT
-			System.clearProperty(EXPORT_ENABLED_PROPERTY);
+		doReturn("MOCK").when(mockResource).getDescription();
+		doReturn(new ByteArrayInputStream(json.getBytes())).when(mockResource).getInputStream();
 
-			Resource mockResource = mock(Resource.class, withSettings().lenient());
+		exportEnabledSupplier = () -> false;
+		importEnabledSupplier = () -> true;
+		importResourceResolverSupplier = () -> region -> Optional.of(mockResource);
 
-			doReturn(true).when(mockResource).exists();
-			doReturn("MOCK").when(mockResource).getDescription();
-			doReturn(new ByteArrayInputStream(json.getBytes())).when(mockResource).getInputStream();
+		example = getExampleRegion(newApplicationContext(TestGeodeConfiguration.class,
 
-			resourceSupplier = () -> mockResource;
+			TestImportResourceResolverGeodeConfiguration.class));
+		assertExampleRegion(example);
+		assertThat(example).hasSize(2);
 
-			example = getExampleRegion(newApplicationContext(withResource(null)));
+		for (Customer doe : Arrays.asList(jonDoe, janeDoe)) {
 
-			assertExampleRegion(example);
-			assertThat(example).hasSize(2);
+			Object value = example.get(doe.getId().byteValue());
 
-			for (Customer doe : Arrays.asList(jonDoe, janeDoe)) {
-
-				Object value = example.get(doe.getId().byteValue());
-
-				assertThat(value).isInstanceOf(PdxInstance.class);
-				assertThat(((PdxInstance) value).getObject()).isEqualTo(doe);
-			}
-		}
-		finally {
-			System.clearProperty(EXPORT_ENABLED_PROPERTY);
+			assertThat(value).isInstanceOf(PdxInstance.class);
+			assertThat(((PdxInstance) value).getObject()).isEqualTo(doe);
 		}
 	}
 
@@ -677,20 +666,37 @@ public class JsonCacheDataImporterExporterIntegrationTests extends IntegrationTe
 		}
 
 		@Bean
-		JsonCacheDataImporterExporter exampleRegionDataImporter() {
+		JsonCacheDataImporterExporter exampleRegionDataImporterExporter() {
+			return new JsonCacheDataImporterExporter();
+		}
 
-			return new JsonCacheDataImporterExporter() {
+		@Bean
+		ResourceWriter stringWriterResourceWriter() {
 
-				@Override @SuppressWarnings("rawtypes")
-				protected Optional<Resource> getResource(@NonNull Region region, String resourcePrefix) {
-					return Optional.ofNullable(resourceSupplier.get());
+			return (resource, data) -> {
+
+				String json = new String(data);
+
+				Writer writer = resourceWriterSupplier.get();
+
+				try {
+					writer.write(json, 0, data.length);
+					writer.flush();
 				}
-
-				@NonNull @Override
-				Writer newWriter(@NonNull Resource resource) {
-					return writerSupplier.get();
+				catch (IOException cause) {
+					throw new ResourceWriteException(String.format("Failed to write data [%s] to Resource [%s]",
+						json, resource.getDescription()), cause);
 				}
 			};
+		}
+	}
+
+	@Configuration
+	static class TestImportResourceResolverGeodeConfiguration {
+
+		@Bean
+		ImportResourceResolver testImportResourceResolver() {
+			return importResourceResolverSupplier.get();
 		}
 	}
 

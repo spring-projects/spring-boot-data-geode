@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,7 +51,7 @@ import org.springframework.data.gemfire.config.annotation.CacheServerApplication
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.data.gemfire.util.PropertiesBuilder;
-import org.springframework.lang.NonNull;
+import org.springframework.geode.core.io.ResourceWriter;
 import org.springframework.util.FileCopyUtils;
 
 import example.app.crm.model.Customer;
@@ -89,7 +88,6 @@ import example.app.crm.model.Customer;
 public class JsonClientCacheDataImporterExporterIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
 	private static final AtomicBoolean applicationContextClosed = new AtomicBoolean(false);
-	private static final AtomicBoolean exportFromCalled = new AtomicBoolean(false);
 
 	private static ConfigurableApplicationContext applicationContext = null;
 
@@ -101,7 +99,6 @@ public class JsonClientCacheDataImporterExporterIntegrationTests extends Forking
 	public static void assetClientCacheDataExportWorksAsExpected() throws IOException {
 
 		assertThat(applicationContextClosed.get()).isTrue();
-		assertThat(exportFromCalled.get()).isTrue();
 
 		String actualJson = trimJson(writer.toString());
 		String expectedJson = trimJson(loadJson(CUSTOMERS_JSON_RESOURCE_PATH));
@@ -212,14 +209,18 @@ public class JsonClientCacheDataImporterExporterIntegrationTests extends Forking
 
 		@Bean
 		JsonCacheDataImporterExporter cacheDataImporterExporter() {
+			return new JsonCacheDataImporterExporter();
+		}
 
-			return new JsonCacheDataImporterExporter() {
+		@Bean
+		ResourceWriter testResourceWriter() {
 
-				@Override
-				@NonNull Writer newWriter(@NonNull org.springframework.core.io.Resource resource) {
-					exportFromCalled.set(true);
-					return writer;
-				}
+			return (resource, data) -> {
+
+				String json = new String(data);
+
+				writer.write(json);
+				writer.flush();
 			};
 		}
 

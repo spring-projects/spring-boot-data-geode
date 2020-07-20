@@ -17,42 +17,34 @@ package org.springframework.geode.data.json;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import org.apache.geode.cache.Region;
 import org.apache.geode.pdx.PdxInstance;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.gemfire.util.ArrayUtils;
+import org.springframework.geode.core.io.ResourceReader;
+import org.springframework.geode.core.io.ResourceWriter;
 import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
+import org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter.ExportResourceResolver;
+import org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter.ImportResourceResolver;
+import org.springframework.lang.NonNull;
 
 /**
  * Unit Tests for {@link JsonCacheDataImporterExporter}.
@@ -63,19 +55,19 @@ import org.springframework.geode.data.json.converter.JsonToPdxArrayConverter;
  * @see org.mockito.junit.MockitoJUnitRunner
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.pdx.PdxInstance
- * @see org.springframework.context.ApplicationContext
- * @see org.springframework.core.io.ClassPathResource
  * @see org.springframework.core.io.Resource
+ * @see org.springframework.geode.core.io.ResourceReader
+ * @see org.springframework.geode.core.io.ResourceWriter
  * @see org.springframework.geode.data.json.JsonCacheDataImporterExporter
- * @see org.springframework.geode.data.json.converter.JsonToPdxArrayConverter
- * @see org.springframework.geode.data.json.converter.ObjectToJsonConverter
+ * @see org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter.ExportResourceResolver
+ * @see org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter.ImportResourceResolver
  * @since 1.3.0
  */
 @RunWith(MockitoJUnitRunner.class)
 public class JsonCacheDataImporterExporterUnitTests {
 
 	@Spy
-	private JsonCacheDataImporterExporter importer;
+	private TestJsonCacheDataImporterExporter importerExporter;
 
 	@Test
 	@SuppressWarnings("unchecked")
@@ -85,28 +77,56 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		Resource mockResource = mock(Resource.class);
 
+		ResourceWriter mockResourceWriter = mock(ResourceWriter.class);
+
 		Region<?, ?> mockRegion = mock(Region.class);
 
+		ExportResourceResolver mockExportResourceResolver = mock(ExportResourceResolver.class);
+
 		doReturn("TestRegion").when(mockRegion).getName();
-		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion), anyString());
-		doReturn( "file:///path/to/data.json").when(importer).getResourceLocation();
-		doNothing().when(this.importer).save(anyString(), any(Resource.class));
-		doReturn(json).when(this.importer).toJson(any());
+		doReturn(mockExportResourceResolver).when(this.importerExporter).getExportResourceResolver();
+		doReturn(mockResourceWriter).when(this.importerExporter).getResourceWriter();
+		doReturn(Optional.of(mockResource)).when(mockExportResourceResolver).resolve(eq(mockRegion));
+		doReturn(json).when(this.importerExporter).toJson(eq(mockRegion));
 
-		assertThat(this.importer.doExportFrom(mockRegion)).isEqualTo(mockRegion);
+		assertThat(this.importerExporter.doExportFrom(mockRegion)).isEqualTo(mockRegion);
 
-		verify(this.importer, times(1)).toJson(eq(mockRegion));
-		verify(this.importer, times(1)).getResource(eq(mockRegion),
-			eq("file:///path/to/data.json"));
-		verify(this.importer, times(1)).getResourceLocation();
-		verify(this.importer, times(1)).save(eq(json), eq(mockResource));
+		InOrder order = inOrder(this.importerExporter, mockRegion, mockExportResourceResolver, mockResourceWriter);
+
+		order.verify(this.importerExporter, times(1)).getExportResourceResolver();
+		order.verify(mockExportResourceResolver, times(1)).resolve(eq(mockRegion));
+		order.verify(this.importerExporter, times(1)).toJson(eq(mockRegion));
+		order.verify(mockRegion, times(1)).getName();
+		order.verify(this.importerExporter, times(1)).getResourceWriter();
+		order.verify(mockResourceWriter, times(1)).write(eq(mockResource), eq(json.getBytes()));
+		verifyNoMoreInteractions(mockRegion, mockExportResourceResolver, mockResourceWriter);
+		verifyNoInteractions(mockResource);
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void doExportFromWithNoResource() {
+
+		ExportResourceResolver mockExportResourceResolver = mock(ExportResourceResolver.class);
+
+		Region<?, ?> mockRegion = mock(Region.class);
+
+		doReturn(mockExportResourceResolver).when(this.importerExporter).getExportResourceResolver();
+		doReturn(Optional.empty()).when(mockExportResourceResolver).resolve(eq(mockRegion));
+
+		assertThat(this.importerExporter.doExportFrom(mockRegion)).isEqualTo(mockRegion);
+
+		verify(this.importerExporter, times(1)).getExportResourceResolver();
+		verify(mockExportResourceResolver, times(1)).resolve(eq(mockRegion));
+		verifyNoMoreInteractions(mockExportResourceResolver, mockRegion);
+		verifyNoInteractions(mockRegion);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void doExportFromNullRegion() {
 
 		try {
-			this.importer.doExportFrom(null);
+			this.importerExporter.doExportFrom(null);
 		}
 		catch (IllegalArgumentException expected) {
 
@@ -114,94 +134,6 @@ public class JsonCacheDataImporterExporterUnitTests {
 			assertThat(expected).hasNoCause();
 
 			throw expected;
-		}
-	}
-
-	@Test
-	public void saveJsonToResource() throws IOException {
-
-		String json = "[{ \"name\": \"Jon Doe\"}, { \"name\": \"Jane Doe\"}]";
-
-		StringWriter writer = new StringWriter(json.length());
-
-		Resource mockResource = mock(Resource.class);
-
-		doReturn(writer).when(this.importer).newWriter(eq(mockResource));
-
-		this.importer.save(json, mockResource);
-
-		assertThat(writer.toString()).isEqualTo(json);
-
-		verify(this.importer, times(1)).newWriter(eq(mockResource));
-		verifyNoInteractions(mockResource);
-	}
-
-	@Test(expected = DataAccessResourceFailureException.class)
-	public void saveThrowsIoException() throws IOException {
-
-		Writer mockWriter = mock(Writer.class);
-
-		String json = "[{ \"name\": \"Jon Doe\"}, { \"name\": \"Jane Doe\"}"
-			+ ", { \"name\": \"Pie Doe\"}, { \"name\": \"Sour Doe\"}]";
-
-		Resource mockResource = mock(Resource.class);
-
-		doReturn("/path/to/data.json").when(mockResource).getDescription();
-		doReturn(mockWriter).when(this.importer).newWriter(eq(mockResource));
-		doThrow(new IOException("TEST")).when(mockWriter).write(anyString(), anyInt(), anyInt());
-
-		try {
-			this.importer.save(json, mockResource);
-		}
-		catch (DataAccessResourceFailureException expected) {
-
-			assertThat(expected)
-				.hasMessageStartingWith("Failed to save content '%s' to Resource [/path/to/data.json]",
-					this.importer.formatContentForPreview(json));
-			assertThat(expected).hasCauseInstanceOf(IOException.class);
-			assertThat(expected.getCause()).hasMessage("TEST");
-			assertThat(expected.getCause()).hasNoCause();
-
-			throw expected;
-		}
-		finally {
-			verify(this.importer, times(1)).newWriter(eq(mockResource));
-			verify(mockWriter, times(1)).write(eq(json), eq(0), eq(json.length()));
-			verify(mockWriter, never()).flush();
-			verify(mockWriter, times(1)).close();
-		}
-	}
-	@Test
-	public void saveWithNoContent() {
-
-		Resource mockResource = mock(Resource.class);
-
-		try {
-			this.importer.save("  ", mockResource);
-		}
-		finally {
-			verify(this.importer, times(1)).save(eq("  "), eq(mockResource));
-			verifyNoMoreInteractions(this.importer);
-			verifyNoInteractions(mockResource);
-		}
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void saveWithNullResource() {
-
-		try {
-			this.importer.save("{}", null);
-		}
-		catch (IllegalArgumentException expected) {
-
-			assertThat(expected).hasMessage("Resource must not be null");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
-		finally {
-			verify(this.importer, times(1)).save(eq("{}"), isNull());
-			verifyNoMoreInteractions(this.importer);
 		}
 	}
 
@@ -211,128 +143,145 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		Resource mockResource = mock(Resource.class);
 
+		ResourceReader mockResourceReader = mock(ResourceReader.class);
+
 		Region<Integer, PdxInstance> mockRegion = mock(Region.class);
 
 		PdxInstance mockPdxInstanceOne = mock(PdxInstance.class);
 		PdxInstance mockPdxInstanceTwo = mock(PdxInstance.class);
 
+		ImportResourceResolver mockImportResourceResolver = mock(ImportResourceResolver.class);
+
 		byte[] json = "[{ \"name\": \"Jon Doe\"}, { \"name\": \"Jane Doe\" }]".getBytes();
 
-		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion),eq("classpath:"));
-		doReturn(true).when(mockResource).exists();
-		doReturn(json).when(this.importer).getContent(eq(mockResource));
-		doReturn(ArrayUtils.asArray(mockPdxInstanceOne, mockPdxInstanceTwo)).when(this.importer).toPdx(eq(json));
-		doReturn(1).when(this.importer).resolveKey(eq(mockPdxInstanceOne));
-		doReturn(2).when(this.importer).resolveKey(eq(mockPdxInstanceTwo));
+		doReturn(mockImportResourceResolver).when(this.importerExporter).getImportResourceResolver();
+		doReturn(mockResourceReader).when(this.importerExporter).getResourceReader();
+		doReturn(Optional.of(mockResource)).when(mockImportResourceResolver).resolve(eq(mockRegion));
+		doReturn(json).when(mockResourceReader).read(eq(mockResource));
+		doReturn(ArrayUtils.asArray(mockPdxInstanceOne, mockPdxInstanceTwo)).when(this.importerExporter).toPdx(eq(json));
+		doReturn(1).when(this.importerExporter).resolveKey(eq(mockPdxInstanceOne));
+		doReturn(2).when(this.importerExporter).resolveKey(eq(mockPdxInstanceTwo));
 
-		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
+		assertThat(this.importerExporter.doImportInto(mockRegion)).isEqualTo(mockRegion);
 
-		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
-		verify(this.importer, times(1)).getContent(eq(mockResource));
-		verify(this.importer, times(1)).toPdx(eq(json));
-		verify(this.importer, times(1)).resolveKey(eq(mockPdxInstanceOne));
-		verify(this.importer, times(1)).postProcess(eq(mockPdxInstanceOne));
-		verify(this.importer, times(1)).resolveValue(eq(mockPdxInstanceOne));
-		verify(this.importer, times(1)).resolveKey(eq(mockPdxInstanceTwo));
-		verify(this.importer, times(1)).postProcess(eq(mockPdxInstanceTwo));
-		verify(this.importer, times(1)).resolveValue(eq(mockPdxInstanceTwo));
-		verify(mockResource, times(1)).exists();
-		verify(mockRegion, times(1)).put(eq(1), eq(mockPdxInstanceOne));
-		verify(mockRegion, times(1)).put(eq(2), eq(mockPdxInstanceTwo));
+		InOrder order =
+			inOrder(this.importerExporter, mockRegion, mockResource, mockResourceReader, mockImportResourceResolver);
+
+		order.verify(this.importerExporter, times(1)).getImportResourceResolver();
+		order.verify(mockImportResourceResolver, times(1)).resolve(eq(mockRegion));
+		order.verify(this.importerExporter, times(1)).getResourceReader();
+		order.verify(mockResourceReader, times(1)).read(eq(mockResource));
+		order.verify(this.importerExporter, times(1)).toPdx(eq(json));
+		order.verify(this.importerExporter, times(1)).resolveKey(eq(mockPdxInstanceOne));
+		order.verify(this.importerExporter, times(1)).resolveValue(eq(mockPdxInstanceOne));
+		order.verify(this.importerExporter, times(1)).postProcess(eq(mockPdxInstanceOne));
+		order.verify(mockRegion, times(1)).put(eq(1), eq(mockPdxInstanceOne));
+		order.verify(this.importerExporter, times(1)).resolveKey(eq(mockPdxInstanceTwo));
+		order.verify(this.importerExporter, times(1)).resolveValue(eq(mockPdxInstanceTwo));
+		order.verify(this.importerExporter, times(1)).postProcess(eq(mockPdxInstanceTwo));
+		order.verify(mockRegion, times(1)).put(eq(2), eq(mockPdxInstanceTwo));
+
+		verifyNoMoreInteractions(mockRegion, mockImportResourceResolver, mockResourceReader);
+		verifyNoInteractions(mockResource, mockPdxInstanceOne, mockPdxInstanceTwo);
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void doImportIntoWithNoResource() {
 
-		Region<?, ?> mockRegion = mock(Region.class);
-
-		doReturn(Optional.empty()).when(this.importer).getResource(eq(mockRegion), eq("classpath:"));
-
-		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
-
-		verify(this.importer, times(1)).doImportInto(eq(mockRegion));
-		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
-		verifyNoMoreInteractions(this.importer);
-		verifyNoInteractions(mockRegion);
-	}
-
-	@Test
-	@SuppressWarnings("unchecked")
-	public void doImportIntoWithNonExistingResource() {
-
-		Resource mockResource = mock(Resource.class);
+		ImportResourceResolver mockImportResourceResolver = mock(ImportResourceResolver.class);
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion), eq("classpath:"));
-		doReturn(false).when(mockResource).exists();
+		ResourceReader mockResourceReader = mock(ResourceReader.class);
 
-		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
+		doReturn(mockImportResourceResolver).when(this.importerExporter).getImportResourceResolver();
+		doReturn(mockResourceReader).when(this.importerExporter).getResourceReader();
+		doReturn(Optional.empty()).when(mockImportResourceResolver).resolve(eq(mockRegion));
 
-		verify(this.importer, times(1)).doImportInto(eq(mockRegion));
-		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
-		verify(mockResource, times(1)).exists();
-		verifyNoMoreInteractions(this.importer);
-		verifyNoMoreInteractions(mockResource);
-		verifyNoInteractions(mockRegion);
+		assertThat(this.importerExporter.doImportInto(mockRegion)).isEqualTo(mockRegion);
+
+		verify(this.importerExporter, times(1)).doImportInto(eq(mockRegion));
+		verify(this.importerExporter, times(1)).getImportResourceResolver();
+		verify(this.importerExporter, times(1)).getResourceReader();
+		verify(mockImportResourceResolver, times(1)).resolve(eq(mockRegion));
+		verifyNoMoreInteractions(this.importerExporter, mockImportResourceResolver);
+		verifyNoInteractions(mockRegion, mockResourceReader);
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
 	public void doImportIntoWithResourceContainingNoContent() {
 
-		Resource mockResource = mock(Resource.class);
+		byte[] json = {};
+
+		ImportResourceResolver mockImportResourceResolver = mock(ImportResourceResolver.class);
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion), eq("classpath:"));
-		doReturn(true).when(mockResource).exists();
-		doReturn(null).when(this.importer).getContent(eq(mockResource));
+		Resource mockResource = mock(Resource.class);
 
-		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
+		ResourceReader mockResourceReader = mock(ResourceReader.class);
 
-		verify(this.importer, times(1)).doImportInto(eq(mockRegion));
-		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
-		verify(this.importer, times(1)).getContent(eq(mockResource));
-		verify(mockResource, times(1)).exists();
-		verifyNoMoreInteractions(this.importer);
-		verifyNoMoreInteractions(mockResource);
-		verifyNoInteractions(mockRegion);
+		doReturn(mockImportResourceResolver).when(this.importerExporter).getImportResourceResolver();
+		doReturn(mockResourceReader).when(this.importerExporter).getResourceReader();
+		doReturn(JsonCacheDataImporterExporter.EMPTY_PDX_INSTANCE_ARRAY).when(this.importerExporter).toPdx(any());
+		doReturn(Optional.of(mockResource)).when(mockImportResourceResolver).resolve(eq(mockRegion));
+		doReturn(json).when(mockResourceReader).read(eq(mockResource));
+
+		assertThat(this.importerExporter.doImportInto(mockRegion)).isEqualTo(mockRegion);
+
+		verify(this.importerExporter, times(1)).doImportInto(eq(mockRegion));
+		verify(this.importerExporter, times(1)).getImportResourceResolver();
+		verify(this.importerExporter, times(1)).getResourceReader();
+		verify(this.importerExporter, times(1)).toPdx(eq(json));
+		verify(this.importerExporter, times(1))
+			.regionPutPdx(eq(mockRegion), eq(JsonCacheDataImporterExporter.EMPTY_PDX_INSTANCE_ARRAY));
+		verify(mockImportResourceResolver, times(1)).resolve(eq(mockRegion));
+		verify(mockResourceReader, times(1)).read(eq(mockResource));
+		verifyNoMoreInteractions(this.importerExporter, mockImportResourceResolver, mockResourceReader);
+		verifyNoInteractions(mockRegion, mockResource);
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void doImportIntoWithNoPdxInstance() {
+	public void doImportIntoWithNoPdx() {
 
-		Resource mockResource = mock(Resource.class);
+		byte[] json = "[{ \"name\":\"Jon Doe\" }]".getBytes();
+
+		ImportResourceResolver mockImportResourceResolver = mock(ImportResourceResolver.class);
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		byte[] json = "[]".getBytes();
+		Resource mockResource = mock(Resource.class);
 
-		doReturn(Optional.of(mockResource)).when(this.importer).getResource(eq(mockRegion), eq("classpath:"));
-		doReturn(true).when(mockResource).exists();
-		doReturn(json).when(this.importer).getContent(eq(mockResource));
-		doReturn(new PdxInstance[0]).when(this.importer).toPdx(eq(json));
+		ResourceReader mockResourceReader = mock(ResourceReader.class);
 
-		assertThat(this.importer.doImportInto(mockRegion)).isEqualTo(mockRegion);
+		doReturn(mockImportResourceResolver).when(this.importerExporter).getImportResourceResolver();
+		doReturn(mockResourceReader).when(this.importerExporter).getResourceReader();
+		doReturn(JsonCacheDataImporterExporter.EMPTY_PDX_INSTANCE_ARRAY).when(this.importerExporter).toPdx(eq(json));
+		doReturn(Optional.of(mockResource)).when(mockImportResourceResolver).resolve(eq(mockRegion));
+		doReturn(json).when(mockResourceReader).read(eq(mockResource));
 
-		verify(this.importer, times(1)).doImportInto(eq(mockRegion));
-		verify(this.importer, times(1)).getResource(eq(mockRegion), eq("classpath:"));
-		verify(this.importer, times(1)).getContent(eq(mockResource));
-		verify(this.importer, times(1)).toPdx(eq(json));
-		verify(mockResource, times(1)).exists();
-		verifyNoMoreInteractions(this.importer);
-		verifyNoMoreInteractions(mockResource);
-		verifyNoInteractions(mockRegion);
+		assertThat(this.importerExporter.doImportInto(mockRegion)).isEqualTo(mockRegion);
+
+		verify(this.importerExporter, times(1)).doImportInto(eq(mockRegion));
+		verify(this.importerExporter, times(1)).getImportResourceResolver();
+		verify(this.importerExporter, times(1)).getResourceReader();
+		verify(this.importerExporter, times(1)).toPdx(eq(json));
+		verify(this.importerExporter, times(1)).regionPutPdx(eq(mockRegion),
+			eq(JsonCacheDataImporterExporter.EMPTY_PDX_INSTANCE_ARRAY));
+		verify(mockImportResourceResolver, times(1)).resolve(eq(mockRegion));
+		verify(mockResourceReader, times(1)).read(eq(mockResource));
+		verifyNoMoreInteractions(this.importerExporter, mockImportResourceResolver, mockResourceReader);
+		verifyNoInteractions(mockRegion, mockResource);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void doImportIntoNullRegion() {
 
 		try {
-			this.importer.doImportInto(null);
+			this.importerExporter.doImportInto(null);
 		}
 		catch (IllegalArgumentException expected) {
 
@@ -341,138 +290,6 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 			throw expected;
 		}
-	}
-
-	@Test
-	public void getContentFromResource() throws IOException {
-
-		byte[] json = "{ \"name\": \"Jon Doe\" }".getBytes();
-
-		ByteArrayInputStream in = spy(new ByteArrayInputStream(json));
-
-		Resource mockResource = mock(Resource.class);
-
-		doReturn(in).when(mockResource).getInputStream();
-
-		assertThat(this.importer.getContent(mockResource)).isEqualTo(json);
-
-		verify(mockResource, times(1)).getInputStream();
-		verify(in, times(1)).close();
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void getContentFromNullResource() {
-
-		try {
-			this.importer.getContent(null);
-		}
-		catch (IllegalArgumentException expected) {
-
-			assertThat(expected).hasMessage("Resource must not be null");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
-	}
-
-	@Test(expected = DataAccessResourceFailureException.class)
-	public void getContentThrowsIoException() throws IOException {
-
-		Resource mockResource = mock(Resource.class);
-
-		doReturn("Test Resource").when(mockResource).getDescription();
-		doThrow(new IOException("TEST")).when(mockResource).getInputStream();
-
-		try {
-			this.importer.getContent(mockResource);
-		}
-		catch (DataAccessResourceFailureException expected) {
-
-			assertThat(expected).hasMessageStartingWith("Failed to read from Resource [Test Resource]");
-			assertThat(expected).hasCauseInstanceOf(IOException.class);
-			assertThat(expected.getCause()).hasMessage("TEST");
-			assertThat(expected.getCause()).hasNoCause();
-
-			throw expected;
-		}
-	}
-
-	@Test
-	public void getResourceFromRegionAndResourcePrefix() {
-
-		ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
-
-		Region<?, ?> mockRegion = mock(Region.class);
-
-		Resource mockResource = mock(Resource.class);
-
-		doReturn(mockResource).when(mockApplicationContext).getResource(anyString());
-		doReturn("Example").when(mockRegion).getName();
-		doReturn(Optional.of(mockApplicationContext)).when(this.importer).getApplicationContext();
-
-		assertThat(this.importer.getResource(mockRegion, "sftp://host/resources/").orElse(null))
-			.isEqualTo(mockResource);
-
-		verify(mockApplicationContext, times(1))
-			.getResource(eq("sftp://host/resources/data-example.json"));
-		verify(mockRegion, times(1)).getName();
-	}
-
-	@Test
-	public void getResourceWhenApplicationContextIsNotPresent() {
-
-		Region<?, ?> mockRegion = mock(Region.class);
-
-		doReturn("TEST").when(mockRegion).getName();
-
-		Resource resource = this.importer.getResource(mockRegion, "file://").orElse(null);
-
-		assertThat(resource).isInstanceOf(ClassPathResource.class);
-		assertThat(((ClassPathResource) resource).getPath()).isEqualTo("data-test.json");
-
-		verify(mockRegion, times(1)).getName();
-	}
-
-	@Test
-	public void getResourceWhenApplicationContextReturnsNoResource() {
-
-		ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
-
-		Region<?, ?> mockRegion = mock(Region.class);
-
-		doReturn(null).when(mockApplicationContext).getResource(anyString());
-		doReturn("MocK").when(mockRegion).getName();
-		doReturn(Optional.ofNullable(mockApplicationContext)).when(this.importer).getApplicationContext();
-
-		Resource resource = this.importer.getResource(mockRegion, null).orElse(null);
-
-		assertThat(resource).isInstanceOf(ClassPathResource.class);
-		assertThat(((ClassPathResource) resource).getPath()).isEqualTo("data-mock.json");
-
-		verify(mockApplicationContext, times(1))
-			.getResource(eq("classpath:data-mock.json"));
-		verify(mockRegion, times(1)).getName();
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void getResourceFromNullRegion() {
-
-		try {
-			this.importer.getResource(null, "classpath:");
-		}
-		catch (IllegalArgumentException expected) {
-
-			assertThat(expected).hasMessage("Region must not be null");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
-	}
-
-	@Test
-	public void getResourceLocationIsInWorkingDirectory() {
-		assertThat(this.importer.getResourceLocation()).isEqualTo(String.format("file://%1$s%2$s",
-			System.getProperty("user.dir"), File.separator));
 	}
 
 	@Test
@@ -480,7 +297,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		assertThat(this.importer.toJson(mockRegion)).isEqualTo("[]");
+		assertThat(this.importerExporter.toJson(mockRegion)).isEqualTo("[]");
 
 		verify(mockRegion, times(1)).values();
 	}
@@ -489,7 +306,7 @@ public class JsonCacheDataImporterExporterUnitTests {
 	public void toJsonFromNullRegion() {
 
 		try {
-			this.importer.toJson(null);
+			this.importerExporter.toJson(null);
 		}
 		catch (IllegalArgumentException expected) {
 
@@ -512,13 +329,36 @@ public class JsonCacheDataImporterExporterUnitTests {
 
 		PdxInstance[] pdxArray = ArrayUtils.asArray(mockPdxInstanceOne, mockPdxInstanceTwo);
 
-		doReturn(mockConverter).when(this.importer).getJsonToPdxArrayConverter();
+		doReturn(mockConverter).when(this.importerExporter).getJsonToPdxArrayConverter();
 		doReturn(pdxArray).when(mockConverter).convert(eq(json));
 
-		assertThat(this.importer.toPdx(json)).isEqualTo(pdxArray);
+		assertThat(this.importerExporter.toPdx(json)).isEqualTo(pdxArray);
 
-		verify(this.importer, times(1)).getJsonToPdxArrayConverter();
+		verify(this.importerExporter, times(1)).getJsonToPdxArrayConverter();
 		verify(mockConverter, times(1)).convert(eq(json));
+		verifyNoMoreInteractions(mockConverter);
+	}
 
+	static class TestJsonCacheDataImporterExporter extends JsonCacheDataImporterExporter {
+
+		@Override
+		protected @NonNull ExportResourceResolver getExportResourceResolver() {
+			return super.getExportResourceResolver();
+		}
+
+		@Override
+		protected @NonNull ImportResourceResolver getImportResourceResolver() {
+			return super.getImportResourceResolver();
+		}
+
+		@Override
+		protected @NonNull ResourceReader getResourceReader() {
+			return super.getResourceReader();
+		}
+
+		@Override
+		protected @NonNull ResourceWriter getResourceWriter() {
+			return super.getResourceWriter();
+		}
 	}
 }
