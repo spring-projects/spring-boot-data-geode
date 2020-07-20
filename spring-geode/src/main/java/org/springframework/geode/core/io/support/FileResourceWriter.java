@@ -114,10 +114,10 @@ public class FileResourceWriter extends AbstractResourceWriter {
 
 	/**
 	 * Returns the configured {@link OpenOption OpenOptions} used to configure the stream writing to the {@link File}.
-	 * <p>
+	 *
 	 * By default, the {@link File} will be {@link StandardOpenOption#CREATE created},
-	 * {@link StandardOpenOption#TRUNCATE_EXISTING, trucated} and {@link StandardOpenOption#WRITE written} to.
-	 * <p>
+	 * {@link StandardOpenOption#TRUNCATE_EXISTING truncated} and {@link StandardOpenOption#WRITE written} to.
+	 *
 	 * Subclasses should override this method to tune the {@link File} stream based on context and requirements.
 	 *
 	 * @return configured {@link OpenOption OpenOptions}.

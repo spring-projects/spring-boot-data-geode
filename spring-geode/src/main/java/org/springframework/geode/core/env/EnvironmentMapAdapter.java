@@ -101,12 +101,12 @@ public class EnvironmentMapAdapter extends AbstractMap<String, String> {
 
 	/**
 	 * Gets the {@link String value} for the property identified by the given {@link Map} {@link Object key}
-	 * from the underlying {@link Environment).
+	 * from the underlying {@link Environment}.
 	 *
 	 * @param key {@link Object key} identifying the property whose value will be retrieved from the {@link Environment}.
 	 * @return the {@link String value} of the property identified by the given {@link Map} {@link Object key}
 	 * from the {@link Environment}.
-	 * @see org.springframework.core.env.Environment#getProperty(:String)
+	 * @see org.springframework.core.env.Environment#getProperty(String)
 	 * @see #getEnvironment()
 	 */
 	@Override
@@ -142,7 +142,7 @@ public class EnvironmentMapAdapter extends AbstractMap<String, String> {
 	}
 
 	/**
-	 * {@link EnvironmentEntry} is a {@link Map.Entry} implementation mapping an {@link Environment} property (key)
+	 * {@link EnvironmentEntry} is a {@code Map.Entry} implementation mapping an {@link Environment} property (key)
 	 * to its value.
 	 *
 	 * @see java.util.Map.Entry
@@ -173,7 +173,7 @@ public class EnvironmentMapAdapter extends AbstractMap<String, String> {
 		}
 
 		/**
-		 * Returns the configured {@link Environment} to which this {@link Map.Entry} belongs.
+		 * Returns the configured {@link Environment} to which this {@code Map.Entry} belongs.
 		 *
 		 * @return the configured {@link Environment}; never {@literal null}.
 		 * @see org.springframework.core.env.Environment
@@ -183,9 +183,9 @@ public class EnvironmentMapAdapter extends AbstractMap<String, String> {
 		}
 
 		/**
-		 * Gets the {@link String key} (property) of this {@link Map.Entry}.
+		 * Gets the {@link String key} (property) of this {@code Map.Entry}.
 		 *
-		 * @return the {@link String key} (property) of this {@link Map.Entry}.
+		 * @return the {@link String key} (property) of this {@code Map.Entry}.
 		 */
 		@Override
 		public @NonNull String getKey() {
@@ -193,10 +193,10 @@ public class EnvironmentMapAdapter extends AbstractMap<String, String> {
 		}
 
 		/**
-		 * Gets the {@link String value} mapped to the {@link #getKey() key} (property) in this {@link Map.Entry}
+		 * Gets the {@link String value} mapped to the {@link #getKey() key} (property) in this {@code Map.Entry}
 		 * ({@link Environment}).
 		 *
-		 * @return the {@link String value} mapped to the {@link #getKey() key} (property) in this {@link Map.Entry}
+		 * @return the {@link String value} mapped to the {@link #getKey() key} (property) in this {@code Map.Entry}
 		 * ({@link Environment}).
 		 * @see org.springframework.core.env.Environment#getProperty(String)
 		 * @see #getEnvironment()

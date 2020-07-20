@@ -179,7 +179,7 @@ public class JsonCacheDataImporterExporter extends ResourceCapableCacheDataImpor
 
 	/**
 	 * Resolves the {@link Object key} used to map the given {@link PdxInstance} as the {@link Object value}
-	 * for the {@link Region.Entry entry} stored in the {@link Region}.
+	 * for the {@code Region.Entry} stored in the {@link Region}.
 	 *
 	 * @param pdxInstance {@link PdxInstance} used to resolve the {@link Object key}.
 	 * @return the resolved {@link Object key}.

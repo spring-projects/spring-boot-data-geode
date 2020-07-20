@@ -280,7 +280,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	 * @param target {@link Object} to evaluate and initialize; must not be {@literal null}.
 	 * @param supplier {@link Supplier} used to initialize the {@link Object target} on return.
 	 * @return the existing {@link Object target} if not {@literal null}, otherwise invoke the {@link Supplier}
-	 * to supply a new instance of {@link T}.
+	 * to supply a new instance of {@code T}.
 	 */
 	public static <T> T initialize(@Nullable T target, @NonNull Supplier<T> supplier) {
 		return target != null ? target : supplier.get();
@@ -340,7 +340,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	/**
 	 * Makes the {@link Method} accessible.
 	 *
-	 * @param constructor {@link Method} to make accessible; must not be {@literal null}.
+	 * @param method {@link Method} to make accessible; must not be {@literal null}.
 	 * @return the given {@link Method}.
 	 * @see java.lang.reflect.Method
 	 */
