@@ -202,6 +202,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	 * @see org.apache.geode.cache.GemFireCache
 	 * @see org.apache.geode.cache.Region
 	 */
+	@FunctionalInterface
 	protected interface CacheResourceResolver extends ResourceResolver {
 
 		/**
@@ -217,6 +218,13 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 		 */
 		Optional<Resource> resolve(@NonNull Region<?, ?> region);
 
+		/**
+		 * @inheritDoc
+		 */
+		@Override
+		default Optional<Resource> resolve(@NonNull String location) {
+			return Optional.empty();
+		}
 	}
 
 	/**
@@ -439,6 +447,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	 * @see org.springframework.geode.core.io.ResourceResolver
 	 * @see CacheResourceResolver
 	 */
+	@FunctionalInterface
 	public interface ExportResourceResolver extends CacheResourceResolver { }
 
 	/**
@@ -448,7 +457,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	 * @see AbstractCacheResourceResolver
 	 * @see ExportResourceResolver
 	 */
-	protected abstract class AbstractExportResourceResolver extends AbstractCacheResourceResolver
+	public abstract class AbstractExportResourceResolver extends AbstractCacheResourceResolver
 			implements ExportResourceResolver {
 
 		/**
@@ -501,6 +510,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	 * @see org.springframework.geode.core.io.ResourceResolver
 	 * @see CacheResourceResolver
 	 */
+	@FunctionalInterface
 	public interface ImportResourceResolver extends CacheResourceResolver { }
 
 	/**
@@ -510,7 +520,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	 * @see AbstractCacheResourceResolver
 	 * @see ImportResourceResolver
 	 */
-	protected abstract class AbstractImportResourceResolver extends AbstractCacheResourceResolver
+	public abstract class AbstractImportResourceResolver extends AbstractCacheResourceResolver
 			implements ImportResourceResolver {
 
 		/**
