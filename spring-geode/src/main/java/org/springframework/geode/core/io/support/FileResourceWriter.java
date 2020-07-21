@@ -160,7 +160,7 @@ public class FileResourceWriter extends AbstractResourceWriter {
 
 	/**
 	 * Tries to construct a new {@link File} based {@link OutputStream} from the {@literal target} {@link Resource}.
-	 * <p>
+	 *
 	 * By default, the constructed {@link OutputStream} is also buffered (e.g. {@link BufferedOutputStream}).
 	 *
 	 * @return a {@link OutputStream} writing to a {@link File} identified by the {@literal target} {@link Resource}.
