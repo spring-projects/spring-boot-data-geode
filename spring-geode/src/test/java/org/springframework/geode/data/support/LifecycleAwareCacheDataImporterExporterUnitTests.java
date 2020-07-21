@@ -34,9 +34,15 @@ import org.apache.geode.cache.Region;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.geode.core.io.ResourceReader;
+import org.springframework.geode.core.io.ResourceWriter;
 import org.springframework.geode.data.CacheDataImporterExporter;
 import org.springframework.geode.data.support.LifecycleAwareCacheDataImporterExporter.ImportLifecycle;
+import org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter.ExportResourceResolver;
+import org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter.ImportResourceResolver;
 
 /**
  * Unit Tests for {@link LifecycleAwareCacheDataImporterExporter}.
@@ -84,49 +90,461 @@ public class LifecycleAwareCacheDataImporterExporterUnitTests {
 	}
 
 	@Test
-	public void setApplicationContextOnWrappedCacheDataImporterExporter() {
+	public void setApplicationContextOnWrappedApplicationContextAwareCacheDataImporterExporter() {
 
 		ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
 
-		ApplicationContextAndEnvironmentAwareCacheDataImporterExporter mockImporterExporter =
-			mock(ApplicationContextAndEnvironmentAwareCacheDataImporterExporter.class);
+		ApplicationContextEnvironmentAndResourceLoaderAwareCacheDataImporterExporter mockImporterExporter =
+			mock(ApplicationContextEnvironmentAndResourceLoaderAwareCacheDataImporterExporter.class);
 
-		LifecycleAwareCacheDataImporterExporter importerExporter =
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
 			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
 
-		assertThat(importerExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
 
-		importerExporter.setApplicationContext(mockApplicationContext);
-		importerExporter.setApplicationContext(null);
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setApplicationContext(mockApplicationContext);
+		lifecycleImporterExporter.setApplicationContext(null);
 
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
 		verify(mockImporterExporter, times(1)).setApplicationContext(eq(mockApplicationContext));
 		verifyNoMoreInteractions(mockImporterExporter);
 	}
 
 	@Test
+	public void setApplicationContextDoesNotConfigureWrappedNonApplicationContextAwareCacheDataImporterExporter() {
+
+		ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setApplicationContext(mockApplicationContext);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verifyNoInteractions(mockApplicationContext, mockImporterExporter);
+	}
+
+	@Test
 	public void setAndGetEnvironment() {
 
-		ApplicationContextAndEnvironmentAwareCacheDataImporterExporter mockImporterExporter =
-			mock(ApplicationContextAndEnvironmentAwareCacheDataImporterExporter.class);
+		ApplicationContextEnvironmentAndResourceLoaderAwareCacheDataImporterExporter mockImporterExporter =
+			mock(ApplicationContextEnvironmentAndResourceLoaderAwareCacheDataImporterExporter.class);
 
 		Environment mockEnvironment = mock(Environment.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+		assertThat(lifecycleImporterExporter.getEnvironment().orElse(null)).isNull();
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setEnvironment(mockEnvironment);
+
+		assertThat(lifecycleImporterExporter.getEnvironment().orElse(null)).isEqualTo(mockEnvironment);
+
+		lifecycleImporterExporter.setEnvironment(null);
+
+		assertThat(lifecycleImporterExporter.getEnvironment().orElse(null)).isNull();
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verify(mockImporterExporter, times(1)).setEnvironment(eq(mockEnvironment));
+		verifyNoMoreInteractions(mockImporterExporter);
+	}
+
+	@Test
+	public void setEnvironmentDoesNotConfigureWrappedNonEnvironmentAwareCacheDataImporterExporter() {
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
+
+		Environment mockEnvironment = mock(Environment.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+		assertThat(lifecycleImporterExporter.getEnvironment().orElse(null)).isNull();
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setEnvironment(mockEnvironment);
+
+		assertThat(lifecycleImporterExporter.getEnvironment().orElse(null)).isEqualTo(mockEnvironment);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verifyNoInteractions(mockImporterExporter);
+	}
+
+	@Test
+	public void setExportResourceResolverConfiguresWrappedResourceCapableCacheDataImporterExporter() {
+
+		TestResourceCapableCacheDataImporterExporter mockImporterExporter =
+			mock(TestResourceCapableCacheDataImporterExporter.class);
+
+		ExportResourceResolver mockExportResourceResolver = mock(ExportResourceResolver.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setExportResourceResolver(mockExportResourceResolver);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verify(mockImporterExporter, times(1))
+			.setExportResourceResolver(eq(mockExportResourceResolver));
+		verifyNoMoreInteractions(mockImporterExporter);
+		verifyNoInteractions(mockExportResourceResolver);
+	}
+
+	@Test
+	public void setExportResourceResolverDoesNotConfigureWrappedNonResourceCapableCacheDataImporterExporter() {
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
+
+		ExportResourceResolver mockExportResourceResolver = mock(ExportResourceResolver.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setExportResourceResolver(mockExportResourceResolver);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verifyNoInteractions(mockExportResourceResolver, mockImporterExporter);
+	}
+
+	@Test
+	public void setExportResourceResolverWithNull() {
+
+		TestResourceCapableCacheDataImporterExporter mockImporterExporter =
+			mock(TestResourceCapableCacheDataImporterExporter.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setExportResourceResolver(null);
+
+		verify(lifecycleImporterExporter, never()).getCacheDataImporterExporter();
+		verifyNoInteractions(mockImporterExporter);
+	}
+
+	@Test
+	public void setImportResourceResolverConfiguresWrappedResourceCapableCacheDataImporterExporter() {
+
+		TestResourceCapableCacheDataImporterExporter mockImporterExporter =
+			mock(TestResourceCapableCacheDataImporterExporter.class);
+
+		ImportResourceResolver mockImportResourceResolver = mock(ImportResourceResolver.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setImportResourceResolver(mockImportResourceResolver);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verify(mockImporterExporter, times(1))
+			.setImportResourceResolver(eq(mockImportResourceResolver));
+		verifyNoMoreInteractions(mockImporterExporter);
+		verifyNoInteractions(mockImportResourceResolver);
+	}
+
+	@Test
+	public void setImportResourceResolverDoesNotConfigureWrappedNonResourceCapableCacheDataImporterExporter() {
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
+
+		ImportResourceResolver mockImportResourceResolver = mock(ImportResourceResolver.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setImportResourceResolver(mockImportResourceResolver);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verifyNoInteractions(mockImportResourceResolver, mockImporterExporter);
+	}
+
+	@Test
+	public void setImportResourceResolverWithNull() {
+
+		TestResourceCapableCacheDataImporterExporter mockImporterExporter =
+			mock(TestResourceCapableCacheDataImporterExporter.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setImportResourceResolver(null);
+
+		verify(lifecycleImporterExporter, never()).getCacheDataImporterExporter();
+		verifyNoInteractions(mockImporterExporter);
+	}
+
+	@Test
+	public void setResourceLoaderConfiguresWrappedResourceLoaderAwareCacheDataImporterExporter() {
+
+		ApplicationContextEnvironmentAndResourceLoaderAwareCacheDataImporterExporter mockImporterExporter =
+			mock(ApplicationContextEnvironmentAndResourceLoaderAwareCacheDataImporterExporter.class);
+
+		ResourceLoader mockResourceLoader = mock(ResourceLoader.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setResourceLoader(mockResourceLoader);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verify(mockImporterExporter, times(1)).setResourceLoader(eq(mockResourceLoader));
+		verifyNoMoreInteractions(mockImporterExporter);
+		verifyNoInteractions(mockResourceLoader);
+	}
+
+	@Test
+	public void setResourceLoaderDoesNotConfigureWrappedNonResourceLoaderAwareCacheDataImporterExporter() {
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
+
+		ResourceLoader mockResourceLoader = mock(ResourceLoader.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setResourceLoader(mockResourceLoader);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verifyNoInteractions(mockResourceLoader, mockImporterExporter);
+	}
+
+	@Test
+	public void setResourceLoaderWithNull() {
+
+		TestResourceCapableCacheDataImporterExporter mockImporterExporter =
+			mock(TestResourceCapableCacheDataImporterExporter.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setResourceLoader(null);
+
+		verify(lifecycleImporterExporter, never()).getCacheDataImporterExporter();
+		verifyNoInteractions(mockImporterExporter);
+	}
+
+	@Test
+	public void setResourceReaderConfiguresWrappedResourceCapableCacheDataImporterExporter() {
+
+		TestResourceCapableCacheDataImporterExporter mockImporterExporter =
+			mock(TestResourceCapableCacheDataImporterExporter.class);
+
+		ResourceReader mockResourceReader = mock(ResourceReader.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setResourceReader(mockResourceReader);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verify(mockImporterExporter, times(1)).setResourceReader(eq(mockResourceReader));
+		verifyNoMoreInteractions(mockImporterExporter);
+		verifyNoInteractions(mockResourceReader);
+	}
+
+	@Test
+	public void setResourceReaderDoesNotConfigureWrappedNonResourceCapableCacheDataImporterExporter() {
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
+
+		ResourceReader mockResourceReader = mock(ResourceReader.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setResourceReader(mockResourceReader);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verifyNoInteractions(mockImporterExporter, mockResourceReader);
+	}
+
+	@Test
+	public void setResourceReaderWithNull() {
+
+		TestResourceCapableCacheDataImporterExporter mockImporterExporter =
+			mock(TestResourceCapableCacheDataImporterExporter.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setResourceReader(null);
+
+		verify(lifecycleImporterExporter, never()).getCacheDataImporterExporter();
+		verifyNoInteractions(mockImporterExporter);
+	}
+
+	@Test
+	public void setResourceWriterConfiguresWrappedResourceCapableCacheDataImporterExporter() {
+
+		TestResourceCapableCacheDataImporterExporter mockImporterExporter =
+			mock(TestResourceCapableCacheDataImporterExporter.class);
+
+		ResourceWriter mockResourceWriter = mock(ResourceWriter.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setResourceWriter(mockResourceWriter);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verify(mockImporterExporter, times(1)).setResourceWriter(eq(mockResourceWriter));
+		verifyNoMoreInteractions(mockImporterExporter);
+		verifyNoInteractions(mockResourceWriter);
+	}
+
+	@Test
+	public void setResourceWriterDoesNotConfigureWrappedNonResourceCapableCacheDataImporterExporter() {
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
+
+		ResourceWriter mockResourceWriter = mock(ResourceWriter.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setResourceWriter(mockResourceWriter);
+
+		verify(lifecycleImporterExporter, times(1)).getCacheDataImporterExporter();
+		verifyNoInteractions(mockImporterExporter, mockResourceWriter);
+	}
+
+	@Test
+	public void setResourceWriterWithNull() {
+
+		TestResourceCapableCacheDataImporterExporter mockImporterExporter =
+			mock(TestResourceCapableCacheDataImporterExporter.class);
+
+		LifecycleAwareCacheDataImporterExporter lifecycleImporterExporter =
+			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
+
+		assertThat(lifecycleImporterExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+
+		lifecycleImporterExporter = spy(lifecycleImporterExporter);
+		lifecycleImporterExporter.setResourceWriter(null);
+
+		verify(lifecycleImporterExporter, never()).getCacheDataImporterExporter();
+		verifyNoInteractions(mockImporterExporter);
+	}
+
+	@Test
+	public void exportFromRegionCallsWrappedCacheDataImporterExporterExportFrom() {
+
+		Region<?, ?> mockRegion = mock(Region.class);
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
 
 		LifecycleAwareCacheDataImporterExporter importerExporter =
 			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
 
 		assertThat(importerExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
-		assertThat(importerExporter.getEnvironment().orElse(null)).isNull();
 
-		importerExporter.setEnvironment(mockEnvironment);
+		importerExporter.exportFrom(mockRegion);
 
-		assertThat(importerExporter.getEnvironment().orElse(null)).isEqualTo(mockEnvironment);
-
-		importerExporter.setEnvironment(null);
-
-		assertThat(importerExporter.getEnvironment().orElse(null)).isNull();
-
-		verify(mockImporterExporter, times(1)).setEnvironment(eq(mockEnvironment));
+		verify(mockImporterExporter, times(1)).exportFrom(eq(mockRegion));
 		verifyNoMoreInteractions(mockImporterExporter);
+	}
+
+	@Test
+	public void importIntoRegionCallsWrappedCacheDataImporterExporterImmediatelyWhenImportLifecycleIsEager() {
+
+		Region<?, ?> mockRegionOne = mock(Region.class);
+		Region<?, ?> mockRegionTwo = mock(Region.class);
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
+
+		LifecycleAwareCacheDataImporterExporter importerExporter =
+			spy(new LifecycleAwareCacheDataImporterExporter(mockImporterExporter));
+
+		doReturn(ImportLifecycle.EAGER).when(importerExporter).resolveImportLifecycle();
+
+		assertThat(importerExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+		assertThat(importerExporter.getRegionsForImport()).isEmpty();
+
+		importerExporter.importInto(mockRegionOne);
+		importerExporter.importInto(mockRegionTwo);
+
+		assertThat(importerExporter.getRegionsForImport()).isEmpty();
+
+		verify(mockImporterExporter, times(1)).importInto(eq(mockRegionOne));
+		verify(mockImporterExporter, times(1)).importInto(eq(mockRegionTwo));
+		verifyNoMoreInteractions(mockImporterExporter);
+	}
+
+	@Test
+	public void importIntoRegionStoresRegionReferenceWhenImportLifecycleIsLazy() {
+
+		Region<?, ?> mockRegionOne = mock(Region.class);
+		Region<?, ?> mockRegionTwo = mock(Region.class);
+
+		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
+
+		LifecycleAwareCacheDataImporterExporter importerExporter =
+			spy(new LifecycleAwareCacheDataImporterExporter(mockImporterExporter));
+
+		doReturn(ImportLifecycle.LAZY).when(importerExporter).resolveImportLifecycle();
+
+		assertThat(importerExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
+		assertThat(importerExporter.getRegionsForImport()).isEmpty();
+
+		importerExporter.importInto(mockRegionOne);
+		importerExporter.importInto(mockRegionTwo);
+
+		assertThat(importerExporter.getRegionsForImport()).containsExactlyInAnyOrder(mockRegionOne, mockRegionTwo);
+
+		verify(mockImporterExporter, never()).importInto(any());
+		verifyNoMoreInteractions(mockImporterExporter);
+		verifyNoInteractions(mockRegionOne, mockRegionTwo);
 	}
 
 	@Test
@@ -234,76 +652,6 @@ public class LifecycleAwareCacheDataImporterExporterUnitTests {
 	}
 
 	@Test
-	public void exportFromRegionCallsWrappedCacheDataImporterExporterExportFrom() {
-
-		Region<?, ?> mockRegion = mock(Region.class);
-
-		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
-
-		LifecycleAwareCacheDataImporterExporter importerExporter =
-			new LifecycleAwareCacheDataImporterExporter(mockImporterExporter);
-
-		assertThat(importerExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
-
-		importerExporter.exportFrom(mockRegion);
-
-		verify(mockImporterExporter, times(1)).exportFrom(eq(mockRegion));
-		verifyNoMoreInteractions(mockImporterExporter);
-	}
-
-	@Test
-	public void importIntoRegionCallsWrappedCacheDataImporterExporterImmediatelyWhenImportLifecycleIsEager() {
-
-		Region<?, ?> mockRegionOne = mock(Region.class);
-		Region<?, ?> mockRegionTwo = mock(Region.class);
-
-		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
-
-		LifecycleAwareCacheDataImporterExporter importerExporter =
-			spy(new LifecycleAwareCacheDataImporterExporter(mockImporterExporter));
-
-		doReturn(ImportLifecycle.EAGER).when(importerExporter).resolveImportLifecycle();
-
-		assertThat(importerExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
-		assertThat(importerExporter.getRegionsForImport()).isEmpty();
-
-		importerExporter.importInto(mockRegionOne);
-		importerExporter.importInto(mockRegionTwo);
-
-		assertThat(importerExporter.getRegionsForImport()).isEmpty();
-
-		verify(mockImporterExporter, times(1)).importInto(eq(mockRegionOne));
-		verify(mockImporterExporter, times(1)).importInto(eq(mockRegionTwo));
-		verifyNoMoreInteractions(mockImporterExporter);
-	}
-
-	@Test
-	public void importIntoRegionStoresRegionReferenceWhenImportLifecycleIsLazy() {
-
-		Region<?, ?> mockRegionOne = mock(Region.class);
-		Region<?, ?> mockRegionTwo = mock(Region.class);
-
-		CacheDataImporterExporter mockImporterExporter = mock(CacheDataImporterExporter.class);
-
-		LifecycleAwareCacheDataImporterExporter importerExporter =
-			spy(new LifecycleAwareCacheDataImporterExporter(mockImporterExporter));
-
-		doReturn(ImportLifecycle.LAZY).when(importerExporter).resolveImportLifecycle();
-
-		assertThat(importerExporter.getCacheDataImporterExporter()).isEqualTo(mockImporterExporter);
-		assertThat(importerExporter.getRegionsForImport()).isEmpty();
-
-		importerExporter.importInto(mockRegionOne);
-		importerExporter.importInto(mockRegionTwo);
-
-		assertThat(importerExporter.getRegionsForImport()).containsExactlyInAnyOrder(mockRegionOne, mockRegionTwo);
-
-		verify(mockImporterExporter, never()).importInto(any());
-		verifyNoMoreInteractions(mockImporterExporter);
-		verifyNoInteractions(mockRegionOne, mockRegionTwo);
-	}
-
-	@Test
 	public void startImportsIntoRegionsWhenImportLifecycleIsLazy() {
 
 		Region<?, ?> mockRegionOne = mock(Region.class);
@@ -402,7 +750,10 @@ public class LifecycleAwareCacheDataImporterExporterUnitTests {
 			.isEqualTo("Imports cache data during the appropriate phase on Lifecycle start");
 	}
 
-	interface ApplicationContextAndEnvironmentAwareCacheDataImporterExporter
-		extends ApplicationContextAware, CacheDataImporterExporter, EnvironmentAware { }
+	interface ApplicationContextEnvironmentAndResourceLoaderAwareCacheDataImporterExporter
+		extends ApplicationContextAware, CacheDataImporterExporter, EnvironmentAware, ResourceLoaderAware { }
+
+	abstract static class TestResourceCapableCacheDataImporterExporter
+		extends ResourceCapableCacheDataImporterExporter { }
 
 }
