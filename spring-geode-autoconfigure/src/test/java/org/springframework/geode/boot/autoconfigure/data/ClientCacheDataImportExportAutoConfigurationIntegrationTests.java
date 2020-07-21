@@ -81,6 +81,7 @@ import example.app.books.model.ISBN;
 @SpringBootTest(
 	classes = ClientCacheDataImportExportAutoConfigurationIntegrationTests.TestGeodeClientConfiguration.class,
 	properties = {
+		"spring.application.name=ClientCacheDataImportExportAutoConfigurationIntegrationTestsClient",
 		"spring.data.gemfire.management.use-http=false",
 		"spring.boot.data.gemfire.cache.data.import.active-profiles=IMPORT-CLIENT",
 		"spring.boot.data.gemfire.cache.region.advice.enabled=true"

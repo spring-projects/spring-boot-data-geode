@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.Region;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -38,6 +39,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperRegionAspect;
 import org.springframework.geode.cache.SimpleCacheResolver;
+import org.springframework.geode.core.io.ResourceNotFoundException;
 import org.springframework.geode.data.AbstractCacheDataImporterExporter;
 import org.springframework.geode.data.CacheDataImporterExporter;
 import org.springframework.geode.data.json.JsonCacheDataImporterExporter;
@@ -50,6 +52,7 @@ import org.springframework.lang.Nullable;
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.autoconfigure.condition.AnyNestedCondition
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnBean
@@ -57,15 +60,15 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Condition
- * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.context.annotation.Conditional
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
- * @see org.springframework.core.type.AnnotatedTypeMetadata
  * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperRegionAspect
- * @see org.springframework.geode.cache.SimpleCacheResolver
+ * @see org.springframework.geode.data.CacheDataImporterExporter
  * @see org.springframework.geode.data.json.JsonCacheDataImporterExporter
+ * @see org.springframework.geode.data.support.LifecycleAwareCacheDataImporterExporter
  * @since 1.3.0
  */
 @Configuration
@@ -81,7 +84,28 @@ public class DataImportExportAutoConfiguration {
 
 	@Bean
 	CacheDataImporterExporter jsonCacheDataImporterExporter() {
-		return new LifecycleAwareCacheDataImporterExporter(new JsonCacheDataImporterExporter());
+		return new LifecycleAwareCacheDataImporterExporter(newCacheDataImporterExporter());
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected CacheDataImporterExporter newCacheDataImporterExporter() {
+
+		return new JsonCacheDataImporterExporter() {
+
+			@Override
+			public @NonNull Region doImportInto(@NonNull Region region) {
+
+				try {
+					return super.doImportInto(region);
+				}
+				catch (ResourceNotFoundException cause) {
+
+					getLogger().info(cause.getMessage());
+
+					return region;
+				}
+			}
+		};
 	}
 
 	@Bean

@@ -52,7 +52,10 @@ import example.app.golf.model.Golfer;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes = LocalClientCacheDataImportAutoConfigurationIntegrationTests.TestGeodeClientConfiguration.class,
-	properties = "spring.boot.data.gemfire.cache.data.import.active-profiles=IMPORT-LOCAL"
+	properties = {
+		"spring.application.name=LocalClientCacheDataImportAutoConfigurationIntegrationTests",
+		"spring.boot.data.gemfire.cache.data.import.active-profiles=IMPORT-LOCAL"
+	}
 )
 public class LocalClientCacheDataImportAutoConfigurationIntegrationTests {
 
