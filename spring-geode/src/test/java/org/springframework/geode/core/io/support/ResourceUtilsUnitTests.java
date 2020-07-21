@@ -18,6 +18,7 @@ package org.springframework.geode.core.io.support;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -40,6 +41,130 @@ import org.springframework.core.io.WritableResource;
  * @since 1.3.1
  */
 public class ResourceUtilsUnitTests {
+
+	@Test
+	public void asStrictlyWritableResourceReturnsWritableResourceFromResource() {
+
+		WritableResource mockResource = mock(WritableResource.class);
+
+		doReturn(true).when(mockResource).isWritable();
+
+		assertThat(ResourceUtils.asStrictlyWritableResource(mockResource)).isEqualTo(mockResource);
+
+		verify(mockResource, times(1)).isWritable();
+		verifyNoMoreInteractions(mockResource);
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void asStrictlyWritableResourceFromResourceThrowsIllegalStateException() {
+
+		Resource mockResource = mock(Resource.class);
+
+		doReturn("MOCK").when(mockResource).getDescription();
+
+		try {
+			ResourceUtils.asStrictlyWritableResource(mockResource);
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("Resource [MOCK] is not writable");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockResource, times(1)).getDescription();
+			verifyNoMoreInteractions(mockResource);
+		}
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void asStrictlyWritableResourceFromNullThrowsIllegalStateException() {
+
+		try {
+			ResourceUtils.asStrictlyWritableResource(null);
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("Resource [null] is not writable");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void asStrictlyWritableResourceFromNonWritableWritableResourceInstanceThrowsIllegalStateException() {
+
+		WritableResource mockResource = mock(WritableResource.class);
+
+		doReturn("TEST").when(mockResource).getDescription();
+		doReturn(false).when(mockResource).isWritable();
+
+		try {
+			ResourceUtils.asStrictlyWritableResource(mockResource);
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("Resource [TEST] is not writable");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockResource, times(1)).getDescription();
+			verify(mockResource, times(1)).isWritable();
+			verifyNoMoreInteractions(mockResource);
+		}
+	}
+
+	@Test
+	public void asWritableResourceWithWritableResourceInstance() {
+
+		WritableResource mockResource = mock(WritableResource.class);
+
+		assertThat(ResourceUtils.asWritableResource(mockResource).orElse(null)).isEqualTo(mockResource);
+
+		verify(mockResource, never()).isWritable();
+	}
+
+	@Test
+	public void asWritableResourceWithResourceInstance() {
+
+		Resource mockResource = mock(Resource.class);
+
+		assertThat(ResourceUtils.asWritableResource(mockResource).orElse(null)).isNull();
+
+		verifyNoInteractions(mockResource);
+	}
+
+	@Test
+	public void asWritableResourceWithNullIsNullSafe() {
+		assertThat(ResourceUtils.asWritableResource(null).isPresent()).isFalse();
+	}
+
+	@Test
+	public void isNotEmptyWithNonEmptyByteArrayReturnsTrue() {
+
+		byte[] array = {
+			(byte) 0xCA,
+			(byte) 0xFE,
+			(byte) 0xBA,
+			(byte) 0xBE
+		};
+
+		assertThat(ResourceUtils.isNotEmpty(array)).isTrue();
+	}
+
+	@Test
+	public void isNotEmptyWithEmptyByteArrayReturnsFalse() {
+		assertThat(ResourceUtils.isNotEmpty(new byte[0])).isFalse();
+	}
+
+	@Test
+	public void isNotEmptyWithNullByteArrayReturnsFalse() {
+		assertThat(ResourceUtils.isNotEmpty(null)).isFalse();
+	}
 
 	@Test
 	public void isReadableWithReadableResourceReturnsTrue() {
@@ -111,105 +236,6 @@ public class ResourceUtilsUnitTests {
 	@Test
 	public void isWritableWithNullResourceIsNullSafeReturnsFalse() {
 		assertThat(ResourceUtils.isWritable(null)).isFalse();
-	}
-
-	@Test
-	public void getWritableResourceReturnsWritableResourceFromResource() {
-
-		WritableResource mockResource = mock(WritableResource.class);
-
-		doReturn(true).when(mockResource).isWritable();
-
-		assertThat(ResourceUtils.getWritableResource(mockResource)).isEqualTo(mockResource);
-
-		verify(mockResource, times(1)).isWritable();
-		verifyNoMoreInteractions(mockResource);
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void getWritableResourceFromResourceThrowsIllegalStateException() {
-
-		Resource mockResource = mock(Resource.class);
-
-		doReturn("MOCK").when(mockResource).getDescription();
-
-		try {
-			ResourceUtils.getWritableResource(mockResource);
-		}
-		catch (IllegalStateException expected) {
-
-			assertThat(expected).hasMessage("Resource [MOCK] is not writable");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
-		finally {
-			verify(mockResource, times(1)).getDescription();
-			verifyNoMoreInteractions(mockResource);
-		}
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void getWritableResourceFromNullThrowsIllegalStateException() {
-
-		try {
-			ResourceUtils.getWritableResource(null);
-		}
-		catch (IllegalStateException expected) {
-
-			assertThat(expected).hasMessage("Resource [null] is not writable");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void getWritableResourceFromNonWritableWritableResourceThrowsIllegalStateException() {
-
-		WritableResource mockResource = mock(WritableResource.class);
-
-		doReturn("TEST").when(mockResource).getDescription();
-		doReturn(false).when(mockResource).isWritable();
-
-		try {
-			ResourceUtils.getWritableResource(mockResource);
-		}
-		catch (IllegalStateException expected) {
-
-			assertThat(expected).hasMessage("Resource [TEST] is not writable");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
-		finally {
-			verify(mockResource, times(1)).getDescription();
-			verify(mockResource, times(1)).isWritable();
-			verifyNoMoreInteractions(mockResource);
-		}
-	}
-
-	@Test
-	public void isNotEmptyWithNonEmptyByteArrayReturnsTrue() {
-
-		byte[] array = {
-			(byte) 0xCA,
-			(byte) 0xFE,
-			(byte) 0xBA,
-			(byte) 0xBE
-		};
-
-		assertThat(ResourceUtils.isNotEmpty(array)).isTrue();
-	}
-
-	@Test
-	public void isNotEmptyWithEmptyByteArrayReturnsFalse() {
-		assertThat(ResourceUtils.isNotEmpty(new byte[0])).isFalse();
-	}
-
-	@Test
-	public void isNotEmptyWithNullByteArrayReturnsFalse() {
-		assertThat(ResourceUtils.isNotEmpty(null)).isFalse();
 	}
 
 	@Test

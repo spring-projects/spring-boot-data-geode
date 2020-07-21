@@ -35,6 +35,50 @@ import org.springframework.lang.Nullable;
 public abstract class ResourceUtils {
 
 	/**
+	 * Returns the {@link Resource} as a {@link WritableResource} if possible.
+	 *
+	 * This method makes a best effort to determine whether the target {@link Resource} is actually {@literal writable}.
+	 * Even still, it may be possible that a write to the target {@link Resource} will fail.
+	 *
+	 * The {@link Resource} is {@literal writable} if the {@link Resource} is an instance of {@link WritableResource}
+	 * and {@link WritableResource#isWritable()} returns {@literal true}.
+	 *
+	 * @param resource {@link Resource} to cast to a {@link WritableResource}.
+	 * @return a {@link WritableResource} from the target {@link Resource} if possible; never {@literal null}.
+	 * @throws IllegalStateException if the target {@link Resource} is not {@literal writable}.
+	 * @see org.springframework.core.io.WritableResource
+	 * @see org.springframework.core.io.Resource
+	 */
+	public static @NonNull WritableResource asStrictlyWritableResource(@Nullable Resource resource) {
+
+		return Optional.ofNullable(resource)
+			.filter(WritableResource.class::isInstance)
+			.map(WritableResource.class::cast)
+			.filter(WritableResource::isWritable)
+			.orElseThrow(() -> newIllegalStateException("Resource [%s] is not writable",
+				ResourceUtils.nullSafeGetDescription(resource)));
+	}
+
+	/**
+	 * {@link Optional Optionally} return the {@link Resource} as a {@link WritableResource}.
+	 *
+	 * The {@link Resource} must be an instance of {@link WritableResource}.
+	 *
+	 * @param resource {@link Resource} to cast to a {@link WritableResource}.
+	 * @return the {@link Resource} as a {@link WritableResource} if the {@link Resource}
+	 * is an instance of {@link WritableResource}, otherwise returns {@link Optional#empty()}.
+	 * @see org.springframework.core.io.WritableResource
+	 * @see org.springframework.core.io.Resource
+	 * @see java.util.Optional
+	 */
+	public static Optional<WritableResource> asWritableResource(@Nullable Resource resource) {
+
+		return Optional.ofNullable(resource)
+			.filter(WritableResource.class::isInstance)
+			.map(WritableResource.class::cast);
+	}
+
+	/**
 	 * Determines whether the given byte array is {@literal null} or {@literal empty}.
 	 *
 	 * @param array byte array to evaluate.
@@ -67,28 +111,6 @@ public abstract class ResourceUtils {
 	 */
 	public static boolean isWritable(@Nullable Resource resource) {
 		return resource instanceof WritableResource && ((WritableResource) resource).isWritable();
-	}
-
-	/**
-	 * Returns the {@link Resource} as a {@link WritableResource} if possible.
-	 *
-	 * This method makes a best effort to determine whether the target {@link Resource} is actually {@literal writable}.
-	 * Even still, it may be possible that a write to the target {@link Resource} will fail.
-	 *
-	 * @param resource {@link Resource} to cast as a {@link WritableResource}.
-	 * @return a {@link WritableResource} from the target {@link Resource} if possible; never {@literal null}.
-	 * @throws IllegalStateException if the target {@link Resource} is not writable.
-	 * @see org.springframework.core.io.Resource
-	 * @see org.springframework.core.io.WritableResource
-	 */
-	public static @NonNull WritableResource getWritableResource(@Nullable Resource resource) {
-
-		return Optional.ofNullable(resource)
-			.filter(WritableResource.class::isInstance)
-			.map(WritableResource.class::cast)
-			.filter(WritableResource::isWritable)
-			.orElseThrow(() -> newIllegalStateException("Resource [%s] is not writable",
-				ResourceUtils.nullSafeGetDescription(resource)));
 	}
 
 	/**
