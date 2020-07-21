@@ -40,7 +40,8 @@ import org.junit.Test;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.WritableResource;
-import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.geode.core.io.ResourceDataAccessException;
+import org.springframework.geode.core.io.ResourceWriteException;
 
 /**
  * Unit Tests for {@link FileResourceWriter}.
@@ -74,12 +75,12 @@ public class FileResourceWriterUnitTests {
 		assertThat(out.toByteArray()).isEqualTo(data);
 
 		verify(mockResource, times(1)).isFile();
-		verify(mockResource, times(1)).isWritable();
 		verify(mockResource, times(1)).getOutputStream();
 		verify(writer, times(1)).doWrite(eq(out), eq(data));
+		verifyNoMoreInteractions(mockResource);
 	}
 
-	@Test(expected = DataAccessResourceFailureException.class)
+	@Test(expected = ResourceWriteException.class)
 	public void doWriteHandlesIOExceptionThrowsDataAccessResourceFailureException() throws IOException {
 
 		byte[] data = { (byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE };
@@ -95,7 +96,7 @@ public class FileResourceWriterUnitTests {
 		try {
 			writer.doWrite(mockOutputStream, data);
 		}
-		catch (DataAccessResourceFailureException expected) {
+		catch (ResourceWriteException expected) {
 
 			assertThat(expected)
 				.hasMessageStartingWith("Failed to write data (%d byte(s)) to Resource using [%s]",
@@ -264,8 +265,8 @@ public class FileResourceWriterUnitTests {
 		}
 	}
 
-	@Test(expected = DataAccessResourceFailureException.class)
-	public void newFileOutputStreamHandlesIOExceptionThrowsDataAccessResourceFailureException() throws IOException {
+	@Test(expected = ResourceDataAccessException.class)
+	public void newFileOutputStreamHandlesIOExceptionThrowsResourceDataAccessException() throws IOException {
 
 		Resource mockResource = mock(Resource.class);
 
@@ -280,7 +281,7 @@ public class FileResourceWriterUnitTests {
 		try {
 			writer.newFileOutputStream();
 		}
-		catch (DataAccessResourceFailureException expected) {
+		catch (ResourceDataAccessException expected) {
 
 			assertThat(expected).hasMessageStartingWith("Failed to access the Resource [FILE] as a file");
 			assertThat(expected).hasCauseInstanceOf(IOException.class);

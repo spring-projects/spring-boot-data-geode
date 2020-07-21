@@ -30,6 +30,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.geode.core.io.AbstractResourceWriter;
+import org.springframework.geode.core.io.ResourceDataAccessException;
+import org.springframework.geode.core.io.ResourceWriteException;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -81,7 +83,7 @@ public class FileResourceWriter extends AbstractResourceWriter {
 				String message = String.format("Failed to write data (%1$d byte(s)) to Resource using [%2$s]",
 					data.length, getClass().getName());
 
-				throw new DataAccessResourceFailureException(message, cause);
+				throw new ResourceWriteException(message, cause);
 			}
 		}
 	}
@@ -189,7 +191,7 @@ public class FileResourceWriter extends AbstractResourceWriter {
 					String message = String.format("Failed to access the Resource [%s] as a file",
 						resource.getDescription());
 
-					throw new DataAccessResourceFailureException(message, cause);
+					throw new ResourceDataAccessException(message, cause);
 				}
 			})
 			.orElseThrow(() -> newIllegalStateException("Resource [%s] is not a file based resource",
