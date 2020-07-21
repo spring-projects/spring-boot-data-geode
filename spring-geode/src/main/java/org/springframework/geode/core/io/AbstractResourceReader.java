@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.Optional;
 
 import org.springframework.core.io.Resource;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.geode.core.io.support.ResourceUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -44,12 +43,13 @@ public abstract class AbstractResourceReader implements ResourceReader {
 
 		return Optional.ofNullable(resource)
 			.filter(this::isAbleToHandle)
+			.map(this::preProcess)
 			.map(it -> {
 				try (InputStream in = it.getInputStream()) {
 					return doRead(in);
 				}
 				catch (IOException cause) {
-					throw new DataAccessResourceFailureException(String.format("Failed to read from Resource [%s]",
+					throw new ResourceReadException(String.format("Failed to read from Resource [%s]",
 						it.getDescription()), cause);
 				}
 			})
@@ -89,4 +89,14 @@ public abstract class AbstractResourceReader implements ResourceReader {
 	 */
 	protected abstract @NonNull byte[] doRead(@NonNull InputStream resourceInputStream) throws IOException;
 
+	/**
+	 * Pre-processes the target {@link Resource} before reading from the {@link Resource}.
+	 *
+	 * @param resource {@link Resource} to pre-process; never {@literal null}.
+	 * @return the given, target {@link Resource}.
+	 * @see org.springframework.core.io.Resource
+	 */
+	protected @NonNull Resource preProcess(@NonNull Resource resource) {
+		return resource;
+	}
 }

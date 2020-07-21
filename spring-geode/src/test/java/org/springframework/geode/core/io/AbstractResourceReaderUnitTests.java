@@ -18,9 +18,12 @@ package org.springframework.geode.core.io;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,9 +34,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import org.springframework.core.io.Resource;
-import org.springframework.dao.DataAccessResourceFailureException;
 
 /**
  * Unit Tests for {@link AbstractResourceReader}.
@@ -48,7 +51,7 @@ import org.springframework.dao.DataAccessResourceFailureException;
 public class AbstractResourceReaderUnitTests {
 
 	@Test
-	public void readCallsDoRead() throws IOException {
+	public void readFromResourceCallsDoRead() throws IOException {
 
 		byte[] array = { (byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE };
 
@@ -59,21 +62,26 @@ public class AbstractResourceReaderUnitTests {
 		Resource mockResource = mock(Resource.class);
 
 		doCallRealMethod().when(mockResourceReader).read(any());
+		doAnswer(invocation -> invocation.getArgument(0)).when(mockResourceReader).preProcess(any());
 		doReturn(true).when(mockResourceReader).isAbleToHandle(eq(mockResource));
 		doReturn(array).when(mockResourceReader).doRead(eq(mockInputStream));
 		doReturn(mockInputStream).when(mockResource).getInputStream();
 
 		assertThat(mockResourceReader.read(mockResource)).isEqualTo(array);
 
-		verify(mockResourceReader, times(1)).isAbleToHandle(eq(mockResource));
-		verify(mockResourceReader, times(1)).doRead(eq(mockInputStream));
+		InOrder order = inOrder(mockResourceReader);
+
+		order.verify(mockResourceReader, times(1)).isAbleToHandle(eq(mockResource));
+		order.verify(mockResourceReader, times(1)).preProcess(eq(mockResource));
+		order.verify(mockResourceReader, times(1)).doRead(eq(mockInputStream));
+
 		verify(mockInputStream, times(1)).close();
 		verify(mockResource, times(1)).getInputStream();
 		verifyNoMoreInteractions(mockInputStream, mockResource);
 	}
 
 	@Test(expected = UnhandledResourceException.class)
-	public void readFromNullResourceThrowsUnhandledResourceException() {
+	public void readFromNullResourceIsNullSafeAndThrowsUnhandledResourceException() {
 
 		AbstractResourceReader mockResourceReader = mock(AbstractResourceReader.class);
 
@@ -91,8 +99,8 @@ public class AbstractResourceReaderUnitTests {
 		}
 	}
 
-	@Test(expected = DataAccessResourceFailureException.class)
-	public void readThrowsDataAccessResourceFailureExceptionOnIoException() throws IOException {
+	@Test(expected = ResourceReadException.class)
+	public void readThrowsResourceReadExceptionOnIoException() throws IOException {
 
 		AbstractResourceReader mockResourceReader = mock(AbstractResourceReader.class);
 
@@ -101,6 +109,7 @@ public class AbstractResourceReaderUnitTests {
 		Resource mockResource = mock(Resource.class);
 
 		doCallRealMethod().when(mockResourceReader).read(any());
+		doAnswer(invocation -> invocation.getArgument(0)).when(mockResourceReader).preProcess(any());
 		doReturn(true).when(mockResourceReader).isAbleToHandle(eq(mockResource));
 		doThrow(new IOException("TEST")).when(mockResourceReader).doRead(eq(mockInputStream));
 		doReturn("MOCK").when(mockResource).getDescription();
@@ -109,7 +118,7 @@ public class AbstractResourceReaderUnitTests {
 		try {
 			mockResourceReader.read(mockResource);
 		}
-		catch (DataAccessResourceFailureException expected) {
+		catch (ResourceReadException expected) {
 
 			assertThat(expected).hasMessageStartingWith("Failed to read from Resource [MOCK]");
 			assertThat(expected).hasCauseInstanceOf(IOException.class);
@@ -149,5 +158,22 @@ public class AbstractResourceReaderUnitTests {
 		doCallRealMethod().when(mockResourceReader).isAbleToHandle(any());
 
 		assertThat(mockResourceReader.isAbleToHandle(null)).isFalse();
+	}
+
+	@Test
+	public void preProcessReturnsTargetResource() {
+
+		Resource mockResource = mock(Resource.class);
+
+		AbstractResourceReader mockResourceReader = mock(AbstractResourceReader.class);
+
+		doCallRealMethod().when(mockResourceReader).preProcess(any());
+
+		assertThat(mockResourceReader.preProcess(mockResource)).isSameAs(mockResource);
+		assertThat(mockResourceReader.preProcess(null)).isNull();
+
+		verify(mockResourceReader, times(1)).preProcess(eq(mockResource));
+		verify(mockResourceReader, times(1)).preProcess(isNull());
+		verifyNoInteractions(mockResource);
 	}
 }
