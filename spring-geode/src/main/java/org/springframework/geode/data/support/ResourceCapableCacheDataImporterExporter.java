@@ -17,6 +17,7 @@ package org.springframework.geode.data.support;
 
 import static org.springframework.geode.core.util.ObjectUtils.initialize;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,12 +67,16 @@ import org.springframework.util.StringUtils;
  * and export {@link Resource Resources}.
  *
  * @author John Blum
+ * @see java.io.File
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
  * @see org.springframework.beans.factory.InitializingBean
+ * @see org.springframework.context.ConfigurableApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
  * @see org.springframework.expression.Expression
  * @see org.springframework.expression.ExpressionParser
+ * @see org.springframework.expression.spel.SpelParserConfiguration
+ * @see org.springframework.expression.spel.standard.SpelExpressionParser
  * @see org.springframework.core.io.Resource
  * @see org.springframework.core.io.ResourceLoader
  * @see org.springframework.geode.core.io.ResourceReader
@@ -92,18 +97,14 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 
 	protected static final String RESOURCE_NAME_PATTERN = "data-%s.json";
 
-	@Autowired(required = false)
 	private ExportResourceResolver exportResourceResolver;
 
-	@Autowired(required = false)
 	private ImportResourceResolver importResourceResolver;
 
 	private ResourceLoader resourceLoader;
 
-	@Autowired(required = false)
 	private ResourceReader resourceReader;
 
-	@Autowired(required = false)
 	private ResourceWriter resourceWriter;
 
 	/**
@@ -131,7 +132,23 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	}
 
 	/**
+	 * Sets a reference to the configured {@link ExportResourceResolver}.
+	 *
+	 * @param exportResourceResolver configured {@link ExportResourceResolver} used by this importer/exporter
+	 * to resolve {@link Resource Resources} on export.
+	 * @see ExportResourceResolver
+	 */
+	@Autowired(required = false)
+	public void setExportResourceResolver(@Nullable ExportResourceResolver exportResourceResolver) {
+		this.exportResourceResolver = exportResourceResolver;
+	}
+
+	/**
 	 * Gets the configured reference to the {@link ExportResourceResolver}.
+	 *
+	 * The configured {@link ExportResourceResolver} is guaranteed to be {@literal non-null} only if the
+	 * {@link #afterPropertiesSet()} initialization method was called after construction of this importer/exporter.
+	 * This is definitely true in a Spring context.
 	 *
 	 * @return the configured reference to the {@link ExportResourceResolver}.
 	 * @see ExportResourceResolver
@@ -141,7 +158,23 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	}
 
 	/**
+	 * Sets a reference to the configured {@link ImportResourceResolver}.
+	 *
+	 * @param importResourceResolver configured {@link ImportResourceResolver} used by this importer/exporter
+	 * to resolve {@link Resource Resources} on import.
+	 * @see ImportResourceResolver
+	 */
+	@Autowired(required = false)
+	public void setImportResourceResolver(@Nullable ImportResourceResolver importResourceResolver) {
+		this.importResourceResolver = importResourceResolver;
+	}
+
+	/**
 	 * Gets the configured reference to the {@link ImportResourceResolver}.
+	 *
+	 * The configured {@link ImportResourceResolver} is guaranteed to be {@literal non-null} only if the
+	 * {@link #afterPropertiesSet()} initialization method was called after construction of this importer/exporter.
+	 * This is definitely true in a Spring context.
 	 *
 	 * @return the configured reference to the {@link ImportResourceResolver}.
 	 * @see ImportResourceResolver
@@ -175,7 +208,23 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	}
 
 	/**
-	 * Gets the configured {@link ResourceReader} used to read data from the {@link Resource} on {@literal import}.
+	 * Sets a reference to the configured {@link ResourceReader}.
+	 *
+	 * @param resourceReader configured {@link ResourceReader} used by this importer/exporter
+	 * to read from a {@link Resource} on import.
+	 * @see org.springframework.geode.core.io.ResourceReader
+	 */
+	@Autowired(required = false)
+	public void setResourceReader(@Nullable ResourceReader resourceReader) {
+		this.resourceReader = resourceReader;
+	}
+
+	/**
+	 * Gets the configured {@link ResourceReader} used to read data from a {@link Resource} on {@literal import}.
+	 *
+	 * The configured {@link ResourceReader} is guaranteed to be {@literal non-null} only if the
+	 * {@link #afterPropertiesSet()} initialization method was called after construction of this importer/exporter.
+	 * This is definitely true in a Spring context.
 	 *
 	 * @return the configured {@link ResourceReader}.
 	 * @see org.springframework.geode.core.io.ResourceReader
@@ -185,7 +234,23 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	}
 
 	/**
+	 * Set a reference to the configured {@link ResourceWriter}.
+	 *
+	 * @param resourceWriter configured {@link ResourceWriter} used by this importer/exporter
+	 * to write to a {@link Resource} on export.
+	 * @see org.springframework.geode.core.io.ResourceWriter
+	 */
+	@Autowired(required = false)
+	public void setResourceWriter(@Nullable ResourceWriter resourceWriter) {
+		this.resourceWriter = resourceWriter;
+	}
+
+	/**
 	 * Gets the configured {@link ResourceWriter} used to write data to the {@link Resource} on {@literal export}.
+	 *
+	 * The configured {@link ResourceWriter} is guaranteed to be {@literal non-null} only if the
+	 * {@link #afterPropertiesSet()} initialization method was called after construction of this importer/exporter.
+	 * This is definitely true in a Spring context.
 	 *
 	 * @return the configured {@link ResourceWriter}.
 	 * @see org.springframework.geode.core.io.ResourceWriter
@@ -499,8 +564,8 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 
 		@Override
 		protected @NonNull String getResourcePath() {
-			return String.format("%1$s%2$s", ResourcePrefix.FILESYSTEM_URL_PREFIX.toUrlPrefix(),
-				System.getProperty("user.dir"));
+			return String.format("%1$s%2$s%3$s", ResourcePrefix.FILESYSTEM_URL_PREFIX.toUrlPrefix(),
+				System.getProperty("user.dir"), File.separator);
 		}
 	}
 

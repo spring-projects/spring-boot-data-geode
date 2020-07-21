@@ -30,6 +30,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newRuntimeException;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 
@@ -562,7 +563,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 			spy(new TestResourceCapableCacheDataImporterExporter().new FileSystemExportResourceResolver());
 
 		assertThat(exportResourceResolver.getResourcePath())
-			.isEqualTo(String.format("file://%s", System.getProperty("user.dir")));
+			.isEqualTo(String.format("file://%1$s%2$s", System.getProperty("user.dir"), File.separator));
 	}
 
 	@Test
