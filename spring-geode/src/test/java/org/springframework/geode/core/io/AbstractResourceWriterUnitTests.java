@@ -18,9 +18,12 @@ package org.springframework.geode.core.io;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -32,10 +35,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.WritableResource;
-import org.springframework.dao.DataAccessResourceFailureException;
 
 /**
  * Unit Tests for {@link AbstractResourceWriter}.
@@ -51,7 +54,7 @@ import org.springframework.dao.DataAccessResourceFailureException;
 public class AbstractResourceWriterUnitTests {
 
 	@Test
-	public void writeCallsDoWrite() throws IOException {
+	public void writeToWritableResourceCallsDoWrite() throws IOException {
 
 		byte[] array = { (byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE };
 
@@ -62,22 +65,26 @@ public class AbstractResourceWriterUnitTests {
 		WritableResource mockResource = mock(WritableResource.class);
 
 		doCallRealMethod().when(mockResourceWriter).write(eq(mockResource), eq(array));
+		doAnswer(invocation -> invocation.getArgument(0)).when(mockResourceWriter).preProcess(any());
 		doReturn(true).when(mockResourceWriter).isAbleToHandle(eq(mockResource));
 		doReturn(mockOutputStream).when(mockResource).getOutputStream();
 		doReturn(true).when(mockResource).isWritable();
 
 		mockResourceWriter.write(mockResource, array);
 
-		verify(mockResourceWriter, times(1)).isAbleToHandle(eq(mockResource));
-		verify(mockResourceWriter, times(1)).doWrite(eq(mockOutputStream), eq(array));
-		verify(mockResource, times(1)).isWritable();
+		InOrder order = inOrder(mockResourceWriter);
+
+		order.verify(mockResourceWriter, times(1)).isAbleToHandle(eq(mockResource));
+		order.verify(mockResourceWriter, times(1)).preProcess(eq(mockResource));
+		order.verify(mockResourceWriter, times(1)).doWrite(eq(mockOutputStream), eq(array));
+
 		verify(mockResource, times(1)).getOutputStream();
 		verify(mockOutputStream, times(1)).close();
 		verifyNoMoreInteractions(mockOutputStream, mockResource);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void writeNonWritableResourceThrowsIllegalStateException() throws IOException {
+	@Test(expected = UnhandledResourceException.class)
+	public void writeToNonWritableResourceThrowsUnhandledResourceException() throws IOException {
 
 		byte[] array = { (byte) 0x01 };
 
@@ -91,23 +98,24 @@ public class AbstractResourceWriterUnitTests {
 		try {
 			mockResourceWriter.write(mockResource, array);
 		}
-		catch (IllegalStateException expected) {
+		catch (UnhandledResourceException expected) {
 
-			assertThat(expected).hasMessage("Resource [MOCK] is not writable");
+			assertThat(expected).hasMessage("Unable to handle Resource [MOCK]");
 			assertThat(expected).hasNoCause();
 
 			throw expected;
 		}
 		finally {
 			verify(mockResourceWriter, never()).isAbleToHandle(any());
+			verify(mockResourceWriter, never()).preProcess(any());
 			verify(mockResourceWriter, never()).doWrite(any(), any());
 			verify(mockResource, times(1)).getDescription();
 			verifyNoMoreInteractions(mockResource);
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void writeNullResourceThrowsIllegalStateException() throws IOException {
+	@Test(expected = UnhandledResourceException.class)
+	public void writeToNullResourceThrowsUnhandledResourceException() throws IOException {
 
 		byte[] array = { (byte) 0x02 };
 
@@ -118,21 +126,22 @@ public class AbstractResourceWriterUnitTests {
 		try {
 			mockResourceWriter.write(null, array);
 		}
-		catch (IllegalStateException expected) {
+		catch (UnhandledResourceException expected) {
 
-			assertThat(expected).hasMessage("Resource [null] is not writable");
+			assertThat(expected).hasMessage("Unable to handle Resource [null]");
 			assertThat(expected).hasNoCause();
 
 			throw expected;
 		}
 		finally {
 			verify(mockResourceWriter, never()).isAbleToHandle(any());
+			verify(mockResourceWriter, never()).preProcess(any());
 			verify(mockResourceWriter, never()).doWrite(any(), any());
 		}
 	}
 
 	@Test(expected = UnhandledResourceException.class)
-	public void writeUnhandledResourceThrowsUnhandledResourceException() throws IOException {
+	public void writeToUnhandledResourceThrowsUnhandledResourceException() throws IOException {
 
 		byte[] array = { (byte) 0x04 };
 
@@ -141,9 +150,9 @@ public class AbstractResourceWriterUnitTests {
 		WritableResource mockResource = mock(WritableResource.class);
 
 		doCallRealMethod().when(mockResourceWriter).write(any(), any(byte[].class));
+		doReturn(false).when(mockResourceWriter).isAbleToHandle(eq(mockResource));
 		doReturn(true).when(mockResource).isWritable();
 		doReturn("MOCK").when(mockResource).getDescription();
-		doReturn(false).when(mockResourceWriter).isAbleToHandle(eq(mockResource));
 
 		try {
 			mockResourceWriter.write(mockResource, array);
@@ -156,15 +165,16 @@ public class AbstractResourceWriterUnitTests {
 			throw expected;
 		}
 		finally {
-			verify(mockResource, times(1)).isWritable();
-			verify(mockResource, times(1)).getDescription();
+			verify(mockResourceWriter, times(1)).isAbleToHandle(eq(mockResource));
+			verify(mockResourceWriter, never()).preProcess(eq(mockResource));
 			verify(mockResourceWriter, never()).doWrite(any(), any());
+			verify(mockResource, times(1)).getDescription();
 			verifyNoMoreInteractions(mockResource);
 		}
 	}
 
-	@Test(expected = DataAccessResourceFailureException.class)
-	public void writeThrowsDataAccessResourceFailureExceptionForIoException() throws IOException {
+	@Test(expected = ResourceWriteException.class)
+	public void writeThrowsResourceWriteExceptionForIoException() throws IOException {
 
 		byte[] array = { (byte) 0x08 };
 
@@ -175,16 +185,16 @@ public class AbstractResourceWriterUnitTests {
 		WritableResource mockResource = mock(WritableResource.class);
 
 		doCallRealMethod().when(mockResourceWriter).write(any(), any(byte[].class));
-		doReturn(true).when(mockResource).isWritable();
+		doReturn(true).when(mockResourceWriter).isAbleToHandle(eq(mockResource));
+		doAnswer(invocation -> invocation.getArgument(0)).when(mockResourceWriter).preProcess(any());
+		doThrow(new IOException("TEST")).when(mockResourceWriter).doWrite(eq(mockOutputStream), eq(array));
 		doReturn("MOCK").when(mockResource).getDescription();
 		doReturn(mockOutputStream).when(mockResource).getOutputStream();
-		doReturn(true).when(mockResourceWriter).isAbleToHandle(eq(mockResource));
-		doThrow(new IOException("TEST")).when(mockResourceWriter).doWrite(eq(mockOutputStream), eq(array));
 
 		try {
 			mockResourceWriter.write(mockResource, array);
 		}
-		catch (DataAccessResourceFailureException expected) {
+		catch (ResourceWriteException expected) {
 
 			assertThat(expected).hasMessageStartingWith("Failed to write to Resource [MOCK]");
 			assertThat(expected).hasCauseInstanceOf(IOException.class);
@@ -195,8 +205,8 @@ public class AbstractResourceWriterUnitTests {
 		}
 		finally {
 			verify(mockResourceWriter, times(1)).isAbleToHandle(eq(mockResource));
+			verify(mockResourceWriter, times(1)).preProcess(eq(mockResource));
 			verify(mockResourceWriter, times(1)).doWrite(eq(mockOutputStream), eq(array));
-			verify(mockResource, times(1)).isWritable();
 			verify(mockResource, times(1)).getDescription();
 			verify(mockResource, times(1)).getOutputStream();
 			verify(mockOutputStream, times(1)).close();
@@ -226,5 +236,22 @@ public class AbstractResourceWriterUnitTests {
 		doCallRealMethod().when(mockResourceWriter).isAbleToHandle(any());
 
 		assertThat(mockResourceWriter.isAbleToHandle(null)).isFalse();
+	}
+
+	@Test
+	public void preProcessWritableResourceReturnsWritableResource() {
+
+		WritableResource mockResource = mock(WritableResource.class);
+
+		AbstractResourceWriter mockResourceWriter = mock(AbstractResourceWriter.class);
+
+		doCallRealMethod().when(mockResourceWriter).preProcess(any());
+
+		assertThat(mockResourceWriter.preProcess(mockResource)).isSameAs(mockResource);
+		assertThat(mockResourceWriter.preProcess(null)).isNull();
+
+		verify(mockResourceWriter, times(1)).preProcess(eq(mockResource));
+		verify(mockResourceWriter, times(1)).preProcess(isNull());
+		verifyNoInteractions(mockResource);
 	}
 }

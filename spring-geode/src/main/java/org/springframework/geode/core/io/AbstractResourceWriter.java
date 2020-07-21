@@ -17,11 +17,9 @@ package org.springframework.geode.core.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Optional;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.WritableResource;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.geode.core.io.support.ResourceUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -44,15 +42,16 @@ public abstract class AbstractResourceWriter implements ResourceWriter {
 	@Override
 	public void write(@NonNull Resource resource, byte[] data) {
 
-		Optional.ofNullable(ResourceUtils.getWritableResource(resource))
+		ResourceUtils.asWritableResource(resource)
 			.filter(this::isAbleToHandle)
+			.map(this::preProcess)
 			.map(it -> {
 				try (OutputStream out = it.getOutputStream()) {
 					doWrite(out, data);
 					return true;
 				}
 				catch (IOException cause) {
-					throw new DataAccessResourceFailureException(String.format("Failed to write to Resource [%s]",
+					throw new ResourceWriteException(String.format("Failed to write to Resource [%s]",
 						it.getDescription()), cause);
 				}
 			})
@@ -91,4 +90,14 @@ public abstract class AbstractResourceWriter implements ResourceWriter {
 	 */
 	protected abstract void doWrite(OutputStream resourceOutputStream, byte[] data) throws IOException;
 
+	/**
+	 * Pre-processes the target {@link WritableResource} before writing to the {@link WritableResource}.
+	 *
+	 * @param resource {@link WritableResource} to pre-process; never {@literal null}.
+	 * @return the given, target {@link WritableResource}.
+	 * @see org.springframework.core.io.WritableResource
+	 */
+	protected @NonNull WritableResource preProcess(@NonNull WritableResource resource) {
+		return resource;
+	}
 }
