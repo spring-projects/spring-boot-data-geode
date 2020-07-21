@@ -210,10 +210,10 @@ public class ClientSecurityAutoConfiguration {
 				CloudCacheService cloudCacheService, Properties cloudCacheProperties) {
 
 			cloudCacheService.getGfshUrl().ifPresent(url -> {
-				cloudCacheProperties.setProperty(MANAGEMENT_USE_HTTP_PROPERTY, Boolean.TRUE.toString());
 				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_HOST_PROPERTY, url.getHost());
-				cloudCacheProperties.setProperty(MANAGEMENT_REQUIRE_HTTPS_PROPERTY, Boolean.TRUE.toString());
 				cloudCacheProperties.setProperty(MANAGEMENT_HTTP_PORT_PROPERTY, String.valueOf(url.getPort()));
+				cloudCacheProperties.setProperty(MANAGEMENT_REQUIRE_HTTPS_PROPERTY, Boolean.TRUE.toString());
+				cloudCacheProperties.setProperty(MANAGEMENT_USE_HTTP_PROPERTY, Boolean.TRUE.toString());
 			});
 		}
 
