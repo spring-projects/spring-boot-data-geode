@@ -52,8 +52,8 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 	private final AtomicReference<ResourceLoader> resolvedResourceLoader = new AtomicReference<>(null);
 
 	/**
-	 * Gets a {@link ClassLoader} used by the {@link ResourceLoader} to resolve and load {@link Resource Resources}
-	 * located on the {@literal classpath}.
+	 * Gets an {@link Optional} {@link ClassLoader} used by the {@link ResourceLoader} to resolve and load
+	 * {@link Resource Resources} located on the {@literal classpath}.
 	 *
 	 * Returns the {@link ResourceLoader#getClassLoader() ClassLoader} from the configured {@link ResourceLoader},
 	 * if present.  Otherwise, returns a {@link ClassLoader} determined by {@link ClassUtils#getDefaultClassLoader()},
@@ -61,6 +61,7 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 	 * and finally, {@link ClassLoader#getSystemClassLoader()}.
 	 *
 	 * @return an {@link Optional} {@link ClassLoader} to resolve and load {@link Resource Resources}.
+	 * @see org.springframework.core.io.ResourceLoader#getClassLoader()
 	 * @see java.lang.ClassLoader
 	 * @see java.util.Optional
 	 */
@@ -73,14 +74,14 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 	}
 
 	/**
-	 * Configures the {@link ResourceLoader} used by this {@link ResourceResolver} to resolve
-	 * and load {@link Resource Resources}.
+	 * Configures the {@link ResourceLoader} used by this {@link ResourceResolver} to resolve and load
+	 * {@link Resource Resources}.
 	 *
 	 * @param resourceLoader {@link ResourceLoader} used to resolve and load {@link Resource Resources}.
 	 * @see org.springframework.core.io.ResourceLoader
 	 */
 	@Override
-	public final void setResourceLoader(@Nullable ResourceLoader resourceLoader) {
+	public void setResourceLoader(@Nullable ResourceLoader resourceLoader) {
 		this.resolvedResourceLoader.set(resourceLoader);
 	}
 
@@ -136,12 +137,14 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 	/**
 	 * Determines whether the {@link Resource} is a {@literal qualified} {@link Resource}.
 	 *
-	 * Qualifications are determined by the application Use Case (UC) or Requirements at time of resolution.
-	 * For example, it maybe that the {@link Resource} must {@link Resource#exists() exist} to be valid, or that
-	 * the {@link Resource} must be fully-qualified in terms of the protocol, path and name.
+	 * Qualifications are determined by the application Requirements and Use Case (UC) at time of resolution.
+	 * For example, it maybe that the {@link Resource} must {@link Resource#exists() exist} to qualify, or that
+	 * the {@link Resource} must have a valid protocol, path and name.
+	 *
+	 * This default implementation requires the target {@link Resource} to not be {@literal null}.
 	 *
 	 * @param resource {@link Resource} to qualify.
-	 * @return a boolean value indicating whether the {@link Resource} is qualified (e.g. valid).
+	 * @return a boolean value indicating whether the {@link Resource} is qualified.
 	 * @see org.springframework.core.io.Resource
 	 */
 	protected boolean isQualified(@Nullable Resource resource) {
@@ -149,18 +152,19 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 	}
 
 	/**
-	 * Action to carry out in the event the {@link Resource} identified at the given {@link String location} is missing,
-	 * or not {@link #isQualified(Resource) qualified}.
+	 * Action to perform when the {@link Resource} identified at the specified {@link String location} is missing,
+	 * or was not {@link #isQualified(Resource) qualified}.
 	 *
 	 * @param resource missing {@link Resource}.
 	 * @param location {@link String} containing the location identifying the missing {@link Resource}.
-	 * @throws ResourceNotFoundException if the {@link Resource} cannot be found at the {@link String location}.
+	 * @throws ResourceNotFoundException if the {@link Resource} cannot be found at the specified {@link String location}.
 	 * @return a different {@link Resource}, possibly.  Alternatively, this method may throw
 	 * a {@link ResourceNotFoundException}.
 	 * @see #isQualified(Resource)
 	 */
 	protected @Nullable Resource onMissingResource(@Nullable Resource resource, @NonNull String location) {
-		throw new ResourceNotFoundException(String.format("Failed to resolve a Resource at location [%s]", location));
+		throw new ResourceNotFoundException(String.format("Failed to resolve Resource [%1$s] at location [%2$s]",
+			ResourceUtils.nullSafeGetDescription(resource), location));
 	}
 
 	/**
@@ -168,7 +172,7 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 	 * such as a Spring {@link ApplicationContext}.
 	 *
 	 * The targeted, identified {@link Resource} can be further {@link #isQualified(Resource) qualified} by subclasses
-	 * based on application Use Case (UC) or Requirements.
+	 * based on application requirements or use case (UC).
 	 *
 	 * In the event that a {@link Resource} cannot be identified at the given {@link String location}, then applications
 	 * have 1 last opportunity to handle the missing {@link Resource} event, and either return a different or default

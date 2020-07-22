@@ -26,6 +26,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.Set;
 
@@ -56,7 +57,7 @@ import org.springframework.util.ClassUtils;
 public class ResourceLoaderResourceResolverUnitTests {
 
 	@Test
-	public void getClassLoaderFromResolvedResourceLoader() {
+	public void getsClassLoaderFromResolvedResourceLoader() {
 
 		ClassLoader mockClassLoader = mock(ClassLoader.class);
 
@@ -71,6 +72,7 @@ public class ResourceLoaderResourceResolverUnitTests {
 		assertThat(resourceResolver.getClassLoader().orElse(null)).isEqualTo(mockClassLoader);
 
 		verify(mockResourceLoader, times(1)).getClassLoader();
+		verifyNoMoreInteractions(mockResourceLoader);
 	}
 
 	@Test
@@ -96,9 +98,10 @@ public class ResourceLoaderResourceResolverUnitTests {
 
 		resourceResolver.setResourceLoader(mockResourceLoader);
 
-		assertThat(resourceResolver.getResourceLoader()).isEqualTo(mockResourceLoader);
+		assertThat(resourceResolver.getResourceLoader()).isSameAs(mockResourceLoader);
 
 		verify(resourceResolver, never()).newResourceLoader();
+		verifyNoInteractions(mockResourceLoader);
 	}
 
 	@Test
@@ -115,6 +118,7 @@ public class ResourceLoaderResourceResolverUnitTests {
 		assertThat(resourceLoader).isEqualTo(mockResourceLoader);
 
 		verify(resourceResolver, times(1)).newResourceLoader();
+		verifyNoInteractions(mockResourceLoader);
 	}
 
 	@Test
@@ -133,10 +137,11 @@ public class ResourceLoaderResourceResolverUnitTests {
 		ResourceLoader resourceLoader = resourceResolver.newResourceLoader();
 
 		assertThat(resourceLoader).isInstanceOf(DefaultResourceLoader.class);
-		assertThat(resourceLoader.getClassLoader()).isEqualTo(mockClassLoader);
+		assertThat(resourceLoader.getClassLoader()).isSameAs(mockClassLoader);
 
 		verify(resourceResolver, times(1)).getClassLoader();
 		verify(mockResourceLoader, times(1)).getClassLoader();
+		verifyNoMoreInteractions(mockResourceLoader);
 	}
 
 	@Test
@@ -215,10 +220,33 @@ public class ResourceLoaderResourceResolverUnitTests {
 		}
 		catch (ResourceNotFoundException expected) {
 
-			assertThat(expected).hasMessage("Failed to resolve a Resource at location [/path/to/resource]");
+			assertThat(expected).hasMessage("Failed to resolve Resource [null] at location [/path/to/resource]");
 			assertThat(expected).hasNoCause();
 
 			throw expected;
+		}
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void onMissingResourceWithResourceThrowsResourceNotFoundException() {
+
+		Resource mockResource = mock(Resource.class);
+
+		doReturn("MOCK").when(mockResource).getDescription();
+
+		try {
+			new ResourceLoaderResourceResolver().onMissingResource(mockResource, "/location/of/resource");
+		}
+		catch (ResourceNotFoundException expected) {
+
+			assertThat(expected).hasMessage("Failed to resolve Resource [MOCK] at location [/location/of/resource]");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+			verify(mockResource, times(1)).getDescription();
+			verifyNoMoreInteractions(mockResource);
 		}
 	}
 
@@ -262,7 +290,7 @@ public class ResourceLoaderResourceResolverUnitTests {
 		}
 		catch (ResourceNotFoundException expected) {
 
-			assertThat(expected).hasMessage("Failed to resolve a Resource at location [%s]", location);
+			assertThat(expected).hasMessage("Failed to resolve Resource [null] at location [%s]", location);
 			assertThat(expected).hasNoCause();
 
 			throw expected;
@@ -272,6 +300,7 @@ public class ResourceLoaderResourceResolverUnitTests {
 			verify(resourceResolver, times(1)).isQualified(isNull());
 			verify(resourceResolver, times(1)).onMissingResource(isNull(), eq(location));
 			verify(mockResourceLoader, times(1)).getResource(eq(location));
+			verifyNoMoreInteractions(mockResourceLoader);
 		}
 	}
 
@@ -287,15 +316,16 @@ public class ResourceLoaderResourceResolverUnitTests {
 		ResourceLoaderResourceResolver resourceResolver = spy(new ResourceLoaderResourceResolver());
 
 		doReturn(mockResourceLoader).when(resourceResolver).getResourceLoader();
-		doReturn(false).when(resourceResolver).isQualified(eq(mockResource));
+		doReturn(false).when(resourceResolver).isQualified(any());
 		doReturn(mockResource).when(mockResourceLoader).getResource(eq(location));
+		doReturn("MOCK").when(mockResource).getDescription();
 
 		try {
 			resourceResolver.resolve(location);
 		}
 		catch (ResourceNotFoundException expected) {
 
-			assertThat(expected).hasMessage("Failed to resolve a Resource at location [%s]", location);
+			assertThat(expected).hasMessage("Failed to resolve Resource [MOCK] at location [%s]", location);
 			assertThat(expected).hasNoCause();
 
 			throw expected;
@@ -305,7 +335,8 @@ public class ResourceLoaderResourceResolverUnitTests {
 			verify(resourceResolver, times(1)).isQualified(eq(mockResource));
 			verify(resourceResolver, times(1)).onMissingResource(eq(mockResource), eq(location));
 			verify(mockResourceLoader, times(1)).getResource(eq(location));
-			verifyNoInteractions(mockResource);
+			verify(mockResource, times(1)).getDescription();
+			verifyNoMoreInteractions(mockResource, mockResourceLoader);
 		}
 	}
 
@@ -322,7 +353,7 @@ public class ResourceLoaderResourceResolverUnitTests {
 		ResourceLoaderResourceResolver resourceResolver = spy(new ResourceLoaderResourceResolver());
 
 		doReturn(mockResourceLoader).when(resourceResolver).getResourceLoader();
-		doReturn(false).when(resourceResolver).isQualified(mockResourceOne);
+		doReturn(false).when(resourceResolver).isQualified(eq(mockResourceOne));
 		doReturn(mockResourceTwo).when(resourceResolver).onMissingResource(eq(mockResourceOne), eq(location));
 		doReturn(mockResourceOne).when(mockResourceLoader).getResource(eq(location));
 
@@ -332,6 +363,7 @@ public class ResourceLoaderResourceResolverUnitTests {
 		verify(resourceResolver, times(1)).isQualified(eq(mockResourceOne));
 		verify(resourceResolver, times(1)).onMissingResource(eq(mockResourceOne), eq(location));
 		verify(mockResourceLoader, times(1)).getResource(eq(location));
+		verifyNoMoreInteractions(mockResourceLoader);
 		verifyNoInteractions(mockResourceOne, mockResourceTwo);
 	}
 
