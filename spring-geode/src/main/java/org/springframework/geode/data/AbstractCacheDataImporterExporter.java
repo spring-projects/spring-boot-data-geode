@@ -225,6 +225,7 @@ public abstract class AbstractCacheDataImporterExporter
 	 * @see org.apache.geode.cache.Region
 	 * @see #isExportEnabled(Environment)
 	 * @see #getRegionPredicate()
+	 * @see #doExportFrom(Region)
 	 */
 	@NonNull @Override
 	public Region exportFrom(@NonNull Region region) {
@@ -245,6 +246,7 @@ public abstract class AbstractCacheDataImporterExporter
 	 * @param region {@link Region} to export data from.
 	 * @return the given {@link Region}.
 	 * @see org.apache.geode.cache.Region
+	 * @see #exportFrom(Region)
 	 */
 	protected abstract @NonNull Region doExportFrom(@NonNull Region region);
 
@@ -262,38 +264,6 @@ public abstract class AbstractCacheDataImporterExporter
 			&& Boolean.TRUE.equals(environment.getProperty(CACHE_DATA_IMPORT_ENABLED_PROPERTY_NAME, Boolean.class,
 				DEFAULT_CACHE_DATA_IMPORT_ENABLED));
 	}
-
-	/**
-	 * Imports data into the given {@link Region}.
-	 *
-	 * @param region {@link Region} to import data into.
-	 * @return the given {@link Region}.
-	 * @see org.apache.geode.cache.Region
-	 * @see #isImportEnabled(Environment)
-	 * @see #getRegionPredicate()
-	 */
-	@NonNull @Override
-	public Region importInto(@NonNull Region region) {
-
-		Assert.notNull(region, "Region must not be null");
-
-		boolean importEnabled = getEnvironment()
-			.filter(this::isImportEnabled)
-			.filter(environment -> getRegionPredicate().test(region))
-			.filter(this::isImportProfilesActive)
-			.isPresent();
-
-		return importEnabled ? doImportInto(region) : region;
-	}
-
-	/**
-	 * Imports data into the given {@link Region}.
-	 *
-	 * @param region {@link Region} to import data into.
-	 * @return the given {@link Region}.
-	 * @see org.apache.geode.cache.Region
-	 */
-	protected abstract @NonNull Region doImportInto(@NonNull Region region);
 
 	/**
 	 * Determines whether the Cache Data Import data access operation is enabled based on the configured, active/default
@@ -330,6 +300,41 @@ public abstract class AbstractCacheDataImporterExporter
 
 		return importProfilesActive;
 	}
+
+	/**
+	 * Imports data into the given {@link Region}.
+	 *
+	 * @param region {@link Region} to import data into.
+	 * @return the given {@link Region}.
+	 * @see org.apache.geode.cache.Region
+	 * @see #isImportEnabled(Environment)
+	 * @see #isImportProfilesActive(Environment)
+	 * @see #getRegionPredicate()
+	 * @see #doImportInto(Region)
+	 */
+	@NonNull @Override
+	public Region importInto(@NonNull Region region) {
+
+		Assert.notNull(region, "Region must not be null");
+
+		boolean importEnabled = getEnvironment()
+			.filter(this::isImportEnabled)
+			.filter(this::isImportProfilesActive)
+			.filter(environment -> getRegionPredicate().test(region))
+			.isPresent();
+
+		return importEnabled ? doImportInto(region) : region;
+	}
+
+	/**
+	 * Imports data into the given {@link Region}.
+	 *
+	 * @param region {@link Region} to import data into.
+	 * @return the given {@link Region}.
+	 * @see org.apache.geode.cache.Region
+	 * @see #importInto(Region)
+	 */
+	protected abstract @NonNull Region doImportInto(@NonNull Region region);
 
 	@NonNull Set<String> commaDelimitedStringToSet(@Nullable String commaDelimitedString) {
 
@@ -379,7 +384,7 @@ public abstract class AbstractCacheDataImporterExporter
 			&& !Collections.singleton(RESERVED_DEFAULT_PROFILE_NAME).containsAll(profiles);
 	}
 
-	private static <T> Set<T> toSet(T[] array, Class<T> type) {
+	private static @NonNull <T> Set<T> toSet(@Nullable T[] array, @NonNull Class<T> type) {
 		return CollectionUtils.asSet(ArrayUtils.nullSafeArray(array, type));
 	}
 }
