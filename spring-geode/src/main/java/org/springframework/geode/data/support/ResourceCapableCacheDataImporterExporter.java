@@ -80,6 +80,7 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
  * @see org.springframework.beans.factory.InitializingBean
+ * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ConfigurableApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
  * @see org.springframework.expression.Expression
@@ -611,7 +612,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 			boolean writable = resource.filter(ResourceUtils::isWritable).isPresent();
 
 			if (!writable) {
-				getLogger().warn("WARNING! Resource [{}] for Region [{}] is not writable",
+				getLogger().warn("Resource [{}] for Region [{}] is not writable",
 					resourceLocation, region.getFullPath());
 			}
 
@@ -624,7 +625,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 		@Override
 		protected @Nullable Resource onMissingResource(@Nullable Resource resource, @NonNull String location) {
 
-			getLogger().warn("WARNING! Resource [{}] at location [{}] does not exist; will try to create it on export",
+			getLogger().warn("Resource [{}] at location [{}] does not exist; will try to create it on export",
 				ResourceUtils.nullSafeGetDescription(resource), location);
 
 			return resource;
@@ -674,15 +675,28 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 
 			Optional<Resource> resource = resolve(resourceLocation);
 
-			Assert.state(resource.isPresent(), () -> String.format("Resource [%1$s] for Region [%2$s] does not exist",
-				resourceLocation, region.getFullPath()));
+			boolean exists = resource.isPresent();
+			boolean readable = exists && resource.filter(Resource::isReadable).isPresent();
 
-			boolean readable = resource.filter(Resource::isReadable).isPresent();
-
-			Assert.state(readable, () -> String.format("Resource [%1$s] for Region [%2$s] is not readable",
-				resourceLocation, region.getFullPath()));
+			if (!exists) {
+				getLogger().warn("Resource [{}] for Region [{}] could not be found; skipping import for Region",
+					resourceLocation, region.getFullPath());
+			}
+			else {
+				Assert.state(readable, () -> String.format("Resource [%1$s] for Region [%2$s] is not readable",
+					resourceLocation, region.getFullPath()));
+			}
 
 			return resource;
+		}
+
+		@Nullable @Override
+		protected Resource onMissingResource(@Nullable Resource resource, @NonNull String location) {
+
+			getLogger().warn("Resource [{}] at location [{}] does not exist; skipping import",
+				ResourceUtils.nullSafeGetDescription(resource), location);
+
+			return null;
 		}
 	}
 

@@ -68,6 +68,7 @@ import org.slf4j.Logger;
  * Unit Tests for {@link ResourceCapableCacheDataImporterExporter}.
  *
  * @author John Blum
+ * @see java.io.File
  * @see org.junit.Test
  * @see org.mockito.Mockito
  * @see org.apache.geode.cache.Region
@@ -76,7 +77,9 @@ import org.slf4j.Logger;
  * @see org.springframework.core.io.Resource
  * @see org.springframework.core.io.ResourceLoader
  * @see org.springframework.core.io.WritableResource
+ * @see org.springframework.expression.spel.standard.SpelExpressionParser
  * @see org.springframework.geode.core.io.ResourceReader
+ * @see org.springframework.geode.core.io.ResourceResolver
  * @see org.springframework.geode.core.io.ResourceWriter
  * @see org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter
  * @since 1.3.1
@@ -659,10 +662,10 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		verify(mockResource, times(1)).isWritable();
 		verify(mockResource, times(1)).getDescription();
 		verify(mockLogger, times(1))
-			.warn(eq("WARNING! Resource [{}] at location [{}] does not exist; will try to create it on export"),
+			.warn(eq("Resource [{}] at location [{}] does not exist; will try to create it on export"),
 				eq("MOCK"), eq("/path/to/resource.xml"));
 		verify(mockLogger, times(1))
-			.warn(eq("WARNING! Resource [{}] for Region [{}] is not writable"), eq("/path/to/resource.xml"),
+			.warn(eq("Resource [{}] for Region [{}] is not writable"), eq("/path/to/resource.xml"),
 				eq("/Example"));
 		verify(mockRegion, times(1)).getFullPath();
 		verifyNoMoreInteractions(mockLogger, mockRegion, mockResource, mockResourceLoader);
@@ -682,6 +685,9 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 			assertThat(expected).hasNoCause();
 
 			throw expected;
+		}
+		finally {
+			verify(exportResourceResolver, never()).resolve(anyString());
 		}
 	}
 
@@ -717,56 +723,68 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 			eq(ResourceCapableCacheDataImporterExporter.CACHE_DATA_IMPORT_RESOURCE_LOCATION_PROPERTY_NAME));
 		verify(importResourceResolver, times(1)).resolve(eq("/path/to/resource.json"));
 		verify(mockResource, times(1)).isReadable();
-		verifyNoMoreInteractions(mockRegion);
+		verifyNoMoreInteractions(mockResource);
 		verifyNoInteractions(mockRegion);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void resolveImportResourceWhenResourceIsNotPresentThrowsIllegalStateException() {
+	@Test
+	public void resolveImportResourceWhenResourceIsMissingLogsWarningsReturnsEmptyOptional() {
+
+		Logger mockLogger = mock(Logger.class);
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		doReturn("/Example").when(mockRegion).getFullPath();
+		Resource mockResource = mock(Resource.class);
+
+		ResourceLoader mockResourceLoader = mock(ResourceLoader.class);
 
 		AbstractImportResourceResolver importResourceResolver = spy(new TestImportResourceResolver());
 
+		importResourceResolver.setResourceLoader(mockResourceLoader);
+
+		doReturn("/Example").when(mockRegion).getFullPath();
+		doReturn(false).when(mockResource).exists();
+		doReturn("MOCK").when(mockResource).getDescription();
+		doReturn(mockResource).when(mockResourceLoader).getResource(eq("/path/to/resource.json"));
+		doReturn(mockLogger).when(importResourceResolver).getLogger();
 		doReturn("/path/to/resource.json")
 			.when(importResourceResolver).getResourceLocation(eq(mockRegion),
 				eq(ResourceCapableCacheDataImporterExporter.CACHE_DATA_IMPORT_RESOURCE_LOCATION_PROPERTY_NAME));
 
-		doReturn(Optional.empty()).when(importResourceResolver).resolve(eq("/path/to/resource.json"));
+		assertThat(importResourceResolver.resolve(mockRegion).orElse(null)).isNull();
 
-		try {
-			importResourceResolver.resolve(mockRegion);
-		}
-		catch (IllegalStateException expected) {
-
-			assertThat(expected).hasMessage("Resource [/path/to/resource.json] for Region [/Example] does not exist");
-			assertThat(expected).hasNoCause();
-
-			throw expected;
-		}
-		finally {
-			verify(importResourceResolver, times(1)).getResourceLocation(eq(mockRegion),
-				eq(ResourceCapableCacheDataImporterExporter.CACHE_DATA_IMPORT_RESOURCE_LOCATION_PROPERTY_NAME));
-			verify(importResourceResolver, times(1)).resolve(eq("/path/to/resource.json"));
-			verify(mockRegion, times(1)).getFullPath();
-			verifyNoMoreInteractions(mockRegion);
-		}
+		verify(importResourceResolver, times(1)).getResourceLocation(eq(mockRegion),
+			eq(ResourceCapableCacheDataImporterExporter.CACHE_DATA_IMPORT_RESOURCE_LOCATION_PROPERTY_NAME));
+		verify(importResourceResolver, times(1)).resolve(eq("/path/to/resource.json"));
+		verify(mockResourceLoader, times(1)).getResource(eq("/path/to/resource.json"));
+		verify(mockResource, times(1)).exists();
+		verify(mockResource, times(1)).getDescription();
+		verify(mockRegion, times(1)).getFullPath();
+		verify(mockLogger, times(1))
+			.warn(eq("Resource [{}] at location [{}] does not exist; skipping import"),
+				eq("MOCK"), eq("/path/to/resource.json"));
+		verify(mockLogger, times(1))
+			.warn(eq("Resource [{}] for Region [{}] could not be found; skipping import for Region"),
+				eq("/path/to/resource.json"), eq("/Example"));
+		verifyNoMoreInteractions(mockLogger, mockRegion, mockResource, mockResourceLoader);
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void resolveImportResourceWhenResourceIsNotReadableThrowsIllegalStateException() {
 
-		Region<?, ?> mockRegion = mock(Region.class);
+		Logger mockLogger = mock(Logger.class);
 
-		doReturn("/Example").when(mockRegion).getFullPath();
+		Region<?, ?> mockRegion = mock(Region.class);
 
 		Resource mockResource = mock(Resource.class);
 
+		AbstractImportResourceResolver importResourceResolver = spy(new TestImportResourceResolver());
+
+		doReturn("/Example").when(mockRegion).getFullPath();
+
 		doReturn(false).when(mockResource).isReadable();
 
-		AbstractImportResourceResolver importResourceResolver = spy(new TestImportResourceResolver());
+		doReturn(mockLogger).when(importResourceResolver).getLogger();
 
 		doReturn("/path/to/resource.json")
 			.when(importResourceResolver).getResourceLocation(eq(mockRegion),
@@ -791,13 +809,14 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 			verify(mockResource, times(1)).isReadable();
 			verify(mockRegion, times(1)).getFullPath();
 			verifyNoMoreInteractions(mockRegion, mockResource);
+			verifyNoInteractions(mockLogger);
 		}
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void resolveImportResourceWithNullRegionThrowsIllegalArgumentException() {
 
-		AbstractImportResourceResolver importResourceResolver = new TestImportResourceResolver();
+		AbstractImportResourceResolver importResourceResolver = spy(new TestImportResourceResolver());
 
 		try {
 			importResourceResolver.resolve((Region<?, ?>) null);
@@ -808,6 +827,9 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 			assertThat(expected).hasNoCause();
 
 			throw expected;
+		}
+		finally {
+			verify(importResourceResolver, never()).resolve(anyString());
 		}
 	}
 
