@@ -15,8 +15,6 @@
  */
 package org.springframework.geode.core.io;
 
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
-
 import java.util.Optional;
 
 import org.springframework.core.io.Resource;
@@ -27,6 +25,7 @@ import org.springframework.util.ClassUtils;
  * Interface defining a contract encapsulating an algorithm/strategy for resolving {@link Resource Resources}.
  *
  * @author John Blum
+ * @see java.lang.FunctionalInterface
  * @see org.springframework.core.io.Resource
  * @since 1.3.1.
  */
@@ -68,9 +67,9 @@ public interface ResourceResolver {
 	 *
 	 * @param location {@link String location} identifying the {@link Resource} to resolve;
 	 * must not be {@literal null}.
-	 * @return a {@literal non-null}, {@literal existing} {@link Resource} handle for the resolved
-	 * {@link String location}.
-	 * @throws IllegalStateException if a {@link Resource} cannot be resolved from the given {@link String location}.
+	 * @return a {@literal non-null}, {@literal existing} {@link Resource} handle for
+	 * the resolved {@link String location}.
+	 * @throws ResourceNotFoundException if a {@link Resource} cannot be resolved from the given {@link String location}.
 	 * A {@link Resource} is unresolvable if the given {@link String location} does not exist (physically);
 	 * see {@link Resource#exists()}.
 	 * @see org.springframework.core.io.Resource
@@ -79,6 +78,6 @@ public interface ResourceResolver {
 	default @NonNull Resource require(@NonNull String location) {
 		return resolve(location)
 			.filter(Resource::exists)
-			.orElseThrow(() -> newIllegalStateException("Resource [%s] does not exist", location));
+			.orElseThrow(() -> new ResourceNotFoundException(String.format("Resource [%s] does not exist", location)));
 	}
 }

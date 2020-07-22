@@ -23,6 +23,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.Optional;
 import java.util.Set;
@@ -78,10 +79,11 @@ public class ResourceResolverUnitTests {
 
 		verify(resourceResolver, times(1)).resolve(eq(location));
 		verify(mockResource, times(1)).exists();
+		verifyNoMoreInteractions(mockResource);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void requireCallsResolveReturningNonExistingResourceThrowsIllegalStateException() {
+	@Test(expected = ResourceNotFoundException.class)
+	public void requireCallsResolveReturningNonExistingResourceThrowsResourceNotFoundException() {
 
 		String location = "/path/to/non-existing/resource.dat";
 
@@ -96,7 +98,7 @@ public class ResourceResolverUnitTests {
 		try {
 			resourceResolver.require(location);
 		}
-		catch (IllegalStateException expected) {
+		catch (ResourceNotFoundException expected) {
 
 			assertThat(expected).hasMessage("Resource [%s] does not exist", location);
 			assertThat(expected).hasNoCause();
@@ -106,23 +108,24 @@ public class ResourceResolverUnitTests {
 		finally {
 			verify(resourceResolver, times(1)).resolve(eq(location));
 			verify(mockResource, times(1)).exists();
+			verifyNoMoreInteractions(mockResource);
 		}
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void requireCallsResolveReturningNoResourceThrowsIllegalStateException() {
+	@Test(expected = ResourceNotFoundException.class)
+	public void requireCallsResolveReturningNoResourceThrowsResourceNotFoundException() {
 
 		String location = "/path/to/nowhere";
 
 		ResourceResolver resourceResolver = mock(ResourceResolver.class);
 
-		doReturn(Optional.empty()).when(resourceResolver).resolve(eq(location));
+		doReturn(Optional.empty()).when(resourceResolver).resolve(any());
 		doCallRealMethod().when(resourceResolver).require(any());
 
 		try {
 			resourceResolver.require(location);
 		}
-		catch (IllegalStateException expected) {
+		catch (ResourceNotFoundException expected) {
 
 			assertThat(expected).hasMessage("Resource [%s] does not exist", location);
 			assertThat(expected).hasNoCause();
