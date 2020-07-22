@@ -116,7 +116,8 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		ResourceWriter mockResourceWriter = mock(ResourceWriter.class);
 
-		ResourceCapableCacheDataImporterExporter importerExporter = new TestResourceCapableCacheDataImporterExporter();
+		ResourceCapableCacheDataImporterExporter importerExporter =
+			spy(new TestResourceCapableCacheDataImporterExporter());
 
 		importerExporter.setApplicationContext(mockApplicationContext);
 		importerExporter.setEnvironment(mockEnvironment);
@@ -133,6 +134,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		assertThat(importerExporter.getResourceReader()).isEqualTo(mockResourceReader);
 		assertThat(importerExporter.getResourceWriter()).isEqualTo(mockResourceWriter);
 
+		verify(importerExporter, times(1)).newCompositeObjectAwareInitializer();
 		verify(mockExportResourceResolver, times(1)).setApplicationContext(eq(mockApplicationContext));
 		verify(mockExportResourceResolver, times(1)).setEnvironment(eq(mockEnvironment));
 		verify(mockExportResourceResolver, times(1)).setResourceLoader(eq(mockResourceLoader));
@@ -153,7 +155,8 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		ApplicationContextAndResourceLoaderAwareImportResourceResolver mockImportResourceResolver =
 			mock(ApplicationContextAndResourceLoaderAwareImportResourceResolver.class);
 
-		ResourceCapableCacheDataImporterExporter importerExporter = new TestResourceCapableCacheDataImporterExporter();
+		ResourceCapableCacheDataImporterExporter importerExporter =
+			spy(new TestResourceCapableCacheDataImporterExporter());
 
 		importerExporter.setApplicationContext(mockApplicationContext);
 		importerExporter.setEnvironment(mockEnvironment);
@@ -173,6 +176,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		assertThat(importerExporter.getResourceReader()).isInstanceOf(ByteArrayResourceReader.class);
 		assertThat(importerExporter.getResourceWriter()).isInstanceOf(FileResourceWriter.class);
 
+		verify(importerExporter, times(1)).newCompositeObjectAwareInitializer();
 		verify(mockImportResourceResolver, times(1)).setApplicationContext(eq(mockApplicationContext));
 		verify(mockImportResourceResolver, never()).setResourceLoader(any());
 		verifyNoMoreInteractions(mockImportResourceResolver);
@@ -846,24 +850,24 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 			return Optional.empty();
 		}
 
-		@NonNull @Override
-		protected String getResourcePath() {
+		@Override
+		protected @NonNull String getResourcePath() {
 			return null;
 		}
 	}
 
 	static class TestExportResourceResolver extends AbstractExportResourceResolver {
 
-		@NonNull @Override
-		protected String getResourcePath() {
+		@Override
+		protected @NonNull String getResourcePath() {
 			return null;
 		}
 	}
 
 	static class TestImportResourceResolver extends AbstractImportResourceResolver {
 
-		@NonNull @Override
-		protected String getResourcePath() {
+		@Override
+		protected @NonNull String getResourcePath() {
 			return null;
 		}
 	}

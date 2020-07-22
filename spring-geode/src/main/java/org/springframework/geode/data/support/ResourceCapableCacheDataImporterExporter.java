@@ -21,6 +21,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
@@ -56,6 +58,7 @@ import org.springframework.geode.core.io.support.FileResourceWriter;
 import org.springframework.geode.core.io.support.ResourceLoaderResourceResolver;
 import org.springframework.geode.core.io.support.ResourcePrefix;
 import org.springframework.geode.core.io.support.ResourceUtils;
+import org.springframework.geode.core.util.ObjectAwareUtils;
 import org.springframework.geode.data.AbstractCacheDataImporterExporter;
 import org.springframework.geode.data.CacheDataImporterExporter;
 import org.springframework.geode.expression.SmartEnvironmentAccessor;
@@ -126,51 +129,15 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 		setResourceReader(initialize(getResourceReader(), ByteArrayResourceReader::new));
 		setResourceWriter(initialize(getResourceWriter(), FileResourceWriter::new));
 
-		initApplicationContext();
-		initEnvironment();
-		initResourceLoader();
+		Stream.of(getExportResourceResolver(), getImportResourceResolver())
+			.forEach(this.newCompositeObjectAwareInitializer());
 	}
 
-	private void initApplicationContext() {
+	Consumer<Object> newCompositeObjectAwareInitializer() {
 
-		getApplicationContext().ifPresent(applicationContext -> {
-
-			if (this.exportResourceResolver instanceof ApplicationContextAware) {
-				((ApplicationContextAware) this.exportResourceResolver).setApplicationContext(applicationContext);
-			}
-
-			if (this.importResourceResolver instanceof ApplicationContextAware) {
-				((ApplicationContextAware) this.importResourceResolver).setApplicationContext(applicationContext);
-			}
-		});
-	}
-
-	private void initEnvironment() {
-
-		getEnvironment().ifPresent(environment -> {
-
-			if (this.exportResourceResolver instanceof EnvironmentAware) {
-				((EnvironmentAware) this.exportResourceResolver).setEnvironment(environment);
-			}
-
-			if (this.importResourceResolver instanceof EnvironmentAware) {
-				((EnvironmentAware) this.importResourceResolver).setEnvironment(environment);
-			}
-		});
-	}
-
-	private void initResourceLoader() {
-
-		getResourceLoader().ifPresent(resourceLoader -> {
-
-			if (this.exportResourceResolver instanceof ResourceLoaderAware) {
-				((ResourceLoaderAware) this.exportResourceResolver).setResourceLoader(resourceLoader);
-			}
-
-			if (this.importResourceResolver instanceof ResourceLoaderAware) {
-				((ResourceLoaderAware) this.importResourceResolver).setResourceLoader(resourceLoader);
-			}
-		});
+		return ObjectAwareUtils.applicationContextAwareObjectInitializer(getApplicationContext().orElse(null))
+			.andThen(ObjectAwareUtils.environmentAwareObjectInitializer(getEnvironment().orElse(null)))
+			.andThen(ObjectAwareUtils.resourceLoaderAwareObjectInitializer(getResourceLoader().orElse(null)));
 	}
 
 	/**
