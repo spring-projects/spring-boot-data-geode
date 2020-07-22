@@ -28,10 +28,13 @@ import org.apache.geode.cache.Region;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.expression.BeanFactoryAccessor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.expression.EvaluationContext;
@@ -61,6 +64,9 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link AbstractCacheDataImporterExporter} extension and implementation capable of handling and managing import
@@ -108,16 +114,52 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	private ResourceWriter resourceWriter;
 
 	/**
-	 * Initializes the Export & Import {@link ResourceResolver ResourceResolvers} as needed along with
-	 * the reader and writer for the {@link Resource} used on import and export.
+	 * Initializes the export and import {@link ResourceResolver ResourceResolvers} as needed along with
+	 * the {@link ResourceReader reader} and {@link ResourceWriter writer} for the {@link Resource}
+	 * used on import and export.
 	 */
 	@Override
 	public void afterPropertiesSet() {
 
-		this.exportResourceResolver = initialize(this.exportResourceResolver, FileSystemExportResourceResolver::new);
-		this.importResourceResolver = initialize(this.importResourceResolver, ClassPathImportResourceResolver::new);
-		this.resourceReader = initialize(this.resourceReader, ByteArrayResourceReader::new);
-		this.resourceWriter = initialize(this.resourceWriter, FileResourceWriter::new);
+		setExportResourceResolver(initialize(getExportResourceResolver(), FileSystemExportResourceResolver::new));
+		setImportResourceResolver(initialize(getImportResourceResolver(), ClassPathImportResourceResolver::new));
+		setResourceReader(initialize(getResourceReader(), ByteArrayResourceReader::new));
+		setResourceWriter(initialize(getResourceWriter(), FileResourceWriter::new));
+
+		initApplicationContext();
+		initEnvironment();
+		initResourceLoader();
+	}
+
+	private void initApplicationContext() {
+
+		getApplicationContext().ifPresent(applicationContext -> {
+
+			if (this.exportResourceResolver instanceof ApplicationContextAware) {
+				((ApplicationContextAware) this.exportResourceResolver).setApplicationContext(applicationContext);
+			}
+
+			if (this.importResourceResolver instanceof ApplicationContextAware) {
+				((ApplicationContextAware) this.importResourceResolver).setApplicationContext(applicationContext);
+			}
+		});
+	}
+
+	private void initEnvironment() {
+
+		getEnvironment().ifPresent(environment -> {
+
+			if (this.exportResourceResolver instanceof EnvironmentAware) {
+				((EnvironmentAware) this.exportResourceResolver).setEnvironment(environment);
+			}
+
+			if (this.importResourceResolver instanceof EnvironmentAware) {
+				((EnvironmentAware) this.importResourceResolver).setEnvironment(environment);
+			}
+		});
+	}
+
+	private void initResourceLoader() {
 
 		getResourceLoader().ifPresent(resourceLoader -> {
 
@@ -297,12 +339,20 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	 * {@link ResourceResolver ResourceResolvers}, whether for import or export.
 	 *
 	 * @see org.springframework.geode.core.io.support.ResourceLoaderResourceResolver
+	 * @see org.springframework.context.ApplicationContextAware
+	 * @see org.springframework.context.EnvironmentAware
 	 * @see CacheResourceResolver
 	 */
-	protected abstract class AbstractCacheResourceResolver extends ResourceLoaderResourceResolver
-			implements CacheResourceResolver {
+	protected static abstract class AbstractCacheResourceResolver extends ResourceLoaderResourceResolver
+			implements ApplicationContextAware, CacheResourceResolver, EnvironmentAware {
+
+		private ApplicationContext applicationContext;
+
+		private Environment environment;
 
 		private final ExpressionParser expressionParser;
+
+		private final Logger logger = LoggerFactory.getLogger(getClass());
 
 		private final Map<String, Expression> compiledExpressions;
 
@@ -365,6 +415,50 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 		}
 
 		/**
+		 * Configures a reference to the Spring {@link ApplicationContext}.
+		 *
+		 * @param applicationContext reference to the {@link ApplicationContext}.
+		 * @see org.springframework.context.ApplicationContext
+		 */
+		@Override
+		public void setApplicationContext(@Nullable ApplicationContext applicationContext) {
+			this.applicationContext = applicationContext;
+		}
+
+		/**
+		 * Returns an {@link Optional} reference to a Spring {@link ApplicationContext}.
+		 *
+		 * @return an {@link Optional} reference to a Spring {@link ApplicationContext}.
+		 * @see org.springframework.context.ApplicationContext
+		 * @see java.util.Optional
+		 */
+		protected Optional<ApplicationContext> getApplicationContext() {
+			return Optional.ofNullable(this.applicationContext);
+		}
+
+		/**
+		 * Configures a reference to the Spring {@link Environment}.
+		 *
+		 * @param environment reference to the {@link Environment}.
+		 * @see org.springframework.core.env.Environment
+		 */
+		@Override
+		public void setEnvironment(Environment environment) {
+			this.environment = environment;
+		}
+
+		/**
+		 * Returns an {@link Optional} reference to the Spring {@link Environment}.
+		 *
+		 * @return an {@link Optional} reference to the Spring {@link Environment}.
+		 * @see org.springframework.core.env.Environment
+		 * @see java.util.Optional
+		 */
+		protected Optional<Environment> getEnvironment() {
+			return Optional.ofNullable(this.environment);
+		}
+
+		/**
 		 * Gets the configured {@link ExpressionParser} used to parse SpEL {@link String expressions}.
 		 *
 		 * @return the configured {@link ExpressionParser}; never {@literal null}.
@@ -372,6 +466,16 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 		 */
 		protected @NonNull ExpressionParser getExpressionParser() {
 			return this.expressionParser;
+		}
+
+		/**
+		 * Return the configured {@link Logger} to log messages.
+		 *
+		 * @return the configured {@link Logger}.
+		 * @see org.slf4j.Logger
+		 */
+		protected Logger getLogger() {
+			return this.logger;
 		}
 
 		/**
@@ -517,12 +621,12 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 
 	/**
 	 * Abstract base class extended by export {@link CacheResourceResolver} implementations, providing a template
-	 * to resolve the {@link Resource} used on export.
+	 * to resolve the {@link Resource} used for export.
 	 *
 	 * @see AbstractCacheResourceResolver
 	 * @see ExportResourceResolver
 	 */
-	public abstract class AbstractExportResourceResolver extends AbstractCacheResourceResolver
+	public static abstract class AbstractExportResourceResolver extends AbstractCacheResourceResolver
 			implements ExportResourceResolver {
 
 		/**
@@ -537,7 +641,9 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 
 			Optional<Resource> resource = resolve(resourceLocation);
 
-			if (!resource.filter(ResourceUtils::isWritable).isPresent()) {
+			boolean writable = resource.filter(ResourceUtils::isWritable).isPresent();
+
+			if (!writable) {
 				getLogger().warn("WARNING! Resource [{}] for Region [{}] is not writable",
 					resourceLocation, region.getFullPath());
 			}
@@ -549,9 +655,10 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 		 * @inheritDoc
 		 */
 		@Override
-		protected @Nullable Resource onMissingResource(Resource resource, String location) {
+		protected @Nullable Resource onMissingResource(@Nullable Resource resource, @NonNull String location) {
 
-			getLogger().warn("WARNING! Resource at location [{}] does not exist; will try to create it", location);
+			getLogger().warn("WARNING! Resource [{}] at location [{}] does not exist; will try to create it on export",
+				ResourceUtils.nullSafeGetDescription(resource), location);
 
 			return resource;
 		}
@@ -560,7 +667,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	/**
 	 * Resolves the {@link Resource} used for {@literal export} from the {@literal filesystem}.
 	 */
-	public class FileSystemExportResourceResolver extends AbstractExportResourceResolver {
+	public static class FileSystemExportResourceResolver extends AbstractExportResourceResolver {
 
 		@Override
 		protected @NonNull String getResourcePath() {
@@ -585,7 +692,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	 * @see AbstractCacheResourceResolver
 	 * @see ImportResourceResolver
 	 */
-	public abstract class AbstractImportResourceResolver extends AbstractCacheResourceResolver
+	public static abstract class AbstractImportResourceResolver extends AbstractCacheResourceResolver
 			implements ImportResourceResolver {
 
 		/**
@@ -615,7 +722,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 	/**
 	 * Resolves the {@link Resource} to {@literal import} from the {@literal classpath}.
 	 */
-	public class ClassPathImportResourceResolver extends AbstractImportResourceResolver {
+	public static class ClassPathImportResourceResolver extends AbstractImportResourceResolver {
 
 		@Override
 		protected @NonNull String getResourcePath() {

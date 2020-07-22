@@ -28,7 +28,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newRuntimeException;
 
 import java.io.File;
 import java.util.Map;
@@ -39,13 +38,14 @@ import org.junit.Test;
 import org.apache.geode.cache.Region;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.WritableResource;
 import org.springframework.data.gemfire.tests.support.MapBuilder;
-import org.springframework.data.gemfire.tests.util.ReflectionUtils;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.geode.core.io.ResourceReader;
@@ -61,8 +61,6 @@ import org.springframework.geode.data.support.ResourceCapableCacheDataImporterEx
 import org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter.FileSystemExportResourceResolver;
 import org.springframework.geode.data.support.ResourceCapableCacheDataImporterExporter.ImportResourceResolver;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
-import org.springframework.util.ObjectUtils;
 
 import org.slf4j.Logger;
 
@@ -85,20 +83,8 @@ import org.slf4j.Logger;
  */
 public class ResourceCapableCacheDataImporterExporterUnitTests {
 
-	@SuppressWarnings("unchecked")
-	private <T> T inject(@NonNull T target, @NonNull String fieldName, @Nullable Object value) {
-
-		try {
-			return (T) ReflectionUtils.setField(target, fieldName, value);
-		}
-		catch (NoSuchFieldException cause) {
-			throw newRuntimeException(cause, "Failed to set field [%s] on object of type [%s] to value [%s]",
-				fieldName, ObjectUtils.nullSafeClassName(target), value);
-		}
-	}
-
 	@Test
-	public void afterPropertiesSetUsesImportExportReaderWriterResourceDefaults() {
+	public void afterPropertiesSetUsesDefaultImportExportResourceResolversAndDefaultResourceReaderWriter() {
 
 		ResourceCapableCacheDataImporterExporter importerExporter = new TestResourceCapableCacheDataImporterExporter();
 
@@ -112,13 +98,17 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	}
 
 	@Test
-	public void afterPropertiesSetWithInjectedImportExportResourceResolversAndResourceReaderWriter() {
+	public void afterPropertiesSetUsesInjectedImportExportResourceResolversAndInjectedResourceReaderWriter() {
 
-		ResourceLoaderAwareExportResourceResolver mockExportResourceResolver =
-			mock(ResourceLoaderAwareExportResourceResolver.class);
+		ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
 
-		ResourceLoaderAwareImportResourceResolver mockImportResourceResolver =
-			mock(ResourceLoaderAwareImportResourceResolver.class);
+		Environment mockEnvironment = mock(Environment.class);
+
+		ApplicationContextEnvironmentAndResourceLoaderAwareExportResourceResolver mockExportResourceResolver =
+			mock(ApplicationContextEnvironmentAndResourceLoaderAwareExportResourceResolver.class);
+
+		ApplicationContextEnvironmentAndResourceLoaderAwareImportResourceResolver mockImportResourceResolver =
+			mock(ApplicationContextEnvironmentAndResourceLoaderAwareImportResourceResolver.class);
 
 		ResourceLoader mockResourceLoader = mock(ResourceLoader.class);
 
@@ -128,12 +118,13 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		ResourceCapableCacheDataImporterExporter importerExporter = new TestResourceCapableCacheDataImporterExporter();
 
-		inject(importerExporter, "exportResourceResolver", mockExportResourceResolver);
-		inject(importerExporter, "importResourceResolver", mockImportResourceResolver);
-		inject(importerExporter, "resourceReader", mockResourceReader);
-		inject(importerExporter, "resourceWriter", mockResourceWriter);
-
+		importerExporter.setApplicationContext(mockApplicationContext);
+		importerExporter.setEnvironment(mockEnvironment);
+		importerExporter.setExportResourceResolver(mockExportResourceResolver);
+		importerExporter.setImportResourceResolver(mockImportResourceResolver);
 		importerExporter.setResourceLoader(mockResourceLoader);
+		importerExporter.setResourceReader(mockResourceReader);
+		importerExporter.setResourceWriter(mockResourceWriter);
 		importerExporter.afterPropertiesSet();
 
 		assertThat(importerExporter.getExportResourceResolver()).isEqualTo(mockExportResourceResolver);
@@ -142,9 +133,90 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		assertThat(importerExporter.getResourceReader()).isEqualTo(mockResourceReader);
 		assertThat(importerExporter.getResourceWriter()).isEqualTo(mockResourceWriter);
 
+		verify(mockExportResourceResolver, times(1)).setApplicationContext(eq(mockApplicationContext));
+		verify(mockExportResourceResolver, times(1)).setEnvironment(eq(mockEnvironment));
 		verify(mockExportResourceResolver, times(1)).setResourceLoader(eq(mockResourceLoader));
+		verify(mockImportResourceResolver, times(1)).setApplicationContext(eq(mockApplicationContext));
+		verify(mockImportResourceResolver, times(1)).setEnvironment(eq(mockEnvironment));
 		verify(mockImportResourceResolver, times(1)).setResourceLoader(eq(mockResourceLoader));
-		verifyNoInteractions(mockResourceLoader, mockResourceReader, mockResourceWriter);
+		verifyNoInteractions(mockApplicationContext, mockEnvironment, mockResourceLoader,
+			mockResourceReader, mockResourceWriter);
+	}
+
+	@Test
+	public void afterPropertiesSetInitializesPartly() {
+
+		ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
+
+		Environment mockEnvironment = mock(Environment.class);
+
+		ApplicationContextAndResourceLoaderAwareImportResourceResolver mockImportResourceResolver =
+			mock(ApplicationContextAndResourceLoaderAwareImportResourceResolver.class);
+
+		ResourceCapableCacheDataImporterExporter importerExporter = new TestResourceCapableCacheDataImporterExporter();
+
+		importerExporter.setApplicationContext(mockApplicationContext);
+		importerExporter.setEnvironment(mockEnvironment);
+		importerExporter.setImportResourceResolver(mockImportResourceResolver);
+
+		assertThat(importerExporter.getExportResourceResolver()).isNull();
+		assertThat(importerExporter.getImportResourceResolver()).isSameAs(mockImportResourceResolver);
+		assertThat(importerExporter.getResourceLoader().orElse(null)).isNull();
+		assertThat(importerExporter.getResourceReader()).isNull();
+		assertThat(importerExporter.getResourceWriter()).isNull();
+
+		importerExporter.afterPropertiesSet();
+
+		assertThat(importerExporter.getExportResourceResolver()).isInstanceOf(FileSystemExportResourceResolver.class);
+		assertThat(importerExporter.getImportResourceResolver()).isSameAs(mockImportResourceResolver);
+		assertThat(importerExporter.getResourceLoader().orElse(null)).isNull();
+		assertThat(importerExporter.getResourceReader()).isInstanceOf(ByteArrayResourceReader.class);
+		assertThat(importerExporter.getResourceWriter()).isInstanceOf(FileResourceWriter.class);
+
+		verify(mockImportResourceResolver, times(1)).setApplicationContext(eq(mockApplicationContext));
+		verify(mockImportResourceResolver, never()).setResourceLoader(any());
+		verifyNoMoreInteractions(mockImportResourceResolver);
+		verifyNoInteractions(mockApplicationContext, mockEnvironment);
+	}
+
+	@Test
+	public void setAndGetExportResourceResolver() {
+
+		ExportResourceResolver mockExportResourceResolver = mock(ExportResourceResolver.class);
+
+		ResourceCapableCacheDataImporterExporter importerExporter = new TestResourceCapableCacheDataImporterExporter();
+
+		assertThat(importerExporter.getExportResourceResolver()).isNull();
+
+		importerExporter.setExportResourceResolver(mockExportResourceResolver);
+
+		assertThat(importerExporter.getExportResourceResolver()).isSameAs(mockExportResourceResolver);
+
+		importerExporter.setExportResourceResolver(null);
+
+		assertThat(importerExporter.getExportResourceResolver()).isNull();
+
+		verifyNoInteractions(mockExportResourceResolver);
+	}
+
+	@Test
+	public void setAndGetImportResourceResolver() {
+
+		ImportResourceResolver mockImportResourceResolver = mock(ImportResourceResolver.class);
+
+		ResourceCapableCacheDataImporterExporter importerExporter = new TestResourceCapableCacheDataImporterExporter();
+
+		assertThat(importerExporter.getImportResourceResolver()).isNull();
+
+		importerExporter.setImportResourceResolver(mockImportResourceResolver);
+
+		assertThat(importerExporter.getImportResourceResolver()).isSameAs(mockImportResourceResolver);
+
+		importerExporter.setImportResourceResolver(null);
+
+		assertThat(importerExporter.getImportResourceResolver()).isNull();
+
+		verifyNoInteractions(mockImportResourceResolver);
 	}
 
 	@Test
@@ -158,20 +230,101 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		importerExporter.setResourceLoader(mockResourceLoader);
 
-		assertThat(importerExporter.getResourceLoader().orElse(null)).isEqualTo(mockResourceLoader);
+		assertThat(importerExporter.getResourceLoader().orElse(null)).isSameAs(mockResourceLoader);
 
 		importerExporter.setResourceLoader(null);
 
 		assertThat(importerExporter.getResourceLoader().orElse(null)).isNull();
+
+		verifyNoInteractions(mockResourceLoader);
+	}
+
+	@Test
+	public void setAndGetResourceReader() {
+
+		ResourceReader mockResourceReader = mock(ResourceReader.class);
+
+		ResourceCapableCacheDataImporterExporter importerExporter = new TestResourceCapableCacheDataImporterExporter();
+
+		assertThat(importerExporter.getResourceReader()).isNull();
+
+		importerExporter.setResourceReader(mockResourceReader);
+
+		assertThat(importerExporter.getResourceReader()).isSameAs(mockResourceReader);
+
+		importerExporter.setResourceReader(null);
+
+		assertThat(importerExporter.getResourceReader()).isNull();
+
+		verifyNoInteractions(mockResourceReader);
+	}
+
+	@Test
+	public void setAndGetResourceWriter() {
+
+		ResourceWriter mockResourceWriter = mock(ResourceWriter.class);
+
+		ResourceCapableCacheDataImporterExporter importerExporter = new TestResourceCapableCacheDataImporterExporter();
+
+		assertThat(importerExporter.getResourceWriter()).isNull();
+
+		importerExporter.setResourceWriter(mockResourceWriter);
+
+		assertThat(importerExporter.getResourceWriter()).isSameAs(mockResourceWriter);
+
+		importerExporter.setResourceWriter(null);
+
+		assertThat(importerExporter.getResourceWriter()).isNull();
+
+		verifyNoInteractions(mockResourceWriter);
 	}
 
 	// Tests for CacheResourceResolver and friends (sub-types)
 
 	@Test
+	public void setAndGetApplicationContext() {
+
+		ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
+
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
+
+		assertThat(resourceResolver.getApplicationContext().orElse(null)).isNull();
+
+		resourceResolver.setApplicationContext(mockApplicationContext);
+
+		assertThat(resourceResolver.getApplicationContext().orElse(null)).isSameAs(mockApplicationContext);
+
+		resourceResolver.setApplicationContext(null);
+
+		assertThat(resourceResolver.getApplicationContext().orElse(null)).isNull();
+
+		verifyNoInteractions(mockApplicationContext);
+	}
+
+	@Test
+	public void setAndGetEnvironment() {
+
+		Environment mockEnvironment = mock(Environment.class);
+
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
+
+		assertThat(resourceResolver.getEnvironment().orElse(null)).isNull();
+
+		resourceResolver.setEnvironment(mockEnvironment);
+
+		assertThat(resourceResolver.getEnvironment().orElse(null)).isSameAs(mockEnvironment);
+
+		resourceResolver.setEnvironment(null);
+
+		assertThat(resourceResolver.getEnvironment().orElse(null)).isNull();
+
+		verifyNoInteractions(mockEnvironment);
+	}
+
+	@Test
 	public void expressionParserIsASpelExpressionParser() {
 
-		AbstractCacheResourceResolver resourceResolver =
-			new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver();
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
 
 		assertThat(resourceResolver.getExpressionParser()).isInstanceOf(SpelExpressionParser.class);
 	}
@@ -179,8 +332,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test
 	public void parserContextIsTemplateBased() {
 
-		AbstractCacheResourceResolver resourceResolver =
-			new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver();
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
 
 		assertThat(resourceResolver.getParserContext()).isEqualTo(ParserContext.TEMPLATE_EXPRESSION);
 	}
@@ -188,8 +340,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test
 	public void isQualifiedWithExistingResource() {
 
-		AbstractCacheResourceResolver resourceResolver =
-			new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver();
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
 
 		Resource mockResource = mock(Resource.class);
 
@@ -204,8 +355,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test
 	public void isQualifiedWithNonExistingResource() {
 
-		AbstractCacheResourceResolver resourceResolver =
-			new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver();
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
 
 		Resource mockResource = mock(Resource.class);
 
@@ -220,8 +370,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test
 	public void isQualifiedWithNullResource() {
 
-		AbstractCacheResourceResolver resourceResolver =
-			new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver();
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
 
 		assertThat(resourceResolver.isQualified(null)).isFalse();
 	}
@@ -231,8 +380,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		AbstractCacheResourceResolver resourceResolver =
-			spy(new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver());
+		AbstractCacheResourceResolver resourceResolver = spy(new TestCacheResourceResolver());
 
 		doReturn("/path/to/").when(resourceResolver).getResourcePath();
 		doReturn("resource.xml").when(resourceResolver).getResourceName(eq(mockRegion));
@@ -259,12 +407,9 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		doReturn(true).when(mockEnvironment).containsProperty(eq(testPropertyName));
 		doReturn(rawPropertyValue).when(mockEnvironment).getProperty(eq(testPropertyName));
 
-		TestResourceCapableCacheDataImporterExporter importerExporter =
-			spy(new TestResourceCapableCacheDataImporterExporter());
+		AbstractCacheResourceResolver resourceResolver = spy(new TestCacheResourceResolver());
 
-		AbstractCacheResourceResolver resourceResolver = spy(importerExporter.new TestCacheResourceResolver());
-
-		doReturn(Optional.of(mockEnvironment)).when(importerExporter).getEnvironment();
+		doReturn(Optional.of(mockEnvironment)).when(resourceResolver).getEnvironment();
 
 		doAnswer(invocation -> {
 
@@ -281,7 +426,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		verify(mockEnvironment, times(1)).containsProperty(eq(testPropertyName));
 		verify(mockEnvironment, times(1)).getProperty(eq(testPropertyName));
 		verify(mockRegion, times(1)).getName();
-		verify(importerExporter, times(1)).getEnvironment();
+		verify(resourceResolver, times(1)).getEnvironment();
 		verify(resourceResolver, times(1)).evaluate(eq(rawPropertyValue), eq(mockRegion));
 		verifyNoMoreInteractions(mockEnvironment, mockRegion);
 	}
@@ -291,19 +436,16 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		TestResourceCapableCacheDataImporterExporter importerExporter =
-			spy(new TestResourceCapableCacheDataImporterExporter());
+		AbstractCacheResourceResolver resourceResolver = spy(new TestCacheResourceResolver());
 
-		AbstractCacheResourceResolver resourceResolver = spy(importerExporter.new TestCacheResourceResolver());
-
-		doReturn(Optional.empty()).when(importerExporter).getEnvironment();
+		doReturn(Optional.empty()).when(resourceResolver).getEnvironment();
 		doReturn("/path/to/resource.xml").when(resourceResolver)
 			.getFullyQualifiedResourceLocation(eq(mockRegion));
 
 		assertThat(resourceResolver.getResourceLocation(mockRegion, "test.property.name"))
 			.isEqualTo("/path/to/resource.xml");
 
-		verify(importerExporter, times(1)).getEnvironment();
+		verify(resourceResolver, times(1)).getEnvironment();
 		verify(resourceResolver, never()).evaluate(anyString(), any(Region.class));
 		verifyNoInteractions(mockRegion);
 	}
@@ -317,19 +459,16 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		doReturn(false).when(mockEnvironment).containsProperty(anyString());
 
-		TestResourceCapableCacheDataImporterExporter importerExporter =
-			spy(new TestResourceCapableCacheDataImporterExporter());
+		AbstractCacheResourceResolver resourceResolver = spy(new TestCacheResourceResolver());
 
-		AbstractCacheResourceResolver resourceResolver = spy(importerExporter.new TestCacheResourceResolver());
-
-		doReturn(Optional.of(mockEnvironment)).when(importerExporter).getEnvironment();
+		doReturn(Optional.of(mockEnvironment)).when(resourceResolver).getEnvironment();
 		doReturn("/path/to/resource.bin").when(resourceResolver)
 			.getFullyQualifiedResourceLocation(eq(mockRegion));
 
 		assertThat(resourceResolver.getResourceLocation(mockRegion, "test.property.name"))
 			.isEqualTo("/path/to/resource.bin");
 
-		verify(importerExporter, times(1)).getEnvironment();
+		verify(resourceResolver, times(1)).getEnvironment();
 		verify(resourceResolver, never()).evaluate(anyString(), any(Region.class));
 		verify(mockEnvironment, times(1)).containsProperty(eq("test.property.name"));
 		verifyNoMoreInteractions(mockEnvironment);
@@ -346,19 +485,16 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		doReturn(true).when(mockEnvironment).containsProperty(eq("test.property.name"));
 		doReturn(null).when(mockEnvironment).getProperty(anyString());
 
-		TestResourceCapableCacheDataImporterExporter importerExporter =
-			spy(new TestResourceCapableCacheDataImporterExporter());
+		AbstractCacheResourceResolver resourceResolver = spy(new TestCacheResourceResolver());
 
-		AbstractCacheResourceResolver resourceResolver = spy(importerExporter.new TestCacheResourceResolver());
-
-		doReturn(Optional.of(mockEnvironment)).when(importerExporter).getEnvironment();
+		doReturn(Optional.of(mockEnvironment)).when(resourceResolver).getEnvironment();
 		doReturn("/path/to/resource.dat").when(resourceResolver)
 			.getFullyQualifiedResourceLocation(eq(mockRegion));
 
 		assertThat(resourceResolver.getResourceLocation(mockRegion, "test.property.name"))
 			.isEqualTo("/path/to/resource.dat");
 
-		verify(importerExporter, times(1)).getEnvironment();
+		verify(resourceResolver, times(1)).getEnvironment();
 		verify(resourceResolver, never()).evaluate(anyString(), any(Region.class));
 		verify(mockEnvironment, times(1)).containsProperty(eq("test.property.name"));
 		verify(mockEnvironment, times(1)).getProperty(eq("test.property.name"));
@@ -369,8 +505,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void getResourceLocationWithNullRegion() {
 
-		AbstractCacheResourceResolver resourceResolver =
-			new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver();
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
 
 		try {
 			resourceResolver.getResourceLocation(null, "test.property.name");
@@ -389,8 +524,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		AbstractCacheResourceResolver resourceResolver =
-			new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver();
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
 
 		try {
 			resourceResolver.getResourceLocation(mockRegion, "  ");
@@ -414,8 +548,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		doReturn("Example").when(mockRegion).getName();
 
-		AbstractCacheResourceResolver resourceResolver =
-			new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver();
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
 
 		assertThat(resourceResolver.getResourceName(mockRegion))
 			.isEqualTo(String.format(ResourceCapableCacheDataImporterExporter.RESOURCE_NAME_PATTERN, "example"));
@@ -427,8 +560,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test
 	public void getResourceNameFromString() {
 
-		AbstractCacheResourceResolver resourceResolver =
-			new TestResourceCapableCacheDataImporterExporter().new TestCacheResourceResolver();
+		AbstractCacheResourceResolver resourceResolver = new TestCacheResourceResolver();
 
 		assertThat(resourceResolver.getResourceName("EXAMPLE"))
 			.isEqualTo(String.format(ResourceCapableCacheDataImporterExporter.RESOURCE_NAME_PATTERN, "EXAMPLE"));
@@ -459,13 +591,10 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 			.when(mockEnvironment).getProperty(any());
 		doReturn("Example").when(mockRegion).getName();
 
-		TestResourceCapableCacheDataImporterExporter importerExporter =
-			mock(TestResourceCapableCacheDataImporterExporter.class);
+		AbstractCacheResourceResolver resourceResolver = spy(new TestCacheResourceResolver());
 
-		doReturn(Optional.ofNullable(mockApplicationContext)).when(importerExporter).getApplicationContext();
-		doReturn(Optional.ofNullable(mockEnvironment)).when(importerExporter).getEnvironment();
-
-		AbstractCacheResourceResolver resourceResolver = importerExporter.new TestCacheResourceResolver();
+		doReturn(Optional.ofNullable(mockApplicationContext)).when(resourceResolver).getApplicationContext();
+		doReturn(Optional.ofNullable(mockEnvironment)).when(resourceResolver).getEnvironment();
 
 		String expression = "https://#{#env['user.name']}:#{#env['user.password']}@skullbox:#{port}/nurv/cache/#{utility.toUpperCase(#regionName)}/data/import";
 		String parsedExpression = String.format("https://%s:s3c3rt@skullbox:8181/nurv/cache/EXAMPLE/data/import",
@@ -491,24 +620,21 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		Region<?, ?> mockRegion = mock(Region.class);
 
-		doReturn("/Example").when(mockRegion).getFullPath();
-
 		ResourceLoader mockResourceLoader = mock(ResourceLoader.class);
 
 		WritableResource mockResource = mock(WritableResource.class);
 
+		doReturn("/Example").when(mockRegion).getFullPath();
 		doReturn(mockResource).when(mockResourceLoader).getResource(eq("/path/to/resource.xml"));
 		doReturn(false).when(mockResource).exists();
 		doReturn(false).when(mockResource).isWritable();
+		doReturn("MOCK").when(mockResource).getDescription();
 
-		TestResourceCapableCacheDataImporterExporter importerExporter =
-			spy(new TestResourceCapableCacheDataImporterExporter());
-
-		AbstractExportResourceResolver exportResourceResolver = spy(importerExporter.new TestExportResourceResolver());
+		AbstractExportResourceResolver exportResourceResolver = spy(new TestExportResourceResolver());
 
 		exportResourceResolver.setResourceLoader(mockResourceLoader);
 
-		doReturn(mockLogger).when(importerExporter).getLogger();
+		doReturn(mockLogger).when(exportResourceResolver).getLogger();
 
 		doReturn("/path/to/resource.xml")
 			.when(exportResourceResolver).getResourceLocation(eq(mockRegion),
@@ -518,7 +644,6 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		assertThat(exportResourceResolver.resolve(mockRegion)).isEqualTo(Optional.of(mockResource));
 
-		verify(importerExporter, times(2)).getLogger();
 		verify(exportResourceResolver, times(1)).getResourceLocation(eq(mockRegion),
 			eq(ResourceCapableCacheDataImporterExporter.CACHE_DATA_EXPORT_RESOURCE_LOCATION_PROPERTY_NAME));
 		verify(exportResourceResolver, times(1)).isQualified(eq(mockResource));
@@ -528,9 +653,10 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		verify(mockResourceLoader, times(1)).getResource(eq("/path/to/resource.xml"));
 		verify(mockResource, times(1)).exists();
 		verify(mockResource, times(1)).isWritable();
+		verify(mockResource, times(1)).getDescription();
 		verify(mockLogger, times(1))
-			.warn(eq("WARNING! Resource at location [{}] does not exist; will try to create it"),
-				eq("/path/to/resource.xml"));
+			.warn(eq("WARNING! Resource [{}] at location [{}] does not exist; will try to create it on export"),
+				eq("MOCK"), eq("/path/to/resource.xml"));
 		verify(mockLogger, times(1))
 			.warn(eq("WARNING! Resource [{}] for Region [{}] is not writable"), eq("/path/to/resource.xml"),
 				eq("/Example"));
@@ -541,8 +667,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void resolveExportResourceWithNullRegionThrowsIllegalArgumentException() {
 
-		AbstractExportResourceResolver exportResourceResolver =
-			spy(new TestResourceCapableCacheDataImporterExporter().new TestExportResourceResolver());
+		AbstractExportResourceResolver exportResourceResolver = spy(new TestExportResourceResolver());
 
 		try {
 			exportResourceResolver.resolve((Region<?, ?>) null);
@@ -559,8 +684,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test
 	public void fileSystemExportResourceResolverResolvesToFileSystemPath() {
 
-		AbstractExportResourceResolver exportResourceResolver =
-			spy(new TestResourceCapableCacheDataImporterExporter().new FileSystemExportResourceResolver());
+		AbstractExportResourceResolver exportResourceResolver = spy(new FileSystemExportResourceResolver());
 
 		assertThat(exportResourceResolver.getResourcePath())
 			.isEqualTo(String.format("file://%1$s%2$s", System.getProperty("user.dir"), File.separator));
@@ -575,8 +699,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		doReturn(true).when(mockResource).isReadable();
 
-		AbstractImportResourceResolver importResourceResolver =
-			spy(new TestResourceCapableCacheDataImporterExporter().new TestImportResourceResolver());
+		AbstractImportResourceResolver importResourceResolver = spy(new TestImportResourceResolver());
 
 		doReturn("/path/to/resource.json")
 			.when(importResourceResolver).getResourceLocation(eq(mockRegion),
@@ -601,8 +724,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		doReturn("/Example").when(mockRegion).getFullPath();
 
-		AbstractImportResourceResolver importResourceResolver =
-			spy(new TestResourceCapableCacheDataImporterExporter().new TestImportResourceResolver());
+		AbstractImportResourceResolver importResourceResolver = spy(new TestImportResourceResolver());
 
 		doReturn("/path/to/resource.json")
 			.when(importResourceResolver).getResourceLocation(eq(mockRegion),
@@ -640,8 +762,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 
 		doReturn(false).when(mockResource).isReadable();
 
-		AbstractImportResourceResolver importResourceResolver =
-			spy(new TestResourceCapableCacheDataImporterExporter().new TestImportResourceResolver());
+		AbstractImportResourceResolver importResourceResolver = spy(new TestImportResourceResolver());
 
 		doReturn("/path/to/resource.json")
 			.when(importResourceResolver).getResourceLocation(eq(mockRegion),
@@ -672,8 +793,7 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void resolveImportResourceWithNullRegionThrowsIllegalArgumentException() {
 
-		AbstractImportResourceResolver importResourceResolver =
-			spy(new TestResourceCapableCacheDataImporterExporter().new TestImportResourceResolver());
+		AbstractImportResourceResolver importResourceResolver = new TestImportResourceResolver();
 
 		try {
 			importResourceResolver.resolve((Region<?, ?>) null);
@@ -690,34 +810,23 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 	@Test
 	public void classPathImportResourceResolverResolvesToClassPath() {
 
-		AbstractImportResourceResolver importResourceResolver =
-			spy(new TestResourceCapableCacheDataImporterExporter().new ClassPathImportResourceResolver());
+		AbstractImportResourceResolver importResourceResolver = spy(new ClassPathImportResourceResolver());
 
 		assertThat(importResourceResolver.getResourcePath())
 			.isEqualTo(ResourcePrefix.CLASSPATH_URL_PREFIX.toUrlPrefix());
 	}
 
-	interface ResourceLoaderAwareExportResourceResolver extends ResourceLoaderAware, ExportResourceResolver { }
+	interface ApplicationContextAndResourceLoaderAwareImportResourceResolver
+		extends ApplicationContextAware, ImportResourceResolver, ResourceLoaderAware {}
 
-	interface ResourceLoaderAwareImportResourceResolver extends ResourceLoaderAware, ImportResourceResolver { }
+	interface ApplicationContextEnvironmentAndResourceLoaderAwareExportResourceResolver
+		extends ApplicationContextAware, EnvironmentAware, ResourceLoaderAware, ExportResourceResolver { }
+
+	interface ApplicationContextEnvironmentAndResourceLoaderAwareImportResourceResolver
+		extends ApplicationContextAware, EnvironmentAware, ResourceLoaderAware, ImportResourceResolver { }
 
 	@SuppressWarnings("rawtypes")
 	static class TestResourceCapableCacheDataImporterExporter extends ResourceCapableCacheDataImporterExporter {
-
-		@Override
-		protected Optional<ApplicationContext> getApplicationContext() {
-			return super.getApplicationContext();
-		}
-
-		@Override
-		protected Optional<Environment> getEnvironment() {
-			return super.getEnvironment();
-		}
-
-		@Override
-		protected Logger getLogger() {
-			return super.getLogger();
-		}
 
 		@Override
 		protected @NonNull Region<?, ?> doExportFrom(@NonNull Region region) {
@@ -728,34 +837,34 @@ public class ResourceCapableCacheDataImporterExporterUnitTests {
 		protected @NonNull Region<?, ?> doImportInto(@NonNull Region region) {
 			return region;
 		}
+	}
 
-		class TestCacheResourceResolver extends AbstractCacheResourceResolver {
+	static class TestCacheResourceResolver extends AbstractCacheResourceResolver {
 
-			@Override
-			public Optional<Resource> resolve(@NonNull Region<?, ?> region) {
-				return Optional.empty();
-			}
-
-			@NonNull @Override
-			protected String getResourcePath() {
-				return null;
-			}
+		@Override
+		public Optional<Resource> resolve(@NonNull Region<?, ?> region) {
+			return Optional.empty();
 		}
 
-		class TestExportResourceResolver extends AbstractExportResourceResolver {
-
-			@NonNull @Override
-			protected String getResourcePath() {
-				return null;
-			}
+		@NonNull @Override
+		protected String getResourcePath() {
+			return null;
 		}
+	}
 
-		class TestImportResourceResolver extends AbstractImportResourceResolver {
+	static class TestExportResourceResolver extends AbstractExportResourceResolver {
 
-			@NonNull @Override
-			protected String getResourcePath() {
-				return null;
-			}
+		@NonNull @Override
+		protected String getResourcePath() {
+			return null;
+		}
+	}
+
+	static class TestImportResourceResolver extends AbstractImportResourceResolver {
+
+		@NonNull @Override
+		protected String getResourcePath() {
+			return null;
 		}
 	}
 
