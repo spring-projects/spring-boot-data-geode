@@ -17,7 +17,6 @@ package org.springframework.geode.security;
 
 import java.util.Properties;
 
-import org.apache.geode.LogWriter;
 import org.apache.geode.distributed.DistributedMember;
 import org.apache.geode.security.AuthInitialize;
 import org.apache.geode.security.AuthenticationFailedException;
@@ -40,10 +39,6 @@ public class TestAuthInitialize implements AuthInitialize {
 	public static TestAuthInitialize create() {
 		return new TestAuthInitialize();
 	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public void init(LogWriter systemLogger, LogWriter securityLogger) throws AuthenticationFailedException { }
 
 	@Override
 	public Properties getCredentials(Properties securityProperties, DistributedMember server, boolean isPeer)

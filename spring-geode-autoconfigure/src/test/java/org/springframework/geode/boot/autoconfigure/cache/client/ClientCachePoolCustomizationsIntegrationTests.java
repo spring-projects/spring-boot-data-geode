@@ -104,7 +104,6 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 			assertThat(namedPoolBean).isNotNull();
 			assertThat(namedPoolBean.getName()).isEqualTo(poolName);
 			assertThat(namedPoolBean.getServerGroup()).isEqualTo("TestServerGroup");
-			assertThat(namedPoolBean.getThreadLocalConnections()).isTrue();
 		}
 
 		Pool namedPool = PoolManager.find(poolName);
@@ -112,7 +111,6 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 		assertThat(namedPool).isNotNull();
 		assertThat(namedPool.getName()).isEqualTo(poolName);
 		assertThat(namedPool.getServerGroup()).isEqualTo("TestServerGroup");
-		assertThat(namedPool.getThreadLocalConnections()).isTrue();
 
 		if (DEFAULT_POOL_NAME.equals(poolName)) {
 			assertThat(namedPool).isSameAs(clientCache.getDefaultPool());
@@ -308,12 +306,7 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 
 		@Bean
 		PoolConfigurer allPoolsConfigurer() {
-
-			return (beanName, poolFactoryBean) -> {
-
-				poolFactoryBean.setServerGroup("TestServerGroup");
-				poolFactoryBean.setThreadLocalConnections(true);
-			};
+			return (beanName, poolFactoryBean) -> poolFactoryBean.setServerGroup("TestServerGroup");
 		}
 	}
 
@@ -327,12 +320,7 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 
 		@Bean
 		PoolConfigurer allPoolsConfigurer() {
-
-			return (beanName, poolFactoryBean) -> {
-
-				poolFactoryBean.setServerGroup("TestServerGroup");
-				poolFactoryBean.setThreadLocalConnections(true);
-			};
+			return (beanName, poolFactoryBean) -> poolFactoryBean.setServerGroup("TestServerGroup");
 		}
 	}
 }

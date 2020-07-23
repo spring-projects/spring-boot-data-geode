@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
 import java.util.Properties;
@@ -45,7 +44,7 @@ public class PoolProperties {
 	private boolean prSingleHopEnabled = PoolFactory.DEFAULT_PR_SINGLE_HOP_ENABLED;
 	private boolean readyForEvents = DEFAULT_READY_FOR_EVENTS;
 	private boolean subscriptionEnabled = PoolFactory.DEFAULT_SUBSCRIPTION_ENABLED;
-	private boolean threadLocalConnections = PoolFactory.DEFAULT_THREAD_LOCAL_CONNECTIONS;
+	private boolean threadLocalConnections = false;
 
 	private int freeConnectionTimeout = PoolFactory.DEFAULT_FREE_CONNECTION_TIMEOUT;
 	private int loadConditioningInterval = PoolFactory.DEFAULT_LOAD_CONDITIONING_INTERVAL;

@@ -65,6 +65,7 @@ import org.springframework.web.client.RestTemplate;
  * @see org.springframework.geode.boot.autoconfigure.support.HttpBasicAuthenticationSecurityConfiguration
  * @since 1.0.0
  */
+@SuppressWarnings("deprecation")
 public class HttpBasicAuthenticationSecurityConfigurationUnitTests {
 
 	private TestHttpBasicAuthenticationSecurityConfiguration httpSecurityConfiguration =

@@ -19,20 +19,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.apache.geode.cache.CacheLoaderException;
-import org.apache.geode.cache.CacheRuntimeException;
-import org.apache.geode.cache.LoaderHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import org.apache.geode.cache.CacheLoaderException;
+import org.apache.geode.cache.CacheRuntimeException;
+import org.apache.geode.cache.LoaderHelper;
+
 import org.springframework.core.env.Environment;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.data.repository.CrudRepository;
@@ -71,7 +73,7 @@ public class RepositoryCacheLoaderUnitTests {
 
 	@After
 	public void tearDown() {
-		verifyZeroInteractions(this.mockEnvironment);
+		verifyNoInteractions(this.mockEnvironment);
 	}
 
 	@Test
@@ -126,7 +128,6 @@ public class RepositoryCacheLoaderUnitTests {
 	}
 
 	@Test
-	@SuppressWarnings("all")
 	public void newCacheRuntimeExceptionIsCorrect() {
 
 		RuntimeException cause = new RuntimeException("TEST");

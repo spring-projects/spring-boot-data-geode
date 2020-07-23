@@ -58,8 +58,8 @@ public class TestAuthInitializeUnitTests {
 	@Test
 	public void getCredentialsUsesProperties() {
 
-		Properties credentials =
-			this.authInitialize.getCredentials(newSecurityProperties("testUser", "s3cr3t"));
+		Properties securityProperties = newSecurityProperties("testUser", "s3cr3t");
+		Properties credentials = this.authInitialize.getCredentials(securityProperties, null, false);
 
 		assertThat(credentials).isNotNull();
 		assertThat(credentials.getProperty(GeodeConstants.USERNAME)).isEqualTo("testUser");
@@ -69,8 +69,8 @@ public class TestAuthInitializeUnitTests {
 	@Test
 	public void getCredentialsUsesProvidedUsernameAndDefaultPassword() {
 
-		Properties credentials =
-			this.authInitialize.getCredentials(newSecurityProperties("testUser", null));
+		Properties securityProperties = newSecurityProperties("testUser", null);
+		Properties credentials = this.authInitialize.getCredentials(securityProperties, null, false);
 
 		assertThat(credentials).isNotNull();
 		assertThat(credentials.getProperty(GeodeConstants.USERNAME)).isEqualTo("testUser");
@@ -80,8 +80,8 @@ public class TestAuthInitializeUnitTests {
 	@Test
 	public void getCredentialsUsesProvidedPasswordAndDefaultUsername() {
 
-		Properties credentials =
-			this.authInitialize.getCredentials(newSecurityProperties(null, "s3cr3t"));
+		Properties securityProperties = newSecurityProperties(null, "s3cr3t");
+		Properties credentials = this.authInitialize.getCredentials(securityProperties, null, false);
 
 		assertThat(credentials).isNotNull();
 		assertThat(credentials.getProperty(GeodeConstants.USERNAME)).isEqualTo("test");
@@ -91,8 +91,8 @@ public class TestAuthInitializeUnitTests {
 	@Test
 	public void getCredentialsUsesDefaultUsernameAndPassword() {
 
-		Properties credentials =
-			this.authInitialize.getCredentials(newSecurityProperties(null, null));
+		Properties securityProperties = newSecurityProperties(null, null);
+		Properties credentials = this.authInitialize.getCredentials(securityProperties, null, false);
 
 		assertThat(credentials).isNotNull();
 		assertThat(credentials.getProperty(GeodeConstants.USERNAME)).isEqualTo("test");

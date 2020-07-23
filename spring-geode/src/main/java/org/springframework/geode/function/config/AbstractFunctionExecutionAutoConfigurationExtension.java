@@ -13,21 +13,16 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.function.config;
-
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
-
-import java.util.Optional;
 
 import org.apache.geode.cache.execute.Execution;
 import org.apache.geode.cache.execute.Function;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.core.type.StandardAnnotationMetadata;
 import org.springframework.data.gemfire.function.config.AbstractFunctionExecutionConfigurationSource;
 import org.springframework.data.gemfire.function.config.AnnotationFunctionExecutionConfigurationSource;
 import org.springframework.data.gemfire.function.config.FunctionExecutionBeanDefinitionRegistrar;
@@ -53,12 +48,10 @@ public abstract class AbstractFunctionExecutionAutoConfigurationExtension
 	private BeanFactory beanFactory;
 
 	@Override
-	@SuppressWarnings("all")
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
 
-	@SuppressWarnings("all")
 	protected BeanFactory getBeanFactory() {
 
 		Assert.state(this.beanFactory != null, "BeanFactory was not properly configured");
@@ -73,8 +66,7 @@ public abstract class AbstractFunctionExecutionAutoConfigurationExtension
 	protected AbstractFunctionExecutionConfigurationSource newAnnotationBasedFunctionExecutionConfigurationSource(
 			AnnotationMetadata annotationMetadata) {
 
-		StandardAnnotationMetadata metadata =
-			new StandardAnnotationMetadata(getConfiguration(), true);
+		AnnotationMetadata metadata = AnnotationMetadata.introspect(getConfiguration());
 
 		return new AnnotationFunctionExecutionConfigurationSource(metadata) {
 

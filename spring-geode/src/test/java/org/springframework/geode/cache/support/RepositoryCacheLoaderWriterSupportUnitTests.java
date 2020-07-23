@@ -21,19 +21,21 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.apache.geode.cache.CacheRuntimeException;
-import org.apache.geode.cache.LoaderHelper;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import org.apache.geode.cache.CacheRuntimeException;
+import org.apache.geode.cache.LoaderHelper;
+
 import org.springframework.core.env.Environment;
 import org.springframework.data.repository.CrudRepository;
 
@@ -51,11 +53,11 @@ import org.springframework.data.repository.CrudRepository;
  * @since 1.1.0
  */
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class RepositoryCacheLoaderWriterSupportUnitTests {
 
 	@Mock
-	private CrudRepository mockCrudRepository;
+	private CrudRepository<?, ?> mockCrudRepository;
 
 	@After
 	public void tearDown() {
@@ -65,7 +67,7 @@ public class RepositoryCacheLoaderWriterSupportUnitTests {
 	@Test
 	public void constructsRepositoryCacheLoaderWriterSupportSuccessfully() {
 
-		RepositoryCacheLoaderWriterSupport cacheLoaderWriter =
+		RepositoryCacheLoaderWriterSupport<Object, Object> cacheLoaderWriter =
 			new TestRepositoryCacheLoaderWriterSupport(this.mockCrudRepository);
 
 		assertThat(cacheLoaderWriter).isNotNull();
@@ -93,7 +95,7 @@ public class RepositoryCacheLoaderWriterSupportUnitTests {
 
 		Environment mockEnvironment = mock(Environment.class);
 
-		RepositoryCacheLoaderWriterSupport cacheLoaderWriter =
+		RepositoryCacheLoaderWriterSupport<Object, Object> cacheLoaderWriter =
 			new TestRepositoryCacheLoaderWriterSupport(this.mockCrudRepository);
 
 		cacheLoaderWriter.setEnvironment(mockEnvironment);
@@ -107,7 +109,7 @@ public class RepositoryCacheLoaderWriterSupportUnitTests {
 
 	@Test
 	public void isNukeAndPaveEnabledReturnsFalse() {
-		assertThat(new TestRepositoryCacheLoaderWriterSupport<>(this.mockCrudRepository)
+		assertThat(new TestRepositoryCacheLoaderWriterSupport(this.mockCrudRepository)
 			.isNukeAndPaveEnabled()).isFalse();
 	}
 
@@ -124,7 +126,7 @@ public class RepositoryCacheLoaderWriterSupportUnitTests {
 		when(mockEnvironment.getProperty(eq(RepositoryCacheLoaderWriterSupport.NUKE_AND_PAVE_PROPERTY),
 			eq(Boolean.class))).thenReturn(true);
 
-		assertThat(new TestRepositoryCacheLoaderWriterSupport<>(this.mockCrudRepository)
+		assertThat(new TestRepositoryCacheLoaderWriterSupport(this.mockCrudRepository)
 			.with(mockEnvironment).isNukeAndPaveEnabled()).isTrue();
 
 		verify(mockEnvironment, times(1))
@@ -139,7 +141,7 @@ public class RepositoryCacheLoaderWriterSupportUnitTests {
 		assertThat(Boolean.parseBoolean(System.getProperty(RepositoryCacheLoaderWriterSupport.NUKE_AND_PAVE_PROPERTY)))
 			.isTrue();
 
-		assertThat(new TestRepositoryCacheLoaderWriterSupport<>(this.mockCrudRepository).isNukeAndPaveEnabled())
+		assertThat(new TestRepositoryCacheLoaderWriterSupport(this.mockCrudRepository).isNukeAndPaveEnabled())
 			.isTrue();
 	}
 
@@ -153,7 +155,7 @@ public class RepositoryCacheLoaderWriterSupportUnitTests {
 		Object testEntity = new Object();
 
 		RepositoryCacheLoaderWriterSupport<Object, Object> cacheLoaderWriter =
-			new TestRepositoryCacheLoaderWriterSupport<>(this.mockCrudRepository);
+			new TestRepositoryCacheLoaderWriterSupport(this.mockCrudRepository);
 
 		assertThat(cacheLoaderWriter.doRepositoryOp(testEntity, mockRepositoryOperationFunction)).isEqualTo("TEST");
 
@@ -165,9 +167,9 @@ public class RepositoryCacheLoaderWriterSupportUnitTests {
 
 		LoaderHelper<?, ?> mockLoadHelper = mock(LoaderHelper.class);
 
-		assertThat(new TestRepositoryCacheLoaderWriterSupport<>(this.mockCrudRepository).load(mockLoadHelper)).isNull();
+		assertThat(new TestRepositoryCacheLoaderWriterSupport(this.mockCrudRepository).load(mockLoadHelper)).isNull();
 
-		verifyZeroInteractions(mockLoadHelper);
+		verifyNoInteractions(mockLoadHelper);
 	}
 
 	@Test(expected = CacheRuntimeException.class)
@@ -180,7 +182,7 @@ public class RepositoryCacheLoaderWriterSupportUnitTests {
 		Object testEntity = new Object();
 
 		RepositoryCacheLoaderWriterSupport<Object, Object> cacheLoaderWriter =
-			new TestRepositoryCacheLoaderWriterSupport<>(this.mockCrudRepository);
+			new TestRepositoryCacheLoaderWriterSupport(this.mockCrudRepository);
 
 		try {
 			cacheLoaderWriter.doRepositoryOp(testEntity, mockRepositoryOperationFunction);

@@ -21,18 +21,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import org.apache.geode.cache.CacheRuntimeException;
-import org.apache.geode.cache.CacheWriterException;
-import org.apache.geode.cache.EntryEvent;
-import org.apache.geode.cache.RegionEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import org.apache.geode.cache.CacheRuntimeException;
+import org.apache.geode.cache.CacheWriterException;
+import org.apache.geode.cache.EntryEvent;
+import org.apache.geode.cache.RegionEvent;
+
 import org.springframework.core.env.Environment;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.geode.cache.support.RepositoryCacheLoaderWriterSupport;
@@ -120,7 +122,7 @@ public class RepositoryCacheWriterUnitTests {
 
 		verify(this.mockCrudRepository, times(1)).deleteAll();
 
-		verifyZeroInteractions(mockRegionEvent);
+		verifyNoInteractions(mockRegionEvent);
 	}
 
 	@Test
@@ -138,7 +140,7 @@ public class RepositoryCacheWriterUnitTests {
 
 		verify(this.mockCrudRepository, never()).deleteAll();
 
-		verifyZeroInteractions(mockRegionEvent);
+		verifyNoInteractions(mockRegionEvent);
 	}
 
 	@Test
@@ -148,13 +150,12 @@ public class RepositoryCacheWriterUnitTests {
 
 		this.cacheWriter.beforeRegionDestroy(mockRegionEvent);
 
-		verifyZeroInteractions(this.mockEnvironment);
-		verifyZeroInteractions(this.mockCrudRepository);
-		verifyZeroInteractions(mockRegionEvent);
+		verifyNoInteractions(this.mockEnvironment);
+		verifyNoInteractions(this.mockCrudRepository);
+		verifyNoInteractions(mockRegionEvent);
 	}
 
 	@Test
-	@SuppressWarnings("all")
 	public void newCacheRuntimeExceptionIsCorrect() {
 
 		RuntimeException cause = new RuntimeException("TEST");
