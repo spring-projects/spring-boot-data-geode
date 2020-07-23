@@ -19,7 +19,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.Region;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -39,7 +38,6 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.geode.boot.autoconfigure.support.PdxInstanceWrapperRegionAspect;
 import org.springframework.geode.cache.SimpleCacheResolver;
-import org.springframework.geode.core.io.ResourceNotFoundException;
 import org.springframework.geode.data.AbstractCacheDataImporterExporter;
 import org.springframework.geode.data.CacheDataImporterExporter;
 import org.springframework.geode.data.json.JsonCacheDataImporterExporter;
@@ -87,25 +85,8 @@ public class DataImportExportAutoConfiguration {
 		return new LifecycleAwareCacheDataImporterExporter(newCacheDataImporterExporter());
 	}
 
-	@SuppressWarnings("rawtypes")
 	protected CacheDataImporterExporter newCacheDataImporterExporter() {
-
-		return new JsonCacheDataImporterExporter() {
-
-			@Override
-			public @NonNull Region doImportInto(@NonNull Region region) {
-
-				try {
-					return super.doImportInto(region);
-				}
-				catch (ResourceNotFoundException cause) {
-
-					getLogger().info(cause.getMessage());
-
-					return region;
-				}
-			}
-		};
+		return new JsonCacheDataImporterExporter();
 	}
 
 	@Bean
