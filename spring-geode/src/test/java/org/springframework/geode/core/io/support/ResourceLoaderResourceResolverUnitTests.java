@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.util.Set;
 
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import org.apache.shiro.util.CollectionUtils;
 
@@ -251,6 +253,19 @@ public class ResourceLoaderResourceResolverUnitTests {
 	}
 
 	@Test
+	public void postProcessReturnsGivenResource() {
+
+		Resource mockResource = mock(Resource.class);
+
+		ResourceLoaderResourceResolver resourceResolver = new ResourceLoaderResourceResolver();
+
+		assertThat(resourceResolver.postProcess(mockResource)).isSameAs(mockResource);
+		assertThat(resourceResolver.postProcess(null)).isNull();
+
+		verifyNoInteractions(mockResource);
+	}
+
+	@Test
 	public void resolveReturnsResource() {
 
 		String location = "/path/to/resource";
@@ -266,10 +281,14 @@ public class ResourceLoaderResourceResolverUnitTests {
 
 		assertThat(resourceResolver.resolve(location).orElse(null)).isEqualTo(mockResource);
 
-		verify(resourceResolver, times(1)).getResourceLoader();
-		verify(resourceResolver, times(1)).isQualified(eq(mockResource));
-		verify(resourceResolver, never()).onMissingResource(any(), any());
-		verify(mockResourceLoader, times(1)).getResource(eq(location));
+		InOrder order = inOrder(mockResource, mockResourceLoader, resourceResolver);
+
+		order.verify(resourceResolver, times(1)).getResourceLoader();
+		order.verify(mockResourceLoader, times(1)).getResource(eq(location));
+		order.verify(resourceResolver, times(1)).postProcess(eq(mockResource));
+		order.verify(resourceResolver, times(1)).isQualified(eq(mockResource));
+		order.verify(resourceResolver, never()).onMissingResource(any(), any());
+
 		verifyNoInteractions(mockResource);
 	}
 
@@ -297,6 +316,7 @@ public class ResourceLoaderResourceResolverUnitTests {
 		}
 		finally {
 			verify(resourceResolver, times(1)).getResourceLoader();
+			verify(resourceResolver, times(1)).postProcess(any());
 			verify(resourceResolver, times(1)).isQualified(isNull());
 			verify(resourceResolver, times(1)).onMissingResource(isNull(), eq(location));
 			verify(mockResourceLoader, times(1)).getResource(eq(location));
@@ -332,6 +352,7 @@ public class ResourceLoaderResourceResolverUnitTests {
 		}
 		finally {
 			verify(resourceResolver, times(1)).getResourceLoader();
+			verify(resourceResolver, times(1)).postProcess(any());
 			verify(resourceResolver, times(1)).isQualified(eq(mockResource));
 			verify(resourceResolver, times(1)).onMissingResource(eq(mockResource), eq(location));
 			verify(mockResourceLoader, times(1)).getResource(eq(location));
@@ -360,6 +381,7 @@ public class ResourceLoaderResourceResolverUnitTests {
 		assertThat(resourceResolver.resolve(location).orElse(null)).isEqualTo(mockResourceTwo);
 
 		verify(resourceResolver, times(1)).getResourceLoader();
+		verify(resourceResolver, times(1)).postProcess(any());
 		verify(resourceResolver, times(1)).isQualified(eq(mockResourceOne));
 		verify(resourceResolver, times(1)).onMissingResource(eq(mockResourceOne), eq(location));
 		verify(mockResourceLoader, times(1)).getResource(eq(location));

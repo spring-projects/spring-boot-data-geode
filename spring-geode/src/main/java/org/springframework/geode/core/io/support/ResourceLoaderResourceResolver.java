@@ -168,6 +168,18 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 	}
 
 	/**
+	 * Method used by subclasses to process the loaded {@link Resource} as determined by
+	 * the {@link #getResourceLoader() ResourceLoader}.
+	 *
+	 * @param resource {@link Resource} to post-process.
+	 * @return the {@link Resource}.
+	 * @see org.springframework.core.io.Resource
+	 */
+	protected Resource postProcess(Resource resource) {
+		return resource;
+	}
+
+	/**
 	 * Tries to resolve a {@link Resource} at the given {@link String location} using a Spring {@link ResourceLoader},
 	 * such as a Spring {@link ApplicationContext}.
 	 *
@@ -183,8 +195,9 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 	 * @throws IllegalArgumentException if {@link String location} is not specified.
 	 * @return an {@link Optional} {@link Resource} handle for the given {@link String location}.
 	 * @see org.springframework.core.io.Resource
-	 * @see #onMissingResource(Resource, String)
 	 * @see #isQualified(Resource)
+	 * @see #onMissingResource(Resource, String)
+	 * @see #postProcess(Resource)
 	 * @see java.util.Optional
 	 */
 	@Override
@@ -194,7 +207,12 @@ public class ResourceLoaderResourceResolver implements ResourceLoaderAware, Reso
 			String.format("The location [%s] of the Resource to resolve must be specified", location));
 
 		Resource resource = getResourceLoader().getResource(location);
-		Resource resolvedResource = isQualified(resource) ? resource : onMissingResource(resource, location);
+
+		resource = postProcess(resource);
+
+		Resource resolvedResource = isQualified(resource)
+			? resource
+			: onMissingResource(resource, location);
 
 		return Optional.ofNullable(resolvedResource);
 	}
