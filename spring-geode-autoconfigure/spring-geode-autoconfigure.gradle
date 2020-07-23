@@ -26,6 +26,7 @@ dependencies {
 	testCompile "org.mockito:mockito-core"
 	testCompile "org.projectlombok:lombok"
 	testCompile "org.springframework.boot:spring-boot-starter-test"
+	testCompile "org.springframework.boot:spring-boot-starter-web"
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
 
 	testCompile("org.springframework.data:spring-data-geode-test") {
@@ -36,7 +37,6 @@ dependencies {
 	testRuntime "javax.cache:cache-api"
 	testRuntime "org.apache.geode:geode-http-service:$apacheGeodeVersion"
 	testRuntime "org.apache.geode:geode-web:$apacheGeodeVersion"
-	testRuntime "org.springframework.boot:spring-boot-starter-web"
 	testRuntime "org.springframework.boot:spring-boot-starter-jetty"
 	testRuntime "org.springframework.boot:spring-boot-starter-json"
 	testRuntime "org.springframework.shell:spring-shell:$springShellVersion"
