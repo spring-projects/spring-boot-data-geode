@@ -49,6 +49,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.geode.core.io.ResourceReadException;
@@ -84,16 +85,25 @@ import example.app.golf.model.Golfer;
  *
  * @author John Blum
  * @see org.junit.Test
+ * @see org.springframework.beans.factory.config.BeanPostProcessor
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.boot.web.server.LocalServerPort
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Profile
  * @see org.springframework.core.io.Resource
+ * @see org.springframework.data.gemfire.GemfireTemplate
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.geode.config.annotation.EnableClusterAware
+ * @see org.springframework.geode.core.io.ResourceReader
+ * @see org.springframework.geode.core.io.ResourceWriter
  * @see org.springframework.geode.data.CacheDataImporterExporter
  * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
+ * @see org.springframework.test.web.servlet.MockMvc
+ * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurer
  * @since 1.3.1
  */
 @ActiveProfiles("NET-IMPORT-EXPORT")
@@ -113,7 +123,7 @@ import example.app.golf.model.Golfer;
 )
 @AutoConfigureMockMvc
 @SuppressWarnings("unused")
-public class RestServiceCacheDataImportExportIntegrationTests {
+public class RestServiceCacheDataImportExportIntegrationTests extends IntegrationTestsSupport {
 
 	private static final boolean DEBUG = false;
 
