@@ -129,7 +129,7 @@ public class SpringCachingWithMockObjectsUnitTests {
 			return mockCacheManager;
 		}
 
-		@SuppressWarnings("all")
+		@SuppressWarnings("unchecked")
 		private Cache mockCache(String name) {
 
 			Map<Object, Object> cacheMap = new ConcurrentHashMap<>();
@@ -158,9 +158,8 @@ public class SpringCachingWithMockObjectsUnitTests {
 				Object key = invocation.getArgument(0);
 				Object value = cacheMap.get(key);
 
-				Cache.ValueWrapper wrapper = value != null ? () -> value : null;
+				return asCacheValueWrapper(value);
 
-				return wrapper ;
 			});
 
 			when(mockCache.get(any(), any(Class.class))).thenAnswer(invocation -> {
@@ -174,7 +173,7 @@ public class SpringCachingWithMockObjectsUnitTests {
 			when(mockCache.get(any(), any(Callable.class))).thenAnswer(invocation -> {
 
 				Object key = invocation.getArgument(0);
-				Callable valueLoader = invocation.getArgument(1);
+				Callable<?> valueLoader = invocation.getArgument(1);
 				Object value = cacheMap.get(key);
 
 				return value != null ? value : valueLoader.call();
@@ -206,13 +205,15 @@ public class SpringCachingWithMockObjectsUnitTests {
 				Object newValue = invocation.getArgument(1);
 				Object existingValue = cacheMap.putIfAbsent(key, newValue);
 
-				Cache.ValueWrapper wrapper = () -> existingValue;
-
-				return wrapper;
+				return asCacheValueWrapper(existingValue);
 
 			}).when(mockCache).putIfAbsent(any(), any());
 
 			return mockCache;
+		}
+
+		private Cache.ValueWrapper asCacheValueWrapper(Object value) {
+			return value != null ? () -> value : null;
 		}
 
 		@Nullable @Override

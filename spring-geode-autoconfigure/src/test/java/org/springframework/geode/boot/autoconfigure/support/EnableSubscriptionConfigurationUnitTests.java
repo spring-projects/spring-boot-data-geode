@@ -39,7 +39,7 @@ public class EnableSubscriptionConfigurationUnitTests {
 
 	private EnableSubscriptionConfiguration configuration = new EnableSubscriptionConfiguration();
 
-	@SuppressWarnings("all")
+	@SuppressWarnings("unchecked")
 	private <T> T getFieldValue(Object target, String fieldName) {
 
 		return Optional.ofNullable(target)
@@ -49,7 +49,7 @@ public class EnableSubscriptionConfigurationUnitTests {
 				ReflectionUtils.makeAccessible(field);
 				return field;
 			})
-			.<T>map(field -> (T) ReflectionUtils.getField(field, target))
+			.map(field -> (T) ReflectionUtils.getField(field, target))
 			.orElseThrow(() -> newIllegalArgumentException("Unable to get value of field [%s] on object of type [%s]",
 				fieldName, target != null ? target.getClass().getName() : null));
 	}

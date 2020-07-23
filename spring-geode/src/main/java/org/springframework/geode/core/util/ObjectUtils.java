@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.geode.pdx.PdxInstance
  * @since 1.0.0
  */
-@SuppressWarnings("all")
+@SuppressWarnings("unused")
 public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(ObjectUtils.class);
@@ -251,6 +251,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	 * @see java.lang.reflect.Field
 	 * @see java.lang.Object
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T get(Object obj, Field field) {
 
 		Assert.notNull(obj, "Object is required");
@@ -316,7 +317,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	 * @return the given {@link Constructor}.
 	 * @see java.lang.reflect.Constructor
 	 */
-	public static Constructor makeAccessible(@NonNull Constructor<?> constructor) {
+	public static Constructor<?> makeAccessible(@NonNull Constructor<?> constructor) {
 
 		ReflectionUtils.makeAccessible(constructor);
 

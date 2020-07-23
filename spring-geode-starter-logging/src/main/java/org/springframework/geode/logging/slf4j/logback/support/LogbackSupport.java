@@ -199,7 +199,7 @@ public abstract class LogbackSupport {
 				appenderName, nullSafeTypeName(appenderType), nullSafeLoggerName(logger))));
 	}
 
-	@SuppressWarnings("all")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static <E, T extends Appender<E>> Class<T> nullSafeAppenderType(Class<T> appenderType) {
 		return appenderType != null ? appenderType : (Class) Appender.class;
 	}
