@@ -8,6 +8,8 @@ dependencies {
     compile project(":spring-geode-actuator")
     compile project(":spring-geode-autoconfigure")
 
+    compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+
     testCompile "junit:junit"
     testCompile "org.assertj:assertj-core"
     testCompile "org.mockito:mockito-core"

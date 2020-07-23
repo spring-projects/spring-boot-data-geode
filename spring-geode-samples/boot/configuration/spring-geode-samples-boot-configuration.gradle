@@ -18,6 +18,8 @@ dependencies {
 
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 
+	testCompileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+
 }
 
 processResources {
