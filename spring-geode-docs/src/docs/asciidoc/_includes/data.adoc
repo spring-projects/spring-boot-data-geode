@@ -344,3 +344,348 @@ if your entity classes do not declare an explicit identifier field, such as with
 not have an "id" field. This scenario can also occur when inter-operating with native clients that model the application
 domain objects differently, then serialize the objects using PDX storing them in Regions on the server that are then
 later consumed by your Spring Boot application.
+
+[[geode-data-using-import-export-api-extensions]]
+=== Import/Export API Extensions
+
+The API in SBDG for Import/Export functionality is separated into the following concerns:
+
+* Data Format
+* Resource Resolving
+* Resource Reading
+* Resource Writing
+
+By breaking each of these functions apart into separate concerns, it affords a developer the ability to customize each
+aspect of the Import/Export functions.
+
+For example, you could import XML from the filesystem and then export JSON to a REST-based Web Service. By default, SBDG
+imports JSON from the classpath and exports JSON to the filesystem.
+
+However, not all environments expose the filesystem, such as cloud environments like PCF. Therefore, giving users
+control over each aspect of import/export process is essential for performing the functions in any environment.
+
+[[geode-data-using-import-export-api-extensions-data-format]]
+==== Data Format
+
+The primary interface to import data into a `Region` is the `CacheDataImporter`.
+
+`CacheDataImporter` is a `@FunctionalInterface` extending Spring's
+{spring-framework-javadoc}/org/springframework/beans/factory/config/BeanPostProcessor.html[`BeanPostProcessor`]
+interface to trigger the import of data after the `Region` has been initialized.
+
+The interface is defined as:
+
+.`CacheDataImporter`
+[source,java]
+----
+interface CacheDataImporter extends BeanPostProcessor {
+
+	Region importInto(Region region);
+
+}
+----
+
+The `importInto(..)` method can be coded to handle any data format (JSON, XML, etc) you prefer. Simply register a bean
+implementing the `CacheDataImporter` interface in the Spring container and the importer will do its job.
+
+On the flip-side, the primary interface to export data from a `Region` is the `CacheDataExporter`.
+
+`CacheDataExporter` is a `@FunctionalInterface` extending Spring's
+{spring-framework-javadoc}/org/springframework/beans/factory/config/DestructionAwareBeanPostProcessor.html[`DestructionAwareBeanPostProcessor`]
+interface to trigger the export of data before the `Region` is destroyed.
+
+The interface is defined as:
+
+.`CacheDataExporter`
+[source,java]
+----
+interface CacheDataExporter extends DestructionAwareBeanPostProcessor {
+
+	Region exportFrom(Region region);
+
+}
+----
+
+The `exportFrom(..)` method can be coded to handle any data format (JSON, XML, etc) you prefer. Simply register a bean
+implementing the `CacheDataExporter` interface in the Spring container and the exporter will do its job.
+
+For convenience when you want to implement both import and export functionality, SBDG provides the
+`CacheDataImporterExporter` interface, which extends both `CacheDataImporter` and `CacheDataExporter`.
+
+.`CacheDataImporterExporter`
+[source,java]
+----
+interface CacheDataImporterExporter extends CacheDataExporter, CacheDataImporter { }
+----
+
+For support, SBDG also provides the `AbstractCacheDataImporterExporter` abstract base class to simplify
+the implementation of your importer/exporter.
+
+[[geode-data-using-import-export-api-extensions-data-format-lifecycle-management]]
+===== Lifecycle Management
+
+Sometimes it is necessary to control precisely when data is imported or exported.
+
+This is especially true on import since different `Regions` maybe collocated or tied together via a cache callback like
+a `CacheListener`. In these cases, the other `Region` may need to exist before the import on the dependent `Region`
+proceeds, particularly if the dependencies were loosely defined.
+
+Another case when controlling the import is important is when you are using SBDG's `@EnableClusterAware` annotation to
+push configuration metadata from the client to the cluster in order to define server-side `Regions` matching the
+client-side `Regions`, especially client `Regions` targeted for import.  The matching `Regions` on the server-side must
+exist before data is imported into client (`PROXY`) `Regions`.
+
+In all cases, SBDG provides the `LifecycleAwareCacheDataImporterExporter` class to wrap your `CacheDataImporterExporter`
+implementation.  This class implements Spring's {spring-framework-javadoc}/https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/SmartLifecycle.html[`SmartLifecycle`]
+interface.
+
+By implementing the `SmartLifecycle` interface, it allows you to control which `phase` of the Spring container
+the import occurs. As such SBDG exposes two more properties to control the lifecycle:
+
+.Lifecycle Management Properties
+[source,properties]
+----
+# Spring Boot application.properties
+
+spring.boot.data.gemfire.cache.data.import.lifecycle=[EAGER|LAZY]
+spring.boot.data.gemfire.cache.data.import.phase=1000000
+----
+
+`EAGER` acts immediately, after the Region is initialized (the default behavior). `LAZY` delays the import until the
+`start()` method is called, which is invoked according to the `phase`, thereby ordering the import relative to other
+"lifecycle-aware" components registered in the Spring container.
+
+To make your `CacheDataImporterExporter` "lifecycle-aware" simply do:
+
+[source,java]
+----
+@Configuration
+class MyApplicationConfiguration {
+
+	@Bean
+    CacheDataImporterExporter importerExporter() {
+		return new LifecycleAwareCacheDataImporterExporter(new MyCacheDataImporterExporter());
+    }
+}
+----
+
+[[geode-data-using-import-export-api-extensions-resource-resolution]]
+==== Resource Resolution
+
+Resolving resources used for import and export results in the creation of a Spring
+{spring-framework-javadoc}/https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/io/Resource.html[`Resource`]
+handle.
+
+Resource resolution is a vital step to qualify a resource, especially if the resource requires special logic
+or permissions to access it. In this case, specific `Resource` handles can be returned and used by the _reader_
+and _writer_ of the `Resource` as is appropriate for import or export operation.
+
+SBDG encapsulates the algorithm for resolving `Resources` in the `ResourceResolver`
+(https://en.wikipedia.org/wiki/Strategy_pattern[Strategy]) interface:
+
+.ResourceResolver
+[source,java]
+----
+@FunctionalInterface
+interface ResourceResolver {
+
+	Optional<Resource> resolve(String location);
+
+	default Resouce required(String location) {
+		// ...
+    }
+}
+----
+
+Additionally, SBDG provides the `ImportResourceResolver` and `ExportResourceResolver` marker interfaces along with
+the `AbstractImportResourceResolver` and `AbstractExportResourceResolver` abstract base classes for implementing
+resource resolution logic used by both import and export operations, for your convenience.
+
+If you wish to customize the resolution of `Resources` used for import and/or export, your `CacheDataImporterExporter`
+implementation can extend the `ResourceCapableCacheDataImporterExporter` abstract base class, which provides the
+aforementioned interfaces and base classes.
+
+As stated above, SBDG resolves resources on import from the classpath and resources on export to the filesystem.
+
+It is easy to customize this behavior simply by providing an implementation of either or both the
+`ImportResourceResolver` and `ExportResourceResolver` interfaces and declare instances as beans in the Spring context:
+
+.Import & Export ResourceResolver beans
+[source,java]
+----
+@Configuration
+class MyApplicationConfiguration {
+
+	@Bean
+    ImportResourceResolver importResourceResolver() {
+		return new MyImportResourceResolver();
+    }
+
+    @Bean
+    ExportResourceResolver exportResourceResolver() {
+		return new MyExportResourceResolver();
+    }
+}
+----
+
+TIP: If you need to customize the resource resolution process per location (or `Region`) on import or export, then you
+could use the https://en.wikipedia.org/wiki/Composite_pattern[Composite Software Design Pattern].
+
+[[geode-data-using-import-export-api-extensions-resource-resolution-default-customization]]
+===== Customize Default Resource Resolution
+
+If you are content with the provided defaults, but want to target specific locations on the classpath or filesystem
+used by the import or export, then SBDG additionally provides the following properties:
+
+.Import/Export Resource Location Properties
+[source,properties]
+----
+# Spring Boot application.properties
+
+spring.boot.data.gemfire.cache.data.import.resource.location=...
+spring.boot.data.gemfire.cache.data.export.resource.location=...
+----
+
+The properties accept any valid resource string as specified in the Spring
+{spring-framework-docs}/core.html#resources-resourceloader[documentation] (See *Table 10. Resource strings*).
+
+This means even though the import defaults from the classpath, it is simple to change the location from classpath
+to filesystem, or even network (e.g. https://) simply by changing the _prefix_ (or _protocol_).
+
+Of course, import/export resource location properties can refer to other properties via property placeholders, but SBDG
+further allows users to use SpEL inside the property values.
+
+For example:
+
+.Using SpEL
+[source,properties]
+----
+# Spring Boot application.properties
+
+spring.boot.data.gemfire.cache.data.import.resource.location=\
+  https://#{#env['user.name']}:#{someBean.lookupPassword(#env['user.name'])}@#{host}:#{port}/cache/#{#regionName}/data/import
+----
+
+The import resource location in this case refers to a rather sophisticated resource string using a complex SpEL
+expression.
+
+Out-of-the-box, SBDG populates the SpEL `EvaluationContext` with 3 sources of information:
+
+* Access to the Spring `BeanFactory`
+* Access to the Spring `Environment`
+* Access to the current `Region`
+
+Simple Java System properties or environment variables can be accessed with the expression:
+
+[source,text]
+----
+#{propertyName}
+----
+
+For more complex property names (e.g. properties using dot notation, such as the `user.home` Java System property),
+users can access these properties directly from the `Environment` using map style syntax as follows:
+
+[source,text]
+----
+#{#env['property.name']}
+----
+
+The `#env` variable is set in the SpEL `EvaluationContext` to the Spring `Environment`.
+
+Because the SpEL `EvaluationContext` is evaluated with the Spring `ApplicationContext` as the root object, you also have
+access to the beans declared and registered in the Spring context and can invoke methods on them, as shown above with
+`someBean.lookupPassword(..)`.  "_someBean_" must be the name of the bean as declared/registered in the Spring context.
+
+WARNING: Be careful when accessing beans declared in the Spring context with SpEL, particularly when using `EAGER`
+import as it may force those beans to be eagerly (or even, prematurely) initialized.
+
+SBDG also sets the `#regionName` variable in the `EvaluationContext` to the name of the `Region`,
+as determined by {apache-geode-javadoc}/https://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/Region.html#getName--[Region.getName()],
+targeted for import/export.
+
+This allows you to not only change the location of the resource but also change the resource name (e.g. filename).
+
+For example:
+
+.Using `#regionName`
+[source,properties]
+----
+# Spring Boot application.properties
+
+spring.boot.data.gemfire.cache.data.export.resource.location=\
+    file://#{#env['user.home']}/gemfire/cache/data/custom-filename-for-#{#regionName}.json
+----
+
+NOTE: By default, the exported file is stored in the working directory (i.e. `System.getProperty("user.dir")`) of the
+Spring Boot application process.
+
+TIP: See the Spring {spring-framework-docs}/core.html#expressions[documentation] for more information on SpEL.
+
+[[geode-data-using-import-export-api-extensions-resource-reading-writing]]
+==== Reading & Writing Resources
+
+The Spring {spring-framework-javadoc}/org/springframework/core/io/Resource.html[`Resource`] handle specifies
+the location of a resource, not how to read or write it. Even the Spring
+{spring-framework-javadoc}/org/springframework/core/io/ResourceLoader.html[`ResourceLoader`], which is an interface for
+"loading" `Resources`, does not specifically read or write any content to the `Resource`.
+
+As such, SBDG separates these concerns into two interfaces: `ResourceReader` and `ResourceWriter`, respectively.
+The design follows the same pattern used by Java's `InputStream/OutputStream` and `Reader/Writer` classes in
+the `java.io` package.
+
+The interfaces are basically defined as:
+
+.ResourceReader
+[source,java]
+----
+@FunctionalInterface
+interface ResourceReader {
+
+    byte[] read(Resource resource);
+
+}
+----
+
+And...
+
+.ResourceWriter
+[source,java]
+----
+@FunctionalInterface
+interface ResourceWriter {
+
+    void write(Resource resource, byte[] data);
+
+}
+----
+
+Both of interfaces provide additional methods to _compose_ readers and writers, much like Java's own `Consumer`
+and `Function` interfaces in the `java.util.function` package. If a particular reader or writer is used in a composition
+and is unable to handle the given `Resource`, then it should throw a `UnhandledResourceException` to allow the next
+reader or writer in the composition to try and read from or write to the `Resource`.
+
+Of course, the reader or writer are free to throw a `ResourceReadException` or `ResourceWriteException` to break the
+chain of reader and writer invocations in the composition.
+
+To override the default export/import reader and writer used by SBDG out-of-the-box, simply implement
+the `ResourceReader` and/or `ResourceWriter` interfaces as appropriate and declare instances of these classes as beans
+in the Spring context:
+
+.Custom `ResourceReader` & `ResourceWriter` beans
+[source,java]
+----
+@Configuration
+class MyApplicationConfiguration {
+
+	@Bean
+    ResourceReader myResourceReader() {
+		return new MyResourceReader()
+            .thenReadFrom(new MyOtherResourceReader());
+    }
+
+    @Bean
+    ResourceWriter myResourceWriter() {
+		return new MyResourceWriter();
+    }
+}
+----
