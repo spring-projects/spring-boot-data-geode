@@ -6,53 +6,61 @@
 
 
 The Spring Boot for {geode-name} (SBDG) project includes the `org.springframework.geode:apache-geode-extensions` module
-to make working with the Apache Geode {apache-geode-javadoc}[APIs] tolerable and useful. While this module is relatively
-new, it contains several useful API extensions already. We will continue to add extensions to this module as both SBDG
-and users' needs dictate.
+to make using {geode-name} {apache-geode-javadoc}[APIs] tolerable and useful. While this module is relatively new, it
+contains several API extensions already.
 
 {geode-name}'s {apache-geode-javadoc}[API] is quite convoluted with many design problems:
 
-1. Non-intuitive, complex interfaces that often contradict industry standard terms.
-(e.g. `Cache` vs. {apache-geode-javadoc}/org/apache/geode/cache/Region.html[`Region`]).
-2. APIs with an excessive footprint: no sensible https://en.wikipedia.org/wiki/Abstract_data_type[ADTs] resulting in
+1. Non-intuitive, complex interfaces that contradict industry standard terms.
+(e.g. https://javadoc.io/static/javax.cache/cache-api/1.1.1/javax/cache/Cache.html[`Cache`]
+vs. {apache-geode-javadoc}/org/apache/geode/cache/Region.html[`Region`]).
+2. APIs with an excessive footprint and no sensible https://en.wikipedia.org/wiki/Abstract_data_type[ADTs] resulting in
 too many overloaded methods with loaded method signatures (e.g. {apache-geode-javadoc}/org/apache/geode/cache/Region.html[`Region`]).
-3. Useful functionality hidden behind so called "internal" APIs that ought to be public.
-4. APIs that are closed for modification yet offer no option for extension violating the
-https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[_Open/Closed Principle_].
-5. Utility/Helper classes containing functionality that ought to be part of the behavior exhibited by the types on which
-the Utility/Helper classes operate (e.g. {apache-geode-javadoc}/org/apache/geode/cache/partition/PartitionRegionHelper.html[`PartitionRegionHelper`]).
-6. Incorrect use of _Checked_ `Exceptions`
+3. Lingering deprecations causing excess baggage.
+4. Use of public fields exposing internal state, violating encapsulation, making it difficult to uphold invariants.
+5. Useful functionality hidden behind so called "internal" APIs that should be public.
+6. Utility/Helper classes containing functionality that should be part of the types on which the Utility class operates
+(e.g. {apache-geode-javadoc}/org/apache/geode/cache/partition/PartitionRegionHelper.html[`PartitionRegionHelper`]).
+7. Incorrect use of _Checked_ `Exceptions`
 (e.g. {apache-geode-javadoc}/org/apache/geode/cache/IncompatibleVersionException.html[`IncompatibleVersionException`]).
-7. Lingering deprecations.
-8. ...
+8. Inconsistent behavior across different methods of configuration: API vs. `cache.xml` vs. _Cluster Configuration_
+using _Gfsh_.
+9. APIs closed for modification, yet offer no option for extension thereby violating the
+https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[_Open/Closed Principle_].
+10. In general, poor _Separation of Concerns_ (e.g. `Region`), violating many of the
+https://en.wikipedia.org/wiki/SOLID[SOLID] principles.
+11. Components (e.g. `Pool`) that are difficult to test properly: {geode-name} often incorrectly refers to implementation
+classes rather than interfaces leading to `ClassCastExceptions` and violation of the _Program to Interfaces_ principle.
+12. Untimely shutdown and release of resources that run interference when writing _Integration Tests_.
 
-All of this plus much more makes using the {geode-name} API correctly difficult and confusing at times, especially
-without prior knowledge or experience. Users very often get this wrong and it is the main reason why Spring's APIs for
-{geode-name} are so invaluable; they can help you do the right thing!
+This list goes on making {geode-name}'s APIs difficult and confusing to use at times, especially without prior knowledge
+or experience. Users very often get this wrong and it is the main reason why Spring's APIs for {geode-name} are so
+invaluable; they can help you do the right thing!
 
-Consider this, the one and only cache implementation (`GemFireCacheImpl`) implements both the `ClientCache` and `Cache`
-interfaces. A `ClientCache` instance is created by client applications to access/persist data in a {geode-name} cluster.
-On the contrary, a "peer" `Cache` instance is created by server-side applications serving as peer members of the
-{geode-name} cluster (a.k.a. distributed system) to manage data. Both incarnations result in an instance of
-`GemFireCacheImpl`, yet a cache cannot be both a client and a peer. But, you would never know this by introspecting
-the cache instance.
+Let's consider a few examples.
+
+The one and only cache implementation (`GemFireCacheImpl`) implements both the `ClientCache` and `Cache` interfaces.
+A `ClientCache` instance is created by client applications to access and persist data in a {geode-name} cluster. On the
+contrary, a _peer_ `Cache` instance is created by server-side applications serving as peer members of the {geode-name}
+cluster and distributed system to manage data. Both incarnations result in an instance of `GemFireCacheImpl`, yet a
+cache cannot be both a client and a peer. But, you would never know this by introspecting the cache instance.
 
 The {apache-geode-javadoc}/org/apache/geode/Delta.html[`Delta`] interface, {apache-geode-javadoc}/org/apache/geode/Delta.html#hasDelta--[`hasDelta()`]
-method is another point of confusion. If there is no delta, why send the object in its entirety? Presumably there are no
-changes. Of course, there is a reason but it is not immediately apparent why!
+method, is another point of confusion. If there is no delta, why send the object in its entirety? Presumably there are
+no changes. Of course, there is a reason but it is not immediately apparent why given the lack of documentation.
 
-Spring in general, and SBDG in particular, shield users from design problems as well as changes in {geode-name}'s APIs
+Spring in general, and SBDG in particular, shield users from design problems as well as changes to {geode-name}'s APIs
 that could adversely affect your applications when integrating with {geode-name}. Spring's APIs provide a layer of
 indirection along with enhanced capabilities (e.g. Exception translation).
 
-NOTE: Spring Data for {geode-name} (SDG) also {spring-data-geode-docs-html}/#apis[offers] some relief when working with
+TIP: Spring Data for {geode-name} (SDG) also {spring-data-geode-docs-html}/#apis[offers] some relief when using
 {geode-name}'s APIs.
 
 [[geode-api-extensions-cacheresolver]]
 === `SimpleCacheResolver`
 
 In some cases, it is necessary to acquire a reference to the cache instance in your application components at runtime.
-For instance, you might want to create a temporary `Region` on the fly in order to aggregate data for analysis.
+For example, you might want to create a temporary `Region` on the fly in order to aggregate data for analysis.
 
 Typically, you already know the type of cache your application is using since you must declare your application to be
 either a client (i.e. `ClientCache`) in the {apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[client/server topology],
@@ -61,10 +69,10 @@ or a {apache-geode-docs}/topologies_and_comm/p2p_configuration/chapter_overview.
 the {geode-name} data management system. In most cases, your application will be a client and SBDG makes this decision
 easy since it _auto-configures_ a `ClientCache` instance, <<geode-clientcache-applications,by default>>.
 
-In a Spring context, the cache instance created by the framework is a managed bean in the Spring Container. As such,
+In a Spring context, the cache instance created by the framework is a managed bean in the Spring container. As such,
 it is a simple matter to inject a reference to the _Singleton_ cache bean into any other managed application component.
 
-Auto-wiring a Cache Reference using Dependency Injection (DI)
+.Autowired Cache Reference using Dependency Injection (DI)
 [source,java]
 ----
 @Service
@@ -78,8 +86,8 @@ class CacheMonitoringService {
 }
 ----
 
-However, in cases where the application component or class is not managed by Spring, and you need a reference to the
-cache instance at runtime, then SBDG provides the abstract `org.springframework.geode.cache.SimpleCacheResolver` class
+However, in cases where your application component or class is not managed by Spring and you need a reference to the
+cache instance at runtime, SBDG provides the abstract `org.springframework.geode.cache.SimpleCacheResolver` class
 (see {spring-boot-data-geode-javadoc}/org/springframework/geode/cache/SimpleCacheResolver.html[Javadoc]).
 
 .`SimpleCacheResolver` API
@@ -101,11 +109,11 @@ abstract class SimpleCacheResolver {
 ----
 
 `SimpleCacheResolver` adheres to https://en.wikipedia.org/wiki/SOLID[SOLID OO Principles]. This class is abstract and
-extensible so users can change the algorithm used to resolve client or peer cache instances as well as mock the methods
+extensible so users can change the algorithm used to resolve client or peer cache instances as well as mock its methods
 in _Unit Tests_.
 
 Additionally, each method is precise. For example, `resolveClientCache()` will only resolve a reference to a cache if
-the cache instance is a "client"! If a cache exists but is a "peer" instance, then `resolveClientCache()` returns
+the cache instance is a "client"! If a cache exists, but is a "peer" instance, then `resolveClientCache()` returns
 `Optional.EMPTY`. The behavior of `resolvePeerCache()` is similar.
 
 `require()` returns a non-`Optional` reference to a cache instance throwing an `IllegalStateException` if a cache
@@ -114,39 +122,37 @@ is not present.
 [[geode-api-extensions-cacheutils]]
 === `CacheUtils`
 
-Under-the-hood, the `SimpleCacheResolver` delegates some of its functions to the
+Under-the-hood, `SimpleCacheResolver` delegates some of its functions to the
 {spring-boot-data-geode-javadoc}/org/springframework/geode/util/CacheUtils.html[`CacheUtils`]
-abstract utility class, which provides additional, convenient capabilities when working with a cache.
+abstract utility class, which provides additional, convenient capabilities when using a cache.
 
 While there are utility methods to determine whether a cache instance (i.e. `GemFireCache`) or _Region_ is a client
-or a peer, 1 of the more useful functions is to extract all the values from a _Region_.
+or a peer, one of the more useful functions is to extract all the values from a _Region_.
 
 To extract all the values stored in a _Region_ call `CacheUtils.collectValues(:Region<?, T>)`. This method returns a
-`Collection<T>` containing all the values stored in the given _Region_.
-
-The `collectValues(:Region<?, T>)` method is smart and knows how to handle either client or peer _Regions_. This
-distinction is important since client `PROXY` _Regions_ store no values.
+`Collection<T>` containing all the values stored in the given _Region_.  The method is smart, and knows how to handle
+the `Region` appropriately regardless of whether the `Region` is a client or peer `Region`. This distinction is
+important since client `PROXY` _Regions_ store no values.
 
 WARNING: Caution is advised when getting all values from a _Region_. While getting filtered reference values from a
-non-transactional, reference-only data [`REPLICATE`] _Region_ is quite useful, getting values from a transactional,
-[`PARTITION`] _Region_ can prove quite detrimental, especially in production.  Getting all values from a _Region_ is
-also quite useful during testing.
+non-transactional, reference data only [`REPLICATE`] _Region_ is quite useful, getting all values from a transactional,
+[`PARTITION`] _Region_ can prove quite detrimental, especially in production. Getting all values from a _Region_ can be
+useful during testing.
 
 [[geode-api-extensions-membership]]
 === `MembershipListenerAdapter` & `MembershipEvent`
 
-Another useful API hidden by {geode-name} is the membership events and listener interface. This API is particularly
-useful on the server-side when your Spring Boot application is serving as a peer member/node of the {geode-name}
-distributed system.
+Another useful API hidden by {geode-name} is the membership events and listener interface. This API is especially useful
+on the server-side when your Spring Boot application is serving as a peer member of an {geode-name} distributed system.
 
-When a peer member gets disconnected from the cluster, perhaps due to a network failure, the member is forcibly removed
-from the distributed system. This node immediately enters a reconnecting state, trying to establish a connection back to
+When a peer member is disconnected from the distributed system, perhaps due to a network failure, the member is forcibly
+removed from the cluster. This node immediately enters a reconnecting state, trying to establish a connection back to
 the cluster. Once reconnected, the peer member must rebuild all cache objects (i.e. `Cache`, `Regions`, `Indexes`,
-`DiskStores`, etc). All old/previous cache objects are invalid and their references stale.
+`DiskStores`, etc). All previous cache objects are now invalid and their references stale.
 
 As you can imagine, in a Spring context this is particularly problematic since most {geode-name} objects are _Singleton_
-beans declared in and managed by the Spring Container. Those beans maybe, and in many cases are, injected into framework
-and application components. For instance, `Regions` are injected into SDG's `GemfireTemplate`, Spring Data _Repositories_
+beans declared in and managed by the Spring container. Those beans may be injected and used in other framework and
+application components. For instance, `Regions` are injected into SDG's `GemfireTemplate`, Spring Data _Repositories_
 and possibly application-specific _Data Access Objects_ (https://en.wikipedia.org/wiki/Data_access_object[DAO]).
 
 If references to those cache objects become stale on a forced disconnect event, then there is no way to auto-wire fresh
@@ -161,17 +167,17 @@ it is worth. It is simply easier to "refresh" the Spring `ApplicationContext`, a
 ideal. See https://jira.spring.io/browse/SGF-921[SGF-921] and https://jira.spring.io/browse/SGF-227[SGF-227]
 for further details.
 
-In the situation where membership events are useful to the Spring Boot application, SBDG provides the following
+In the case where membership events are useful to the Spring Boot application, SBDG provides the following
 {spring-boot-data-geode-javadoc}/org/springframework/geode/distributed/event/package-frame.html[API]:
 
 * {spring-boot-data-geode-javadoc}/org/springframework/geode/distributed/event/MembershipListenerAdapter.html[`MembershipListenerAdapter`]
 * {spring-boot-data-geode-javadoc}/org/springframework/geode/distributed/event/MembershipEvent.html[`MembershipEvent`]
 
 The abstract `MembershipListenerAdapter` class implements {geode-name}'s clumsy
-`org.apache.geode.distributed.internal.MembershipListener` interface, simplifying the event handler method signatures
-by using an appropriate `MembershipEvent` type to encapsulate the actors in the event.
+`org.apache.geode.distributed.internal.MembershipListener` interface to simplify the event handler method signatures by
+using an appropriate `MembershipEvent` type to encapsulate the actors in the event.
 
-The abstract `MembershipEvent` class is further subclassed to represent the specific membership event types that occur
+The abstract `MembershipEvent` class is further subclassed to represent specific membership event types that occur
 within the {geode-name} system:
 
 * {spring-boot-data-geode-javadoc}/org/springframework/geode/distributed/event/support/MemberDepartedEvent.html[`MemberDepartedEvent`]
@@ -179,7 +185,7 @@ within the {geode-name} system:
 * {spring-boot-data-geode-javadoc}/org/springframework/geode/distributed/event/support/MemberSuspectEvent.html[`MemberSuspectEvent`]
 * {spring-boot-data-geode-javadoc}/org/springframework/geode/distributed/event/support/QuorumLostEvent.html[`QuorumLostEvent`]
 
-The API can be depicted in this UML diagram:
+The API is depicted in this UML diagram:
 
 image::{images-dir}/membership-api-uml.png[]
 
@@ -192,20 +198,26 @@ The type hierarchy is useful in `instanceof` expressions while the `Enum` is use
 You can see 1 particular implementation of the `MembershipListenerAdapter` with the
 {spring-boot-data-geode-javadoc}/org/springframework/geode/distributed/event/ApplicationContextMembershipListener.html[`ApplicationContextMembershipListener`] class,
 which does exactly as we described above, handling forced-disconnect/auto-reconnect membership events inside a
-Spring context.
+Spring context in order to refresh the Spring `ApplicationContext`.
 
 [[geode-api-extensions-pdx]]
 === PDX
 
-{geode-name}'s PDX serialization framework is yet another API that falls short.
+{geode-name}'s PDX serialization framework is yet another API that falls short of a complete stack.
 
 For instance, there is no easy or direct way to serialize an object as PDX bytes. It is also not possible to modify an
-existing `PdxInstance` by adding or removing a field as it requires a new PDX type. In this case, you must create a new
-`PdxInstance`, but unfortunately, the {geode-name} API offers no assistance when copying from an existing `PdxInstance`.
+existing `PdxInstance` by adding or removing fields since it requires a new PDX type. In this case, you must create a
+new `PdxInstance` and copy from the existing `PdxInstance`. Unfortunately, the {geode-name} API offers no assistance.
+It is also not possible to use PDX in a client, local-only mode without a server since the PDX type registry is only
+available and managed on servers in a cluster. All of this leaves much to be desired.
 
-In such cases, SBDG provides the {spring-boot-data-geode-javadoc}/org/springframework/geode/pdx/PdxInstanceBuilder.html[`PdxInstanceBuilder`]
-class, appropriately named after the https://en.wikipedia.org/wiki/Builder_pattern[_Builder Software Design Pattern_].
-The `PdxInstanceBuilder` also offers a fluent API style for constructing `PdxInstances`.
+[[geode-api-extensions-pdx-builder]]
+==== `PdxInstanceBuilder`
+
+In such cases, SBDG conveniently provides the
+{spring-boot-data-geode-javadoc}/org/springframework/geode/pdx/PdxInstanceBuilder.html[`PdxInstanceBuilder`] class,
+appropriately named after the https://en.wikipedia.org/wiki/Builder_pattern[_Builder Software Design Pattern_].
+The `PdxInstanceBuilder` also offers a fluent API for constructing `PdxInstances`.
 
 .`PdxInstanceBuilder` API
 [source,java]
@@ -221,7 +233,7 @@ class PdxInstanceBuilder {
 
 For example, you could serialize an application domain object as PDX bytes with the following code:
 
-.Object to PDX
+.Serializing an Object to PDX
 [source,java]
 ----
 @Component
@@ -259,9 +271,13 @@ class CustomerDecorator {
 }
 ----
 
+[[geode-api-extensions-pdx-wrapper]]
+==== `PdxInstanceWrapper`
+
 SBDG also provides the {spring-boot-data-geode-javadoc}/org/springframework/geode/pdx/PdxInstanceWrapper.html[`PdxInstanceWrapper`]
-class to wrap an existing `PdxInstance` in order to provide more control during the conversion from PDX to JSON and back
-into a POJO. Specifically, the wrapper gives users more control of the configuration of Jackson's `ObjectMapper`.
+class to wrap an existing `PdxInstance` in order to provide more control during the conversion from PDX to JSON and from
+JSON back into a POJO. Specifically, the wrapper gives users more control over the configuration of Jackson's
+`ObjectMapper`.
 
 The `ObjectMapper` constructed by {geode-name}'s own `PdxInstance` implementation (`PdxInstanceImpl`) is not
 configurable nor was it configured correctly. And unfortunately, since `PdxInstance` is not extensible, the `getObject()`
@@ -280,9 +296,26 @@ implementation called by the user.
 In addition to the decorated `getObject()` method, the `PdxInstanceWrapper` provides a thorough implementation of the
 `toString()` method. The state of the `PdxInstance` is output in a JSON-like String.
 
-WARNING: It is not currently possible to implement the `PdxInstance` interface and then store instances of this type as
-a value in a _Region_.  {geode-name} naively assumes that all `PdxInstance` objects are an implementation created by
-{geode-name} itself (i.e. `PdxInstanceImpl`), which has a tight coupling to the PDX type registry.
+Finally, the `PdxInstanceWrapper` class adds a `getIdentifier()` method. Rather than put the burden on the user to have
+to iterate the field names of the `PdxInstance` to determine whether a field is the identity field, and then call
+`getField(..)` with the field name to get the ID (value), assuming an identity field was marked in the first place,
+the `PdxInstanceWrapper` class provides the `getIdentifier()` method to return the ID of the `PdxInstance` directly.
+
+The `getIdentifier()` method is smart in that it first iterates the fields of the `PdxInstance` asking if the field is
+the identity field. If no field was marked as the "identity" field, then the algorithm searches for a field named "id".
+If no field with the name "id" exists, then the algorithm searches for a metadata field called "@identifier", which
+refers to the field that is the identity field of the `PdxInstance`.
+
+The `@identifier` metadata field is useful in cases where the `PdxInstance` originated from JSON and the application
+domain object uses a natural identifier, rather than a surrogate ID, such as `Book.isbn`.
+
+NOTE: {geode-name}'s `JSONFormatter` is not capable of marking the identity field of a `PdxInstance` originating
+from JSON.
+
+WARNING: It is not currently possible to implement the `PdxInstance` interface and store instances of this type as a
+value in a _Region_. {geode-name} naively assumes that all `PdxInstance` objects are an implementation created by
+{geode-name} itself (i.e. `PdxInstanceImpl`), which has a tight coupling to the PDX type registry. An Exception is
+thrown if you try to store instances of your own `PdxInstance` implementation.
 
 [[geode-api-extensions-security]]
 === Security
