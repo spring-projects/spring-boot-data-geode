@@ -263,7 +263,7 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 
 	@Configuration
 	@EnableAutoConfiguration
-	@EnableGemFireMockObjects(destroyOnEvent = ContextClosedEvent.class)
+	@EnableGemFireMockObjects(destroyOnEvents = ContextClosedEvent.class)
 	static class WithAutoConfiguredClientCacheConfiguration { }
 
 	@ClientCacheApplication(serverGroup = "TestServerGroup", threadLocalConnections = true)
