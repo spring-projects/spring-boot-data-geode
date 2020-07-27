@@ -317,6 +317,92 @@ value in a _Region_. {geode-name} naively assumes that all `PdxInstance` objects
 {geode-name} itself (i.e. `PdxInstanceImpl`), which has a tight coupling to the PDX type registry. An Exception is
 thrown if you try to store instances of your own `PdxInstance` implementation.
 
+[[geode-api-extensions-pdx-adapter]]
+==== `ObjectPdxInstanceAdapter`
+
+In rare cases, it might be necessary to treat an `Object` as a `PdxInstance` depending on the context without incurring
+the overhead of serializing an `Object` to PDX. For such cases, SBDG offers the `ObjectPdxInstanceAdapter` class.
+
+This might be true when calling a method with a parameter expecting an argument, or returning an instance, of type
+`PdxInstance`, particularly when {geode-name}'s `read-serialized` PDX configuration property is set to `true`, and only
+an object is available in the current context.
+
+Under-the-hood, SBDG's `ObjectPdxInstanceAdapter` class uses Spring's
+{spring-framework-javadoc}/org/springframework/beans/BeanWrapper.html[`BeanWrapper`] class along with _Java's
+Introspection & Reflection_ functionality to adapt the given `Object` in order to access it using the full
+{apache-geode-javadoc}/org/apache/geode/pdx/PdxInstance.html[`PdxInstance`] API. This includes the use of the
+{apache-geode-javadoc}/org/apache/geode/pdx/WritablePdxInstance.html[`WritablePdxInstance`] API, obtained from
+{apache-geode-javadoc}/org/apache/geode/pdx/PdxInstance.html#createWriter--[`PdxInstance.createWriter()`], to modify
+the underlying `Object` as well.
+
+Like the `PdxInstanceWrapper` class, `ObjectPdxInstanceAdapter` contains special logic to resolve the identity field
+and ID of the `PdxInstance`, including consideration for Spring Data's
+{spring-data-commons-javadoc}/org/springframework/data/annotation/Id.html[`@Id`] mapping annotation, which can be
+introspected in this case given the underlying `Object` backing the `PdxInstance` is a POJO.
+
+Clearly, the `ObjectPdxInstanceAdapter.getObject()` method will return the given, wrapped `Object` used to construct
+the `ObjectPdxInstanceAdapter`, and is therefore, automatically "_deserializable_", as determined by the
+{apache-geode-javadoc}/org/apache/geode/pdx/PdxInstance.html#isDeserializable--[`PdxInstance.isDeseriable()`] method,
+which always returns true.
+
+To adapt any `Object` as a `PdxInstance`, simply do:
+
+.Adapt an `Object` as a `PdxInstance`
+[source,java]
+----
+class OfflineObjectToPdxInstanceConverter {
+
+	@NonNull PdxInstance convert(@NonNull Object target) {
+		return ObjectPdxInstanceAdapter.from(target);
+	}
+}
+----
+
+Once the adapter is created, you can use it to access data on the underlying `Object`.
+
+For example, given a `Customer` class:
+
+.`Customer` class
+[source,java]
+----
+@Region("Customers")
+class Customer {
+
+	@Id
+    private Long id;
+
+	String name;
+
+	// constructors, getters and setters omitted
+
+}
+----
+
+Then accessing an instance of `Customer` using the `PdxInstance` API is as easy as:
+
+.Accessing an `Object` using the `PdxInstance` API
+[source,java]
+----
+class ObjectPdxInstanceAdapterTest {
+
+	@Test
+    public void getAndSetObjectProperties() {
+
+		Customer jonDoe = new Customer(1L, "Jon Doe");
+
+		PdxInstance adapter = ObjectPdxInstanceAdapter.from(jonDoe);
+
+		assertThat(jonDoe.getName()).isEqualTo("Jon Doe");
+		assertThat(adapter.getField("name")).isEqualTo("Jon Doe");
+
+		adapter.createWriter().setField("name", "Jane Doe");
+
+		assertThat(adapter.getField("name")).isEqualTo("Jane Doe");
+		assertThat(jonDoe.getName()).isEqualTo("Jane Doe");
+    }
+}
+----
+
 [[geode-api-extensions-security]]
 === Security
 
