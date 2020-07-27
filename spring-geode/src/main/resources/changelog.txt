@@ -4,6 +4,27 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.3.1.RELEASE (2020-07-27)
+---------------------------------------------
+Upgrades SBDG to Spring Boot 2.3.1.RELEASE. Adds support to extend the Cache Data Import/Export API.
+
+* Adds support to customize and extend the Cache Data Import/Export API in order to  to affect the behavior of
+import/export functionality including Data Format, Resource Resolution and Resource Reading/Writing.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/92.
+* Renames the 'Working with Data' chapter to 'Using Data' in the reference documentation.
+* Includes additional documentation on how to extend the Cache Data Import/Export API.
+* Edits the 'Apache Geode API Extensions' chapter to include documentation on the ObjectPdxInstanceAdapter class
+along with revising the other sections.
+* Upgrades to Spring Framework 5.2.7.RELEASE.
+* Upgrades to Spring Boot 2.3.1.RELEASE.
+* Upgrades to Spring Build Conventions Gradle Plugin 0.0.33.RELEASE.
+* Upgrades to Spring Data Neumann-SR1.
+* Upgrades to Spring Data for Apache Geode & VMware GemFire 2.3.1.RELEASE.
+* Upgrades to Spring Test for Apache Geode & VMware GemFire 0.0.17.RELEASE.
+* Upgrades to Byte Buddy 1.10.13.
+* Upgrades to Mockito 3.4.4.
+
+
 Changes in version 1.2.8.RELEASE (2020-06-16)
 ---------------------------------------------
 Aligns SBDG with Spring Boot 2.2.8.RELEASE along with the latest versions of Spring Framework and Spring Data.
