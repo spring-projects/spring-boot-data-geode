@@ -21,14 +21,14 @@ applications with Spring Boot.
 | Explains what auto-configuration is provided by SBDG out-of-the-box and what the auto-configuration is doing.
 | {github-samples-url}/boot/configuration[Boot Auto-Configuration]
 
-| link:guides/boot-security.html[Security with Spring Boot for Apache Geode/Pivotal GemFire]
-| Explains how to configure auth and SSL/TLS for Apache Geode and Pivotal Cloud Cache powered
-applications with Spring Boot.
-| {github-samples-url}/boot/security[Boot Security]
-
 | link:guides/boot-actuator.html[Spring Boot Actuator for Apache Geode/Pivotal GemFire]
 | Explains how to use Spring Boot Actuator for Apache Geode and how it works.
 | {github-samples-url}/boot/actuator[Boot Actuator]
+
+| link:guides/boot-security.html[Spring Boot Security for Apache Geode/Pivotal GemFire]
+| Explains how to configure Auth and TLS with SSL when using Apache Geode and Pivotal Cloud Cache
+in Spring Boot applications.
+| {github-samples-url}/boot/security[Boot Security]
 
 | link:guides/caching-look-aside.html[Look-Aside Caching with Spring's Cache Abstraction and Apache Geode]
 | Explains how to enable and use the Spring Cache Abstraction with Apache Geode as the caching provider for Look-Aside Caching.
