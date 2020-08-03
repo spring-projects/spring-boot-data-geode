@@ -3,7 +3,7 @@ applications:
   - name: crm-app
     memory: 768M
     instances: 1
-    path: ./build/libs/spring-geode-samples-getting-started-1.2.0.BUILD-SNAPSHOT.jar
+    path: ./build/libs/spring-geode-samples-getting-started-1.4.0-SNAPSHOT.jar
     services:
       - pccServiceOne
     buildpacks:
