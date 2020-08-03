@@ -1521,8 +1521,8 @@ In order to acquire the Pivotal Cloud Cache (PCC) / Pivotal GemFire bits used by
 sign up and register on https://network.pivotal.io/[Pivotal Network] (a.k.a. "_PivNet_").
 
 This should include instructions on how to configure your application Maven POM file with the necessary `<repository>`
-declaration for acquiring the _Pivotal Cloud Cache_ / Pivotal GemFire bits pulled in by the `
-org.springframework.geode:spring-gemfire-starter` SBDG application dependency as well as the necessary settings in
+declaration for acquiring the _Pivotal Cloud Cache_ / Pivotal GemFire bits pulled in by the
+`org.springframework.geode:spring-gemfire-starter` SBDG application dependency as well as the necessary settings in
 `~/.m2/settings.xml` to authenticate and access the Pivotal Commercial Repository server.
 
 This is absolutely necessary since Pivotal Cloud Cache (PCC) / Pivotal GemFire bits are not available in _Maven Central_.
@@ -1534,7 +1534,7 @@ https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/gemfire/getting_starte
 .Required Spring Boot Actuator Bits
 *****
 As of Apache Geode 1.9 and Pivotal GemFire 9.8, upon which Pivotal Cloud Cache (PCC) 1.8 is {pivotal-cloudcache-docs}/product-snapshot.html[based],
-both GemFire and Geode require and declare Micrometer on the classpath as a compile-time depedency.
+both GemFire and Geode require and declare Micrometer on the classpath as a compile-time dependency.
 
 Technically, the Micrometer bits are pulled in by `org.apache.geode:geode-core:1.9.0` and the Micrometer version
 is determined by the version of Spring Boot you are using:
