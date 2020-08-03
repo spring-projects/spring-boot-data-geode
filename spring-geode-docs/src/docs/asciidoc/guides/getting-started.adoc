@@ -1,7 +1,7 @@
 [[geode-samples-getting-started]]
 = Getting Started Quickly, Easily and Reliably with Spring Boot for Apache Geode & Pivotal Cloud Cache
 John Blum
-:apache-geode-version: {master-apache-geode-version}
+:apache-geode-version: {apache-geode-doc-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
@@ -9,11 +9,11 @@ John Blum
 :gemfire-name: Pivotal GemFire
 :geode-name: Apache Geode
 :images-dir: ./images
-:pivotal-cloudcache-version: {master-pivotal-cloudcache-version}
+:pivotal-cloudcache-version: {pivotal-cloudcache-doc-version}
 :pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}
 :pivotal-cloudcache-website: https://pivotal.io/pivotal-cloud-cache
 :pivotal-cloudfoundry-website: https://pivotal.io/platform
-:pivotal-gemfire-version: {master-pivotal-gemfire-version}
+:pivotal-gemfire-version: {pivotal-gemfire-doc-version}
 :pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference
 :pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
 :pivotal-gemfire-website: https://pivotal.io/pivotal-gemfire

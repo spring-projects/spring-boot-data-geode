@@ -1,6 +1,6 @@
 [[geode-samples-caching-lookaside]]
 = Look-Aside Caching with Spring
-:apache-geode-version: {master-apache-geode-version}
+:apache-geode-version: {apache-geode-doc-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :images-dir: ./images
