@@ -5,6 +5,9 @@ John Blum
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
+:cloudcache-name: Pivotal Cloud Cache
+:gemfire-name: Pivotal GemFire
+:geode-name: Apache Geode
 :images-dir: ./images
 :pivotal-cloudcache-version: {master-pivotal-cloudcache-version}
 :pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}
@@ -1556,7 +1559,40 @@ To:
 
 TIP: See the link:../index.html#geode-gemfire-switch[Appendix] for more details on making the switch.
 
-.Acquiring Pivotal Cloud Cache Bits
+.Matching Client/Server Versions
+*****
+It is important to match versions when deploying to Pivotal Platform (formerly known as Pivotal CloudFoundry; PCF)
+using {cloudcache-name} (PCC). This is technically a {gemfire-name} restriction and has nothing to do with Spring.
+
+In a nutshell, older clients can connect to and communicate with the same or newer servers. For example, a 9.9 client
+can connect to and communicate with a 9.10 server. Clients can always connect to and communicate with a server having
+the same `major.minor` version (e.g. a 9.10 client with a 9.10 server). The `patch` version in `major.minor.patch`
+should be irrelevant (e.g. a 9.10.2 client should still be able to connect to and communicate with a 9.10.0 server).
+
+The opposite is not true. A newer client cannot connect to and communicate with an older server. For example, a 9.10
+client cannot connect to and communicate with a 9.9, or earlier version of a, server.
+
+Use the following table to make sure your client and server versions are correct when deploying to Pivotal Platform
+(PCF) or similar cloud environment hosting and managing {gemfire-name}:
+
+.Client/Server Versions
+[with="100%",subs="verbatim,attributes"]
+|===
+| SBDG | Spring Boot | {gemfire-name} | {geode-name} | {cloudcache-name}
+
+| {spring-boot-data-geode-version} | {spring-boot-version} | {pivotal-gemfire-artifact-version} | {apache-geode-artifact-version} | {pivotal-cloudcache-docs}/product-snapshot.html[{pivotal-cloudcache-artifact-version}]
+
+| 1.2.x | 2.2.x | 9.8.x | 1.9.x | https://docs.pivotal.io/p-cloud-cache/1-8/product-snapshot.html[1.8.x+]
+
+| 1.1.x | 2.1.x | 9.5.x | 1.6.x | https://resources.docs.pivotal.io/pdfs/p-cloud-cache-1.5.pdf[1.5.x+]
+
+|===
+
+TIP: Your Spring Boot application is the client and the cloud environment, hosting the {gemfire-name} cluster,
+is the server-side.
+*****
+
+.Acquiring {cloudcache-name} Bits
 *****
 In order to acquire the Pivotal Cloud Cache (PCC) / Pivotal GemFire bits used by your Spring Boot application, you must
 sign up and register on https://network.pivotal.io/[Pivotal Network] (a.k.a. "_PivNet_").
