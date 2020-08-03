@@ -1,6 +1,6 @@
 [[geode-samples-boot-actuator]]
 = Spring Boot Actuator for Apache Geode & Pivotal GemFire
-:apache-geode-version: {master-apache-geode-version}
+:apache-geode-version: {apache-geode-doc-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html

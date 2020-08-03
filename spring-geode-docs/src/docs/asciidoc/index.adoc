@@ -12,19 +12,19 @@ John Blum
 :toc: left
 :toclevels: 1
 :apache-geode-name: Apache Geode
-:apache-geode-version: {master-apache-geode-version}
+:apache-geode-version: {apache-geode-doc-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
 :apache-geode-wiki: https://cwiki.apache.org/confluence/display/GEODE
-:pivotal-cloudcache-version: {master-pivotal-cloudcache-version}
+:pivotal-cloudcache-version: {pivotal-cloudcache-doc-version}
 :pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}
 :pivotal-cloudcache-website: https://pivotal.io/pivotal-cloud-cache
 :pivotal-cloudfoundry-version: 2-9
 :pivotal-cloudfoundry-docs: https://docs.pivotal.io/platform/application-service/{pivotal-cloudfoundry-version}
 :pivotal-cloudfoundry-website: https://pivotal.io/platform
 :pivotal-gemfire-name: VMware GemFire
-:pivotal-gemfire-version: {master-pivotal-gemfire-version}
+:pivotal-gemfire-version: {pivotal-gemfire-doc-version}
 :pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference
 :pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
 :pivotal-gemfire-website: https://pivotal.io/pivotal-gemfire
