@@ -1,3 +1,4 @@
 # Spring Boot for Apache Geode Application Listeners
 org.springframework.context.ApplicationListener=\
-org.springframework.geode.context.logging.GeodeLoggingApplicationListener
+org.springframework.geode.context.logging.GeodeLoggingApplicationListener,\
+org.springframework.geode.context.logging.EnvironmentLoggingApplicationListener
