@@ -15,73 +15,82 @@
  */
 package example.app.security;
 
-import example.app.security.client.BootGeodeSecurityClientApplication;
-import example.app.security.client.model.Customer;
-import example.app.security.server.BootGeodeSecurityServerApplication;
-import org.apache.geode.cache.Region;
-import org.apache.geode.cache.client.ServerOperationException;
-import org.apache.geode.security.NotAuthorizedException;
-import org.junit.AfterClass;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.IOException;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.client.ServerOperationException;
+import org.apache.geode.security.NotAuthorizedException;
+
+import org.apache.shiro.authz.UnauthorizedException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.gemfire.tests.integration.ClientServerIntegrationTestsSupport;
-import org.springframework.data.gemfire.tests.process.ProcessWrapper;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.data.gemfire.GemfireTemplate;
+import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import example.app.security.client.BootGeodeSecurityClientApplication;
+import example.app.security.client.model.Customer;
+import example.app.security.server.BootGeodeSecurityServerApplication;
 
 /**
  * Integration Tests for {@link BootGeodeSecurityClientApplication} and {@link BootGeodeSecurityServerApplication}.
  *
  * @author Patrick Johsnon
+ * @author John Blum
+ * @see org.junit.Test
+ * @see org.apache.geode.security.NotAuthorizedException
+ * @see org.apache.shiro.authz.UnauthorizedException
  * @see org.springframework.boot.test.context.SpringBootTest
- * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.data.gemfire.GemfireTemplate
+ * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @see org.springframework.test.context.junit4.SpringRunner
  * @see example.app.security.client.BootGeodeSecurityClientApplication
+ * @see example.app.security.server.BootGeodeSecurityServerApplication
  * @since 1.3.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BootGeodeSecurityClientApplication.class)
-public class BootGeodeSecurityClientApplicationIntegrationTests extends ClientServerIntegrationTestsSupport {
+public class BootGeodeSecurityClientApplicationIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
-	private static ProcessWrapper geodeServer;
-
-	@Resource(name = "Customers")
-	private Region<Long, Customer> customers;
+	@Autowired
+	@Qualifier("customersTemplate")
+	@SuppressWarnings("unused")
+	private GemfireTemplate customersTemplate;
 
 	@BeforeClass
-	public static void setup() throws IOException {
-		int availablePort = findAvailablePort();
-
-		geodeServer = run(BootGeodeSecurityServerApplication.class,
-				String.format("-D%s=%d", GEMFIRE_CACHE_SERVER_PORT_PROPERTY, availablePort));
-
-		waitForServerToStart("localhost", availablePort);
-
-		System.setProperty(GEMFIRE_POOL_SERVERS_PROPERTY, String.format("%s[%d]", "localhost", availablePort));
+	public static void startGeodeServer() throws IOException {
+		startGemFireServer(BootGeodeSecurityServerApplication.class);
 	}
 
 	@Test
 	public void dataReadNotAllowed() {
-		Exception exception = assertThrows(ServerOperationException.class, () -> customers.get(2L).getName());
-		assertThat(exception.getCause()).isInstanceOf(NotAuthorizedException.class);
-		assertThat(exception.getCause().getMessage()).contains("jdoe not authorized for DATA:READ");
+
+		Exception exception = assertThrows(DataAccessResourceFailureException.class, () -> this.customersTemplate.get(2L));
+
+		assertThat(exception).hasCauseInstanceOf(ServerOperationException.class);
+		assertThat(exception.getCause()).hasMessageContaining("remote server");
+		assertThat(exception.getCause()).hasCauseInstanceOf(NotAuthorizedException.class);
+		assertThat(exception.getCause().getCause()).hasMessageContaining("jdoe not authorized for DATA:READ");
+		assertThat(exception.getCause().getCause()).hasCauseInstanceOf(UnauthorizedException.class);
+		assertThat(exception.getCause().getCause().getCause())
+			.hasMessageContaining("Subject does not have permission [DATA:READ");
+		assertThat(exception.getCause().getCause().getCause()).hasNoCause();
 	}
 
 	@Test
 	public void dataWriteAllowed() {
-		customers.put(3L, Customer.newCustomer(3L, "Samantha Rogers"));
-	}
 
-	@AfterClass
-	public static void cleanup() {
-		stop(geodeServer);
-		System.clearProperty(GEMFIRE_CACHE_SERVER_PORT_PROPERTY);
+		Customer samanthaRogers = Customer.newCustomer(3L, "Samantha Rogers");
+
+		assertThat(this.customersTemplate.put(samanthaRogers.getId(), samanthaRogers)).isNull();
 	}
 }
