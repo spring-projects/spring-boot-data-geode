@@ -43,7 +43,7 @@ import org.springframework.data.gemfire.config.annotation.EnableSecurity;
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
- * @see <a href="http://shiro.apache.org/">Apache Shiro</a>
+ * @see <a href="https://shiro.apache.org/">Apache Shiro</a>
  * @since 1.4.0
  */
 // tag::class[]
