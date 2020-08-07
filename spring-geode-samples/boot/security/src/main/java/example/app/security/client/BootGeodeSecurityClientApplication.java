@@ -27,6 +27,9 @@ import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.geode.config.annotation.EnableClusterAware;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import example.app.security.client.model.Customer;
 
 /**
@@ -49,6 +52,8 @@ import example.app.security.client.model.Customer;
 @EnableEntityDefinedRegions(basePackageClasses = Customer.class)
 public class BootGeodeSecurityClientApplication {
 
+	private static final Logger logger = LoggerFactory.getLogger("example.app.security");
+
 	public static void main(String[] args) {
 
 		new SpringApplicationBuilder(BootGeodeSecurityClientApplication.class)
@@ -67,16 +72,15 @@ public class BootGeodeSecurityClientApplication {
 
 			customersTemplate.put(williamEvans.getId(), williamEvans);
 
-			System.err.printf("Successfully put [%1$s] in Region [%2$s]%n",
+			logger.info("Successfully put [{}] in Region [{}]",
 				williamEvans, customersTemplate.getRegion().getName());
 
 			try {
-				System.err.printf("Attempting to read from Region [%s]...%n", customersTemplate.getRegion().getName());
+				logger.info("Attempting to read from Region [{}]...", customersTemplate.getRegion().getName());
 				customersTemplate.get(2L);
 			}
 			catch (Exception cause) {
-				System.err.println(String.format("Read failed because \"%s\"",
-					cause.getCause().getCause().getMessage()));
+				logger.info("Read failed because \"{}\"", cause.getCause().getCause().getMessage());
 			}
 		};
 	}
