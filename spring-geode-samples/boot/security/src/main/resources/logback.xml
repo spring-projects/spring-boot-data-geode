@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+	<statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d %5p %40.40c:%4L - %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="programAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%highlight(%m) %n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="ch.qos.logback" level="${logback.log.level:-ERROR}"/>
+
+	<logger name="example.app.security" level="${logback.log.level:-INFO}" additivity="false">
+		<appender-ref ref="programAppender"/>
+	</logger>
+
+	<logger name="org.apache" level="${logback.log.level:-INFO}"/>
+
+	<logger name="org.springframework" level="${logback.log.level:-INFO}"/>
+
+	<root level="${logback.log.level:-ERROR}">
+		<appender-ref ref="console"/>
+	</root>
+
+</configuration>
