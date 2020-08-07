@@ -13,32 +13,33 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package example.app.security.client.controller;
 
-import example.app.security.client.BootGeodeSecurityClientApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import example.app.security.client.BootGeodeSecurityClientApplication;
+
 /**
- * The {@link SecurityController} class is a RestController used by {@link BootGeodeSecurityClientApplication}
+ * A Spring {@link RestController} used by {@link BootGeodeSecurityClientApplication}.
  *
  * @author Patrick Johnson
  * @see org.springframework.web.bind.annotation.RestController
- * @since 1.3.0
+ * @since 1.4.0
  */
 // tag::class[]
 @RestController
 public class SecurityController {
 
 	@Autowired
-	Environment env;
+	private Environment environment;
 
 	@GetMapping("/message")
 	public String getMessage() {
-		return "I'm using SSL with this keystore: " + env.getProperty("spring.data.gemfire.security.ssl.keystore");
+		return String.format("I'm using SSL with this Keystore: %s",
+			this.environment.getProperty("spring.data.gemfire.security.ssl.keystore"));
 	}
 }
 // end::class[]
