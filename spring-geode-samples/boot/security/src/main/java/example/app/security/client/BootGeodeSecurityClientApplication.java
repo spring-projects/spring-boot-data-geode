@@ -15,55 +15,71 @@
  */
 package example.app.security.client;
 
-import example.app.security.client.model.Customer;
-import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration;
+import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
+import org.springframework.geode.config.annotation.EnableClusterAware;
+
+import example.app.security.client.model.Customer;
 
 /**
- * The {@link BootGeodeSecurityClientApplication} class is a Spring Boot, Apache Geode {@link ClientCache}
- * application that configures security.
+ * A Spring Boot, Apache Geode {@link ClientCache} application that configures security.
  *
  * @author Patrick Johnson
+ * @author John Blum
  * @see org.apache.geode.cache.client.ClientCache
- * @see org.springframework.boot.SpringApplication
+ * @see org.springframework.boot.ApplicationRunner
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
- * @since 1.3.0
+ * @see org.springframework.geode.config.annotation.EnableClusterAware
+ * @since 1.4.0
  */
 // tag::class[]
 @SpringBootApplication
-@EnableClusterConfiguration
-@EnableEntityDefinedRegions
+@EnableClusterAware
+@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
 public class BootGeodeSecurityClientApplication {
+
 	public static void main(String[] args) {
+
 		new SpringApplicationBuilder(BootGeodeSecurityClientApplication.class)
-				.web(WebApplicationType.SERVLET)
-				.build()
-				.run(args);
+			.web(WebApplicationType.SERVLET)
+			.build()
+			.run(args);
 	}
 
+	// tag::runner[]
 	@Bean
-	ApplicationRunner runner(@Qualifier("Customers") Region<Long, Customer> customers) {
+	ApplicationRunner runner(@Qualifier("customersTemplate") GemfireTemplate customersTemplate) {
+
 		return args -> {
-			customers.put(2L, Customer.newCustomer(2L, "William Evans"));
-			System.out.println(String.format("Successfully wrote data to region %s", customers.getName()));
+
+			Customer williamEvans = Customer.newCustomer(2L, "William Evans");
+
+			customersTemplate.put(williamEvans.getId(), williamEvans);
+
+			System.err.printf("Successfully put [%1$s] in Region [%2$s]%n",
+				williamEvans, customersTemplate.getRegion().getName());
 
 			try {
-				System.out.println(String.format("Attempting to read data from region %s", customers.getName()));
-				customers.get(2L);
-			} catch (Exception e) {
-				System.out.println(String.format("Read failed because \"%s\"", e.getCause().getMessage()));
+				System.err.printf("Attempting to read from Region [%s]...%n", customersTemplate.getRegion().getName());
+				customersTemplate.get(2L);
+			}
+			catch (Exception cause) {
+				System.err.println(String.format("Read failed because \"%s\"",
+					cause.getCause().getCause().getMessage()));
 			}
 		};
 	}
+	// end::runner[]
 }
 // end::class[]
