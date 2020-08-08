@@ -4,6 +4,23 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.3.2.RELEASE (2020-08-07)
+---------------------------------------------
+Upgrades SBDG to Spring Boot 2.3.2.RELEASE. Adds new Security Sample Guide and Code demonstrating how to configure
+Apache Geode & Pivotal/VMware GemFire Security (Auth + TLS) using Spring Boot.
+
+* Adds new Security Sample Guide and Code;
+Resolves https://github.com/spring-projects/spring-boot-data-geode/pull/81.
+* Adds additional documentation in the Getting Started Guide on matching versions of Apache Geode with Pivotal/VMware
+GemFire, Pivotal/VMware Cloud Cache and Spring Boot.
+* Fixes minor issue when launching the client Spring Boot application in the Spring Boot Actuator Sample.
+* Upgrades to Spring Framework 5.2.8.RELEASE.
+* Upgrades to Spring Boot 2.3.2.RELEASE.
+* Upgrades to Spring Data Neumann-SR2.
+* Upgrades to Spring Data for Apache Geode & VMware GemFire 2.3.2.RELEASE.
+* Upgrades to Pivotal/VMware GemFire 9.10.2.
+
+
 Changes in version 1.2.9.RELEASE (2020-07-27)
 ---------------------------------------------
 Aligns SBDG with Spring Boot 2.2.9.RELEASE along with the latest versions of Spring Framework, Spring Data
