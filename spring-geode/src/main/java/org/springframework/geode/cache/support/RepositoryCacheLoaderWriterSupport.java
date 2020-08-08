@@ -73,7 +73,7 @@ public abstract class RepositoryCacheLoaderWriterSupport<T, ID>
 			.orElse(Boolean.getBoolean(NUKE_AND_PAVE_PROPERTY));
 	}
 
-	@Override @SuppressWarnings("all")
+	@Override
 	public void setEnvironment(@Nullable Environment environment) {
 		this.environment = environment;
 	}
@@ -86,7 +86,6 @@ public abstract class RepositoryCacheLoaderWriterSupport<T, ID>
 		return this.repository;
 	}
 
-	@SuppressWarnings("all")
 	protected <S, R> R doRepositoryOp(S entity, Function<S, R> repositoryOperation) {
 
 		try {
