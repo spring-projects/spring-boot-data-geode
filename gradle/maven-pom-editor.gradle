@@ -15,6 +15,7 @@ def customizePom(gradleProject, pom) {
 				developerConnection = 'scm:git:git@github.com:spring-projects/spring-boot-data-geode.git'
 				url = 'https://github.com/spring-projects/spring-boot-data-geode'
 			}
+			url = 'https://github.com/spring-projects/spring-boot-data-geode#spring-boot-for-apache-geode--pivotal-gemfire'
 		}
 	}
 }
