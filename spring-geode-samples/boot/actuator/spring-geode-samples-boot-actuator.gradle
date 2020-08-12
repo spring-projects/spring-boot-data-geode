@@ -31,5 +31,5 @@ bootJar {
 
 bootRun {
 	main = 'example.app.temp.geode.client.BootGeodeClientApplication'
-	args "--spring.profiles.active=client", "--spring.data.gemfire.management.use-http=false"
+	args "--spring.profiles.active=client"
 }
