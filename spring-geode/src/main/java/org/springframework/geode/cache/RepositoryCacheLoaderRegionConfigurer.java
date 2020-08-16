@@ -169,6 +169,7 @@ public class RepositoryCacheLoaderRegionConfigurer<T, ID> implements RegionConfi
 	 * @see org.apache.geode.cache.CacheLoader
 	 * @see #getRepository()
 	 */
+	@SuppressWarnings("rawtypes")
 	protected RepositoryCacheLoader newRepositoryCacheLoader() {
 		return new RepositoryCacheLoader<>(getRepository());
 	}
