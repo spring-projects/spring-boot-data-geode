@@ -165,6 +165,7 @@ public class RepositoryCacheWriterRegionConfigurer<T, ID> implements RegionConfi
 	 * @see org.apache.geode.cache.CacheWriter
 	 * @see #getRepository()
 	 */
+	@SuppressWarnings("rawtypes")
 	protected RepositoryCacheWriter newRepositoryCacheWriter() {
 		return new RepositoryCacheWriter<>(getRepository());
 	}
