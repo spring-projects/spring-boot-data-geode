@@ -24,6 +24,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.Collections;
@@ -188,6 +189,8 @@ public class AsyncInlineCachingRegionConfigurerIntegrationTests extends Integrat
 		order.verify(this.usersRepository, times(1)).save(eq(jonDoe));
 		order.verify(this.usersRepository, times(1)).save(eq(janeDoe));
 		order.verify(this.usersRepository, times(1)).delete(eq(janeDoe));
+
+		verifyNoMoreInteractions(this.usersRepository);
 	}
 
 	@PeerCacheApplication
