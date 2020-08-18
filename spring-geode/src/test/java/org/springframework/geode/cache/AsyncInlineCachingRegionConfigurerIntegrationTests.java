@@ -51,6 +51,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -62,7 +63,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
- * Integration Tests for {@link AsyncInlineCachingRegionConfigurer}.
+ * Integration Tests for {@link AsyncInlineCachingRegionConfigurer} and {@link RepositoryAsyncEventListener}.
  *
  * @author John Blum
  * @see org.junit.Test
@@ -74,14 +75,16 @@ import lombok.ToString;
  * @see org.apache.geode.cache.asyncqueue.AsyncEventQueue
  * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.repository.CrudRepository
  * @see org.springframework.geode.cache.AsyncInlineCachingRegionConfigurer
+ * @see org.springframework.geode.cache.RepositoryAsyncEventListener
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.4.0
  */
 @RunWith(SpringRunner.class)
 @SuppressWarnings("unused")
-public class AsyncInlineCachingRegionConfigurerIntegrationTests {
+public class AsyncInlineCachingRegionConfigurerIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private Cache peerCache;
