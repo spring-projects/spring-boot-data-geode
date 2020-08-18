@@ -31,6 +31,7 @@ import org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory;
 import org.apache.geode.cache.wan.GatewayEventFilter;
 import org.apache.geode.cache.wan.GatewayEventSubstitutionFilter;
 import org.apache.geode.cache.wan.GatewaySender;
+import org.apache.geode.cache.wan.GatewaySender.OrderPolicy;
 
 import org.springframework.data.gemfire.PeerRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.RegionConfigurer;
@@ -54,6 +55,9 @@ import org.springframework.util.StringUtils;
  * @see org.apache.geode.cache.asyncqueue.AsyncEventListener
  * @see org.apache.geode.cache.asyncqueue.AsyncEventQueue
  * @see org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory
+ * @see org.apache.geode.cache.wan.GatewayEventFilter
+ * @see org.apache.geode.cache.wan.GatewayEventSubstitutionFilter
+ * @see org.apache.geode.cache.wan.GatewaySender.OrderPolicy
  * @see org.springframework.data.gemfire.PeerRegionFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.RegionConfigurer
  * @see org.springframework.data.repository.CrudRepository
@@ -344,7 +348,7 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 	 * in the queue will trigger the AEQ listener. If cache events are occurring rather frequently, then the batch size
 	 * can help reduce memory consumption by processing the cache events before the batch time interval expires.
 	 *
-	 * Defaults to {@link 5 ms}.
+	 * Defaults to {@literal 5 ms}.
 	 *
 	 * @param batchTimeInterval {@link Duration} of time to determine when the AEQ listener should be invoked with
 	 * any existing cache events in the queue.
@@ -394,7 +398,7 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 	 *
 	 * When a queue is serial and multiple dispatcher threads are configured, Geode creates an additional copy of
 	 * the queue for each thread on each Geode member that hosts the queue.  When the queue is serial and multiple
-	 * dispatcher threads are configure, then you can use the {@link GatewaySender.OrderPolicy} to control
+	 * dispatcher threads are configure, then you can use the {@link GatewaySender} {@link OrderPolicy} to control
 	 * the distribution of cache events from the queue by the threads.
 	 *
 	 * Default is {@literal 5}.
@@ -486,8 +490,8 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 	 * Builder method used to configure the {@link AsyncEventQueue} order of processing for cache events when the AEQ
 	 * is serial and the AEQ is using multiple dispatcher threads.
 	 *
-	 * @param orderPolicy {@link GatewaySender.OrderPolicy} used to determine the order of processing for cache events
-	 * when the AEQ is serial and uses multiple dispatcher threads.
+	 * @param orderPolicy {@link GatewaySender} {@link OrderPolicy} used to determine the order of processing
+	 * for cache events when the AEQ is serial and uses multiple dispatcher threads.
 	 * @return this {@link AsyncInlineCachingRegionConfigurer}.
 	 * @see org.apache.geode.cache.wan.GatewaySender.OrderPolicy
 	 */
