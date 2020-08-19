@@ -47,9 +47,9 @@ import org.springframework.util.Assert;
  */
 public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 
-	protected static final AsyncEventErrorHandler DEFAULT = eventError -> false;
+	protected static final AsyncEventErrorHandler DEFAULT_EVENT_ERROR_HANDLER = eventError -> false;
 
-	private AsyncEventErrorHandler asyncEventErrorHandler = DEFAULT;
+	private AsyncEventErrorHandler asyncEventErrorHandler = DEFAULT_EVENT_ERROR_HANDLER;
 
 	private final CrudRepository<T, ID> repository;
 
@@ -96,19 +96,21 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 	 * Gets the configured {@link AsyncEventErrorHandler} used to handle errors that may occur when this listener
 	 * is invoked with a batch of {@link AsyncEvent AsyncEvents}.
 	 *
+	 * Defaults to an {@link AsyncEventErrorHandler} that always returns {@literal false} on any error.
+	 *
 	 * @return the configured {@link AsyncEventErrorHandler}; never {@literal null}.
 	 * @see AsyncEventErrorHandler
 	 */
 	protected @NonNull AsyncEventErrorHandler getAsyncEventErrorHandler() {
-		return this.asyncEventErrorHandler != null ? this.asyncEventErrorHandler : DEFAULT;
+		return this.asyncEventErrorHandler != null ? this.asyncEventErrorHandler : DEFAULT_EVENT_ERROR_HANDLER;
 	}
 
 	/**
 	 * Gets a reference to the configured Spring Data {@link CrudRepository} used by this {@link AsyncEventListener}
-	 * to perform data access operations to a backend, external data source asynchronously when triggered by a cache
+	 * to perform data access operations to a external, backend data source asynchronously when triggered by a cache
 	 * operation.
 	 *
-	 * @return a reference to the configured Spring Data {@link CrudRepository}.
+	 * @return a reference to the configured Spring Data {@link CrudRepository}; never {@literal null}.
 	 * @see org.springframework.data.repository.CrudRepository
 	 */
 	protected @NonNull CrudRepository<T, ID> getRepository() {
@@ -134,7 +136,8 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 	 * corresponding to the {@link AsyncEvent} {@link Operation}.
 	 *
 	 * @param events {@link List} of {@link AsyncEvent AsyncEvents} to process.
-	 * @return a boolean value indicating whether all {@link AsyncEvent AsyncEvents} were processes successfully.
+	 * @return a boolean value indicating whether all {@link AsyncEvent AsyncEvents} were processed successfully
+	 * by this listener.
 	 * If any {@link AsyncEvent} fails to be processed (just one), then this method will return {@literal false}.
 	 * If any {@link AsyncEvent} cannot be handled, then this method will return {@literal false}, even if other
 	 * {@link AsyncEvent AsyncEvents} were successfully processed.

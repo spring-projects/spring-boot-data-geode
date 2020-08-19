@@ -103,7 +103,7 @@ public class RepositoryAsyncEventListenerUnitTests {
 
 		RepositoryAsyncEventListener<?, ?> listener = new RepositoryAsyncEventListener<>(mockRepository);
 
-		assertThat(listener.getAsyncEventErrorHandler()).isEqualTo(RepositoryAsyncEventListener.DEFAULT);
+		assertThat(listener.getAsyncEventErrorHandler()).isEqualTo(RepositoryAsyncEventListener.DEFAULT_EVENT_ERROR_HANDLER);
 
 		listener.setAsyncEventErrorHandler(mockAsyncEventErrorHandler);
 
@@ -111,7 +111,7 @@ public class RepositoryAsyncEventListenerUnitTests {
 
 		listener.setAsyncEventErrorHandler(null);
 
-		assertThat(listener.getAsyncEventErrorHandler()).isEqualTo(RepositoryAsyncEventListener.DEFAULT);
+		assertThat(listener.getAsyncEventErrorHandler()).isEqualTo(RepositoryAsyncEventListener.DEFAULT_EVENT_ERROR_HANDLER);
 
 		verifyNoInteractions(mockAsyncEventErrorHandler, mockRepository);
 	}
