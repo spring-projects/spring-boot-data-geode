@@ -20,11 +20,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.DiskStore;
 import org.apache.geode.cache.Region;
+import org.apache.geode.cache.asyncqueue.AsyncEvent;
 import org.apache.geode.cache.asyncqueue.AsyncEventListener;
 import org.apache.geode.cache.asyncqueue.AsyncEventQueue;
 import org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory;
@@ -38,6 +40,7 @@ import org.springframework.data.gemfire.config.annotation.RegionConfigurer;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.geode.cache.RepositoryAsyncEventListener.AsyncEventErrorHandler;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -49,6 +52,7 @@ import org.springframework.util.StringUtils;
  * abstraction.
  *
  * @author John Blum
+ * @see java.util.function.Function
  * @see java.util.function.Predicate
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.Region
@@ -61,9 +65,12 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.data.gemfire.PeerRegionFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.RegionConfigurer
  * @see org.springframework.data.repository.CrudRepository
+ * @see org.springframework.geode.cache.RepositoryAsyncEventListener.AsyncEventErrorHandler
  * @since 1.4.0
  */
 public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigurer {
+
+	protected static final Predicate<String> DEFAULT_REGION_BEAN_NAME_PREDICATE = beanName -> false;
 
 	/**
 	 * Factory method used to construct a new instance of {@link AsyncInlineCachingRegionConfigurer} initialized with
@@ -101,15 +108,17 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 	 * {@literal Asynchronous Inline Caching} will be configured.
 	 * @return a new {@link AsyncInlineCachingRegionConfigurer}.
 	 * @throws IllegalArgumentException if {@link CrudRepository} is {@literal null}.
-	 * @see #AsyncInlineCachingRegionConfigurer(CrudRepository, Predicate)
 	 * @see org.springframework.data.repository.CrudRepository
+	 * @see #create(CrudRepository, Predicate)
 	 * @see java.lang.String
 	 */
 	public static <T, ID> AsyncInlineCachingRegionConfigurer<T, ID> create(@NonNull CrudRepository<T, ID> repository,
 			@Nullable String regionBeanName) {
 
-		return new AsyncInlineCachingRegionConfigurer<>(repository, Predicate.isEqual(regionBeanName));
+		return create(repository, Predicate.isEqual(regionBeanName));
 	}
+
+	private AsyncEventErrorHandler asyncEventErrorHandler;
 
 	private Boolean batchConflationEnabled;
 	private Boolean diskSynchronous;
@@ -119,6 +128,12 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 	private Boolean pauseEventDispatching;
 
 	private final CrudRepository<T, ID> repository;
+
+	private Function<AsyncEventListener, AsyncEventListener> asyncEventListenerPostProcessor;
+
+	private Function<AsyncEventQueue, AsyncEventQueue> asyncEventQueuePostProcessor;
+
+	private Function<AsyncEventQueueFactory, AsyncEventQueueFactory> asyncEventQueueFactoryPostProcessor;
 
 	private Integer batchSize;
 	private Integer batchTimeInterval;
@@ -155,7 +170,7 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 		Assert.notNull(repository, "CrudRepository must not be null");
 
 		this.repository = repository;
-		this.regionBeanName = regionBeanName != null ? regionBeanName : beanName -> false;
+		this.regionBeanName = regionBeanName != null ? regionBeanName : DEFAULT_REGION_BEAN_NAME_PREDICATE;
 	}
 
 	/**
@@ -195,6 +210,7 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 	 * @param bean {@link PeerRegionFactoryBean} containing the configuration of the target {@link Region}
 	 * in the Spring container.
 	 * @see org.springframework.data.gemfire.PeerRegionFactoryBean
+	 * @see #newAsyncEventQueue(Cache, String)
 	 */
 	@Override
 	public void configure(String beanName, PeerRegionFactoryBean<?, ?> bean) {
@@ -230,12 +246,17 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 	 * @return a new {@link AsyncEventQueue}.
 	 * @see org.apache.geode.cache.asyncqueue.AsyncEventQueue
 	 * @see org.apache.geode.cache.Cache
-	 * @see #newRepositoryAsyncEventListener()
 	 * @see #generateId(String)
+	 * @see #newAsyncEventQueueFactory(Cache)
+	 * @see #newAsyncEventQueue(AsyncEventQueueFactory, String, AsyncEventListener)
+	 * @see #newRepositoryAsyncEventListener()
+	 * @see #postProcess(AsyncEventListener)
+	 * @see #postProcess(AsyncEventQueue)
+	 * @see #postProcess(AsyncEventQueueFactory)
 	 */
 	protected AsyncEventQueue newAsyncEventQueue(@NonNull Cache peerCache, @NonNull String regionBeanName) {
 
-		AsyncEventQueueFactory asyncEventQueueFactory = peerCache.createAsyncEventQueueFactory();
+		AsyncEventQueueFactory asyncEventQueueFactory = newAsyncEventQueueFactory(peerCache);
 
 		Optional.ofNullable(this.batchConflationEnabled).ifPresent(asyncEventQueueFactory::setBatchConflationEnabled);
 		Optional.ofNullable(this.batchSize).ifPresent(asyncEventQueueFactory::setBatchSize);
@@ -258,20 +279,236 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 			asyncEventQueueFactory.pauseEventDispatching();
 		}
 
-		return asyncEventQueueFactory.create(generateId(regionBeanName), newRepositoryAsyncEventListener());
+		String asyncEventQueueId = generateId(regionBeanName);
+
+		AsyncEventListener asyncEventListener = newRepositoryAsyncEventListener();
+
+		asyncEventListener = postProcess(asyncEventListener);
+		asyncEventQueueFactory = postProcess(asyncEventQueueFactory);
+
+		AsyncEventQueue asyncEventQueue =
+			newAsyncEventQueue(asyncEventQueueFactory, asyncEventQueueId, asyncEventListener);
+
+		asyncEventQueue = postProcess(asyncEventQueue);
+
+		return asyncEventQueue;
+	}
+
+	/**
+	 * Constructs (creates) a new instance of {@link AsyncEventQueue} using the given {@link AsyncEventQueueFactory}
+	 * with the given {@link String AEQ ID} and {@link AsyncEventListener}.
+	 *
+	 * @param factory {@link AsyncEventQueueFactory} used to create the {@link AsyncEventQueue};
+	 * must not be {@literal null}.
+	 * @param asyncEventQueueId {@link String} containing the {@literal ID} for the {@link AsyncEventQueue};
+	 * must not be {@literal null}.
+	 * @param listener {@link AsyncEventListener} registered with the {@link AsyncEventQueue} to process cache events
+	 * from the {@link AsyncEventQueue} attached to the {@link Region}.
+	 * @return a new {@link AsyncEventQueue} with the {@link String ID} and registered {@link AsyncEventListener}.
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventQueue
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventListener
+	 */
+	protected @NonNull AsyncEventQueue newAsyncEventQueue(@NonNull AsyncEventQueueFactory factory,
+			@NonNull String asyncEventQueueId, @NonNull AsyncEventListener listener) {
+
+		return factory.create(asyncEventQueueId, listener);
+	}
+
+	/**
+	 * Constructs (creates) a new instance of the {@link AsyncEventQueueFactory} from the given {@literal peer}
+	 * {@link Cache}.
+	 *
+	 * @param peerCache {@literal Peer} {@link Cache} instance used to create an instance of
+	 * the {@link AsyncEventQueueFactory}; must not be {@literal null}.
+	 * @return a new instance of {@link AsyncEventQueueFactory} to create a {@link AsyncEventQueue}.
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory
+	 * @see org.apache.geode.cache.Cache
+	 */
+	protected @NonNull AsyncEventQueueFactory newAsyncEventQueueFactory(@NonNull Cache peerCache) {
+		return peerCache.createAsyncEventQueueFactory();
 	}
 
 	/**
 	 * Constructs a new Apache Geode {@link AsyncEventListener} to register on an {@link AsyncEventQueue} attached to
 	 * the target {@link Region}, which uses the {@link CrudRepository} to perform data access operations on an external
-	 * data source asynchronously when cache events and operations occur on the target {@link Region}.
+	 * backend data source asynchronously when cache events and operations occur on the target {@link Region}.
 	 *
 	 * @return a new {@link RepositoryAsyncEventListener}.
 	 * @see org.springframework.geode.cache.RepositoryAsyncEventListener
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventListener
+	 * @see #newRepositoryAsyncEventListener(CrudRepository)
 	 * @see #getRepository()
 	 */
 	protected @NonNull AsyncEventListener newRepositoryAsyncEventListener() {
-		return new RepositoryAsyncEventListener<>(getRepository());
+		return newRepositoryAsyncEventListener(getRepository());
+	}
+
+	/**
+	 * Constructs a new Apache Geode {@link AsyncEventListener} to register on an {@link AsyncEventQueue} attached to
+	 * the target {@link Region}, which uses the given {@link CrudRepository} to perform data access operations on an
+	 * external, backend data source asynchronously when cache events and operations occur on the target {@link Region}.
+	 *
+	 * @param repository Spring Data {@link CrudRepository} used to perform data access operations on the external,
+	 * backend data source; must not be {@literal null}.
+	 * @return a new {@link RepositoryAsyncEventListener}.
+	 * @see org.springframework.geode.cache.RepositoryAsyncEventListener
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventListener
+	 * @see #getRepository()
+	 */
+	protected @NonNull AsyncEventListener newRepositoryAsyncEventListener(@NonNull CrudRepository<T, ID> repository) {
+		return new RepositoryAsyncEventListener<>(repository);
+	}
+
+	/**
+	 * Applies the user-defined {@link Function} to the framework constructed/provided {@link AsyncEventListener}
+	 * for post processing.
+	 *
+	 * @param asyncEventListener {@link AsyncEventListener} constructed by the framework and post processed by
+	 * end-user code encapsulated in the {@link #applyToListener(Function) configured} {@link Function}.
+	 * @return the post-processed {@link AsyncEventListener}.
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventListener
+	 * @see #applyToListener(Function)
+	 */
+	protected @NonNull AsyncEventListener postProcess(@NonNull AsyncEventListener asyncEventListener) {
+		return resolveAsyncEventListenerPostProcessor().apply(asyncEventListener);
+	}
+
+	/**
+	 * Applies the user-defined {@link Function} to the framework constructed/provided {@link AsyncEventQueue}
+	 * for post processing.
+	 *
+	 * @param asyncEventQueue {@link AsyncEventQueue} constructed by the framework and post processed by
+	 * end-user code encapsulated in the {@link #applyToQueue(Function) configured} {@link Function}.
+	 * @return the post-processed {@link AsyncEventQueue}.
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventQueue
+	 * @see #applyToQueue(Function)
+	 */
+	protected @NonNull AsyncEventQueue postProcess(@NonNull AsyncEventQueue asyncEventQueue) {
+
+		Function<AsyncEventQueue, AsyncEventQueue> asyncEventQueuePostProcessor =
+			this.asyncEventQueuePostProcessor;
+
+		return asyncEventQueuePostProcessor != null
+			? asyncEventQueuePostProcessor.apply(asyncEventQueue)
+			: asyncEventQueue;
+	}
+
+	/**
+	 * Applies the user-defined {@link Function} to the framework constructed/provided {@link AsyncEventQueueFactory}
+	 * for post processing.
+	 *
+	 * @param asyncEventQueueFactory {@link AsyncEventQueueFactory} constructed by the framework and post processed by
+	 * end-user code encapsulated in the {@link #applyToQueueFactory(Function) configured} {@link Function}.
+	 * @return the post-processed {@link AsyncEventQueueFactory}.
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory
+	 * @see #applyToQueueFactory(Function)
+	 */
+	protected @NonNull AsyncEventQueueFactory postProcess(@NonNull AsyncEventQueueFactory asyncEventQueueFactory) {
+
+		Function<AsyncEventQueueFactory, AsyncEventQueueFactory> asyncEventQueueFactoryPostProcessor =
+			this.asyncEventQueueFactoryPostProcessor;
+
+		return asyncEventQueueFactoryPostProcessor != null
+			? asyncEventQueueFactoryPostProcessor.apply(asyncEventQueueFactory)
+			: asyncEventQueueFactory;
+	}
+
+	@SuppressWarnings("unchecked")
+	private @NonNull Function<AsyncEventListener, AsyncEventListener> resolveAsyncEventListenerPostProcessor() {
+
+		AsyncEventErrorHandler asyncEventErrorHandler = this.asyncEventErrorHandler;
+
+		Function<AsyncEventListener, AsyncEventListener> resolvedListenerPostProcessor = asyncEventErrorHandler != null
+			? listener -> {
+
+				if (listener instanceof RepositoryAsyncEventListener) {
+					((RepositoryAsyncEventListener<T, ID>) listener).setAsyncEventErrorHandler(asyncEventErrorHandler);
+				}
+
+				return listener;
+			}
+			: Function.identity();
+
+		Function<AsyncEventListener, AsyncEventListener> asyncEventListenerPostProcessor =
+			this.asyncEventListenerPostProcessor;
+
+		if (asyncEventListenerPostProcessor != null) {
+			resolvedListenerPostProcessor = resolvedListenerPostProcessor.andThen(asyncEventListenerPostProcessor);
+		}
+
+		return resolvedListenerPostProcessor;
+	}
+
+	/**
+	 * Builder method used to configure the given user-defined {@link Function} applied to the framework constructed
+	 * and provided {@link AsyncEventListener} for post processing.
+	 *
+	 * @param asyncEventListenerPostProcessor user-defined {@link Function} encapsulating the logic applied to
+	 * the framework constructed/provided {@link AsyncEventListener} for post-processing.
+	 * @return this {@link AsyncInlineCachingRegionConfigurer}.
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventListener
+	 * @see java.util.function.Function
+	 */
+	public AsyncInlineCachingRegionConfigurer<T, ID> applyToListener(
+			@Nullable Function<AsyncEventListener, AsyncEventListener> asyncEventListenerPostProcessor) {
+
+		this.asyncEventListenerPostProcessor = asyncEventListenerPostProcessor;
+
+		return this;
+	}
+
+	/**
+	 * Builder method used to configure the given user-defined {@link Function} applied to the framework constructed
+	 * and provided {@link AsyncEventQueue} for post processing.
+	 *
+	 * @param asyncEventQueuePostProcessor user-defined {@link Function} encapsulating the logic applied to
+	 * the framework constructed {@link AsyncEventQueue} for post-processing.
+	 * @return this {@link AsyncInlineCachingRegionConfigurer}.
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventQueue
+	 * @see java.util.function.Function
+	 */
+	public AsyncInlineCachingRegionConfigurer<T, ID> applyToQueue(
+			@Nullable Function<AsyncEventQueue, AsyncEventQueue> asyncEventQueuePostProcessor) {
+
+		this.asyncEventQueuePostProcessor = asyncEventQueuePostProcessor;
+
+		return this;
+	}
+
+	/**
+	 * Builder method used to configure the given user-defined {@link Function} applied to the framework constructed
+	 * and provided {@link AsyncEventQueueFactory} for post processing.
+	 *
+	 * @param asyncEventQueueFactoryPostProcessor user-defined {@link Function} encapsulating the logic applied to
+	 * the framework constructed {@link AsyncEventQueueFactory} for post-processing.
+	 * @return this {@link AsyncInlineCachingRegionConfigurer}.
+	 * @see org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory
+	 * @see java.util.function.Function
+	 */
+	public AsyncInlineCachingRegionConfigurer<T, ID> applyToQueueFactory(
+			@Nullable Function<AsyncEventQueueFactory, AsyncEventQueueFactory> asyncEventQueueFactoryPostProcessor) {
+
+		this.asyncEventQueueFactoryPostProcessor = asyncEventQueueFactoryPostProcessor;
+
+		return this;
+	}
+
+	/**
+	 * Builder method used to configure a {@link AsyncEventErrorHandler} to handle errors thrown while processing
+	 * {@link AsyncEvent AsyncEvents} in the {@link AsyncEventListener}.
+	 *
+	 * @param errorHandler {@link AsyncEventErrorHandler} used to handle errors thrown while processing
+	 * {@link AsyncEvent AsyncEvents} in the {@link AsyncEventListener}.
+	 * @return this {@link AsyncInlineCachingRegionConfigurer}.
+	 * @see org.springframework.geode.cache.RepositoryAsyncEventListener.AsyncEventErrorHandler
+	 */
+	public AsyncInlineCachingRegionConfigurer<T, ID> withAsyncEventErrorHandler(
+			@Nullable AsyncEventErrorHandler errorHandler) {
+
+		this.asyncEventErrorHandler = errorHandler;
+
+		return this;
 	}
 
 	/**

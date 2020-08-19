@@ -18,6 +18,7 @@ package org.springframework.geode.cache;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -27,9 +28,11 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.asyncqueue.AsyncEventListener;
@@ -42,6 +45,7 @@ import org.apache.geode.cache.wan.GatewaySender;
 import org.springframework.data.gemfire.PeerRegionFactoryBean;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.geode.cache.RepositoryAsyncEventListener.AsyncEventErrorHandler;
 
 /**
  * Unit Tests for {@link AsyncInlineCachingRegionConfigurer}.
@@ -54,9 +58,12 @@ import org.springframework.data.repository.CrudRepository;
  * @see org.apache.geode.cache.asyncqueue.AsyncEventListener
  * @see org.apache.geode.cache.asyncqueue.AsyncEventQueue
  * @see org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory
+ * @see org.apache.geode.cache.wan.GatewayEventFilter
+ * @see org.apache.geode.cache.wan.GatewayEventSubstitutionFilter
  * @see org.springframework.data.gemfire.PeerRegionFactoryBean
  * @see org.springframework.data.repository.CrudRepository
  * @see org.springframework.geode.cache.AsyncInlineCachingRegionConfigurer
+ * @see org.springframework.geode.cache.RepositoryAsyncEventListener.AsyncEventErrorHandler
  * @since 1.4.0
  */
 public class AsyncInlineCachingRegionConfigurerUnitTests {
@@ -66,13 +73,13 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 
 		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
 
-		Predicate<String> regionBeanName = Predicate.isEqual("TestRegion");
+		Predicate<String> testRegionBeanName = Predicate.isEqual("TestRegion");
 
 		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
-			new AsyncInlineCachingRegionConfigurer<>(mockRepository, regionBeanName);
+			new AsyncInlineCachingRegionConfigurer<>(mockRepository, testRegionBeanName);
 
 		assertThat(regionConfigurer).isNotNull();
-		assertThat(regionConfigurer.getRegionBeanName()).isEqualTo(regionBeanName);
+		assertThat(regionConfigurer.getRegionBeanName()).isEqualTo(testRegionBeanName);
 		assertThat(regionConfigurer.getRepository()).isEqualTo(mockRepository);
 
 		verifyNoInteractions(mockRepository);
@@ -87,7 +94,8 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 			new AsyncInlineCachingRegionConfigurer<>(mockRepository, null);
 
 		assertThat(regionConfigurer).isNotNull();
-		assertThat(regionConfigurer.getRegionBeanName()).isNotNull();
+		assertThat(regionConfigurer.getRegionBeanName())
+			.isEqualTo(AsyncInlineCachingRegionConfigurer.DEFAULT_REGION_BEAN_NAME_PREDICATE);
 		assertThat(regionConfigurer.getRepository()).isEqualTo(mockRepository);
 
 		verifyNoInteractions(mockRepository);
@@ -113,14 +121,30 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 
 		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
 
-		Predicate<String> regionBeanName = Predicate.isEqual("TestRegion");
+		Predicate<String> testRegionBeanName = Predicate.isEqual("TestRegion");
 
 		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
-			AsyncInlineCachingRegionConfigurer.create(mockRepository, regionBeanName);
+			AsyncInlineCachingRegionConfigurer.create(mockRepository, testRegionBeanName);
+
+		assertThat(regionConfigurer).isNotNull();
+		assertThat(regionConfigurer.getRegionBeanName()).isEqualTo(testRegionBeanName);
+		assertThat(regionConfigurer.getRepository()).isEqualTo(mockRepository);
+
+		verifyNoInteractions(mockRepository);
+	}
+
+	@Test
+	public void createAsyncInlineCachingRegionConfigurerFromCrudRepositoryAndNullPredicate() {
+
+		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
+
+		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
+			AsyncInlineCachingRegionConfigurer.create(mockRepository, (Predicate<String>) null);
 
 		assertThat(regionConfigurer).isNotNull();
 		assertThat(regionConfigurer.getRepository()).isEqualTo(mockRepository);
-		assertThat(regionConfigurer.getRegionBeanName()).isEqualTo(regionBeanName);
+		assertThat(regionConfigurer.getRegionBeanName())
+			.isEqualTo(AsyncInlineCachingRegionConfigurer.DEFAULT_REGION_BEAN_NAME_PREDICATE);
 
 		verifyNoInteractions(mockRepository);
 	}
@@ -134,10 +158,30 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 			AsyncInlineCachingRegionConfigurer.create(mockRepository, "MockRegion");
 
 		assertThat(regionConfigurer).isNotNull();
-		assertThat(regionConfigurer.getRepository()).isEqualTo(mockRepository);
 		assertThat(regionConfigurer.getRegionBeanName()).isNotNull();
 		assertThat(regionConfigurer.getRegionBeanName().test("MockRegion")).isTrue();
+		assertThat(regionConfigurer.getRegionBeanName().test("MOCKREGION")).isFalse();
+		assertThat(regionConfigurer.getRegionBeanName().test("mockregion")).isFalse();
 		assertThat(regionConfigurer.getRegionBeanName().test("TestRegion")).isFalse();
+		assertThat(regionConfigurer.getRepository()).isEqualTo(mockRepository);
+
+		verifyNoInteractions(mockRepository);
+	}
+
+	@Test
+	public void createAsyncInlineCachingRegionConfigurerFromCrudRepositoryAndNullString() {
+
+		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
+
+		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
+			AsyncInlineCachingRegionConfigurer.create(mockRepository, (String) null);
+
+		assertThat(regionConfigurer).isNotNull();
+		assertThat(regionConfigurer.getRegionBeanName()).isNotNull();
+		assertThat(regionConfigurer.getRegionBeanName().test(null)).isTrue();
+		assertThat(regionConfigurer.getRegionBeanName().test("MockRegion")).isFalse();
+		assertThat(regionConfigurer.getRegionBeanName().test("TestRegion")).isFalse();
+		assertThat(regionConfigurer.getRepository()).isEqualTo(mockRepository);
 
 		verifyNoInteractions(mockRepository);
 	}
@@ -181,10 +225,10 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 
 		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
 
+		PeerRegionFactoryBean<?, ?> peerRegionFactoryBean = mock(PeerRegionFactoryBean.class);
+
 		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
 			spy(new AsyncInlineCachingRegionConfigurer<>(mockRepository, Predicate.isEqual("TestRegion")));
-
-		PeerRegionFactoryBean<?, ?> peerRegionFactoryBean = mock(PeerRegionFactoryBean.class);
 
 		doReturn(mockCache).when(peerRegionFactoryBean).getCache();
 		doReturn(mockAsyncEventQueue).when(regionConfigurer).newAsyncEventQueue(eq(mockCache), eq("TestRegion"));
@@ -194,9 +238,9 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 		verify(regionConfigurer, times(1))
 			.configure(eq("TestRegion"), eq(peerRegionFactoryBean));
 		verify(regionConfigurer, times(1)).getRegionBeanName();
+		verify(peerRegionFactoryBean, times(1)).getCache();
 		verify(regionConfigurer, times(1))
 			.newAsyncEventQueue(eq(mockCache), eq("TestRegion"));
-		verify(peerRegionFactoryBean, times(1)).getCache();
 		verify(peerRegionFactoryBean, times(1))
 			.setAsyncEventQueues(eq(ArrayUtils.asArray(mockAsyncEventQueue)));
 
@@ -210,17 +254,20 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
 
 		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
-			spy(new AsyncInlineCachingRegionConfigurer<>(mockRepository, Predicate.isEqual("TestRegion")));
+			spy(new AsyncInlineCachingRegionConfigurer<>(mockRepository, Predicate.isEqual("NoRegion")));
 
 		PeerRegionFactoryBean<?, ?> peerRegionFactoryBean = mock(PeerRegionFactoryBean.class);
 
 		regionConfigurer.configure("MockRegion", peerRegionFactoryBean);
+		regionConfigurer.configure("TestRegion", peerRegionFactoryBean);
 
 		verify(regionConfigurer, times(1))
 			.configure(eq("MockRegion"), eq(peerRegionFactoryBean));
-		verify(regionConfigurer, times(1)).getRegionBeanName();
+		verify(regionConfigurer, times(1))
+			.configure(eq("TestRegion"), eq(peerRegionFactoryBean));
+		verify(regionConfigurer, times(2)).getRegionBeanName();
 		verifyNoMoreInteractions(regionConfigurer);
-		verifyNoInteractions(peerRegionFactoryBean);
+		verifyNoInteractions(mockRepository, peerRegionFactoryBean);
 	}
 
 	@Test
@@ -275,9 +322,9 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 
 	@Test
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void newAsyncEventQueueCreatesAsyncEventQueueFromCacheInitializedWithRegionConfigurer() {
+	public void newAsyncEventQueueCreatesQueueFromCacheInitializedWithRegionConfigurer() {
 
-		AsyncEventListener mockAsyncEventListener = mock(AsyncEventListener.class, "Mock AEQ Listener");
+		AsyncEventErrorHandler mockAsyncEventErrorHandler = mock(AsyncEventErrorHandler.class);
 
 		AsyncEventQueue mockAsyncEventQueue = mock(AsyncEventQueue.class, "Mock AEQ");
 
@@ -289,10 +336,17 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 
 		Duration batchTimeInterval = Duration.ofSeconds(15);
 
+		Function<AsyncEventListener, AsyncEventListener> mockAsyncEventListenerFunction = mock(Function.class);
+		Function<AsyncEventQueue, AsyncEventQueue> mockAsyncEventQueueFunction = mock(Function.class);
+		Function<AsyncEventQueueFactory, AsyncEventQueueFactory> mockAsyncEventQueueFactoryFunction = mock(Function.class);
+
 		GatewayEventFilter mockEventFilterOne = mock(GatewayEventFilter.class);
 		GatewayEventFilter mockEventFilterTwo = mock(GatewayEventFilter.class);
 
 		GatewayEventSubstitutionFilter mockEventSubstitutionFilter = mock(GatewayEventSubstitutionFilter.class);
+
+		RepositoryAsyncEventListener mockAsyncEventListener =
+			mock(RepositoryAsyncEventListener.class, "Mock AEQ Listener");
 
 		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
 			spy(new AsyncInlineCachingRegionConfigurer<>(mockRepository, Predicate.isEqual("TestRegion")));
@@ -301,7 +355,14 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 		doReturn(mockAsyncEventQueue).when(mockAsyncEventQueueFactory).create(eq("123"), eq(mockAsyncEventListener));
 		doReturn("123").when(regionConfigurer).generateId(eq("TestRegion"));
 		doReturn(mockAsyncEventListener).when(regionConfigurer).newRepositoryAsyncEventListener();
+		doReturn(mockAsyncEventListener).when(mockAsyncEventListenerFunction).apply(eq(mockAsyncEventListener));
+		doReturn(mockAsyncEventQueue).when(mockAsyncEventQueueFunction).apply(eq(mockAsyncEventQueue));
+		doReturn(mockAsyncEventQueueFactory).when(mockAsyncEventQueueFactoryFunction).apply(eq(mockAsyncEventQueueFactory));
 
+		assertThat(regionConfigurer.applyToListener(mockAsyncEventListenerFunction)).isSameAs(regionConfigurer);
+		assertThat(regionConfigurer.applyToQueue(mockAsyncEventQueueFunction)).isSameAs(regionConfigurer);
+		assertThat(regionConfigurer.applyToQueueFactory(mockAsyncEventQueueFactoryFunction)).isSameAs(regionConfigurer);
+		assertThat(regionConfigurer.withAsyncEventErrorHandler(mockAsyncEventErrorHandler)).isSameAs(regionConfigurer);
 		assertThat(regionConfigurer.withParallelQueue()).isSameAs(regionConfigurer);
 		assertThat(regionConfigurer.withPersistentQueue()).isSameAs(regionConfigurer);
 		assertThat(regionConfigurer.withQueueBatchConflationEnabled()).isSameAs(regionConfigurer);
@@ -323,45 +384,103 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 		assertThat(regionConfigurer.newAsyncEventQueue(mockCache, "TestRegion"))
 			.isEqualTo(mockAsyncEventQueue);
 
-		verify(mockCache, times(1)).createAsyncEventQueueFactory();
-		verify(mockAsyncEventQueueFactory, times(1)).setBatchConflationEnabled(eq(true));
-		verify(mockAsyncEventQueueFactory, times(1)).setBatchSize(eq(224));
-		verify(mockAsyncEventQueueFactory, times(1)).setBatchTimeInterval(eq((int) batchTimeInterval.toMillis()));
-		verify(mockAsyncEventQueueFactory, times(1)).setDiskStoreName(eq("TestDiskStore"));
-		verify(mockAsyncEventQueueFactory, times(1)).setDiskSynchronous(eq(true));
-		verify(mockAsyncEventQueueFactory, times(1)).setDispatcherThreads(eq(8));
-		verify(mockAsyncEventQueueFactory, times(1)).setForwardExpirationDestroy(eq(true));
-		verify(mockAsyncEventQueueFactory, times(1)).setGatewayEventSubstitutionListener(eq(mockEventSubstitutionFilter));
-		verify(mockAsyncEventQueueFactory, times(1)).setMaximumQueueMemory(eq(51));
-		verify(mockAsyncEventQueueFactory, times(1)).setOrderPolicy(eq(GatewaySender.OrderPolicy.THREAD));
-		verify(mockAsyncEventQueueFactory, times(1)).setParallel(eq(true));
-		verify(mockAsyncEventQueueFactory, times(1)).setPersistent(eq(true));
-		verify(mockAsyncEventQueueFactory, times(1)).addGatewayEventFilter(eq(mockEventFilterOne));
-		verify(mockAsyncEventQueueFactory, times(1)).addGatewayEventFilter(eq(mockEventFilterTwo));
-		verify(mockAsyncEventQueueFactory, times(1)).pauseEventDispatching();
-		verify(mockAsyncEventQueueFactory, times(1)).create(eq("123"), eq(mockAsyncEventListener));
-		verify(regionConfigurer, times(1)).generateId(eq("TestRegion"));
-		verify(regionConfigurer, times(1)).newRepositoryAsyncEventListener();
+		InOrder order = inOrder(regionConfigurer, mockAsyncEventListener, mockAsyncEventQueueFactory, mockCache,
+			mockAsyncEventListenerFunction, mockAsyncEventQueueFunction, mockAsyncEventQueueFactoryFunction);
 
-		verifyNoMoreInteractions(mockCache, mockAsyncEventQueueFactory);
+		order.verify(regionConfigurer, times(1)).newAsyncEventQueueFactory(eq(mockCache));
+		order.verify(mockCache, times(1)).createAsyncEventQueueFactory();
+		order.verify(mockAsyncEventQueueFactory, times(1)).setBatchConflationEnabled(eq(true));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setBatchSize(eq(224));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setBatchTimeInterval(eq((int) batchTimeInterval.toMillis()));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setDiskStoreName(eq("TestDiskStore"));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setDiskSynchronous(eq(true));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setDispatcherThreads(eq(8));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setForwardExpirationDestroy(eq(true));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setGatewayEventSubstitutionListener(eq(mockEventSubstitutionFilter));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setMaximumQueueMemory(eq(51));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setOrderPolicy(eq(GatewaySender.OrderPolicy.THREAD));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setParallel(eq(true));
+		order.verify(mockAsyncEventQueueFactory, times(1)).setPersistent(eq(true));
+		order.verify(mockAsyncEventQueueFactory, times(1)).addGatewayEventFilter(eq(mockEventFilterOne));
+		order.verify(mockAsyncEventQueueFactory, times(1)).addGatewayEventFilter(eq(mockEventFilterTwo));
+		order.verify(mockAsyncEventQueueFactory, times(1)).pauseEventDispatching();
+		order.verify(regionConfigurer, times(1)).generateId(eq("TestRegion"));
+		order.verify(regionConfigurer, times(1)).newRepositoryAsyncEventListener();
+		order.verify(regionConfigurer, times(1)).postProcess(eq(mockAsyncEventListener));
+		order.verify(mockAsyncEventListener, times(1)).setAsyncEventErrorHandler(eq(mockAsyncEventErrorHandler));
+		order.verify(mockAsyncEventListenerFunction, times(1)).apply(eq(mockAsyncEventListener));
+		order.verify(regionConfigurer, times(1)).postProcess(eq(mockAsyncEventQueueFactory));
+		order.verify(mockAsyncEventQueueFactoryFunction, times(1)).apply(eq(mockAsyncEventQueueFactory));
+		order.verify(mockAsyncEventQueueFactory, times(1)).create(eq("123"), eq(mockAsyncEventListener));
+		order.verify(regionConfigurer, times(1)).postProcess(eq(mockAsyncEventQueue));
+		order.verify(mockAsyncEventQueueFunction, times(1)).apply(eq(mockAsyncEventQueue));
 
-		verifyNoInteractions(mockAsyncEventListener, mockAsyncEventQueue, mockRepository, mockEventFilterOne,
-			mockEventFilterTwo, mockEventSubstitutionFilter);
+		verifyNoMoreInteractions(mockCache, mockAsyncEventListener, mockAsyncEventListenerFunction,
+			mockAsyncEventQueueFactory, mockAsyncEventQueueFunction, mockAsyncEventQueueFactoryFunction);
+
+		verifyNoInteractions(mockAsyncEventErrorHandler, mockAsyncEventQueue, mockRepository,
+			mockEventFilterOne, mockEventFilterTwo, mockEventSubstitutionFilter);
 	}
 
 	@Test
-	public void newRepositoryAsyncEventListener() {
+	public void newAsyncEventQueueCreatesQueueFromFactoryWithIdAndListener() {
+
+		AsyncEventListener mockAsyncEventListener = mock(AsyncEventListener.class, "Mock AEQ Listener");
+
+		AsyncEventQueue mockAsyncEventQueue = mock(AsyncEventQueue.class, "Mock AEQ");
+
+		AsyncEventQueueFactory mockAsyncEventQueueFactory = mock(AsyncEventQueueFactory.class, "Mock AEQ Factory");
+
+		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
+
+		String asyncEventQueueId = "abc123";
+
+		doReturn(mockAsyncEventQueue).when(mockAsyncEventQueueFactory)
+			.create(eq(asyncEventQueueId), eq(mockAsyncEventListener));
+
+		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
+			new AsyncInlineCachingRegionConfigurer<>(mockRepository, Predicate.isEqual("TestRegion"));
+
+		assertThat(regionConfigurer.newAsyncEventQueue(mockAsyncEventQueueFactory, asyncEventQueueId, mockAsyncEventListener))
+			.isEqualTo(mockAsyncEventQueue);
+
+		verify(mockAsyncEventQueueFactory, times(1))
+			.create(eq(asyncEventQueueId), eq(mockAsyncEventListener));
+		verifyNoMoreInteractions(mockAsyncEventQueueFactory);
+		verifyNoInteractions(mockAsyncEventListener, mockAsyncEventQueue, mockRepository);
+	}
+
+	@Test
+	public void newAsyncEventQueueFactoryCallsCacheCreateAsyncEventQueueFactory() {
+
+		Cache mockCache = mock(Cache.class, "Mock Peer Cache");
 
 		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
 
 		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
-			spy(new AsyncInlineCachingRegionConfigurer<>(mockRepository, Predicate.isEqual("TestRegion")));
+			new AsyncInlineCachingRegionConfigurer<>(mockRepository, Predicate.isEqual("TestRegion"));
+
+		regionConfigurer.newAsyncEventQueueFactory(mockCache);
+
+		verify(mockCache, times(1)).createAsyncEventQueueFactory();
+		verifyNoMoreInteractions(mockCache);
+	}
+
+	@Test
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void newRepositoryAsyncEventListenerReturnsNewListener() {
+
+		CrudRepository mockRepository = mock(CrudRepository.class);
+
+		AsyncInlineCachingRegionConfigurer regionConfigurer =
+			spy(new AsyncInlineCachingRegionConfigurer(mockRepository, Predicate.isEqual("TestRegion")));
 
 		AsyncEventListener listener = regionConfigurer.newRepositoryAsyncEventListener();
 
 		assertThat(listener).isInstanceOf(RepositoryAsyncEventListener.class);
 		assertThat(((RepositoryAsyncEventListener<?, ?>) listener).getRepository()).isEqualTo(mockRepository);
 
+		verify(regionConfigurer, times(1)).newRepositoryAsyncEventListener(eq(mockRepository));
 		verify(regionConfigurer, times(1)).getRepository();
 		verifyNoInteractions(mockRepository);
 	}
