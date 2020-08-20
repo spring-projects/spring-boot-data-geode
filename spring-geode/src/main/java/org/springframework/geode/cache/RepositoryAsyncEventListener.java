@@ -71,8 +71,8 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 		this.repository = repository;
 
 		this.repositoryFunctions.addAll(Arrays.asList(
-			new CreateUpdateAsyncEventRepositoryFunction<>(),
-			new RemoveAsyncEventRepositoryFunction<>()
+			new CreateUpdateAsyncEventRepositoryFunction<>(this),
+			new RemoveAsyncEventRepositoryFunction<>(this)
 		));
 	}
 
@@ -324,8 +324,62 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 	 * @param <ID> {@link Class type} of the identifier of the entity.
 	 * @see AsyncEventOperationRepositoryFunction
 	 */
-	protected abstract class AbstractAsyncEventOperationRepositoryFunction<T, ID>
+	public static abstract class AbstractAsyncEventOperationRepositoryFunction<T, ID>
 			implements AsyncEventOperationRepositoryFunction<T, ID> {
+
+		private final RepositoryAsyncEventListener<T, ID> listener;
+
+		/**
+		 * Constructs an new instance of {@link AbstractAsyncEventOperationRepositoryFunction} initialized with
+		 * the given, required {@link RepositoryAsyncEventListener} to which this function is associated.
+		 *
+		 * @param listener {@link RepositoryAsyncEventListener} processing {@link AsyncEvent AsyncEvents}
+		 * by invoking this {@link Function} to handle them.
+		 * @throws IllegalArgumentException if {@link RepositoryAsyncEventListener} is {@literal null}.
+		 * @see RepositoryAsyncEventListener
+		 */
+		public AbstractAsyncEventOperationRepositoryFunction(@NonNull RepositoryAsyncEventListener<T, ID> listener) {
+
+			Assert.notNull(listener, "RepositoryAsyncEventListener must not be null");
+
+			this.listener = listener;
+		}
+
+		/**
+		 * Alias to the {@link RepositoryAsyncEventListener#getAsyncEventErrorHandler() configured}
+		 * {@link RepositoryAsyncEventListener} {@link AsyncEventErrorHandler}.
+		 *
+		 * @return the configured {@link AsyncEventErrorHandler}; never {@literal null}.
+		 * @see RepositoryAsyncEventListener#getAsyncEventErrorHandler()
+		 * @see AsyncEventErrorHandler
+		 * @see #getListener()
+		 */
+		protected AsyncEventErrorHandler getErrorHandler() {
+			return getListener().getAsyncEventErrorHandler();
+		}
+
+		/**
+		 * Returns a reference to the associated {@link RepositoryAsyncEventListener}.
+		 *
+		 * @return a reference to the associated {@link RepositoryAsyncEventListener}; never {@literal null}.
+		 * @see RepositoryAsyncEventListener
+		 */
+		protected @NonNull RepositoryAsyncEventListener<T, ID> getListener() {
+			return this.listener;
+		}
+
+		/**
+		 * Alias to the {@link RepositoryAsyncEventListener#getRepository() configured}
+		 * {@link RepositoryAsyncEventListener} {@link CrudRepository}.
+		 *
+		 * @return the configured {@link CrudRepository}; never {@literal null}.
+		 * @see org.springframework.data.repository.CrudRepository
+		 * @see RepositoryAsyncEventListener#getRepository()
+		 * @see #getListener()
+		 */
+		protected @NonNull CrudRepository<T, ID> getRepository() {
+			return getListener().getRepository();
+		}
 
 		/**
 		 * Processes the given {@link AsyncEvent} by first determining whether the event can be processed by this
@@ -349,7 +403,7 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 		 * @see #canProcess(AsyncEvent)
 		 * @see #doRepositoryOp(Object)
 		 * @see #resolveEntity(AsyncEvent)
-		 * @see #getAsyncEventErrorHandler()
+		 * @see #getErrorHandler()
 		 */
 		@Override
 		public Boolean apply(@Nullable AsyncEvent<ID, T> event) {
@@ -367,7 +421,7 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 				return false;
 			}
 			catch (Throwable cause) {
-				return getAsyncEventErrorHandler().apply(new AsyncEventError(event, cause));
+				return getErrorHandler().apply(new AsyncEventError(event, cause));
 			}
 		}
 
@@ -411,17 +465,29 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 	 *
 	 * Invokes the {@link CrudRepository#save(Object)} data access operation.
 	 *
-	 * @param <S> {@link Class Subtype} of the entity tied to the event.
+	 * @param <T> {@link Class type} of the entity tied to the event.
 	 * @param <ID> {@link Class type} of the identifier of the entity.
 	 */
-	public class CreateUpdateAsyncEventRepositoryFunction<S extends T, ID>
-			extends AbstractAsyncEventOperationRepositoryFunction<S, ID> {
+	public static class CreateUpdateAsyncEventRepositoryFunction<T, ID>
+			extends AbstractAsyncEventOperationRepositoryFunction<T, ID> {
+
+		/**
+		 * Constructs a new instance of {@link CreateUpdateAsyncEventRepositoryFunction} initialized with the given,
+		 * required {@link RepositoryAsyncEventListener}.
+		 *
+		 * @param listener {@link RepositoryAsyncEventListener} forwarding {@link AsyncEvent AsyncEvents} for processing
+		 * by this {@link Function}
+		 * @see RepositoryAsyncEventListener
+		 */
+		public CreateUpdateAsyncEventRepositoryFunction(@NonNull RepositoryAsyncEventListener<T, ID> listener) {
+			super(listener);
+		}
 
 		/**
 		 * @inheritDoc
 		 */
 		@Override
-		public boolean canProcess(@Nullable AsyncEvent<ID, S> event) {
+		public boolean canProcess(@Nullable AsyncEvent<ID, T> event) {
 
 			Operation operation = event != null ? event.getOperation() : null;
 
@@ -433,28 +499,39 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 		 */
 		@Override
 		@SuppressWarnings("unchecked")
-		protected <R> R doRepositoryOp(S entity) {
+		protected <R> R doRepositoryOp(T entity) {
 			return (R) getRepository().save(entity);
 		}
 	}
 
 	/**
-	 * An {@link AsyncEventOperationRepositoryFunction} capable of handling {@link Operation#REMOVE}
-	 * {@link AsyncEvent AsyncEvents}.
+	 * An {@link Function} implementation capable of handling {@link Operation#REMOVE} {@link AsyncEvent AsyncEvents}.
 	 *
 	 * Invokes the {@link CrudRepository#delete(Object)} data access operation.
 	 *
-	 * @param <S> {@link Class Subtype} of the entity tied to the event.
+	 * @param <T> {@link Class type} of the entity tied to the event.
 	 * @param <ID> {@link Class type} of the identifier of the entity.
 	 */
-	public class RemoveAsyncEventRepositoryFunction<S extends T, ID>
-			extends AbstractAsyncEventOperationRepositoryFunction<S, ID> {
+	public static class RemoveAsyncEventRepositoryFunction<T, ID>
+			extends AbstractAsyncEventOperationRepositoryFunction<T, ID> {
+
+		/**
+		 * Constructs a new instance of {@link RemoveAsyncEventRepositoryFunction} initialized with the given, required
+		 * {@link RepositoryAsyncEventListener}.
+		 *
+		 * @param listener {@link RepositoryAsyncEventListener} forwarding {@link AsyncEvent AsyncEvents} for processing
+		 * by this {@link Function}
+		 * @see RepositoryAsyncEventListener
+		 */
+		public RemoveAsyncEventRepositoryFunction(@NonNull RepositoryAsyncEventListener<T, ID> listener) {
+			super(listener);
+		}
 
 		/**
 		 * @inheritDoc
 		 */
 		@Override
-		public boolean canProcess(@Nullable AsyncEvent<ID, S> event) {
+		public boolean canProcess(@Nullable AsyncEvent<ID, T> event) {
 
 			Operation operation = event != null ? event.getOperation() : null;
 
@@ -465,7 +542,7 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 		 * @inheritDoc
 		 */
 		@Override
-		protected <R> R doRepositoryOp(S entity) {
+		protected <R> R doRepositoryOp(T entity) {
 			getRepository().delete(entity);
 			return null;
 		}
