@@ -1,8 +1,8 @@
 .DS_Store
+bin/
 build/
 out/
 target/
-bin/
 .gradle
 .springBeans
 *.iml
