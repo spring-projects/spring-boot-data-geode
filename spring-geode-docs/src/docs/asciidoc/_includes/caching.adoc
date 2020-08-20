@@ -493,6 +493,392 @@ TIP: To see a similar implementation of _Inline Caching_ using a Database (In-Me
 look at this https://github.com/spring-projects/spring-boot-data-geode/blob/master/spring-geode/src/test/java/org/springframework/geode/cache/inline/database/InlineCachingWithDatabaseIntegrationTests.java[test class]
 from the SBDG test suite. A dedicated sample will be provided in a future release.
 
+[[geode-caching-provider-inline-caching-asynchronous]]
+===== Asynchronous Inline Caching
+
+If consistency between the cache and your backend, external data source is not a concern, and you only need to write
+from the cache to the backend data store periodically, then you can employ _asynchronous_ (Write-Behind_)
+_Inline Caching_.
+
+As the term implies, a write to the backend data store is "_asynchronous_" and not strictly tied to the cache operation.
+As a result, the backend data store will be "_eventually consistent_" with the cache and the cache is primarily used by
+the application to access and manage state at runtime. In this case, the backend data store is used to persist the state
+of the cache at periodic intervals.
+
+Of course, if multiple applications or processes are updating the backend data store concurrently, then you could
+combine a `CacheLoader` to synchronously "_read-through_" to the backend data store in order to keep the cache
+up-to-date as data is accessed and then asynchronously _write-behind_ when the cache is updated to eventually inform
+other interested application/processes of the changes. In this capacity, the backend data store (e.g. database) is
+still the primary _System of Record_ (SOR).
+
+If data processing is not time sensitive, then you can gain a performance boost from periodic, quantity
+and/or time-based batch updates.
+
+[[geode-caching-provider-inline-caching-asynchronous-asynceventlistener]]
+====== Implementing an AsyncEventListener for Inline Caching
+
+If you were to implement _asynchronous_ (_Write-Behind_) _Inline Caching_ by hand, with access to and control over
+low-level configuration details, then you would need to do the following yourself:
+
+1. Implement an `AsyncEventListener` to write to an external, backend data source on cache events
+2. Configure and create an `AsyncEventQueue` (AEQ) with the listener
+3. Create a Region and attach the AEQ
+
+Following from our _synchronous_, _Read/Write-Through_ _Inline Caching_ example from the prior sections above, our
+`AsyncEventListener` implementation might appear as follows:
+
+.Example `AsyncEventListener` for _Inline Caching_
+[source,java]
+----
+@Component
+class ExampleAsyncEventListener implements AsyncEventListener {
+
+	private final DataSource dataSource;
+
+	ExampleAsyncEventListener(DataSoruce dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	@Override
+	public boolean processEvents(List<AsyncEvent> events) {
+
+		// Iterate over the ordered AsyncEvents and use the DataSource to write to the external, backend DataSource
+
+	}
+}
+----
+
+NOTE: Of course, instead of injecting a `DataSource` object directly, you could use JDBC, Spring's `JdbcTemplate`,
+JPA/Hibernate or another data access API/Framework. Further below, we will show how SBDG simplifies the
+`AsyncEventListener` using Spring Data _Repositories_.
+
+Then, we need to register this listener with a configured `AsyncEventQueue` (AEQ) (2) and attach it to the target Region
+that is the source of the cache events we want to persist asynchronously (3):
+
+.Configure and Create an `AsyncEventQueue`
+[source,java]
+----
+@Configuration
+@PeerCacheApplication
+class GeodeConfiguration {
+
+	@Bean
+    DataSource exampleDataSource() {
+		// Configure and construct a data store specific DataSource then return it
+    }
+
+	@Bean("ExampleListener")
+    ExampleAsyncEventListener exampleAsyncEventListener(DataSource dataSource) {
+		return new ExampleAsyncEventListener(dataSource);
+    }
+
+	@Bean("ExampleQueue")
+    AsyncEventQueueFactoryBean exampleAsyncEventQueue(Cache peerCache,
+            @Qualifier("ExampleListener") ExampleAsyncEventListener listener) {
+
+		AsyncEventQueueFactoryBean asyncEventQueue = new AsyncEventQueueFactoryBean(peerCache, listener);
+
+		asyncEventQueue.setBatchConflationEnabled(true);
+		asyncEventQueue.setBatchSize(50);
+		asyncEventQueue.setBatchTimeInterval(15000); // 15 seconds
+        asyncEventQueue.setMaximumQueueMemory(64); // 64 MB
+        // ...
+
+		return asyncEventQueue;
+    }
+
+    @Bean("ExampleRegion")
+    PartitionedRegionFactoryBean<?, ?> exampleRegion(Cache peerCache,
+            @Qualifier("ExampleQueue") AsyncEventQueue queue) {
+
+        PartitionedRegionFactoryBean<?, ?> exampleRegion = new PartitionedRegionFactoryBean<>();
+
+        exampleRegion.setAsyncEventQueues(ArrayUtils.asArray(queue));
+        exampleRegion.setCache(peerCache);
+        // ...
+
+        return exampleRegion;
+    }
+}
+----
+
+While this approach affords you the developer a lot of control over the (low-level) configuration, in addition to
+your `AsyncEventListener` implementation, this is a lot of boilerplate code.
+
+TIP: See the {spring-data-geode-javadoc}/org/springframework/data/gemfire/wan/AsyncEventQueueFactoryBean.html[Javadoc]
+on SDG's `AsyncEventQueueFactoryBean` for custom configuration of the AEQ.
+
+TIP: See {geode-name}'s {apache-geode-docs}/developing/events/implementing_write_behind_event_handler.html[User Guide]
+for more details on AEQs and listeners.
+
+Fortunately, with SBDG, there is a better way.
+
+[[geode-caching-provider-inline-caching-asynchronous-using-spring-data-repositories]]
+====== Asynchronous Inline Caching using Spring Data Repositories
+
+The implementation and configuration of the `AsyncEventListener` as well as the AEQ shown above can be simplified
+as follows:
+
+.Using SBDG to configure Asynchronous (Write-Behind) Inline Caching
+[source,java]
+----
+@SpringBootApplication
+@EntityScan(basePackageClasses = Example.class)
+@EnableJpaRepositories(basePackageClasses = ExampleRepository.class)
+@EnableEntityDefinedRegions(basePackageClasses = Example.class)
+class SpringBootRdbmsApacheGeodeAsyncInlineCachingApplication {
+
+	@Bean
+    AsyncInlineCachingRegionConfigurer asyncInlineCachingRegionConfigurer(
+    	    @Qualifier("ExampleRepository") CrudRepository<?, ?> repository) {
+
+		return AsyncInlineCachingRegionConfigurer.create(repository, "ExampleRegion")
+            .withQueueBatchConflationEnabled()
+            .withQueueBatchSize(50)
+            .withQueueBatchTimeInterval(Duration.ofSeconds(15))
+            .withQueueMaxMemory(64);
+    }
+}
+----
+
+The `AsyncInlineCachingRegionConfigurer.create(..)` method is overloaded to accept a `Predicate` in place of the `String`
+identifying the target Region (by name) on which to configure asynchronous _Inline Caching_ functionality to express
+more powerful matching logic, programmatically.
+
+The `AsyncInlineCachingRegionConfigurer` uses the https://en.wikipedia.org/wiki/Builder_pattern[_Builder Software Design Pattern_]
+and `withQueue*(..)` builder methods to configure the underlying `AsyncEventQueue` (AEQ) when the queue's configuration
+deviates from the defaults, as specified by {geode-name}.
+
+Under-the-hood, the `AsyncInlineCachingRegionConfigurer` constructs a new instance of the `RepositoryAsyncEventListener`
+class initialized with the given Spring Data `CrudRepository`. The `RegionConfigurer` then registers the listener with
+the AEQ and attaches it to the target `Region`.
+
+With the power of Spring Boot _auto-configuration_ and SBDG, the configuration is much more concise and intuitive.
+
+[[geode-caching-provider-inline-caching-asynchronous-listener]]
+====== About `RepositoryAsyncEventListener`
+
+The SBDG `RepositoryAsyncEventListener` class is the magic behind the integration between the cache and the external,
+backend data source. The listener is a specialized https://en.wikipedia.org/wiki/Adapter_pattern[Adpater] that processes
+`AsyncEvents` by invoking an appropriate `CrudRepository` method based on the cache entry event operation. The listener
+requires an instance of a `CrudRepository`. Therefore the listener supports any external, backend data source supported
+by Spring Data's _Repository_ abstraction.
+
+Of course, backend data store, data access operations (e.g. INSERT, UPDATE, DELETE, etc) triggered by cache events
+are performed asynchronously from the cache operation. This means the state of the cache and backend data store
+will be "_eventually consistent_".
+
+Given the complex nature of "_eventual consistent_" systems and asynchronous, concurrent processing, the
+`RepositoryAsyncEventListener` allows users to register a custom `AsyncEventErrorHandler` in the case that `AsyncEvent`
+processing results in an error, perhaps due to a faulty backend data store data access operation
+(e.g. `PessimisticLockingFailureException`).
+
+The `AsyncEventErrorHandler` interface is a `java.util.function.Function` implementation and `@FunctionalInterface`
+defined as:
+
+.AsyncEventErrorHandler interface definition
+[source,java]
+----
+@FunctionalInterface
+interface AsyncEventErrorHandler implements Function<AsyncEventError, Boolean> { }
+----
+
+Since the `AsyncEventErrorHandler` interface implements `Function`, then you would override the `apply(:AsyncEventError)`
+method to handle the error with application-specific actions. The handler returns a `boolean` to indicate whether it was
+able to handle the error or not.
+
+The `AsyncEventError` class encapsulates `AsyncEvent` along with the `Throwable` error thrown while processing the event.
+
+.Custom `AsyncEventErrorHandler` implementation
+[source,java]
+----
+class CustomAsyncEventErrorHandler implements AsyncEventErrorHandler {
+
+	@Override
+    public Boolean apply(AsyncEventError error) {
+
+		if (error.getCause() instanceof PessimisticLockingFailureException) {
+			// handle pessimistic locking failure
+            return true; // if error was successfully handled.
+		}
+		else if (error.getCause() instanceof IncorrectResultSizeDataAccessException) {
+			// handle no row or too many row update
+            return true; // if error was successfully handled.
+		}
+
+		return false;
+    }
+}
+----
+
+It is easy to configure the `RepositoryAsyncEventListener` with your custom `AsyncEventErrorHandler` using the
+`AsyncInlineCachingRegionConfigurer`, like so:
+
+.Configuring a custom `AsyncEventErrorHandler`
+[source,java]
+----
+@Configuration
+class GeodeConfiguration {
+
+	@Bean
+	CustomAsyncEventErrorHandler customAsyncEventErrorHandler() {
+		return new CustomAsyncEventErrorHandler();
+	}
+
+	@Bean
+    AsyncInlineCachingRegionConfigurer asyncInlineCachingRegionConfigurer(
+    	    CrudRepository<?, ?> repository,
+            CustomerAsyncEventErrorHandler errorHandler
+    ) {
+
+		return AsyncInlineCachingRegionConfigurer.create(repository, "ExampleRegion")
+            .withAsyncEventErrorHandler(errorHandler);
+    }
+}
+----
+
+Also, since `AsyncEventErrorHandler` implements `Function`, you can https://en.wikipedia.org/wiki/Composite_pattern["_compose_"]
+multiple error handlers using {jdk-javadoc}/java/util/function/Function.html#andThen-java.util.function.Function-[`Function.andThen(:Function)`].
+
+By default, the `RepositoryAsyncEventListener` handles `CREATE`, `UPDATE` and `REMOVE` cache event, entry operations.
+
+`CREATE` and `UPDATE` translates to `CrudRepository.save(entity)` where the `entity` is derived from
+`AsyncEvent.getDeserializedValue()`.
+
+`REMOVE` translates to `CrudRepository.delete(entity)` where the `entity` is derived from
+`AsyncEvent.getDeserializedValue()`.
+
+The cache {apache-geode-javadoc}/org/apache/geode/cache/Operation.html[`Operation`] to `CrudRepository` method is
+supported by the `AsyncEventOperationRepositoryFunction` interface, which implements `java.util.function.Function`
+and is a `@FunctionalInterface`.
+
+This interface becomes useful if and when you want to implement `CrudRepository` method invocations for other
+`AsyncEvent` `Operations` not handled by SBDG's `RepositoryAsyncEventListener`, out-of-the-box.
+
+The The `AsyncEventOperationRepositoryFunction` interface is defined as:
+
+.AsyncEventOperationRepositoryFunction interface defintion
+[source,java]
+----
+@FunctionalInterface
+interface AsyncEventOperationRepositoryFunction<T, ID> implements Function<AsyncEvent<ID, T>,  Boolean> {
+
+	default boolean canProcess(AsyncEvent<ID, T> event) {
+		return false;
+	}
+}
+----
+
+`T` is the class type of the entity and `ID` is the class type of the entity's identifier (ID), possibly defined by
+Spring Data's {spring-data-commons-javadoc}/org/springframework/data/annotation/Id.html[`org.springframework.data.annotation.Id`] annotation.
+
+For convenience, SBDG provides the `AbstractAsyncEventOperationRepositoryFunction` class for extension, where you would
+provide implementations for the `cacheProcess(:AsyncEvent)` and `doRepositoryOp(entity)` methods.
+
+NOTE: the `AsyncEventOperationRepositoryFunction.apply(:AsyncEvent)` method is already implemented in terms of
+`canProcess(:AsyncEvent)`, `resolveEntity(:AsyncEvent)`, `doRepositoryOp(entity)`, and catching and handling any
+`Throwable` (errors) by calling the configured `AsyncEventErrorHandler`.
+
+For example, you might want to handle {apache-geode-javadoc}/org/apache/geode/cache/Operation.html#INVALIDATE[`Operation.INVALIDATE`]
+cache events as well, by deleting the entity from the backend data store by invoking the `CrudRepository.delete(entity)`
+method:
+
+.Handling `AsyncEvent`, `Operation.INVALIDATE`
+[source,java]
+----
+@Component
+class InvalidateAsyncEventRepositoryFunction
+    extends RepositoryAsyncEventListener.AbstractAsyncEventOperationRepositoryFunction<?, ?> {
+
+	InvalidateAsyncEventRepositoryFunction(RepositoryAsyncEventListener<?, ?> listener) {
+		super(listener);
+	}
+
+	@Override
+	public boolean canProcess(AsyncEvent<?, ?> event) {
+		return event != null && Operation.INVALIDATE.equals(event.getOperation());
+	}
+
+
+	@Override
+	protected Object doRepositoryOperation(Object entity) {
+		getRepository.delete(entity);
+		return null;
+	}
+}
+----
+
+You can then register your user-defined, `AsyncEventOperationRepositoryFunction`
+(i.e. `InvalidateAsyncEventRepositoryFunction`) with the `RepositoryAsyncEventListener` by using the
+`AsyncInlineCachingRegionConfigurer`, like so:
+
+.Configuring a user-defined `AsyncEventOperationRepositoryFunction`
+[source,java]
+----
+import org.springframework.geode.cache.RepositoryAsyncEventListener;@Configuration
+class GeodeConfiguration {
+
+	@Bean
+    AsyncInlineCachingRegionConfigurer asyncInlineCachingRegionConfigurer(
+    	    CrudRepository<?, ?> repository,
+            CustomerAsyncEventErrorHandler errorHandler
+    ) {
+
+		return AsyncInlineCachingRegionConfigurer.create(repository, "ExampleRegion")
+            .applyToListener(listener -> {
+
+            	if (listener instanceof RepositoryAsyncEventListener) {
+
+            		RepositoryAsyncEventListener<?, ?> repositoryListener =
+                        (RepositoryAsyncEventListener<?, ?>) listener;
+
+             		repositoryListener.register(new InvalidAsyncEventRepositoryFunction(repositoryListener));
+            	}
+
+            	return listener;
+            });
+    }
+}
+----
+
+This same technique can be applied to the `Operation.CREATE`, `Operation.UPDATE` and `Operation.REMOVE` cache entry
+event operations, handled by SBDG out-of-the-box, by default, as well.
+
+By registering your own, user-defined `AsyncEventOperationRepositoryFunctions` for the `CREATE`, `UPDATE` and `REMOVE`
+cache `Operations`, you effectively override the default behavior. This is convenient if you want to override
+the default behavior.
+
+[[geode-caching-provider-inline-caching-asynchronous-region-configurer]]
+====== About `AsyncInlineCachingRegionConfigurer`
+
+As we saw in the previous section, it is possible to intercept and post-process key components constructed
+and configured by the `AsyncInlineCachingRegionConfigurer` class during initialization.
+
+Out-of-the-box, SBDG's allows you to intercept and post-process the `AsyncEventListener` (i.e. `RepositoryAsyncEventListener`),
+`AsyncEventQueueFactory` and even the `AsyncEventQueue`, created by the `AsyncInlineCachingRegionConfigurer`
+(a SDG {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/RegionConfigurer.html[`RegionConfigurer`])
+during Spring `ApplicationContext`, bean initialization.
+
+The `AsyncInlineCachingRegionConfigurer` class provides the builder methods listed below to intercept and post-process
+any of the following {geode-name} objects:
+
+* `applyToListener(:Function<AsyncEventListener, AsyncEventListener>)`
+* `applyToQueue(:Function<AsyncEventQueue, AsyncEventQueue>)`
+* `applyToQueueFactory(:Function<AsyncEventQueueFactory, AsyncEventQueueFactory>)`
+
+All of these "_apply_" methods accept a `java.util.function.Function` that accepts and "_applies_" the logic of
+the `Function` to the {geode-name} object (e.g. `AsyncEventListener`), returning the object as a result.
+
+TIP: The {geode-name} object returned by the `Function` may be the same object, a proxy, or a completely new object.
+Essentially, the returned object can be anything you want. This is the fundamental premise behind
+_Aspect-Oriented Programming_ (AOP) and the https://en.wikipedia.org/wiki/Decorator_pattern[Decorator Software Design Pattern].
+
+These "_apply_" methods and the supplied `Function` allow you to decorate, enhance, post-process, whatever you want to,
+to the {geode-name} objects created by the listener.
+
+Of course, the `AsyncInlineCachingRegionConfigurer` strictly, adheres to the https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[Open/Close Principle]
+as well, and is flexibly extensible.
+
 [[geode-caching-provider-advanced-configuration]]
 === Advanced Caching Configuration
 
