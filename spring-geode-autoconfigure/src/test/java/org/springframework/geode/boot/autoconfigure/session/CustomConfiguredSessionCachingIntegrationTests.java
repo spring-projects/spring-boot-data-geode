@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.apache.geode.cache.RegionShortcut;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
+import org.springframework.boot.ApplicationContextFactory;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -140,7 +141,7 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 	protected SpringApplicationBuilder processBeforeBuild(SpringApplicationBuilder springApplicationBuilder) {
 
 		return this.springApplicationBuilderFunction.apply(springApplicationBuilder)
-			.contextClass(GenericWebApplicationContext.class);
+			.contextFactory(ApplicationContextFactory.ofContextClass(GenericWebApplicationContext.class));
 	}
 
 	@Override
