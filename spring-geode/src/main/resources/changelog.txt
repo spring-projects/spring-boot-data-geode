@@ -4,6 +4,25 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.3.3.RELEASE (2020-08-20)
+---------------------------------------------
+Upgrades SBDG to Spring Boot 2.3.3.RELEASE. Adds a Maven BOM to manage the SBDG module dependency versions collectively
+and consistently.
+
+* Includes a new spring-geode-bom module creating a Maven BOM to manage the SBDG module dependency versions
+in a collective and consistent way.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/issues/93.
+* Revises (Edits) the chapter on "Caching with Apache Geode & Pivotal GemFire".
+* Upgrades to Spring Boot 2.3.3.RELEASE.
+* Upgrades to Spring Data Neumann-SR3.
+* Upgrades to Spring Data for Apache Geode & VMware/Pivotal GemFire 2.3.3.RELEASE.
+* Upgrades to Spring Test for Apache Geode & VMware/Pivotal GemFire 0.0.18.RELEASE.
+* Upgrades to Spring Build Conventions Gradle Plugin 0.0.34.RELEASE.
+* Upgrades to Byte Buddy 1.10.14.
+* Upgrades to Gradle 6.6.
+* Upgrades to Mockito 3.5.0.
+
+
 Changes in version 1.4.0-M2 (2020-08-20)
 ----------------------------------------
 Upgrades SBDG to Spring Boot 2.4.0-M2. Adds dedicated support for Asynchronous (Write-Behind) Inline Caching
