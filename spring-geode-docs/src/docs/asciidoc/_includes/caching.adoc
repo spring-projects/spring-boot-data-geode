@@ -131,10 +131,13 @@ Typically, when most users think of caching, they are thinking of _Look-Aside Ca
 pattern applied by _Spring's Cache Abstraction_.
 
 In a nutshell, _Near Caching_ keeps the data closer to where the data is used thereby improving on performance
-due to lower latencies when data is needed (i.e. no network hops).
+due to lower latencies when data is needed (i.e. no network hops). This also improves application throughput,
+i.e. the amount of work completed in a given time frame.
 
 Within _Inline Caching_, developers have a choice between synchronous (_Read/Write-Through_) and asynchronous
-(_Write-Behind_) configurations depending on the application use case and requirements.
+(_Write-Behind_) configurations depending on the application use case and requirements. Synchronous, Read/Write-Through
+_Inline Caching_ is necessary if consistency is a concern.  Asynchronous, Write-Behind _Inline Caching_ is applicable
+if throughput and low-latency are a priority.
 
 Within _Multi-Site Caching_, there are _Active-Passive_ and _Active-Active_ arrangements.  More details on _Multi-Site
 Caching_ will be presented in a later release.
@@ -231,7 +234,7 @@ in the Region that might have been changed by other clients accessing the same d
 [[geode-caching-provider-inline-caching]]
 ==== Inline Caching
 
-The final pattern of caching we will discuss in this chapter is _Inline Caching_.
+The next pattern of caching we will discuss in this chapter is _Inline Caching_.
 
 There are two different configurations of _Inline Caching_ that developers can apply to their Spring Boot applications
 when using this pattern of caching: Synchronous (_Read/Write-Through_) and Asynchronous (_Write-Behind_).
@@ -881,6 +884,18 @@ to the {geode-name} objects created by the listener.
 
 Of course, the `AsyncInlineCachingRegionConfigurer` strictly adheres to the https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[Open/Close Principle]
 as well, and is therefore flexibly extensible.
+
+[[geode-caching-provider-multi-site-caching]]
+==== Multi-Site Caching
+
+The final pattern of caching presented in this chapter is _Multi-Site Caching_.
+
+As described above, there are 2 configuration arrangements depending on your application usage patterns, requirements
+and user demographic: _Active-Active_ & _Active-Passive_.
+
+_Multi-Site Caching_ along with _Active-Active_ and _Active-Passive_ configuration arrangements will be described
+in more detail in the Sample link:guides/caching-multi-site.html[Guide]. Also, be sure to review the Sample
+{github-samples-url}/caching/multi-site[Code].
 
 [[geode-caching-provider-advanced-configuration]]
 === Advanced Caching Configuration
