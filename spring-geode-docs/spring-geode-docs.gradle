@@ -31,6 +31,7 @@ asciidoctor {
 		'github-url': githubUrl,
 		'github-samples-url': "${githubUrl}/spring-geode-samples",
 		'download-url' : "${githubBaseUrl}/archive/${githubTag}.zip",
+		'apache-geode-src' : "https://github.com/apache/geode/blob/rel/v${apacheGeodeVersion}",
 		'master-apache-geode-version' : "19",
 		'master-pivotal-gemfire-version' : "98",
 		'master-pivotal-cloudcache-version' : "1-8",
