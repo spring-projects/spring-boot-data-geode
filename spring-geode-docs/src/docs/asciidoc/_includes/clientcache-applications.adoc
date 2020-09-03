@@ -29,7 +29,7 @@ main application class:
 [source,java]
 ----
 @SpringBootApplication
-public SpringBootApacheGeodeClientCacheApplication {
+public class SpringBootApacheGeodeClientCacheApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBootApacheGeodeClientCacheApplication.class, args);
@@ -68,7 +68,7 @@ For example, perhaps you want to perform some additional `ClientCache` initializ
 [source,java]
 ----
 @SpringBootApplication
-public SpringBootApacheGeodeClientCacheApplication {
+public class SpringBootApacheGeodeClientCacheApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBootApacheGeodeClientCacheApplication.class, args);
