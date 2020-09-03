@@ -52,6 +52,7 @@ asciidoctorj {
 		'docinfodir@': ".",
 		'apache-geode-artifact-version' : "${apacheGeodeVersion}",
 		'apache-geode-doc-version' : "112",
+		'apache-geode-src' : "https://github.com/apache/geode/blob/rel/v${apacheGeodeVersion}",
 		'pivotal-cloudcache-artifact-version' : "${pivotalCloudCacheVersion}",
 		'pivotal-cloudcache-doc-version' : "1-12",
 		'pivotal-gemfire-artifact-version' : "${pivotalGemFireVersion}",
