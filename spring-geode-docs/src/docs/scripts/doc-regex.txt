@@ -1,0 +1,4 @@
+# Useful Regular Expressions (REGEX) to search for documentation problems
+
+# Searches for class definitions without the 'class' keyword.
+public [class]{0}\w* \{
