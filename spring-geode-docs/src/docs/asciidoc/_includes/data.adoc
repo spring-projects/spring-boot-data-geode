@@ -1,6 +1,7 @@
 [[geode-data-using]]
 == Using Data
 :geode-name: Apache Geode
+:gemfire-name: VMware Tanzu GemFire
 
 One of the most important tasks during development is ensuring your Spring Boot application handles data correctly.
 In order to verify the accuracy, integrity and availability of your data, your application needs data to work with.
@@ -344,6 +345,16 @@ if your entity classes do not declare an explicit identifier field, such as with
 not have an "id" field. This scenario can also occur when inter-operating with native clients that model the application
 domain objects differently, then serialize the objects using PDX storing them in Regions on the server that are then
 later consumed by your Spring Boot application.
+
+WARNING: It may be necessary to set the `-Dgemfire.disableShutdownHook` JVM System property to `true` before your Spring
+Boot application starts up when using Export. Unfortunately, this Java Runtime shutdown hook is registered and enabled
+in {geode-name} & {gemfire-name} by default, which results in the cache and _Regions_ being closed before the SBDG
+Export functionality can "export the data", thereby resulting in a `CacheClosedException`. SBDG
+{github-url}/spring-geode-autoconfigure/src/main/java/org/springframework/geode/boot/autoconfigure/DataImportExportAutoConfiguration.java#L173-L183[makes a best effort]
+to disable the GemFire/Geode shutdown hook when export is enabled, but it is at the mercy of the JVM `ClassLoader` since
+GemFire/Geode's JVM shutdown hook
+{apache-geode-src}/geode-core/src/main/java/org/apache/geode/distributed/internal/InternalDistributedSystem.java#L2185-L2223[registration]
+is declared in a `static` initializer.
 
 [[geode-data-using-import-export-api-extensions]]
 === Import/Export API Extensions
