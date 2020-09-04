@@ -34,6 +34,10 @@ on _Look-Aside Caching_ before continuing with this guide.
 
 Let's begin.
 
+TIP: Refer to the link:../index.html#geode-caching-provider-multi-site-caching[Multi-Site Caching] section
+in the link:../index.html#geode-caching-provider[Caching with Apache Geode or VMware Tanzu GemFire] chapter
+in the reference documentation for more information.
+
 [#index-link]
 link:../index.html[Index]
 
