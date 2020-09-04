@@ -31,7 +31,8 @@ https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[_Open/Closed Princip
 https://en.wikipedia.org/wiki/SOLID[SOLID] principles.
 11. Components (e.g. `Pool`) that are difficult to test properly: {geode-name} often incorrectly refers to implementation
 classes rather than interfaces leading to `ClassCastExceptions` and violation of the _Program to Interfaces_ principle.
-12. Untimely shutdown and release of resources that run interference when writing _Integration Tests_.
+12. Excessive use of `static` initializer blocks making {geode-name} difficult to test.
+13. Untimely shutdown and release of resources that run interference when writing _Integration Tests_.
 
 This list goes on making {geode-name}'s APIs difficult and confusing to use at times, especially without prior knowledge
 or experience. Users very often get this wrong and it is the main reason why Spring's APIs for {geode-name} are so
