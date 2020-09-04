@@ -26,6 +26,10 @@ _Cache Abstraction_ or Apache Geode is required to utilize caching in your Sprin
 
 Let's begin.
 
+TIP: Refer to the link:../index.html#geode-caching-provider-look-aside-caching[Look-Aside Caching] section
+in the link:../index.html#geode-caching-provider[Caching with Apache Geode or VMware Tanzu GemFire] chapter
+in the reference documentation for more information.
+
 [#index-link]
 link:../index.html[Index]
 

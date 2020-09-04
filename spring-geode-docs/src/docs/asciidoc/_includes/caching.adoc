@@ -1,7 +1,7 @@
 [[geode-caching-provider]]
-== Caching using Apache Geode or VMware GemFire
-:gemfire-name: VMware GemFire
-:geode-name: Apache Geode
+== Caching using Apache Geode or VMware Tanzu GemFire
+:gemfire-name: {pivotal-gemfire-name}
+:geode-name: {apache-geode-name}
 
 One of the quickest, easiest and least invasive ways to get started using {geode-name} or {gemfire-name} in your
 Spring Boot applications is to use either {geode-name} or {gemfire-name} as a
@@ -18,7 +18,7 @@ TIP: Make sure you thoroughly understand the {spring-framework-docs}/integration
 behind Spring's Cache Abstraction before you continue.
 
 TIP: You can also refer to the relevant section on {spring-boot-docs-html}/#boot-features-caching[Caching]
-in _Spring Boot's Reference Guide_. _Spring Boot_ even provides _auto-configuration_ support for a few,
+in _Spring Boot's Reference Documentation_. _Spring Boot_ even provides _auto-configuration_ support for a few,
 simple {spring-boot-docs-html}/#_supported_cache_providers[caching providers] out-of-the-box.
 
 Indeed, _caching_ can be a very effective _software design pattern_ to avoid the cost of invoking
@@ -53,9 +53,9 @@ Our application might consist of a financial loan service to process a person's 
 @Service
 class FinancialLoanApplicationService {
 
-    @Cacheable("EligibilityDecisions", ...)
+    @Cacheable("EligibilityDecisions")
     EligibilityDecision processEligility(Person person, Timespan timespan) {
-        ...
+        // ...
     }
 }
 ----
@@ -92,8 +92,6 @@ The complete Spring Boot application looks like this:
 ----
 package example.app;
 
-import ...;
-
 @SpringBootApplication
 @EnableCachingDefinedRegions
 class FinancialLoanApplication {
@@ -114,7 +112,7 @@ NOTE: Spring Boot for {geode-name}/{gemfire-name} does not recognize nor apply t
 Instead, you should use SDG's `@EnableCachingDefinedRegions` on an appropriate Spring Boot application
 `@Configuration` class.
 
-[[geode-caching-provider-look-aside-near-inline]]
+[[geode-caching-provider-look-aside-near-inline-multi-site]]
 === Look-Aside Caching, Near Caching, Inline Caching and Multi-Site Caching
 
 Four different types of caching patterns can be applied with Spring when using Apace Geode or {gemfire-name}
@@ -144,6 +142,9 @@ Caching_ will be presented in a later release.
 
 [[geode-caching-provider-look-aside-caching]]
 ==== Look-Aside Caching
+
+TIP: Refer to the corresponding Sample link:guides/caching-look-aside.html[Guide] and {github-samples-url}/caching/look-aside[Code]
+to see _Look-Aside Caching_ using {apache-geode-name} in action!
 
 The caching pattern demonstrated in the example above is a form of
 https://content.pivotal.io/blog/an-introduction-to-look-aside-vs-inline-caching-patterns[_Look-Aside Caching_].
@@ -287,7 +288,7 @@ class CustomerService {
 
       Customer customer = customerRepository.findByAccountNumber(account.getNumber());
 
-      // post-processing locic here.
+      // post-processing logic here.
 
       return customer;
   }
@@ -349,8 +350,8 @@ class FinancialLoanApplicationServer {
     }
 
     @Bean
-    DataSource dataSource(..) {
-      ...
+    DataSource dataSource() {
+      // ...
     }
 }
 ----
@@ -374,8 +375,6 @@ class DecisionManagementSystemLoader implements CacheLoader<?, EligibilityDecisi
      Object key = helper.getKey();
 
      // Use the configured DataSource to load the value identified by the key from a backend, external data store.
-
-     return ...
    }
 }
 ----
@@ -409,7 +408,7 @@ class DecisionManagementSystemWriter implements CacheWriter<?, EligibilityDecisi
     // Use the configured DataSource to delete (i.e. DELETE) the entry value from the backend data store
   }
 
-  ...
+  // ...
 }
 ----
 
