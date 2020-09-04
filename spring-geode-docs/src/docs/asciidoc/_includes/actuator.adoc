@@ -1,30 +1,33 @@
 [[actuator]]
 == Spring Boot Actuator
 
-Spring Boot for Apache Geode and Pivotal GemFire (SBDG) adds {spring-boot-docs-html}/production-ready.html[Spring Boot Actuator]
-support and dedicated `HealthIndicators` for Apache Geode and Pivotal GemFire.  Equally, the provided `HealthIndicators`
-will even work with Pivotal Cloud Cache, which is backed by Pivotal GemFire, when pushing your Spring Boot applications
-to Pivotal CloudFoundry (PCC).
+Spring Boot for {apache-geode-name} and {pivotal-gemfire-name} (SBDG) adds {spring-boot-docs-html}/production-ready.html[Spring Boot Actuator]
+support and dedicated `HealthIndicators` for {apache-geode-name} and {pivotal-gemfire-name}.  Equally, the provided
+`HealthIndicators` will even work with Pivotal Cloud Cache, which is backed by {pivotal-gemfire-name}, when pushing your
+Spring Boot applications to Pivotal CloudFoundry (PCC).
 
-Spring Boot `HealthIndicators` provide details about the runtime operation and behavior of your Apache Geode
-or Pivotal GemFire based Spring Boot applications.  For instance, by querying the right `HealthIndicator` endpoint,
-you would be able to get the current hit/miss count for your `Region.get(key)` data access operations.
+Spring Boot `HealthIndicators` provide details about the runtime operation and behavior of your {apache-geode-name}
+based Spring Boot applications.  For instance, by querying the right `HealthIndicator` endpoint, you would be able to
+get the current hit/miss count for your `Region.get(key)` data access operations.
 
-In addition to vital health information, SBDG provides basic, pre-runtime configuration meta-data about the Apache Geode
-/ Pivotal GemFire components that are monitored by Spring Boot Actuator.  This makes it easier to see how
+In addition to vital health information, SBDG provides basic, pre-runtime configuration meta-data about the
+{apache-geode-name} components that are monitored by Spring Boot Actuator.  This makes it easier to see how
 the application was configured all in one place, rather than in properties files, Spring config, XML, etc.
 
 The provided Spring Boot `HealthIndicators` fall under one of three categories:
 
-* Base `HealthIndicators` that apply to all Apache Geode/Pivotal GemFire, Spring Boot applications, regardless of
-cache type, such as Regions, Indexes and DiskStores.
+* Base `HealthIndicators` that apply to all {apache-geode-name}, Spring Boot applications, regardless of cache type,
+such as Regions, Indexes and DiskStores.
 * Peer `Cache` based `HealthIndicators` that are only applicable to peer `Cache` applications, such as
 `AsyncEventQueues`, `CacheServers`, `GatewayReceivers` and `GatewaySenders`.
 * And finally, `ClientCache` based `HealthIndicators` that are only applicable to `ClientCache` applications, such as
 `ContinuousQueries` and connection `Pools`.
 
 The following sections give a brief overview of all the available Spring Boot `HealthIndicators` provided for
-Apache Geode/Pivotal GemFire, out-of-the-box.
+{apache-geode-name} out-of-the-box.
+
+TIP: Refer to the corresponding Sample link:guides/boot-actuator.html[Guide] and {github-samples-url}/boot/actuator[Code]
+to see the Spring Boot Actuator for {apache-geode-name} in action!
 
 [[actuator-base-healthindicators]]
 === Base `HealthIndicators`
@@ -32,10 +35,9 @@ Apache Geode/Pivotal GemFire, out-of-the-box.
 The following section covers Spring Boot `HealthIndicators` that apply to both peer `Cache` and `ClientCache`,
 Spring Boot applications.  That is, these `HealthIndicators` are not specific to the cache type.
 
-In both Apache Geode and Pivotal GemFire, the cache instance is either a peer `Cache` instance, which makes your
-Spring Boot application part of a GemFire/Geode cluster, or more commonly, a `ClientCache` instance that talks to
-an existing cluster.  Your Spring Boot application can only be one cache type or the other and can only have a single
-instance of that cache type.
+In {apache-geode-name}, the cache instance is either a peer `Cache` instance, which makes your Spring Boot application
+part of a GemFire/Geode cluster, or more commonly, a `ClientCache` instance that talks to an existing cluster.  Your
+Spring Boot application can only be one cache type or the other and can only have a single instance of that cache type.
 
 [[actuator-base-healthindicators-cache]]
 ==== GeodeCacheHealthIndicator
@@ -403,7 +405,7 @@ The peer `Cache` based `HealthIndicators` provide additional details specificall
 applications.  These `HealthIndicators` are only available when the Spring Boot application creates a peer `Cache`
 instance.
 
-NOTE: The default cache instance created by Spring Boot for Apache Geode/Pivotal GemFire is a `ClientCache` instance.
+NOTE: The default cache instance created by Spring Boot for {apache-geode-name} is a `ClientCache` instance.
 
 TIP: To control what type of cache instance is created, such as a "peer", then you can explicitly declare either the
 `@PeerCacheApplication`, or alternatively, the `@CacheServerApplication`, annotation on your `@SpringBootApplication`
@@ -412,7 +414,7 @@ annotated class.
 [[actuator-peercache-healthindicators-cacheservers]]
 ==== GeodeCacheServersHealthIndicator
 
-The `GeodeCacheServersHealthIndicator` provides details about the configured Apache Geode/Pivotal GemFire `CacheServers`.
+The `GeodeCacheServersHealthIndicator` provides details about the configured {apache-geode-name} `CacheServers`.
 `CacheServer` instances are required to enable clients to connect to the servers in the cluster.
 
 This `HealthIndicator` captures basic configuration meta-data and runtime behavior/characteristics of
@@ -510,7 +512,7 @@ or serial.
 ==== GeodeGatewayReceiversHealthIndicator
 
 The `GeodeGatewayReceiversHealthIndicator` provide details about the configured (WAN) `GatewayReceivers`, which are
-capable of receiving events from remote clusters when using Apache Geode/Pivotal GemFire's
+capable of receiving events from remote clusters when using {apache-geode-name}'s
 {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site, WAN topology].
 
 This `HealthIndicator` captures configuration meta-data along with the running state for each `GatewayReceiver`:
@@ -543,7 +545,7 @@ GatewayReceiver's  port will be chosen.
 ==== GeodeGatewaySendersHealthIndicator
 
 The `GeodeGatewaySendersHealthIndicator` provides details about the configured `GatewaySenders`.  `GatewaySenders` are
-attached to Regions in order to send Region events to remote clusters in Apache Geode/Pivotal GemFire's
+attached to Regions in order to send Region events to remote clusters in {apache-geode-name}'s
  {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site, WAN topology].
 
 This `HealthIndicator` captures essential configuration meta-data and runtime characteristics for each `GatewaySender`:
@@ -584,4 +586,3 @@ between this GatewaySender and its receiving GatewayReceiver.
 this sending GatewaySender and its receiving GatewayReceiver will block.
 
 |=====================================================================================================================
-

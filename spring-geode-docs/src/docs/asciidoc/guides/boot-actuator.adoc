@@ -1,7 +1,9 @@
 [[geode-samples-boot-actuator]]
-= Spring Boot Actuator for Apache Geode & Pivotal GemFire
-:apache-geode-version: {apache-geode-doc-version}
-:apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
+= Spring Boot Actuator for Apache Geode & VMware Tanzu GemFire
+:geode-version: {apache-geode-doc-version}
+:geode-name: Apache Geode
+:geode-docs: https://geode.apache.org/docs/guide/{geode-version}
+:gemfire-name: VMware Tanzu GemFire
 :images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
@@ -13,16 +15,19 @@
 
 
 This guide walks through using {spring-boot-docs}/production-ready.html[Spring Boot Actuator] to assess the state
-of your running Apache Geode or Pivotal GemFire, Spring Boot application.
+of your running {geode-name} or {gemfire-name}, Spring Boot application.
 
 The goal for SBDG's Spring Boot Actuator integration is to enable users to effectively manage and monitor their
-Spring Boot applications using Apache Geode or Pivotal GemFire in a production environment.
+Spring Boot applications using {geode-name} or {gemfire-name} in a production environment.
 
 In particular, SBDG's integration with Spring Boot Actuator currently focuses on enabling
 {spring-boot-docs}/production-ready-endpoints.html#production-ready-health[Health Information]
 for your application.  In the future, SBDG will provide dedicated support for https://micrometer.io/[Micrometer] metrics.
 
-This guide assumes you are already familiar with Spring Boot and Apache Geode (or Pivotal GemFire).
+This guide assumes you are already familiar with Spring Boot and {geode-name}.
+
+TIP: Refer to the link:../index.html#actuator[Spring Boot Actuator] chapter in the reference documentation
+for more information.
 
 [#index-link]
 link:../index.html[Index]
@@ -57,7 +62,7 @@ However in this case, we simply model the `TemperatureReading` as:
 include::{samples-dir}/boot/actuator/src/main/java/example/app/temp/model/TemperatureReading.java[tags=class]
 ----
 
-The `TemperatureReading` class is annotated with SDG's `@Region` mapping annotation to declare the Apache Geode Region
+The `TemperatureReading` class is annotated with SDG's `@Region` mapping annotation to declare the {geode-name} Region
 in which `TemperatureReadings` will be persisted.
 
 [[geode-samples-boot-actuator-example-temperatureevent]]
@@ -98,12 +103,11 @@ along with 2 `@Query` annotated query methods using raw OQL queries.
 [[geode-samples-boot-actuator-example-temperaturemonitor]]
 === TemperatureMonitor service class
 
-To receive temperature change events, we need a class to monitor changes.  This capability is built on Apache Geode's
-{apache-geode-docs}/developing/continuous_querying/chapter_overview.html[Continuous Query (CQ)] functionality.
+To receive temperature change events, we need a class to monitor changes.  This capability is built on {geode-name}'s
+{geode-docs}/developing/continuous_querying/chapter_overview.html[Continuous Query (CQ)] functionality.
 
-With Apache Geode (or Pivotal GemFire) you can register an (OQL) Query with the servers in the cluster that runs
-continuously, sending notifications back to the client anytime data changes to match the predicate in our query,
-or queries.
+With {geode-name} you can register an (OQL) Query with the servers in the cluster that runs continuously, sending
+notifications back to the client anytime data changes to match the predicate in our query, or queries.
 
 For our purposes, we will simply monitor the temperature anytime it rises above boiling (212 °F)
 or drops below freezing (32 °F):
@@ -154,7 +158,7 @@ data access operations.
 
 Now, we need a couple of main application classes to actually have the application do something useful.
 
-We start with an Spring Boot, Apache Geode Server application functioning as the temperature sensor (device)
+We start with an Spring Boot, {geode-name} Server application functioning as the temperature sensor (device)
 using the `TemperatureSensor` class:
 
 .BootGeodeServerApplication main class
@@ -166,26 +170,26 @@ include::{samples-dir}/boot/actuator/src/main/java/example/app/temp/geode/server
 This class is annotated with `@SpringBootApplication` making it a proper Spring Boot application. It uses Spring Boot's
 `SpringApplicationBuilder` to configure and bootstrap the server application.
 
-This class is also annotated with SDG's `@CacheServerApplication` making it a proper Apache Geode Server with a peer
+This class is also annotated with SDG's `@CacheServerApplication` making it a proper {geode-name} Server with a peer
 `Cache` instance along with a `CacheServer` to accept client connections.  This effectively overrides SBDG's default
 `ClientCache` instance.
 
-Additionally, the class enables several other features, such as Spring's _Scheduling Service_, Apache Geode Statistics,
+Additionally, the class enables several other features, such as Spring's _Scheduling Service_, {geode-name} Statistics,
 and entity-defined Regions making the creation of our server-side, partitioned "TemperatureReadings" Region simple.
 
-By enabling Apache Geode statistics, we allow Spring Boot's Actuator, `HealthIndicators` to collect metrics about
-our running Apache Geode Server as well.
+By enabling {geode-name} statistics, we allow Spring Boot's Actuator, `HealthIndicators` to collect metrics about
+our running {geode-name} Server as well.
 
 Because we have enabled scheduling (with `@EnableScheduling`) and declared the `TemperatureSensor` class as a bean
 in the Spring application context, the application will immediately start generating temperature readings, which are
 recorded to the "TemperatureReadings" Region.
 
-Finally, our class registers a couple Apache Geode Region Indexes to make the Actuator `HealthIndicator` information
+Finally, our class registers a couple {geode-name} Region Indexes to make the Actuator `HealthIndicator` information
 more interesting, particularly since we are running continuous queries.
 
 This is a Servlet-based application as well since our Actuator, `HealthIndicator` endpoints are exposed via HTTP.
 
-TIP: There are multiple ways to configure and bootstrap an Apache Geode Server, and the server-side of our application.
+TIP: There are multiple ways to configure and bootstrap an {geode-name} Server, and the server-side of our application.
 Using Spring Boot is one of the easier ways.
 
 [[geode-samples-boot-actuator-example-client]]
@@ -234,7 +238,7 @@ The `gradlew` command and `runServer` Gradle Task sets the configuration (e.g. S
 command is ran in the directory where you cloned the `spring-boot-data-geode` project (**not** in
 `spring-boot-data-geode/spring-geode-samples/boot/actuator/`).
 
-If you wish to adjust the log levels of Apache Geode or Spring Boot while running the client and server applications,
+If you wish to adjust the log levels of {geode-name} or Spring Boot while running the client and server applications,
 then you can set the log levels of the individual Loggers (i.e. `org.apache` and `org.springframework`)
 in `src/main/resources/logback.xml`:
 
@@ -324,7 +328,7 @@ Both the server and client will continue to run, generating and logging temperat
 
 After the application has been running for some time, we can inspect the Spring Boot Actuator, HealthIndicator Endpoints
 provided by SBDG to monitor our application's health and runtime performance in addition to basic configuration
-meta-data used to configure Apache Geode at runtime.
+meta-data used to configure {geode-name} at runtime.
 
 [[geode-samples-boot-actuator-example-monitor-client]]
 === Client Health Information
@@ -383,7 +387,7 @@ All of this was made possible by including the following dependency on our appli
 <dependency>
   <groupId>org.springframework.geode</groupId>
   <artifactId>spring-geode-starter-actuator</artifactId>
-</dependency
+</dependency>
 ----
 
 Additionally, in Spring Boot `application.properties`, you must enable the following:
@@ -397,11 +401,11 @@ management.endpoint.health.show-details=always
 [[geode-samples-boot-actuator-conclusion]]
 == Conclusion
 
-Hopefully this guide has shown you how to use the Spring Boot Actuator feature for Apache Geode and Pivotal GemFire.
+Hopefully this guide has shown you how to use the Spring Boot Actuator feature for {geode-name} and {gemfire-name}.
 
 You are encouraged to read more about {spring-boot-docs}/production-ready.html[Spring Boot's Actuator] functionality.
 
-Additonally, you can find out more about Apache Geode Statistics
-in the {apache-geode-docs}/managing/statistics/chapter_overview.html[User Guide].
+Additionally, you can find out more about {geode-name} Statistics
+in the {geode-docs}/managing/statistics/chapter_overview.html[User Guide].
 
 link:../index.html#geode-samples[Back to Samples]
