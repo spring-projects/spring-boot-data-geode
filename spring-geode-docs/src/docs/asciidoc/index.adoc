@@ -151,6 +151,9 @@ As such, it would be pertinent to begin your Spring Boot education {spring-boot-
 
 Finally, we arrive at Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} (SBDG).
 
+TIP: Refer to the corresponding Sample link:guides/getting-started.html[Guide] and {github-samples-url}/intro/getting-started[Code]
+to see Spring Boot for {apache-geode-name} in action!
+
 [[maven-gradle]]
 == Using Spring Boot for {apache-geode-name} & {pivotal-gemfire-name}
 
