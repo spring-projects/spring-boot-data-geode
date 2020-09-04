@@ -25,7 +25,7 @@ John Blum
 :pivotal-cloudfoundry-version: 2-9
 :pivotal-cloudfoundry-docs: https://docs.pivotal.io/platform/application-service/{pivotal-cloudfoundry-version}
 :pivotal-cloudfoundry-website: https://pivotal.io/platform
-:pivotal-gemfire-name: VMware GemFire
+:pivotal-gemfire-name: VMware Tanzu GemFire
 :pivotal-gemfire-version: {pivotal-gemfire-doc-version}
 :pivotal-gemfire-docs: https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/geode/reference
 :pivotal-gemfire-javadoc: https://gemfire-{pivotal-gemfire-version}-javadocs.docs.pivotal.io/
