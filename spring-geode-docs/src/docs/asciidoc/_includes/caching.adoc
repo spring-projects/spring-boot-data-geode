@@ -192,6 +192,9 @@ pull multiple bits of information to retrieve the Customer record, and so on, he
 [[geode-caching-provider-near-caching]]
 ==== Near Caching
 
+TIP: Refer to the corresponding Sample link:guides/caching-near.html[Guide] and {github-samples-url}/caching/near[Code]
+to see _Near Caching_ using {apache-geode-name} in action!
+
 _Near Caching_ is another pattern of caching where the cache is collocated with the application.  This is useful when
 the caching technology is configured using a client/server arrangement.
 

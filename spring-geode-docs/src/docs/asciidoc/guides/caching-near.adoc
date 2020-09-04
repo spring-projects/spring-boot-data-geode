@@ -1,6 +1,7 @@
 [[geode-samples-caching-near]]
 = Near Caching with Spring
 :apache-geode-version: {apache-geode-doc-version}
+:apache-geode-name: Apache Geode
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :images-dir: ./images
@@ -19,16 +20,20 @@
 
 This guide walks you through building a simple Spring Boot application
 using {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]
-backed by Apache Geode as the caching provider for Near Caching.
+backed by {apache-geode-name} as the caching provider for Near Caching.
 
 It is assumed that the reader is familiar with the Spring _programming model_.  No prior knowledge of Spring's
-_Cache Abstraction_ nor Apache Geode is required to utilize caching in your Spring Boot applications.
+_Cache Abstraction_ nor {apache-geode-name} is required to utilize caching in your Spring Boot applications.
 
 Additionally, this Sample builds on the concepts introduced in both link:caching-look-aside.html[Look-Aside Caching]
 as well as link:caching-inline.html[Inline Caching] with Spring.  It would be helpful to start by reading the guide on
 _Look-Aside Caching_ followed by the guide on _Inline Caching_, first, before continuing with this guide.
 
 Let's begin.
+
+TIP: Refer to the link:../index.html#geode-caching-provider-near-caching[Near Caching] section
+in the link:../index.html#geode-caching-provider[Caching with Apache Geode or VMware Tanzu GemFire] chapter
+in the reference documentation for more information.
 
 [#index-link]
 link:../index.html[Index]
@@ -120,9 +125,9 @@ the person's contact information, such as an email address and phone number.
 [[geode-samples-caching-near-example-server-side]]
 === Server-side Configuration
 
-First, we will configure and bootstrap an Apache Geode, peer `CacheServer` node using Spring Boot:
+First, we will configure and bootstrap an {apache-geode-name}, peer `CacheServer` node using Spring Boot:
 
-.SpringBootApplication for an Apache Geode `CacheServer`
+.SpringBootApplication for an {apache-geode-name} `CacheServer`
 [source,java]
 ----
 include::{samples-dir}/caching/near/src/main/java/example/app/caching/near/server/BootGeodeNearCachingCacheServerApplication.java[tags=class]
@@ -153,7 +158,7 @@ include::{samples-dir}/caching/near/src/main/java/example/app/caching/near/serve
 ----
 
 And finally, we include a Spring `@Profile` to enable an embedded Locator and Manager, allowing us to connect to our
-Spring Boot, Apache Geode `CacheServer` application using _Gfsh_ (Geode Shell).  Enabling the embedded Locator
+Spring Boot, {apache-geode-name} `CacheServer` application using _Gfsh_ (Geode Shell).  Enabling the embedded Locator
 and Manager are not necessary when starting the server or to run our application, but can be useful when debugging.
 
 .Embedded Locator & Manager Configuration
@@ -162,13 +167,13 @@ and Manager are not necessary when starting the server or to run our application
 include::{samples-dir}/caching/near/src/main/java/example/app/caching/near/server/BootGeodeNearCachingCacheServerApplication.java[tags=locator-manager]
 ----
 
-TIP: For more information on configurating and bootstrapping a small cluster of Apache Geode servers using Spring Boot,
-see link:../index.html#geode-cluster-configuration-bootstrapping[Running an Apache Geode or Pivotal GemFire Cluster using Spring Boot].
+TIP: For more information on configurating and bootstrapping a small cluster of {apache-geode-name} servers using Spring Boot,
+see link:../index.html#geode-cluster-configuration-bootstrapping[Running an {apache-geode-name} or Pivotal GemFire Cluster using Spring Boot].
 
 [[geode-samples-caching-near-example-client-side]]
 === Client-side Configuration
 
-Next, we will create and start 2 instances of our Spring Boot, Apache Geode `ClientCache` application, which will use
+Next, we will create and start 2 instances of our Spring Boot, {apache-geode-name} `ClientCache` application, which will use
 the _Look-Aside Caching_ pattern enhanced with_Near Caching_.
 
 We start with the `@SpringBootApplication` main class:
@@ -235,7 +240,7 @@ Durability can be useful for clients that need to receive events for data it mis
 order the events occurred.  Of course, keep in mind that durable clients use up system resources on the server
 (e.g. memory).
 
-TIP: To learn more about durable subscriptions, see the Apache Geode
+TIP: To learn more about durable subscriptions, see the {apache-geode-name}
 {apache-geode-docs}/developing/events/implementing_durable_client_server_messaging.html[documentation]
 
 The `receiveValues` boolean parameter determines whether the client will receive both KEYS and VALUES when an event
@@ -252,7 +257,7 @@ TIP: The `RegexInterest` constructor corresponds to
 {apache-geode-javadoc}/org/apache/geode/cache/Region.html#registerInterestRegex-java.lang.String-org.apache.geode.cache.InterestResultPolicy-boolean-boolean-[Region.registerInterestRegex(:String, :InterestResultPolicy, :boolean, :boolean)]
 
 There is one final bit of configuration on the client-side that we need, and that is to enable subscriptions. We do so
-by setting the appropriate Spring Data for Apache Geode (SDG) property
+by setting the appropriate Spring Data for {apache-geode-name} (SDG) property
 (e.g. `spring.data.gemfire.pool.subscriptions-enabled`) in `application.properties`, like so:
 
 .Common Client `application.properties`
@@ -338,9 +343,9 @@ Now we are ready to run our example application and observe the effects of *_Nea
 [[geode-samples-caching-near-example-run-server]]
 === Run the Server
 
-First, we must start our Spring Boot application that configures and bootstraps the Apache Geode `CacheServer`.
+First, we must start our Spring Boot application that configures and bootstraps the {apache-geode-name} `CacheServer`.
 
-TIP: If you want to connect to the server with _Gfsh_, you must have a distribution of Apache Geode installed on your
+TIP: If you want to connect to the server with _Gfsh_, you must have a distribution of {apache-geode-name} installed on your
 system and you must enable the "_locator-manager_" profile.  The "_locator-manager_" profile can be enabled using the
 `-Dspring.profiles.active=server,locator-manager` Java System property.  Additionally, the `server` profile has been
 enabled as well.
@@ -364,7 +369,7 @@ When running the `BootGeodeNearCachingCacheServerApplication` class, you should 
 
 ...
 
-// Then you should see a bunch of Apache Geode log output, ending with something like...
+// Then you should see a bunch of {apache-geode-name} log output, ending with something like...
 
 ...
 
@@ -376,7 +381,7 @@ When running the `BootGeodeNearCachingCacheServerApplication` class, you should 
 NOTE: The Spring Boot Gradle plugin has been configured to run the `BootGeodeNearCachingClientCacheApplication` class,
 not the server.
 
-Now that the server is running, if you installed Apache Geode on your system and set the `$PATH` to include `$GEODE/bin`,
+Now that the server is running, if you installed {apache-geode-name} on your system and set the `$PATH` to include `$GEODE/bin`,
 then you can run _Gfsh_ and connect to the server:
 
 .Connect to the Server with Gfsh
@@ -453,7 +458,7 @@ gfsh>
 [[geode-samples-caching-near-example-run-client-app]]
 === Run the Client Application
 
-Now it is time to start 2 instances of the Spring Boot, Apache Geode `ClientCache` application hosting
+Now it is time to start 2 instances of the Spring Boot, {apache-geode-name} `ClientCache` application hosting
 our _Yellow Pages_ service.
 
 NOTE: Make sure to enable the `client` generic profile in addition to 1 of the client-specific profiles,
@@ -565,7 +570,7 @@ _Near Caching_.
 == Summary
 
 In this guide, we learned how to create a Spring Boot application using Spring's Cache Abstraction backed by
-Apache Geode using the _Look-Aside Caching_ pattern in our application service methods.  We further enhanced
+{apache-geode-name} using the _Look-Aside Caching_ pattern in our application service methods.  We further enhanced
 the caching ability of our application with *_Near Caching_*.
 
 With *_Near Caching_*, we have the added ability to further improve on the throughput and latency of our application
