@@ -235,6 +235,9 @@ in the Region that might have been changed by other clients accessing the same d
 [[geode-caching-provider-inline-caching]]
 ==== Inline Caching
 
+TIP: Refer to the corresponding Sample link:guides/caching-inline.html[Guide] and {github-samples-url}/caching/inline[Code]
+to see _Inline Caching_ using {apache-geode-name} in action!
+
 The next pattern of caching we will discuss in this chapter is _Inline Caching_.
 
 There are two different configurations of _Inline Caching_ that developers can apply to their Spring Boot applications
