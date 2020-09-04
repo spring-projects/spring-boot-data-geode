@@ -1,5 +1,5 @@
 [[geode-samples-boot-security]]
-= Spring Boot Security for Apache Geode & VMware GemFire
+= Spring Boot Security for Apache Geode & VMware Tanzu GemFire
 Patrick Johnson, John Blum
 :gemfire-name: VMware Tanzu GemFire
 :geode-name: Apache Geode
@@ -13,6 +13,9 @@ Patrick Johnson, John Blum
 
 This guide walks you through building a simple Spring Boot application enabled with Security, specifically Auth
 and TLS using SSL. You should already be familiar with Spring Boot and {geode-name}/{gemfire-name}.
+
+TIP: Refer to the link:../index.html#geode-security[Security] chapter in the reference documentation
+for more information.
 
 [#index-link]
 link:../index.html[Index]
