@@ -1,6 +1,7 @@
 [[geode-samples-caching-http-session]]
 = HTTP Session State Caching with Spring
 :apache-geode-version: {apache-geode-doc-version}
+:apache-geode-name: Apache Geode
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
@@ -22,13 +23,16 @@
 
 
 This guide walks you through building a simple Spring Boot application using {spring-session-website}[Spring Session]
-backed by {apache-geode-website}[Apache Geode] to manage HTTP Session state.
+backed by {apache-geode-website}[{apache-geode-name}] to manage HTTP Session state.
 
 It is assumed that the reader is familiar with the Spring _programming model_ as well as the _Java Servlet_ API.
-No prior knowledge of Spring Session or Apache Geode is required to utilize HTTP Session State Caching in your
+No prior knowledge of Spring Session or {apache-geode-name} is required to utilize HTTP Session State Caching in your
 Spring Boot applications.
 
 Let's begin.
+
+TIP: Refer to the link:../index.html#geode-session[Spring Session] chapter in the reference documentation
+for more information.
 
 [#index-link]
 link:../index.html[Index]
@@ -63,7 +67,7 @@ continuity and provide a consistent, uninterrupted experience, the HTTP Session 
 One way to do this is to employ a data management solution in your application architecture that 1) makes the HTTP
 Session highly available and 2) makes the HTTP Session resilient to failures in the system architecture.
 
-Apache Geode is ideal for managing HTTP Session state given that it can distribute data/state across a scaled-out,
+{apache-geode-name} is ideal for managing HTTP Session state given that it can distribute data/state across a scaled-out,
 highly-available architecture by replicating data in a redundant and organized (partitioned) manner, thereby making
 the data resilient to network and hardware failures.
 
@@ -94,8 +98,8 @@ image::{images-dir}/Spring-Session-Framework-Architecture.png[]
 Again, the `SessionRepository` interface is the central component of the framework enabling any backend data store
 to be adapted and serve as a provider  for managing the HTTP Sessions.
 
-This is effectively how https://github.com/spring-projects/spring-session-data-geode[Spring Session for Apache Geode
-& Pivotal GemFire] works.
+This is effectively how https://github.com/spring-projects/spring-session-data-geode[Spring Session for {apache-geode-name}]
+works.
 
 [[geode-samples-caching-http-session-example]]
 == Example
@@ -153,9 +157,9 @@ the application is switched to a client/server topology to the "_DEFAULT_" Pool.
 used to store HTTP Session state as "_Sessions_" (default name is "_ClusteredSpringSessions_").
 
 TIP: In most production deployments, you will likely be using a client/server topology, where the HTTP Session is
-managed by a cluster of Apache Geode or Pivotal GemFire servers so that the HTTP Session can be shared across multiple
-instances of the Spring Boot, Web application. This would be especially true in a cloud environment when utilizing a
-Microservices architecture.  However, for example purposes, we tried to keep the sample as simple as possible.
+managed by a cluster of {apache-geode-name} servers so that the HTTP Session can be shared across multiple instances
+of the Spring Boot, Web application. This would be especially true in a cloud environment when utilizing a Microservices
+architecture.  However, for example purposes, we tried to keep the sample as simple as possible.
 
 NOTE: The default data management policy for the client cache (a.k.a. Region) used to manage HTTP Session state is a
 `PROXY`, which is the basis for the client/server topology.  Therefore, the default configuration assumes you will be
@@ -259,9 +263,9 @@ First, we must add Spring Session to the application's classpath.  We do this si
 ----
 
 The `spring-geode-starter-session` dependency adds Spring Session to the application's classpath at runtime
-and positions Apache Geode as the provider used to manage the HTTP Session state.
+and positions {apache-geode-name} as the provider used to manage the HTTP Session state.
 
-With Apache Geode, we gain all the benefits of using a highly concurrent, highly distributed data management solution
+With {apache-geode-name}, we gain all the benefits of using a highly concurrent, highly distributed data management solution
 that provides high availability (HA) and resiliency in a cloud environment.
 
 That's it! This is all we have to do to replace the Servlet's Container's HTTP Session management facilities with a
@@ -277,7 +281,7 @@ Now we see that the implementing class for the `javax.servlet.http.HttpSession` 
 Easy!
 
 Of course, the ability to scale-out and optimize the data management policies for HTTP Session management is very
-provider-specific (e.g. Apache Geode) and highly dependent on the use case as well a application requirements,
+provider-specific (e.g. {apache-geode-name}) and highly dependent on the use case as well a application requirements,
 therefore is beyond the scope of this guide.
 
 [[geode-samples-caching-http-session-summary]]
@@ -286,7 +290,7 @@ therefore is beyond the scope of this guide.
 Spring Session is a powerful framework for managing your HTTP Session state.  Not only does it allow you to plugin
 different backend data management providers (as of this writing):
 
-* https://github.com/spring-projects/spring-session-data-geode#spring-session-for-apache-geode--pivotal-gemfire[_Apache Geode (or Pivotal GemFire)_]
+* https://github.com/spring-projects/spring-session-data-geode#spring-session-for-apache-geode--pivotal-gemfire[_{apache-geode-name}_]
 * {spring-session-website}[_Hazelast_]
 * {spring-session-website}[_JDBC_]
 * https://spring.io/projects/spring-session-data-mongodb[_MongoDB_]
