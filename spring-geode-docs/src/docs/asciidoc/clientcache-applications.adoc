@@ -29,7 +29,7 @@ main application class:
 [source,java]
 ----
 @SpringBootApplication
-public SpringBootApacheGeodeClientCacheApplication {
+public class SpringBootApacheGeodeClientCacheApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBootApacheGeodeClientCacheApplication.class, args);
@@ -68,7 +68,7 @@ For example, perhaps you want to perform some additional `ClientCache` initializ
 [source,java]
 ----
 @SpringBootApplication
-public SpringBootApacheGeodeClientCacheApplication {
+public class SpringBootApacheGeodeClientCacheApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBootApacheGeodeClientCacheApplication.class, args);
@@ -113,7 +113,7 @@ or alternatively, if you need to enable connections from `ClientCache` apps as w
 ----
 @SpringBootApplication
 @CacheServerApplication(name = "MySpringBootApacheGeodeCacheServerApplication")
-public SpringBootApacheGeodeCacheServerApplication {
+public class SpringBootApacheGeodeCacheServerApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBootApacheGeodeCacheServerApplication.class, args);
@@ -140,7 +140,7 @@ shell tool:
 @CacheServerApplication(name = "SpringBootApacheGeodeCacheServerApplication")
 @EnableLocator
 @EnableManager
-public SpringBootApacheGeodeCacheServerApplication {
+public class SpringBootApacheGeodeCacheServerApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBootApacheGeodeCacheServerApplication.class, args);
@@ -273,7 +273,7 @@ Then, modify the `SpringBootApacheGeodeCacheServerApplication` class to connect 
 ----
 @SpringBootApplication
 @CacheServerApplication(name = "MySpringBootApacheGeodeCacheServerApplication", locators = "localhost[11235]")
-public SpringBootApacheGeodeCacheServerApplication {
+public class SpringBootApacheGeodeCacheServerApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBootApacheGeodeClientCacheApplication.class, args);
@@ -364,7 +364,7 @@ using the SDG `@EnableLocator` annotation:
 @EnableLocator
 @CacheServerApplication
 @SpringBootApplication
-class SpringBootCacheServerWithEmbeddedLocatorApplication { ... }
+class SpringBootCacheServerWithEmbeddedLocatorApplication { /* ... */ }
 ----
 
 However, it is more common to start standalone Locator JVM processes.  This is useful when you want to increase
@@ -388,7 +388,7 @@ configuration:
 ----
 @LocatorApplication
 @SpringBootApplication
-class SpringBootApacheGeodeLocatorApplication { ... }
+class SpringBootApacheGeodeLocatorApplication { /* ... */ }
 ----
 
 Instead of using the `@EnableLocator` annotation, you now use the `@LocatorApplication` annotation.
