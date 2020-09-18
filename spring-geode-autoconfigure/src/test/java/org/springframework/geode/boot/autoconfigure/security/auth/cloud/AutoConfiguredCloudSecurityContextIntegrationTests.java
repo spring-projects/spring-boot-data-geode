@@ -34,8 +34,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration Tests testing the auto-configuration of Apache Geode/Pivotal GemFire Security
- * authentication/authorization in a cloud, managed context (e.g. Pivotal CloudFoundry)
+ * Integration Tests testing the auto-configuration of Apache Geode Security (authentication/authorization) in a cloud,
+ * managed context (e.g. CloudFoundry).
  *
  * @author John Blum
  * @see java.security.Principal

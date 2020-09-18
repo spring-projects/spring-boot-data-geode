@@ -52,7 +52,7 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
 /**
- * Integration Test for the auto-configuration of Spring Session using either Apache Geode or Pivotal GemFire
+ * Integration Test for the auto-configuration of Spring Session using either Apache Geode
  * as the {@link Session} state management provider.
  *
  * This test asserts that the Spring Boot auto-configuration can be customized using either {@link Properties}
@@ -116,7 +116,7 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 
 		return applicationContext -> {
 
-			PropertySource springSessionGemFireProperties = new MockPropertySource("TestSpringSessionGemFireProperties")
+			PropertySource<?> springSessionGemFireProperties = new MockPropertySource("TestSpringSessionGemFireProperties")
 				.withProperty(springSessionPropertyName("cache.client.region.shortcut"), "LOCAL")
 				.withProperty(springSessionPropertyName("session.attributes.indexable"), "one, two")
 				.withProperty(springSessionPropertyName("session.expiration.max-inactive-interval-seconds"), "600")

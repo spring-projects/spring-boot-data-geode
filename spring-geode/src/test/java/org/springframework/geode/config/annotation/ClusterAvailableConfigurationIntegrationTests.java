@@ -21,18 +21,18 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.cache.server.CacheServer;
-
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,7 +54,7 @@ import example.app.crm.service.CustomerService;
 
 /**
  * Integration Tests asserting the functionality and behavior of {@link EnableClusterAware}
- * and {@link ClusterAvailableConfiguration} when the Apache Geode (or Pivotal GemFire) cluster of servers is available.
+ * and {@link ClusterAvailableConfiguration} when the Apache Geode cluster of servers is available.
  *
  * @author John Blum
  * @see org.junit.Test

@@ -31,8 +31,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration Tests testing the auto-configuration of Apache Geode/Pivotal GemFire Security
- * authentication/authorization in a local, non-managed context.
+ * Integration Tests testing the auto-configuration of Apache Geode Security (authentication/authorization) in a local,
+ * non-managed context.
  *
  * @author John Blum
  * @see java.security.Principal

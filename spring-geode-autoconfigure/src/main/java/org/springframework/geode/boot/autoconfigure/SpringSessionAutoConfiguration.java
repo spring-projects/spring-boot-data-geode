@@ -47,8 +47,8 @@ import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.util.StringUtils;
 
 /**
- * Spring Boot {@link EnableAutoConfiguration auto-configuration} for configuring either Apache Geode
- * or Pivotal GemFire as an (HTTP) {@link Session} state management provider in Spring Session.
+ * Spring Boot {@link EnableAutoConfiguration auto-configuration} for configuring Apache Geode
+ * as an (HTTP) {@link Session} state management provider in Spring Session.
  *
  * @author John Blum
  * @see java.util.Properties

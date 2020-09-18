@@ -35,11 +35,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration Tests asserting and testing the precedence of GemFire, Spring and Spring Data for Apache Geode
- * & Pivotal GemFire (SDG) {@link Properties} precedence.
+ * Integration Tests asserting and testing the precedence of Apache Geode, Spring and Spring Data for Apache Geode (SDG)
+ * {@link Properties} precedence.
  *
- * Essentially, SDG {@link Properties} should take precedence over (i.e. override) both Spring And Apache Geode
- * or Pivotal GemFire {@link Properties}.
+ * Essentially, SDG {@link Properties} should take precedence over (i.e. override) both Spring and Apache Geode
+ * {@link Properties}.
  *
  * @author John Blum
  * @see org.junit.Test

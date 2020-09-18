@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Integration Tests for auto-configuration of Spring Session using a custom Spring Session {@link Session} state
- * management provider, asserting that neither Apache Geode nor Pivotal GemFire is configured.
+ * management provider, asserting that Apache Geode is not configured.
  *
  * @author John Blum
  * @see org.junit.Test

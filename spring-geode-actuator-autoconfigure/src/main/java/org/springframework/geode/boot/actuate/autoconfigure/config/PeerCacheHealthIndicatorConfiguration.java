@@ -43,8 +43,8 @@ import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.lang.Nullable;
 
 /**
- * Spring {@link Configuration @Configuration} class declaring Spring beans for Apache Geode/Pivotal GemFire
- * peer {@link Cache} {@link HealthIndicator HealthIndicators}.
+ * Spring {@link Configuration} class declaring Spring beans for Apache Geode peer {@link Cache}
+ * {@link HealthIndicator HealthIndicators}.
  *
  * @author John Blum
  * @see org.apache.geode.cache.Cache
@@ -107,7 +107,7 @@ public class PeerCacheHealthIndicatorConfiguration {
 				return bean;
 			}
 
-			@Nullable @Override @SuppressWarnings("all")
+			@Nullable @Override
 			public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 
 				if (bean instanceof CacheServer) {
@@ -133,7 +133,7 @@ public class PeerCacheHealthIndicatorConfiguration {
 
 	public static final class PeerCacheCondition implements Condition {
 
-		@Override @SuppressWarnings("all")
+		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
 			Cache peerCache = CacheUtils.getCache();

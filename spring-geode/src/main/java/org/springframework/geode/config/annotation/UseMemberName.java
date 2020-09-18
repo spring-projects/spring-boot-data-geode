@@ -30,8 +30,8 @@ import org.springframework.core.annotation.AliasFor;
 
 /**
  * The {@link UseMemberName} annotation configures the {@literal name} of the member in the Apache Geode
- * or Pivotal GemFire distributed system, whether the member is a {@link ClientCache client} in
- * the client/server topology or a {@link Cache peer Cache member} in the cluster using the P2P topology.
+ * distributed system, whether the member is a {@link ClientCache client} in the client/server topology
+ * or a {@link Cache peer Cache member} in the cluster using the P2P topology.
  *
  * @author John Blum
  * @see java.lang.annotation.Documented
@@ -53,7 +53,7 @@ import org.springframework.core.annotation.AliasFor;
 public @interface UseMemberName {
 
 	/**
-	 * Alias for the {@link String name} of the Apache Geode/Pivotal GemFire distributed system member.
+	 * Alias for the {@link String name} of the Apache Geode distributed system member.
 	 *
 	 * @see #value()
 	 */
@@ -61,7 +61,7 @@ public @interface UseMemberName {
 	String name() default "";
 
 	/**
-	 * {@link String Name} used for the Apache Geode/Pivotal GemFire distributed system member.
+	 * {@link String Name} used for the Apache Geode distributed system member.
 	 *
 	 * @see #name()
 	 */

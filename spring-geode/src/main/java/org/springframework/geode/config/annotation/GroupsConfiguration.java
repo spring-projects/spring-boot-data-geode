@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.config.annotation;
 
 import java.lang.annotation.Annotation;
@@ -21,6 +20,7 @@ import java.util.Optional;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
@@ -34,9 +34,8 @@ import org.springframework.util.StringUtils;
 
 /**
  * The {@link GroupsConfiguration} class is a Spring {@link Configuration} class used to configure the {@literal groups}
- * in which is member belongs in an Apache Geode/Pivotal GemFire distributed system, whether the member
- * is a {@link ClientCache} in a client/server topology or a {@link Cache peer Cache} in a cluster
- * using the P2P topology.
+ * in which is member belongs in an Apache Geode distributed system, whether the member is a {@link ClientCache} in a
+ * client/server topology or a {@link Cache peer Cache} in a cluster using the P2P topology.
  *
  * @author John Blum
  * @see org.apache.geode.cache.Cache

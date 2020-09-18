@@ -65,8 +65,8 @@ import org.springframework.util.StringUtils;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} class used to configure a {@link GemfireTemplate}
- * for each Apache Geode / Pivotal GemFire {@link Region} declared/defined in
- * the Spring {@link ConfigurableApplicationContext} in order to perform {@link Region} data access operations.
+ * for each Apache Geode cache {@link Region} declared/defined in the Spring {@link ConfigurableApplicationContext}
+ * in order to perform {@link Region} data access operations.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
@@ -292,7 +292,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 	private void registerRegionTemplatesForCacheRegions(@NonNull ConfigurableApplicationContext applicationContext,
 			@NonNull GemFireCache cache) {
 
-		for (Region region : CollectionUtils.nullSafeSet(cache.rootRegions())) {
+		for (Region<?, ?> region : CollectionUtils.nullSafeSet(cache.rootRegions())) {
 
 			String regionTemplateBeanName = toRegionTemplateBeanName(region.getName());
 
@@ -301,7 +301,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 	}
 
 	private void registerRegionTemplateBean(@NonNull ConfigurableApplicationContext applicationContext,
-			@NonNull Region region, String regionTemplateBeanName) {
+			@NonNull Region<?, ?> region, String regionTemplateBeanName) {
 
 		Optional.of(applicationContext)
 			.filter(it -> isNotBean(it, regionTemplateBeanName))
@@ -313,8 +313,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 		return !(StringUtils.hasText(beanName) && applicationContext.containsBean(beanName));
 	}
 
-	@SuppressWarnings("unchecked")
-	private GemfireTemplate newGemfireTemplate(@NonNull Region region) {
+	private GemfireTemplate newGemfireTemplate(@NonNull Region<?, ?> region) {
 		return new GemfireTemplate(region);
 	}
 

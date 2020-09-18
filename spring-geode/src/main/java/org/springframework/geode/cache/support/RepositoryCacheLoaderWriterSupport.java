@@ -34,7 +34,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 /**
- * Abstract base class supporting the implementation of Apache Geode / Pivotal GemFire {@link CacheLoader CacheLoaders}
+ * Abstract base class supporting the implementation of Apache Geode {@link CacheLoader CacheLoaders}
  * and {@link CacheWriter CacheWriters} backed by Spring Data {@link Repository Repositories}.
  *
  * @author John Blum

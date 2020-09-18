@@ -33,7 +33,7 @@ import org.apache.geode.cache.client.Pool;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 /**
- * Abstract utility class for working with GemFire/Geode cache instances, such as {@link ClientCache}
+ * Abstract utility class for working with Apache Geode cache instances, such as {@link ClientCache}
  * and {@literal peer} {@link Cache} instances.
  *
  * @author John Blum

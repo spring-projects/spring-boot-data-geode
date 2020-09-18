@@ -58,7 +58,7 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	/**
 	 * Tries to cast the given source {@link Object} into an instance of the given {@link Class} type.
 	 *
-	 * This method is cable of handling GemFire/Geode {@link PdxInstance} types.
+	 * This method is cable of handling Apache Geode {@link PdxInstance} types.
 	 *
 	 * @param <T> desired {@link Class type} of the source {@link Object}.
 	 * @param source {@link Object} to evaluate.

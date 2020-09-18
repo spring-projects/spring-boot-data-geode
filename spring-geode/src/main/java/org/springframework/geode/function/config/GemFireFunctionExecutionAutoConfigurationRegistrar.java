@@ -13,18 +13,17 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.function.config;
 
 import org.apache.geode.cache.execute.Execution;
 import org.apache.geode.cache.execute.Function;
+
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.data.gemfire.function.config.EnableGemfireFunctionExecutions;
 
 /**
  * The {@link GemFireFunctionExecutionAutoConfigurationRegistrar} class is a Spring {@link ImportBeanDefinitionRegistrar}
- * used to register SDG POJO interfaces defining Apache Geode/Pivotal GemFire
- * {@link Function} {@link Execution Executions}
+ * used to register SDG POJO interfaces defining Apache Geode {@link Function} {@link Execution Executions}.
  *
  * @author John Blum
  * @see org.apache.geode.cache.execute.Execution

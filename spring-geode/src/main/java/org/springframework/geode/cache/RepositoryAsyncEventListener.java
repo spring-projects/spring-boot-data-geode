@@ -82,7 +82,7 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 	 *
 	 * Since the processing of {@link AsyncEvent AsyncEvents} is asynchronous, the {@link AsyncEventErrorHandler} gives
 	 * users the opportunity to respond to errors for each {@link AsyncEvent} as it is is processed given this listener
-	 * is designed to coordinate data/state changes occurring in a GemFire/Geode cache with an external data source.
+	 * is designed to coordinate data/state changes occurring in an Apache Geode cache with an external data source.
 	 *
 	 * @param asyncEventErrorHandler {@link AsyncEventErrorHandler} used to handle errors while processing the batch of
 	 * {@link AsyncEvent AsyncEvents}.

@@ -23,8 +23,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration;
 
 /**
- * The {@link ClusterAvailableConfiguration} class is a Spring {@link Configuration @Configuration} class that enables
- * configuration when an Apache Geode or Pivotal GemFire cluster of servers are available.
+ * The {@link ClusterAvailableConfiguration} class is a Spring {@link Configuration} class that enables configuration
+ * when an Apache Geode cluster of servers are available.
  *
  * @author John Blum
  * @see org.springframework.boot.autoconfigure.condition.AnyNestedCondition

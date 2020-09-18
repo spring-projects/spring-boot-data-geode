@@ -38,12 +38,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Integration Tests testing the functionality and behavior of {@link ClientSecurityAutoConfiguration} when a
- * Spring Boot app is deployed (pushed) to Pivotal CloudFoundry (PCF), however, the app has not be bound to a
- * Pivotal Cloud Cache (PCC) service instance.
+ * Spring Boot app is deployed (pushed) to CloudFoundry, however, the app has not be bound to a Pivotal Cloud Cache
+ * (PCC) service instance.
  *
- * This Use Case is common when users want to deploy their Spring Boot, {@link ClientCache} apps to
- * Pivotal CloudFoundry (PCF) however, want to connect those apps to an external Apache Geode or Pivotal GemFire
- * cluster.
+ * This Use Case is common when users want to deploy their Spring Boot, Apache Geode {@link ClientCache} apps to
+ * CloudFoundry however, want to connect those apps to an external Apache Geode cluster.
  *
  * @author John Blum
  * @see java.util.Properties

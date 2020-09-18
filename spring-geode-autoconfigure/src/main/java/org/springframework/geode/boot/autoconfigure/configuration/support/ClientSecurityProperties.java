@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
 import java.util.Properties;
@@ -23,11 +22,11 @@ import org.apache.geode.cache.client.ClientCache;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Spring Boot {@link ConfigurationProperties} used to configure an Apache Geode / Pivotal GemFire {@link ClientCache}
- * Security (authentication & authorization).
+ * Spring Boot {@link ConfigurationProperties} used to configure an Apache Geode {@link ClientCache} Security
+ * (authentication & authorization).
  *
- * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
- * (SDG) {@link Properties}.
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode (SDG)
+ * {@link Properties}.
  *
  * @author John Blum
  * @see java.util.Properties

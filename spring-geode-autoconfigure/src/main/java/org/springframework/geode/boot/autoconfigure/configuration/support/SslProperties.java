@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
 import java.util.Properties;
@@ -23,13 +22,13 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.data.gemfire.config.annotation.EnableSsl;
 
 /**
- * Spring Boot {@link ConfigurationProperties} used to configure Apache Geode / Pivotal GemFire Socket layer SSL.
+ * Spring Boot {@link ConfigurationProperties} used to configure Apache Geode Socket layer SSL.
  *
  * The SSL configuration is used to secure communications and data in motion between clients and servers
  * as well as between peers in a cluster.
  *
- * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
- * (SDG) {@link Properties}.
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode (SDG)
+ * {@link Properties}.
  *
  * @author John Blum
  * @see java.util.Properties

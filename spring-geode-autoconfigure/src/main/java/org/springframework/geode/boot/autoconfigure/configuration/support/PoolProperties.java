@@ -23,10 +23,10 @@ import org.apache.geode.cache.client.PoolFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Spring Boot {@link ConfigurationProperties} used to configure an Apache Geode / Pivotal GemFire peer {@link Pool}.
+ * Spring Boot {@link ConfigurationProperties} used to configure an Apache Geode client {@link Pool}.
  *
- * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
- * (SDG) {@link Properties}.
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode (SDG)
+ * {@link Properties}.
  *
  * @author John Blum
  * @see java.util.Properties

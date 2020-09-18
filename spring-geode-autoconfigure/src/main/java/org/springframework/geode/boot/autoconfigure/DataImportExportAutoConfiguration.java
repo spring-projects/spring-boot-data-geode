@@ -146,10 +146,10 @@ public class DataImportExportAutoConfiguration {
 		}
 
 		/**
-		 * If we do not disable GemFire/Geode's {@link org.apache.geode.distributed.DistributedSystem} JRE/JVM runtime
+		 * If we do not disable Apache Geode's {@link org.apache.geode.distributed.DistributedSystem} JRE/JVM runtime
 		 * shutdown hook then the {@link org.apache.geode.cache.Region} is prematurely closed by the JRE/JVM shutdown hook
-		 * before Spring's {@link org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor}s can do their
-		 * work of exporting data from the {@link org.apache.geode.cache.Region} as JSON.
+		 * before Spring's {@link org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor}s can do
+		 * their work of exporting data from the {@link org.apache.geode.cache.Region} as JSON.
 		 */
 		void disableGemFireShutdownHook(@Nullable Environment environment) {
 			System.setProperty(GEMFIRE_DISABLE_SHUTDOWN_HOOK, Boolean.TRUE.toString());

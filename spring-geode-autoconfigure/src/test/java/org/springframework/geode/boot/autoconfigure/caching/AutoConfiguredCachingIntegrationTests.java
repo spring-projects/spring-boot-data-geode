@@ -43,8 +43,8 @@ import example.app.books.model.Book;
 import example.app.books.service.support.CachingBookService;
 
 /**
- * Integration tests testing the auto-configuration of Spring's Cache Abstraction with Apache Geode
- * or Pivotal GemFire as the caching provider.
+ * Integration Tests testing the auto-configuration of Spring's Cache Abstraction with Apache Geode
+ * as the caching provider.
  *
  * @author John Blum
  * @see org.junit.Test

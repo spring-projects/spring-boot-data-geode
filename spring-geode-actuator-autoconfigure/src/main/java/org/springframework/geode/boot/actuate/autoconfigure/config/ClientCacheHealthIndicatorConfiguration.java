@@ -33,8 +33,8 @@ import org.springframework.geode.boot.actuate.GeodeContinuousQueriesHealthIndica
 import org.springframework.geode.boot.actuate.GeodePoolsHealthIndicator;
 
 /**
- * Spring {@link Configuration @Configuration} class declaring Spring beans for Apache Geode/Pivotal GemFire
- * {@link ClientCache} {@link HealthIndicator HealthIndicators}.
+ * Spring {@link Configuration} class declaring Spring beans for Apache Geode {@link ClientCache}
+ * {@link HealthIndicator HealthIndicators}.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
@@ -65,7 +65,7 @@ public class ClientCacheHealthIndicatorConfiguration {
 
 	public static final class ClientCacheCondition implements Condition {
 
-		@Override @SuppressWarnings("all")
+		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
 			Cache peerCache = CacheUtils.getCache();

@@ -26,7 +26,7 @@ import org.springframework.geode.security.support.SecurityManagerProxy;
 
 /**
  * Spring {@link Configuration} class used to configure a {@link org.apache.geode.security.SecurityManager},
- * thereby enabling Security (Auth) on this GemFire/Geode node.
+ * thereby enabling Security (Auth) on this Apache Geode node.
  *
  * @author John Blum
  * @see org.springframework.context.ApplicationListener

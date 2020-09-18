@@ -21,7 +21,7 @@ import org.apache.geode.cache.EntryEvent;
 import org.apache.geode.cache.RegionEvent;
 
 /**
- * Class supporting the implementation of Apache Geode / Pivotal GemFire (PCC) {@link CacheWriter CacheWriters}.
+ * Class supporting the implementation of Apache Geode {@link CacheWriter CacheWriters}.
  *
  * @author John Blum
  * @see org.apache.geode.cache.CacheWriter

@@ -29,8 +29,8 @@ import org.springframework.geode.boot.autoconfigure.configuration.GemFirePropert
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} class used to configure Spring Boot
- * {@link ConfigurationProperties @ConfigurationProperites} classes and beans from the Spring {@link Environment}
- * containing Apache Geode / Pivotal GemFire configuration properties.
+ * {@link ConfigurationProperties} classes and beans from the Spring {@link Environment} containing Apache Geode
+ * configuration properties.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache

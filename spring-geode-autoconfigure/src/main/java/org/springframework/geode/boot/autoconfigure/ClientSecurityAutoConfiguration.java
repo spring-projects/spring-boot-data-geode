@@ -310,8 +310,8 @@ public class ClientSecurityAutoConfiguration {
 	}
 
 	// This custom PropertySource is required to prevent Pivotal Spring Cloud Services
-	// (spring-cloud-services-starter-service-registry) from losing the GemFire/PCC Security Context credentials
-	// stored in the Environment.
+	// (spring-cloud-services-starter-service-registry) from losing the Apache Geode or Cloud Cache Security Context
+	// credentials stored in the Environment.
 	static class SpringDataGemFirePropertiesPropertySource extends PropertySource<Properties> {
 
 		private static final String SPRING_DATA_GEMFIRE_PROPERTIES_PROPERTY_SOURCE_NAME =

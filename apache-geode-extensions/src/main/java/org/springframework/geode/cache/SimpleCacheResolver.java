@@ -28,7 +28,7 @@ import org.apache.geode.cache.client.ClientCacheFactory;
 import org.springframework.geode.util.CacheUtils;
 
 /**
- * The {@link SimpleCacheResolver} abstract class contains utility functions for resolving GemFire/Geode
+ * The {@link SimpleCacheResolver} abstract class contains utility functions for resolving Apache Geode
  * {@link GemFireCache} instances, such as a {@link ClientCache} or a {@literal peer} {@link Cache}.
  *
  * @author John Blum
@@ -64,7 +64,7 @@ public abstract class SimpleCacheResolver {
 	}
 
 	/**
-	 * 	The 1st {@code resolve():Optional<? extends GemFire>} method signature avoids the cast
+	 * 	The 1st {@code resolve():Optional<? extends GemFireCache>} method signature avoids the cast
 	 * 	  and the @SuppressWarnings("unchecked") annotation, but puts the burden on the caller.
 	 * 	The 2nd {@code resolve():Optional<T extends GemFireCache>} method signature requires a cast
 	 * 	  and the @SuppressWarnings("unchecked") annotation, but avoids putting the burden on the caller.

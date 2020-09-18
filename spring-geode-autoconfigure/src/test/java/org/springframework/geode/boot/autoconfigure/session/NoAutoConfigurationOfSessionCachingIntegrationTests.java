@@ -32,9 +32,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * Integration tests for {@link SpringSessionAutoConfiguration} asserting that Spring Session
- * (for Apache Geode/Pivotal GemFire) is not auto-configured when the Spring {@link ApplicationContext}
- * is not a {@link WebApplicationContext}.
+ * Integration Tests for {@link SpringSessionAutoConfiguration} asserting that Spring Session for Apache Geode (SSDG)
+ * is not auto-configured when the Spring {@link ApplicationContext} is not a {@link WebApplicationContext}.
  *
  * @author John Blum
  * @see org.junit.Test

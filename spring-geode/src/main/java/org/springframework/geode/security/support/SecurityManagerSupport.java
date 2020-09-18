@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.security.support;
 
 import java.util.Properties;
@@ -22,9 +21,9 @@ import org.apache.geode.security.AuthenticationFailedException;
 import org.apache.geode.security.ResourcePermission;
 
 /**
- * {@link SecurityManagerSupport} is an abstract base class implementing Apache Geode/Pivotal GemFire's
+ * {@link SecurityManagerSupport} is an abstract base class implementing Apache Geode's
  * {@link org.apache.geode.security.SecurityManager} interface, providing default implementations of the
- * {@literal SecurityManager's} auth methods.
+ * {@link org.apache.geode.security.SecurityManager's} auth methods.
  *
  * @author John Blum
  * @see org.apache.geode.security.SecurityManager

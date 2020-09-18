@@ -38,8 +38,8 @@ import org.springframework.data.gemfire.config.annotation.support.CacheTypeAware
 import org.springframework.lang.Nullable;
 
 /**
- * The {@link ClusterNotAvailableConfiguration} class is a Spring {@link Configuration @Configuration} class that
- * enables configuration when an Apache Geode or Pivotal GemFire cluster of servers is not available.
+ * The {@link ClusterNotAvailableConfiguration} class is a Spring {@link Configuration} class that enables configuration
+ * when an Apache Geode cluster of servers is not available.
  *
  * @author John Blum
  * @see org.springframework.beans.factory.config.BeanPostProcessor
@@ -113,7 +113,7 @@ public class ClusterNotAvailableConfiguration {
 		return clientRegion;
 	}
 
-	protected <K, V> ClientRegionFactoryBean configureAsLocalClientRegion(Environment environment,
+	protected <K, V> ClientRegionFactoryBean<K, V> configureAsLocalClientRegion(Environment environment,
 			ClientRegionFactoryBean<K, V> clientRegion) {
 
 		ClientRegionShortcut shortcut =

@@ -42,8 +42,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 
 /**
- * Integration Tests testing the auto-configuration of Spring Data for Apache Geode/Pivotal GemFire
- * Function implementations and executions support.
+ * Integration Tests testing the auto-configuration of Spring Data for Apache Geode Function implementations
+ * and executions support.
  *
  * @author John Blum
  * @see org.junit.Test

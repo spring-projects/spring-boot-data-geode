@@ -35,9 +35,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration tests for {@link CachingProviderAutoConfiguration} asserting that neither Apache Geode
- * nor Pivotal GemFire is configured as the caching provider in Spring's Cache Abstraction when another
- * caching provider (i.e. {@link CacheManager} bean) has been declared and configured.
+ * Integration Tests for {@link CachingProviderAutoConfiguration} asserting that Apache Geode is not configured as
+ * the caching provider in Spring's Cache Abstraction when another caching provider (i.e. {@link CacheManager} bean)
+ * has been declared and configured.
  *
  * @author John Blum
  * @see org.junit.Test

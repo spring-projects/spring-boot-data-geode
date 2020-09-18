@@ -19,15 +19,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.annotation.Resource;
 
-import org.apache.geode.cache.DataPolicy;
-import org.apache.geode.cache.GemFireCache;
-import org.apache.geode.cache.Region;
-import org.apache.geode.cache.client.ClientRegionShortcut;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.apache.geode.cache.DataPolicy;
+import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.Region;
+import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +43,7 @@ import example.app.crm.service.CustomerService;
 
 /**
  * Integration Tests asserting the functionality and behavior of {@link EnableClusterAware}
- * and {@link ClusterNotAvailableConfiguration} when the Apache Geode (or Pivotal GemFire) cluster of servers
+ * and {@link ClusterNotAvailableConfiguration} when the Apache Geode cluster of servers
  * is not available.
  *
  * @author John Blum

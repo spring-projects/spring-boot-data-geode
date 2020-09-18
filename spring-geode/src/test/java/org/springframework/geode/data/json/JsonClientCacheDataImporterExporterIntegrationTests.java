@@ -57,7 +57,7 @@ import org.springframework.util.FileCopyUtils;
 import example.app.crm.model.Customer;
 
 /**
- * Integration Tests for {@link JsonCacheDataImporterExporter} using a GemFire/Geode {@link ClientCache}.
+ * Integration Tests for {@link JsonCacheDataImporterExporter} using an Apache Geode {@link ClientCache}.
  *
  * @author John Blum
  * @see java.util.Properties

@@ -33,8 +33,8 @@ import org.springframework.geode.boot.autoconfigure.configuration.support.Securi
 import org.springframework.geode.boot.autoconfigure.configuration.support.ServiceProperties;
 
 /**
- * Spring Boot {@link ConfigurationProperties} for well-known, documented Spring Data for Apache Geode/Pivotal GemFire
- * (SDG) {@link Properties}.
+ * Spring Boot {@link ConfigurationProperties} for well-known, documented Spring Data for Apache Geode (SDG)
+ * {@link Properties}.
  *
  * This class assists the application developer in the auto-completion / content-assist of the well-known, documented
  * SDG {@link Properties}.

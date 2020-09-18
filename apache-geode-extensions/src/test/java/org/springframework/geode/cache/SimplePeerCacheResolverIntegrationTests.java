@@ -27,7 +27,7 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.CacheFactory;
 
 /**
- * Integration Tests for {@link SimpleCacheResolver} using a GemFire/Geode {@literal peer} {@link Cache}.
+ * Integration Tests for {@link SimpleCacheResolver} using an Apache Geode {@literal peer} {@link Cache}.
  *
  * @author John Blum
  * @see org.junit.Test

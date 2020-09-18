@@ -29,8 +29,8 @@ import org.springframework.geode.boot.actuate.GeodeIndexesHealthIndicator;
 import org.springframework.geode.boot.actuate.GeodeRegionsHealthIndicator;
 
 /**
- * Spring {@link Configuration @Configuration} class declaring Spring beans for general Apache Geode/Pivotal GemFire
- * peer {@link Cache} and {@link ClientCache} {@link HealthIndicator HealthIndicators}.
+ * Spring {@link Configuration} class declaring Spring beans for general Apache Geode peer {@link Cache}
+ * and {@link ClientCache} {@link HealthIndicator HealthIndicators}.
  *
  * @author John Blum
  * @see org.apache.geode.cache.Cache

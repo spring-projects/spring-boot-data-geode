@@ -27,7 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Integration Tests testing the configuration of TLS (e.g. SSL) in a Cloud Platform Environment/Context (e.g. PCF)
- * using Live GemFire Objects.
+ * using live Apache Geode objects.
  *
  * @author John Blum
  * @see org.junit.Test

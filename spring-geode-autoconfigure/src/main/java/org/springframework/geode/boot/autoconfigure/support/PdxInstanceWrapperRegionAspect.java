@@ -34,7 +34,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
 /**
- * A Spring, AspectJ {@link Aspect} advising GemFire/Geode cache {@link Region} data access operations.
+ * A Spring, AspectJ {@link Aspect} advising Apache Geode cache {@link Region} data access operations.
  *
  * Specifically, this {@link Aspect} wraps all {@link PdxInstance} objects returned from cache {@link Region}
  * read data access operations inside a new instance of {@link PdxInstanceWrapper}.

@@ -33,8 +33,7 @@ import org.springframework.data.gemfire.repository.config.GemfireRepositoryConfi
 import org.springframework.data.gemfire.repository.support.GemfireRepositoryFactoryBean;
 
 /**
- * Spring Boot {@link EnableAutoConfiguration auto-configuration} for Spring Data Geode
- * and Spring Data GemFire Repositories.
+ * Spring Boot {@link EnableAutoConfiguration auto-configuration} for Spring Data for Apache Geode (SDG) Repositories.
  *
  * Activates when there is a bean of type {@link Cache} or {@link ClientCache} configured in the Spring context,
  * the Spring Data Geode {@link GemfireRepository} type is on the classpath, and no other existing

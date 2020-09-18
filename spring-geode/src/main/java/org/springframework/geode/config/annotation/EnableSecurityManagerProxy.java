@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 /**
- * Spring {@link Annotation} to enable Apache Geode or Pivotal GemFire (PCC) Security (Auth) through proxying.
+ * Spring {@link Annotation} to enable Apache Geode Security (Authentication/Authorization (Auth)) through proxying.
  *
  * @author John Blum
  * @see java.lang.annotation.Annotation

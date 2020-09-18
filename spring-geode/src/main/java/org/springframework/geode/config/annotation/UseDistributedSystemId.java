@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.config.annotation;
 
 import java.lang.annotation.Documented;
@@ -25,12 +24,13 @@ import java.lang.annotation.Target;
 
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
+
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
 /**
  * The {@link UseDistributedSystemId} annotation configures the {@literal distributed-system-id} property
- * of a {@link Cache peer Cache member} in an Apache Geode/Pivotal GemFire P2P topology.
+ * of a {@link Cache peer Cache member} in an Apache Geode P2P topology.
  *
  * This configuration annotation is only applicable on {@link Cache peer Cache members}
  * and has no effect on {@link ClientCache} instances.

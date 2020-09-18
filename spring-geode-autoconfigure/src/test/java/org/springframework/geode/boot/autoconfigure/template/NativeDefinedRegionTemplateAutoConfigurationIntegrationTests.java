@@ -41,8 +41,8 @@ import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfigurat
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration Tests for {@link RegionTemplateAutoConfiguration} using natively declared {@link Region}
- * definitions in GemFire/Geode {@literal cache.xml}.
+ * Integration Tests for {@link RegionTemplateAutoConfiguration} using natively declared {@link Region} definitions
+ * in Apache Geode {@literal cache.xml}.
  *
  * @author John Blum
  * @see org.junit.Test

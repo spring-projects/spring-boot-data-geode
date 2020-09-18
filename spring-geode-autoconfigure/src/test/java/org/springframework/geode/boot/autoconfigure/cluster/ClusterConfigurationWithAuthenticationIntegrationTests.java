@@ -64,8 +64,8 @@ import example.app.books.model.Book;
 import example.app.books.model.ISBN;
 
 /**
- * Integration Tests testing the SDG {@link EnableClusterConfiguration} annotation functionality
- * when the GemFire/Geode server is configured with Security (Authentication).
+ * Integration Tests testing the SDG {@link EnableClusterConfiguration} annotation functionality when the Apache Geode
+ * server is configured with Security (Authentication).
  *
  * @author John Blum
  * @see java.io.File

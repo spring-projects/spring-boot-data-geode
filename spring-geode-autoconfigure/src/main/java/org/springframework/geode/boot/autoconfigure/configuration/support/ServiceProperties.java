@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
 import java.util.Properties;
@@ -22,13 +21,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.gemfire.config.annotation.EnableMemcachedServer;
 
 /**
- * Spring Boot {@link ConfigurationProperties} used to configure Apache Geode / Pivotal GemFire embedded services.
+ * Spring Boot {@link ConfigurationProperties} used to configure Apache Geode embedded services.
  *
  * Currently, the supported embedded services include HTTP service (Jetty), Memcached (protocol) server
  * and a Redis (protocol) server.
  *
- * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
- * (SDG) {@link Properties}.
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode (SDG)
+ * {@link Properties}.
  *
  * @author John Blum
  * @see java.util.Properties

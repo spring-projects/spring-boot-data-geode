@@ -28,7 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Integration Tests testing the configuration of TLS (e.g. SSL) in a Cloud Platform Environment/Context (e.g. PCF)
- * using GemFire Mock Objects.
+ * using Apache Geode Mock Objects.
  *
  * @author John Blum
  * @see org.junit.Test

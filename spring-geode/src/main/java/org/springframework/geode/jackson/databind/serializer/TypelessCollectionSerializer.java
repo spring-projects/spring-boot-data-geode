@@ -37,7 +37,7 @@ import org.springframework.data.gemfire.util.CollectionUtils;
  * The {@link TypelessCollectionSerializer} class is a custom, typeless {@link CollectionSerializer} implementation.
  *
  * This {@link AsArraySerializerBase} implementation is a lot like {@link CollectionSerializer}, however it excludes
- * unnecessary type metadata in the context of GemFire/Geode.
+ * unnecessary type metadata in the context of Apache Geode.
  *
  * @author John Blum
  * @see java.util.Collection
