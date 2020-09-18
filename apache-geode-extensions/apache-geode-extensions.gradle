@@ -32,4 +32,7 @@ dependencies {
     testCompile "org.projectlombok:lombok"
     testCompile "edu.umd.cs.mtc:multithreadedtc"
 
+    testCompile "org.apache.geode:geode-membership:$apacheGeodeVersion"
+    testCompile "org.apache.geode:geode-serialization:$apacheGeodeVersion"
+
 }
