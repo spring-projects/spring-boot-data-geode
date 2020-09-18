@@ -7,7 +7,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 apply plugin: 'io.spring.convention.docs'
 apply plugin: 'io.spring.convention.spring-test'
 
-description = "Generate Javadoc and Reference Documentation on Spring Boot for Apache Geode & Pivotal GemFire"
+description = "Generate Javadoc and Reference Documentation on Spring Boot for Apache Geode"
 
 dependencies {
 
@@ -61,7 +61,6 @@ asciidoctorj {
 		'spring-boot-version' : "${springBootVersion}",
 		'spring-boot-data-geode-version' : project.version,
 		'spring-data-commons-version' : "${springDataReleaseTrainVersion}",
-		'spring-data-gemfire-version' : "${springDataGemFireVersion}",
 		'spring-data-geode-version' : "${springDataGeodeVersion}",
 		'spring-session-data-gemfire-version' : "${springSessionDataGeodeVersion}",
 		'spring-session-data-geode-version' : "${springSessionDataGeodeVersion}",
