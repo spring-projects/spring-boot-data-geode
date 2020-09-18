@@ -12,7 +12,7 @@ buildscript {
 apply plugin: 'io.spring.convention.root'
 
 group = 'org.springframework.geode'
-description = 'Spring Boot for Apache Geode & Pivotal GemFire'
+description = 'Spring Boot for Apache Geode'
 
 //ext['spring.version'] = "$springVersion"
 //ext['spring-framework.version'] = "$springVersion"
