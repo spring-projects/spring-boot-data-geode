@@ -18,7 +18,6 @@ dependencies {
     testCompile "edu.umd.cs.mtc:multithreadedtc"
 
     testCompile("org.springframework.data:spring-data-geode-test") {
-        exclude group: "javax.servlet", module: "javax.servlet-api"
         exclude group: "org.apache.logging.log4j", module: "log4j-core"
     }
 
