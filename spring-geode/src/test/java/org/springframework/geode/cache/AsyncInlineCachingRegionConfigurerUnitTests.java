@@ -242,7 +242,7 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 		verify(regionConfigurer, times(1))
 			.newAsyncEventQueue(eq(mockCache), eq("TestRegion"));
 		verify(peerRegionFactoryBean, times(1))
-			.setAsyncEventQueues(eq(ArrayUtils.asArray(mockAsyncEventQueue)));
+			.addAsyncEventQueues(eq(ArrayUtils.asArray(mockAsyncEventQueue)));
 
 		verifyNoMoreInteractions(regionConfigurer, peerRegionFactoryBean);
 		verifyNoInteractions(mockAsyncEventQueue, mockCache, mockRepository);

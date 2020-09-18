@@ -219,8 +219,7 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 
 			AsyncEventQueue queue = newAsyncEventQueue((Cache) bean.getCache(), beanName);
 
-			// TODO: change; PeerRegionFactoryBean.setAsyncEventQueues(..) overwrites the existing user-configured AEQs.
-			bean.setAsyncEventQueues(ArrayUtils.asArray(queue));
+			bean.addAsyncEventQueues(ArrayUtils.asArray(queue));
 		}
 	}
 
