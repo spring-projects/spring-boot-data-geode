@@ -15,13 +15,14 @@
  */
 package org.springframework.geode.util;
 
-import org.apache.geode.distributed.internal.DistributionConfig;
+import org.apache.geode.distributed.ConfigurationProperties;
 import org.apache.geode.management.internal.security.ResourceConstants;
 
 /**
  * Interface encapsulating common Apache Geode constants used by SBDG.
  *
  * @author John Blum
+ * @see org.apache.geode.distributed.ConfigurationProperties
  * @since 1.3.0
  */
 public interface GeodeConstants {
@@ -29,10 +30,10 @@ public interface GeodeConstants {
 	String GEMFIRE_PROPERTY_PREFIX = "gemfire.";
 
 	// Logging Constants (referring to Properties)
-	String LOG_DISK_SPACE_LIMIT = DistributionConfig.LOG_DISK_SPACE_LIMIT_NAME;
-	String LOG_FILE = DistributionConfig.LOG_FILE_NAME;
-	String LOG_FILE_SIZE_LIMIT = DistributionConfig.LOG_FILE_SIZE_LIMIT_NAME;
-	String LOG_LEVEL = DistributionConfig.LOG_LEVEL_NAME;
+	String LOG_DISK_SPACE_LIMIT = ConfigurationProperties.LOG_DISK_SPACE_LIMIT;
+	String LOG_FILE = ConfigurationProperties.LOG_FILE;
+	String LOG_FILE_SIZE_LIMIT = ConfigurationProperties.LOG_FILE_SIZE_LIMIT;
+	String LOG_LEVEL = ConfigurationProperties.LOG_LEVEL;
 
 	// Security Constants (referring to Properties)
 	String PASSWORD = ResourceConstants.PASSWORD;
