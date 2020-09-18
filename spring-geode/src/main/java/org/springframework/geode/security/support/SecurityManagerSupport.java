@@ -23,7 +23,7 @@ import org.apache.geode.security.ResourcePermission;
 /**
  * {@link SecurityManagerSupport} is an abstract base class implementing Apache Geode's
  * {@link org.apache.geode.security.SecurityManager} interface, providing default implementations of the
- * {@link org.apache.geode.security.SecurityManager's} auth methods.
+ * {@link org.apache.geode.security.SecurityManager} auth methods.
  *
  * @author John Blum
  * @see org.apache.geode.security.SecurityManager
