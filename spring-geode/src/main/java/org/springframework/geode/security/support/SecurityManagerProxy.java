@@ -15,7 +15,6 @@
  */
 package org.springframework.geode.security.support;
 
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -174,8 +173,6 @@ public class SecurityManagerProxy extends LazyWiringDeclarableSupport
 
 	@Override
 	protected BeanFactory locateBeanFactory() {
-
-		return Optional.ofNullable(this.beanFactory)
-			.orElseGet(super::locateBeanFactory);
+		return this.beanFactory != null ? this.beanFactory : super.locateBeanFactory();
 	}
 }
