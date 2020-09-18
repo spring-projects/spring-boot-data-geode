@@ -1,6 +1,5 @@
 [[geode-api-extensions]]
 == Apache Geode API Extensions
-:gemfire-name: Pivotal GemFire
 :geode-name: Apache Geode
 :images-dir: ./images
 

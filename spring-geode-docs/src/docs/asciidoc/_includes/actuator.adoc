@@ -1,6 +1,7 @@
 [[actuator]]
 == Spring Boot Actuator
 
+
 Spring Boot for {apache-geode-name} and {pivotal-gemfire-name} (SBDG) adds {spring-boot-docs-html}/production-ready.html[Spring Boot Actuator]
 support and dedicated `HealthIndicators` for {apache-geode-name} and {pivotal-gemfire-name}.  Equally, the provided
 `HealthIndicators` will even work with Pivotal Cloud Cache, which is backed by {pivotal-gemfire-name}, when pushing your
@@ -36,8 +37,9 @@ The following section covers Spring Boot `HealthIndicators` that apply to both p
 Spring Boot applications.  That is, these `HealthIndicators` are not specific to the cache type.
 
 In {apache-geode-name}, the cache instance is either a peer `Cache` instance, which makes your Spring Boot application
-part of a GemFire/Geode cluster, or more commonly, a `ClientCache` instance that talks to an existing cluster.  Your
-Spring Boot application can only be one cache type or the other and can only have a single instance of that cache type.
+part of a {apache-geode-name} cluster, or more commonly, a `ClientCache` instance that talks to an existing cluster.
+Your Spring Boot application can only be one cache type or the other and can only have a single instance of
+that cache type.
 
 [[actuator-base-healthindicators-cache]]
 ==== GeodeCacheHealthIndicator
@@ -328,8 +330,8 @@ In addition, the following CQ query and statistical data is covered:
 
 |=====================================================================================================================
 
-In a more general sense, the GemFire/Geode Continuous Query system is tracked with the following, additional details
-on the client:
+In a more general sense, the {apache-geode-name} Continuous Query system is tracked with the following,
+additional details on the client:
 
 .Continuous Query(CQ), Statistic Details
 [width="90%",cols="^3,<10",options="header"]

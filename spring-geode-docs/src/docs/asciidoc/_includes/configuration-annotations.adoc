@@ -1,36 +1,39 @@
 [[geode-auto-configuration-annotations]]
 == Auto-configuration vs. Annotation-based configuration
+:geode-name: {apache-geode-name}
+:vmw-gemfire-name: VMware Tanzu GemFire
+:vmw-tas-name: VMware Tanzu Application Service
 
-The question most often asked is, "_What Spring Data for Apache Geode/Pivotal GemFire annotations can I use,
-or must I use, when developing Apache Geode or Pivotal GemFire applications with Spring Boot?_"
+
+The question most often asked is, "_What Spring Data for {geode-name} (SDG) annotations can I use, or must I use, when
+developing {geode-name} applications with Spring Boot?_"
 
 This section will answer this question and more.
 
-Readers should refer to the complimentary sample, link:guides/boot-configuration.html[Spring Boot Auto-configuration for Apache Geode & Pivotal GemFire],
-which showcases the _auto-configuration_ provided by Spring Boot for Apache Geode/Pivotal GemFire in action.
+Readers should refer to the complimentary sample, link:guides/boot-configuration.html[Spring Boot Auto-configuration for {geode-name}],
+which showcases the _auto-configuration_ provided by Spring Boot for {geode-name} in action.
 
 [[geode-autoconfiguration-annotations-background]]
 === Background
 
-To help answer this question, we must start by reviewing the complete collection of available
-Spring Data for Apache Geode/Pivotal GemFire (SDG) annotations.  These annotations are provided in the
+To help answer this question, we must start by reviewing the complete collection of available Spring Data for {geode-name}
+(SDG) annotations.  These annotations are provided in the
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/package-summary.html[org.springframework.data.gemfire.config.annotation]
 package. Most of the pertinent annotations begin with `@Enable...`, except for the base annotations:
 `@ClientCacheApplication`, `@PeerCacheApplication` and `@CacheServerApplication`.
 
-By extension, Spring Boot for Apache Geode/Pivotal GemFire (SBDG) builds on SDG's Annotation-based configuration model
-to implement _auto-configuration_ and apply Spring Boot's core concepts, like "_convention over configuration_",
-enabling GemFire/Geode applications to be built with Spring Boot reliably, quickly and easily.
+By extension, Spring Boot for {geode-name} (SBDG) builds on SDG's Annotation-based configuration model to implement
+_auto-configuration_ and apply Spring Boot's core concepts, like "_convention over configuration_", enabling
+{geode-name} applications to be built with Spring Boot reliably, quickly and easily.
 
 SDG provides this Annotation-based configuration model to, first and foremost, give application developers "_choice_"
-when building Spring applications using either Apache Geode or Pivotal GemFire. SDG makes no assumptions about what
-application developers are trying to do and fails fast anytime the configuration is ambiguous, giving users immediate
-feedback.
+when building Spring applications using {geode-name}. SDG makes no assumptions about what application developers are
+trying to do and fails fast anytime the configuration is ambiguous, giving users immediate feedback.
 
 Second, SDG's Annotations were meant to get application developers up and running quickly and reliably with ease.  SDG
 accomplishes this by applying sensible defaults so application developers do not need to know, or even have to learn,
-all the intricate configuration details and tooling provided by GemFire/Geode to accomplish simple tasks,
-e.g. build a prototype.
+all the intricate configuration details and tooling provided by {geode-name} to accomplish simple tasks, e.g. build a
+prototype.
 
 So, SDG is all about "choice" and SBDG is all about "convention".  Together these frameworks provide application
 developers with convenience and reliability to move quickly and easily.
@@ -83,10 +86,9 @@ In this section, we cover a few examples to make the behavior when overriding mo
 By default, SBDG provides you with a `ClientCache` instance.  Technically, SBDG accomplishes this by annotating
 an auto-configuration class with `@ClientCacheApplication`, internally.
 
-It is by convention that we assume most application developers' will be developing Spring Boot applications
-using Apache Geode or Pivotal GemFire as "client" applications in GemFire/Geode's client/server topology. This is
-especially true as users migrate their applications to a managed environment, such as Pivotal CloudFoundry (PCF)
-using Pivotal Cloud Cache (PCC).
+It is by convention that we assume most application developers' will be developing Spring Boot applications using
+{geode-name} as "client" applications in {geode-name}'s client/server topology. This is especially true as users
+migrate their applications to a managed cloud environment.
 
 Still, users are free to "override" the default settings and declare their Spring applications to be actual peer `Cache`
 members of a cluster, instead.
@@ -97,7 +99,7 @@ For example:
 ----
 @SpringBootApplication
 @CacheServerApplication
-class MySpringBootPeerCacheServerApplication { ... }
+class MySpringBootPeerCacheServerApplication {  }
 ----
 
 By declaring the `@CacheServerApplication` annotation, you effectively override the SBDG default. Therefore, SBDG
@@ -139,10 +141,10 @@ spring.data.gemfire.security.password=Secret
 You do not need to explicitly declare the `@EnableSecurity` annotation just to specify Security configuration
 (e.g. username/password).
 
-Inside a managed environment, such as Pivotal CloudFoundry (PCF) when using Pivotal Cloud Cache (PCC), SBDG is able to
-introspect the environment and configure Security (Auth) completely without the need to specify any configuration,
-usernames/passwords, or otherwise.  This is due in part because PCF supplies the security details in the VCAP
-environment when the app is deployed to PCF and bound to services (e.g. PCC).
+Inside a managed environment, such as the {vmw-tas-name} (TAS) when using {vmw-gemfire-name}, SBDG is able to introspect
+the environment and configure Security (Auth) completely without the need to specify any configuration, usernames
+/ passwords, or otherwise.  This is due in part because PCF supplies the security details in the VCAP environment
+when the app is deployed to TAS and bound to services (e.g. {vmw-gemfire-name}).
 
 So, in short, you do not need to explicitly declare the `@EnableSecurity` annotation (or the `@ClientCacheApplication`
 for that matter).
@@ -154,8 +156,8 @@ While explicitly declaring `@EnableSecurity` makes more sense when "overriding" 
 explicitly declaring the `@ClientCacheApplication` annotation most likely makes less sense with regard to its impact
 on Security configuration.
 
-This is entirely due to the internals of GemFire/Geode, which in certain cases, like Security, not even Spring
-is able to completely shield users from the nuances of GemFire/Geode's configuration.
+This is entirely due to the internals of {geode-name}, which in certain cases, like Security, not even Spring is able to
+completely shield users from the nuances of {geode-name}'s configuration.
 
 Both Auth and SSL must be configured before the cache instance (whether a `ClientCache` or a peer `Cache`,
 it does not matter) is created.  Technically, this is because Security is enabled/configured during the "construction"
@@ -169,7 +171,7 @@ in SBDG must be triggered before the ClientCache _auto-configuration_ class, whi
 (i.e. you must also explicitly declare the `@EnableSecurity` annotation in this case since you overrode the
 _auto-configuration_ of the cache, and, well, implicitly Security as well).
 
-Again, this is due to the way Security (Auth) and SSL meta-data must be supplied to GemFire/Geode.
+Again, this is due to the way Security (Auth) and SSL metadata must be supplied to {geode-name}.
 
 See the <<geode-security,Reference Guide>> for more details.
 
@@ -209,7 +211,7 @@ class CustomerService {
 }
 ----
 
-Of course, it is necessary to create GemFire/Geode Regions backing the caches declared in your application service
+Of course, it is necessary to create {geode-name} Regions backing the caches declared in your application service
 components (e.g. "CustomersByName") using Spring's Caching Annotations (e.g. `@Cacheable), or alternatively,
 JSR-107, JCache annotations (e.g. `@CacheResult`).
 
@@ -220,7 +222,7 @@ You can do that by defining each Region explicitly, or more conveniently, you ca
 ----
 @SpringBootApplication
 @EnableCachingDefinedRegions
-class Application { ... }
+class Application {  }
 ----
 
 `@EnableCachingDefinedRegions` is optional, provided for convenience, and complimentary to caching when used
@@ -256,7 +258,7 @@ public class TemperatureMonitor extends AbstractTemperatureEventPublisher {
 }
 ----
 
-Of course, GemFire/Geode CQ only applies to clients.
+Of course, {geode-name} CQ only applies to clients.
 
 See the <<geode-continuous-query,Reference Guide>> for more details.
 
@@ -271,11 +273,11 @@ and executions.  You simply need to define the implementation:
 [source,java]
 ----
 @Component
-class GemFireFunctions {
+class GeodeFunctions {
 
   @GemfireFunction
   Object exampleFunction(Object arg) {
-    ...
+    // ...
   }
 }
 ----
@@ -286,13 +288,13 @@ And then define the execution:
 [source,java]
 ----
 @OnRegion(region = "Example")
-interface GemFireFunctionExecutions {
+interface GeodeFunctionExecutions {
 
   Object exampleFunction(Object arg);
 }
 ----
 
-SBDG will automatically find, configure and register Function Implementations (POJOs) in GemFire/Geode as proper
+SBDG will automatically find, configure and register Function Implementations (POJOs) in {geode-name} as proper
 `Functions` as well as create Executions proxies for the Interfaces which can then be injected into application service
 components to invoke the registered `Functions` without needing to explicitly declare the enabling annotations.
 The application Function Implementations & Executions (Interfaces) should simply exist below the `@SpringBootApplication`
@@ -343,7 +345,7 @@ See the <<geode-repositories,Reference Guide>> for more details.
 === Explicit Configuration
 
 Most of the other annotations provided in SDG are focused on particular application concerns, or enable certain
-GemFire/Geode features, rather than being a necessity.
+{geode-name} features, rather than being a necessity.
 
 A few examples include:
 
@@ -388,7 +390,7 @@ the feature appropriately, as needed by your application (e.g. `@EnableRedisServ
 In other cases, you might also want to explicitly declare a complimentary annotation (e.g. `@EnableEntityDefinedRegions`)
 for convenience, since there is no convention or "opinion" provided by SBDG out-of-the-box.
 
-In all remaining cases, it boils down to understanding how GemFire/Geode works under-the-hood.  While we go to great
+In all remaining cases, it boils down to understanding how {geode-name} works under-the-hood. While we go to great
 lengths to shield users from as many details as possible, it is not feasible or practical to address all matters,
 e.g. cache creation and Security.
 

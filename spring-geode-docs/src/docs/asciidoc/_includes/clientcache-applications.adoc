@@ -1,19 +1,22 @@
 [[geode-clientcache-applications]]
-== Building ClientCache Applications
+== Building `ClientCache` Applications
+:geode-name: {apache-geode-name}
 
-The first, opinionated option provided to you by Spring Boot for Apache Geode & Pivotal GemFire (SBDG) out-of-the-box is
-a {apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html[ClientCache] instance, simply by declaring
-either Spring Boot for Apache Geode or Spring Boot for Pivotal GemFire on your application classpath.
 
-It is assumed that most application developers using Spring Boot to build applications backed by either Apache Geode
-or Pivotal GemFire will be building cache client applications deployed in an Apache Geode or Pivotal GemFire
-{apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[Client/Server topology].
-A client/server topology is the most common and traditional architecture employed by enterprise applications.
+The first opinionated option provided to you by Spring Boot for {geode-name} (SBDG) out-of-the-box is a
+{apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html[ClientCache] instance simply by declaring
+Spring Boot for {geode-name} on your application classpath.
 
-For example, you can begin building a Spring Boot, Apache Geode or Pivotal GemFire, `ClientCache` application
-with either the `spring-geode-starter` or `spring-gemfire-starter` on your application's classpath:
+It is assumed that most application developers using Spring Boot to build applications backed by {geode-name} will be
+building cache client applications deployed in an {geode-name}
+{apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[Client/Server Topology].
+The _client/server topology_ is the most common and traditional architecture employed by enterprise applications when
+using {geode-name}.
 
-.Spring Boot for Apache Geode on the application classpath
+For example, you can begin building a Spring Boot, {geode-name} `ClientCache` application by declaring the
+`spring-geode-starter` on your application's classpath:
+
+.Spring Boot for {geode-name} on the application classpath
 [source,xml]
 ----
 <dependency>
@@ -22,10 +25,10 @@ with either the `spring-geode-starter` or `spring-gemfire-starter` on your appli
 </dependency>
 ----
 
-Then, you configure and bootstrap your Spring Boot, Apache Geode `ClientCache` application with the following
+Then, you configure and bootstrap your Spring Boot, {geode-name} `ClientCache` application with the following
 main application class:
 
-.Spring Boot, Apache Geode `ClientCache` Application
+.Spring Boot, {geode-name} `ClientCache` Application
 [source,java]
 ----
 @SpringBootApplication
@@ -37,28 +40,27 @@ public class SpringBootApacheGeodeClientCacheApplication {
 }
 ----
 
-Your application now has a `ClientCache` instance, which is able to connect to an Apache Geode or Pivotal GemFire server
-running on `localhost`, listening on the default `CacheServer` port, `40404`.
+Your application now has a `ClientCache` instance, which is able to connect to an {geode-name} server running on
+`localhost`, listening on the default `CacheServer` port, `40404`.
 
-By default, an Apache Geode or Pivotal GemFire server (i.e. `CacheServer`) must be running in order to use
-the `ClientCache` instance.  However, it is perfectly valid to create a `ClientCache` instance and perform
-data access operations using `LOCAL` Regions.  This is very useful during development.
+By default, an {geode-name} server (i.e. `CacheServer`) must be running in order to use the `ClientCache` instance.
+However, it is perfectly valid to create a `ClientCache` instance and perform data access operations using `LOCAL`
+Regions. This is very useful during development.
 
-TIP: To develop with `LOCAL` Regions, you only need to define your cache Regions with the
+TIP: To develop with `LOCAL` Regions, you only need to configure your cache Regions with the
 {apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html#LOCAL[`ClientRegionShortcut.LOCAL`]
 data management policy.
 
 When you are ready to switch from your local development environment (IDE) to a client/server architecture in a managed
 environment, you simply change the data management policy of the client Region from `LOCAL` back to the default `PROXY`,
-or even a `CACHING_PROXY`, data management policy which will cause the data to be sent/received to and from 1 or more
-servers, respectively.
+or even a `CACHING_PROXY`, which will cause the data to be sent/received to and from 1 or more servers, respectively.
 
-TIP: Compare and contrast the above configuration with Spring Data for Apache Geode/Pivotal GemFire's
+TIP: Compare and contrast the above configuration with Spring Data for {geode-name}
 {spring-data-geode-docs-html}/#bootstrap-annotation-config-geode-applications[approach].
 
 It is uncommon to ever need a direct reference to the `ClientCache` instance provided by SBDG injected into your
 application components (e.g. `@Service` or `@Repository` beans defined in a Spring `ApplicationContext`) whether you
-are configuring additional GemFire/Geode objects (e.g. Regions, Indexes, etc) or simply using those objects indirectly
+are configuring additional {geode-name} objects (e.g. Regions, Indexes, etc) or simply using those objects indirectly
 in your applications. However, it is also possible to do so if and when needed.
 
 For example, perhaps you want to perform some additional `ClientCache` initialization in a Spring Boot
@@ -103,16 +105,16 @@ It is the 2nd part, "_get out of the way quickly as requirements start to diverg
 that we refer to here.
 
 If your application requirements demand you use Spring Boot to configure and bootstrap an embedded, peer `Cache`
-Apache Geode or Pivotal GemFire application, then simply declare your intention with either SDG's
+instance, then simply declare your intention with either SDG's
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html[`@PeerCacheApplication`] annotation,
-or alternatively, if you need to enable connections from `ClientCache` apps as well, use the SDG
+or alternatively, if you need to enable connections from `ClientCache` apps as well, use SDG's
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html[`@CacheServerApplication`] annotation:
 
-.Spring Boot, Apache Geode/Pivotal GemFire CacheServer Application
+.Spring Boot, {geode-name} `CacheServer` Application
 [source,java]
 ----
 @SpringBootApplication
-@CacheServerApplication(name = "MySpringBootApacheGeodeCacheServerApplication")
+@CacheServerApplication(name = "SpringBootApacheGeodeCacheServerApplication")
 public class SpringBootApacheGeodeCacheServerApplication {
 
     public static void main(String[] args) {
@@ -121,19 +123,19 @@ public class SpringBootApacheGeodeCacheServerApplication {
 }
 ----
 
-TIP: An Apache Geode/Pivotal GemFire "server" is not necessarily a "`CacheServer`" capable of serving cache clients.
-It is merely a peer member node in a GemFire/Geode cluster (a.k.a. distributed system) that stores and manages data.
+TIP: An {geode-name} "server" is not necessarily a `CacheServer` capable of serving cache clients. It is merely a peer
+member node in an {geode-name} cluster (a.k.a. distributed system) that stores and manages data.
 
 By explicitly declaring the `@CacheServerApplication` annotation, you are telling Spring Boot that you do not want
 the default, `ClientCache` instance, but rather an embedded, peer `Cache` instance with a `CacheServer` component,
 which enables connections from `ClientCache` apps.
 
-You can also enable 2 other GemFire/Geode services, an embedded _Locator_, which allows clients or even other peers
-to "locate" servers in a cluster, as well as an embedded _Manager_, which allows the GemFire/Geode application process
-to be managed and monitored using {apache-geode-docs}/tools_modules/gfsh/chapter_overview.html[_Gfsh_], GemFire/Geode's
-shell tool:
+You can also enable 2 other {geode-name} services, an embedded _Locator_, which allows clients or even other peers
+to "locate" servers in the cluster, as well as an embedded _Manager_, which allows the {geode-name} application process
+to be managed and monitored using {apache-geode-docs}/tools_modules/gfsh/chapter_overview.html[_Gfsh_], {geode-name}'s
+command-line shell tool:
 
-.Spring Boot, Apache Geode/Pivotal GemFire CacheServer Application with _Locator_ and _Manager_ services enabled
+.Spring Boot, {geode-name} `CacheServer` Application with _Locator_ and _Manager_ services enabled
 [source,java]
 ----
 @SpringBootApplication
@@ -197,9 +199,9 @@ Client Connections       : 0
 ----
 
 You can even start additional servers in _Gfsh_, which will connect to your Spring Boot configured and bootstrapped
-Apache Geode or Pivotal GemFire `CacheServer` application.  These additional servers started in _Gfsh_ know about
-the Spring Boot, GemFire/Geode server because of the embedded _Locator_ service, which is running on `localhost`,
-listening on the default _Locator_ port, `10334`:
+{geode-name} `CacheServer` application. These additional servers started in _Gfsh_ know about the Spring Boot,
+{geode-name} server because of the embedded _Locator_ service, which is running on `localhost`, listening on
+the default _Locator_ port, `10334`:
 
 [source,text]
 ----
@@ -224,7 +226,7 @@ GfshServer                                  | 10.0.0.121(GfshServer:30031)<v1>:1
 ----
 
 Perhaps you want to start the other way around.  As developer, I may need to connect my Spring Boot configured
-and bootstrapped GemFire/Geode server application to an existing cluster.  You can start the cluster in _Gfsh_
+and bootstrapped {geode-name} server application to an existing cluster. You can start the cluster in _Gfsh_
 by executing the following commands:
 
 [source,text]
@@ -268,11 +270,11 @@ GfshServer  | 10.0.0.121(GfshServer:30270)<v1>:1025
 
 Then, modify the `SpringBootApacheGeodeCacheServerApplication` class to connect to the existing cluster, like so:
 
-.Spring Boot, Apache Geode/Pivotal GemFire CacheServer Application with _Locator_ and _Manager_ services enabled
+.Spring Boot, {geode-name} `CacheServer` Application connecting to an external cluster
 [source,java]
 ----
 @SpringBootApplication
-@CacheServerApplication(name = "MySpringBootApacheGeodeCacheServerApplication", locators = "localhost[11235]")
+@CacheServerApplication(name = "SpringBootApacheGeodeCacheServerApplication", locators = "localhost[11235]")
 public class SpringBootApacheGeodeCacheServerApplication {
 
     public static void main(String[] args) {
@@ -284,7 +286,7 @@ public class SpringBootApacheGeodeCacheServerApplication {
 TIP: Notice I configured the `SpringBootApacheGeodeCacheServerApplication` class, `@CacheServerApplication` annotation's
 `locators` property with the host and port (i.e. "_localhost[11235]_") on which I started my _Locator_ using _Gfsh_.
 
-After running your Spring Boot, Apache Geode `CacheServer` application again, and then running `list members` in _Gfsh_,
+After running your Spring Boot, {geode-name} `CacheServer` application again, and then running `list members` in _Gfsh_,
 you should see:
 
 [source,text]
@@ -317,8 +319,8 @@ Running                  : true
 Client Connections       : 0
 ----
 
-In both scenarios, the Spring Boot configured and bootstrapped Apache Geode (or Pivotal GemFire) server
-and the _Gfsh_ _Locator_ and _Server_ formed a cluster.
+In both scenarios, the Spring Boot configured and bootstrapped {geode-name} server and the _Gfsh_ _Locator_
+and _Gfsh_ _Server_ formed a cluster.
 
 While you can use either approach and Spring does not care, it is far more convenient to use Spring Boot and your IDE
 to form a small cluster while developing.  By leveraging Spring profiles, it is far simpler and much faster to
@@ -342,10 +344,10 @@ TIP: See the Appendix, <<geode-cluster-configuration-bootstrapping>> for more de
 In addition to `ClientCache`, `CacheServer` and peer `Cache` applications, SDG, and by extension SBDG, now supports
 Locator-based, Spring Boot applications.
 
-An Apache Geode or Pivotal GemFire Locator is a location-based service, or alternatively and more typically,
-a standalone process enabling clients to "locate" a cluster of Apache Geode/Pivotal GemFire servers to manage data.
-Many cache clients can connect to the same cluster in order to share data.  Running multiple clients is common in a
-Microservices architecture where you need to scale-up the number of app instances to satisfy the demand.
+An {geode-name} Locator is a location-based service, or alternatively and more typically, a standalone process enabling
+clients to "locate" a cluster of {geode-name} servers to manage data. Many cache clients can connect to the same cluster
+in order to share data. Running multiple clients is common in a Microservices architecture where you need to scale-up
+the number of app instances to satisfy the demand.
 
 A Locator is also used by joining members of an existing cluster to scale-out and increase capacity of the logically
 pooled system resources (i.e. Memory, CPU and Disk).  A Locator maintains metadata that is sent to the clients to
@@ -398,8 +400,8 @@ class SpringBootApacheGeodeLocatorApplication {
 Instead of using the `@EnableLocator` annotation, you now use the `@LocatorApplication` annotation.
 
 The `@LocatorApplication` annotation works in the same way as the `@PeerCacheApplication` and `@CacheServerApplication`
-annotations, bootstrapping a Apache Geode or Pivotal GemFire process, overriding the default `ClientCache` instance
-provided by SBDG out-of-the-box.
+annotations, bootstrapping an {geode-name} process, overriding the default `ClientCache` instance provided by SBDG
+out-of-the-box.
 
 NOTE: If your `@SpringBootApplication` class is annotated with `@LocatorApplication`, then it can only be a `Locator`
 and not a `ClientCache`, `CacheServer` or peer `Cache` application.  If you need the application to function as a
@@ -407,10 +409,10 @@ peer `Cache`, perhaps with an embedded `CacheServer` components and embedded Loc
 the approach shown above using the `@EnableLocator` annotation with either the `@PeerCacheApplication`
 or `@CacheServerApplication` annotation.
 
-With our Spring Boot, Apache Geode Locator application, we can connect both Spring Boot configured and bootstrapped
+With our Spring Boot, {geode-name} Locator application, we can connect both Spring Boot configured and bootstrapped
 peer members (peer `Cache`, `CacheServer` and `Locator` applications) as well as _Gfsh_ started Locators and Servers.
 
-First, let's startup 2 Locators using our Apache Geode Locator, Spring Boot application class.
+First, let's startup 2 Locators using our {geode-name} Locator, Spring Boot application class.
 
 .SpringBootApacheGeodeLocatorApplication class
 [source,java]
@@ -420,14 +422,13 @@ include::{docs-src-dir}/org/springframework/geode/docs/example/app/locator/Sprin
 
 We also need to vary the configuration for each Locator app instance.
 
-Apache Geode and Pivotal GemFire requires each peer member in the cluster to be uniquely named.  We can set the name
-of the Locator by using the `spring.data.gemfire.locator.name` SDG property set as a JVM System Property in your IDE's
-Run Configuration Profile for the application main class like so: `-Dspring.data.gemfire.locator.name=SpringLocatorOne`.
-We name the second Locator app instance, "_SpringLocatorTwo_".
+{geode-name} requires each peer member in the cluster to be uniquely named. We can set the name of the Locator by using
+the `spring.data.gemfire.locator.name` SDG property set as a JVM System Property in your IDE's Run Configuration Profile
+for the application main class like so: `-Dspring.data.gemfire.locator.name=SpringLocatorOne`. We name the second
+Locator app instance, "_SpringLocatorTwo_".
 
-Additionally, we must vary the port numbers that the Locators use to listen for connections.  By default,
-an Apache Geode or Pivotal GemFire Locator listens on port `10334`.  We can set the Locator port using the
-`spring.data.gemfire.locator.port` SDG property.
+Additionally, we must vary the port numbers that the Locators use to listen for connections. By default, an {geode-name}
+Locator listens on port `10334`.  We can set the Locator port using the `spring.data.gemfire.locator.port` SDG property.
 
 For our first Locator app instance (i.e. "_SpringLocatorOne_"), we also enable the "_manager_" Profile so that
 we can connect to the Locator using _Gfsh_.
@@ -442,7 +443,7 @@ And our IDE Run Configuration Profile for our second Locator app instance appear
 
 You should see log output similar to the following when you start a Locator app instance:
 
-.Spring Boot, Apache Geode Locator log output
+.Spring Boot, {geode-name} Locator log output
 [source,txt]
 ----
   .   ____          _            __ _ _
@@ -551,7 +552,7 @@ SpringLocatorTwo | 10.99.199.24(SpringLocatorTwo:30077:locator)<ec><v1>:41001
 ----
 
 Using our `SpringBootApacheGeodeCacheServerApplication` main class from the previous section, we can configure
-and bootstrap an Apache Geode `CacheServer` application with Spring Boot and connect it to our cluster of Locators.
+and bootstrap an {geode-name} `CacheServer` application with Spring Boot and connect it to our cluster of Locators.
 
 .SpringBootApacheGeodeCacheServerApplication class
 [source,java]
@@ -565,7 +566,7 @@ Simply enable the "clustered" Profile by using a IDE Run Profile Configuration s
 
 After the server starts up, you should see the new peer member in the cluster:
 
-.Cluster with Spring Boot configured and bootstrapped Apache Geode `CacheServer`
+.Cluster with Spring Boot configured and bootstrapped {geode-name} `CacheServer`
 [source,txt]
 ----
 gfsh>list members
@@ -615,18 +616,18 @@ GfshLocator      | 10.99.199.24(GfshLocator:30259:locator)<ec><v3>:41003
 GfshServer       | 10.99.199.24(GfshServer:30295)<v4>:41004
 ----
 
-You must be careful to vary the ports and name your peer members appropriately.  With Spring, and Spring Boot
-for Apache Geode and Pivotal GemFire (SBDG) in particular, it really is that easy!
+You must be careful to vary the ports and name of your peer members appropriately. With Spring, and Spring Boot
+for {geode-name} (SBDG) in particular, it really is that easy!
 
 [[geode-manager-applications]]
 === Building Manager Applications
 
 As discussed in the previous sections above, it is possible to enable a Spring Boot configured and bootstrapped
-Apache Geode or Pivotal GemFire peer member node in the cluster to function as a _Manager_.
+{geode-name} peer member node in the cluster to function as a _Manager_.
 
-An Apache Geode or Pivotal GemFire _Manager_ is a peer member node in the cluster running the Management Service,
-allowing the cluster to be managed and monitored using JMX based tools, like _Gfsh_, _JConsole_ or _JVisualVM_,
-for instance.  Any tool that uses the JMX API can connect to and manage the GemFire/Geode cluster for whatever purpose.
+An {geode-name} _Manager_ is a peer member node in the cluster running the Management Service, allowing the cluster
+to be managed and monitored using JMX based tools, like _Gfsh_, _JConsole_ or _JVisualVM_, for instance. Any tool
+that uses the JMX API can connect to and manage an {geode-name} cluster for whatever purpose.
 
 The cluster may have more than 1 _Manager_ for redundancy.  Only server-side, peer member nodes in the cluster
 may function as a _Manager_.  Therefore, a `ClientCache` application cannot be a _Manager_.
@@ -682,9 +683,9 @@ TIP: See the `@EnableManager` annotation
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html[Javadoc]
 for additional configuration options.
 
-As of Apache Geode 1.11.0, you must now include additional Geode dependencies on your Spring Boot application classpath
-to make your application a proper Apache Geode/Pivotal GemFire _Manager_ in the cluster, particularly if you are also
-enabling the embedded HTTP service in the _Manager_.
+As of {geode-name} 1.11.0, you must now include additional {geode-name} dependencies on your Spring Boot application
+classpath to make your application a proper {geode-name} _Manager_ in the cluster, particularly if you are also enabling
+the embedded HTTP service in the _Manager_.
 
 The required dependencies are:
 

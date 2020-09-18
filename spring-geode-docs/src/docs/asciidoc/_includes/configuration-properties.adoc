@@ -1,12 +1,14 @@
 [[geode-configuration-metadata]]
 == Configuration Metadata Reference
+:geode-name: {apache-geode-name}
+
 
 The following 2 reference sections cover documented and well-known properties recognized and processed by
-_Spring Data for Apache Geode/Pivotal GemFire_ (SDG) as well as _Spring Session for Apache Geode/Pivotal GemFire_ (SSDG).
+_Spring Data for {geode-name}_ (SDG) as well as _Spring Session for {geode-name}_ (SSDG).
 
 These properties may be used in Spring Boot `application.properties` files, or as JVM System properties, to configure
-different aspects of or enable individual features of Apache Geode or Pivotal GemFire in a Spring application.
-When combined with the power of Spring Boot, magical things begin to happen.
+different aspects of or enable individual features of {geode-name} in a Spring application. When combined with the power
+of Spring Boot, magical things begin to happen.
 
 [[geode-configuration-metadata-springdata]]
 === Spring Data Based Properties
@@ -20,9 +22,9 @@ property, use `spring.data.gemfire.cache.copy-on-read` in Spring Boot `applicati
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| name  | Name of the Apache Geode / Pivotal GemFire member. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
+| name  | Name of the {geode-name}. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
 | locators | Comma-delimited list of Locator endpoints formatted as: locator1[port1],...,locatorN[portN]. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#locators--[PeerCacheApplication.locators]
-| use-bean-factory-locator | Enable the SDG BeanFactoryLocator when mixing Spring config with GemFire/Geode native config (e.g. cache.xml) and you wish to configure GemFire objects declared in cache.xml with Spring.  | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#useBeanFactoryLocator--[ClientCacheApplication.useBeanFactoryLocator]
+| use-bean-factory-locator | Enable the SDG BeanFactoryLocator when mixing Spring config with {geode-name} native config (e.g. cache.xml) and you wish to configure {geode-name} objects declared in `cache.xml` with Spring.  | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#useBeanFactoryLocator--[ClientCacheApplication.useBeanFactoryLocator]
 
 |=====================================================================================================================
 
@@ -35,14 +37,14 @@ property, use `spring.data.gemfire.cache.copy-on-read` in Spring Boot `applicati
 | cache.copy-on-read  | Configure whether a copy of an object returned from Region.get(key) is made. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#copyOnRead--[ClientCacheApplication.copyOnRead]
 | cache.critical-heap-percentage | Percentage of heap at or above which the cache is considered in danger of becoming inoperable. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#criticalHeapPercentage--[ClientCacheApplication.criticalHeapPercentage]
 | cache.critical-off-heap-percentage | Percentage of off-heap at or above which the cache is considered in danger of becoming inoperable. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#criticalOffHeapPercentage--[ClientCacheApplication.criticalOffHeapPercentage]
-| cache.enable-auto-region-lookup | Configure whether to lookup Regions configured in GemFire/Geode native config and declare them as Spring beans. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAutoRegionLookup.html#enabled--[EnableAutoRegionLookup.enable]
+| cache.enable-auto-region-lookup | Configure whether to lookup Regions configured in {geode-name} native config and declare them as Spring beans. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAutoRegionLookup.html#enabled--[EnableAutoRegionLookup.enable]
 | cache.eviction-heap-percentage | Percentage of heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionHeapPercentage--[ClientCacheApplication.evictionHeapPercentage]
 | cache.eviction-off-heap-percentage | Percentage of off-heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionOffHeapPercentage--[ClientCacheApplication.evictionOffHeapPercentage]
-| cache.log-level | Configure the log-level of an Apache Geode / Pivotal GemFire cache. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#logLevel--[ClientCacheApplication.logLevel]
+| cache.log-level | Configure the log-level of an {geode-name} cache. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#logLevel--[ClientCacheApplication.logLevel]
 | cache.name | Alias for 'spring.data.gemfire.name'. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
 | cache.compression.bean-name | Name of a Spring bean implementing org.apache.geode.compression.Compressor. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#compressorBeanName--[EnableCompression.compressorBeanName]
 | cache.compression.region-names | Comma-delimited list of Region names for which compression will be configured. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#regionNames--[EnableCompression.regionNames]
-| cache.off-heap.memory-size | Determines the size of off-heap memory used by GemFire/Geode in megabytes (m) or gigabytes (g); for example 120g. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableOffHeap.html#memorySize--[EnableOffHeap.memorySize]
+| cache.off-heap.memory-size | Determines the size of off-heap memory used by {geode-name} in megabytes (m) or gigabytes (g); for example 120g. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableOffHeap.html#memorySize--[EnableOffHeap.memorySize]
 | cache.off-heap.region-names | Comma-delimited list of Region names for which off-heap will be configured. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableOffHeap.html#regionNames--[EnableOffHeap.regionNames]
 
 |=====================================================================================================================
@@ -70,7 +72,7 @@ property, use `spring.data.gemfire.cache.copy-on-read` in Spring Boot `applicati
 | cache.peer.lock-timeout | Configures the number of seconds a cache operation will wait to obtain a distributed lock lease. | 60 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#lockTimeout--[PeerCacheApplication.lockTimeout]
 | cache.peer.message-sync-interval | Configures the frequency (in seconds) at which a message will be sent by the primary cache-server to all the secondary cache-server nodes to remove the events which have already been dispatched from the queue. | 1 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#messageSyncInterval--[PeerCacheApplication.messageSyncInterval]
 | cache.peer.search-timeout | Configures the number of seconds a cache get operation can spend searching for a value. | 300 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#searchTimeout--[PeerCacheApplication.searchTimeout]
-| cache.peer.use-cluster-configuration | Configures whether this GemFire cache member node would pull it's configuration meta-data from the cluster-based Cluster Configuration Service. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#useClusterConfiguration--[PeerCacheApplication.useClusterConfiguration]
+| cache.peer.use-cluster-configuration | Configures whether this cache member node would pull it's configuration meta-data from the cluster-based Cluster Configuration Service. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#useClusterConfiguration--[PeerCacheApplication.useClusterConfiguration]
 
 |=====================================================================================================================
 
@@ -125,7 +127,7 @@ spring.data.gemfire.cache.server.[<cacheServerBeanName>].bind-address=...
 | disk.store.allow-force-compaction | Configures whether to allow DiskStore.forceCompaction() to be called on Regions using a DiskStore. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#allowForceCompaction--[EnableDiskStore.allowForceCompaction]
 | disk.store.auto-compact | Configures whether to cause the disk files to be automatically compacted. | true | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#autoCompact--[EnableDiskStore.autoCompact]
 | disk.store.compaction-threshold | Configures the threshold at which an oplog will become compactable. | 50 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#compactionThreshold--[EnableDiskStore.compactionThreshold]
-| disk.store.directory.location | Configures the system directory where the GemFire/Geode DiskStore (oplog) files will be stored. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskDirectories--[EnableDiskStore.diskDirectories.location]
+| disk.store.directory.location | Configures the system directory where the `DiskStore` (oplog) files will be stored. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskDirectories--[EnableDiskStore.diskDirectories.location]
 | disk.store.directory.size | Configures the amount of disk space allowed to store DiskStore (oplog) files. | 21474883647 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskDirectories--[EnableDiskStore.diskDirectories.size]
 | disk.store.disk-usage-critical-percentage | Configures the critical threshold for disk usage as a percentage of the total disk volume. | 99.0 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskUsageCriticalPercentage--[EnableDiskStore.diskUsageCriticalPercentage]
 | disk.store.disk-usage-warning-percentage | Configures the warning threshold for disk usage as a percentage of the total disk volume. | 90.0 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskUsageWarningPercentage--[EnableDiskStore.diskUsageWarningPercentage]
@@ -188,7 +190,7 @@ specified location and limited to the defined size.
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| logging.level | Configures the log-level of an Apache Geode / Pivotal GemFire cache; Alias for 'spring.data.gemfire.cache.log-level'. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logLevel--[EnableLogging.logLevel]
+| logging.level | Configures the log-level of an {geode-name} cache; Alias for 'spring.data.gemfire.cache.log-level'. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logLevel--[EnableLogging.logLevel]
 | logging.log-disk-space-limit | Configures the amount of disk space allowed to store log files. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logDiskSpaceLimit--[EnableLogging.logDiskSpaceLimit]
 | logging.log-file | Configures the pathname of the log file used to log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFile--[EnableLogging.logFile]
 | logging.log-file-size | Configures the maximum size of a log file before the log file is rolled. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFileSizeLimit--[EnableLogging.logFileSize]
@@ -201,9 +203,9 @@ specified location and limited to the defined size.
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| management.use-http | Configures whether to use the HTTP protocol to communicate with a GemFire/Geode Manager. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#useHttp--[EnableClusterConfiguration.useHttp]
-| management.http.host | Configures the IP address or hostname of the GemFire/Geode Manager running the HTTP service. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#host--[EnableClusterConfiguration.host]
-| management.http.port | Configures the port used by the GemFire/Geode Manager's HTTP service to listen for connections. | 7070 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#port--[EnableClusterConfiguration.port]
+| management.use-http | Configures whether to use the HTTP protocol to communicate with a {geode-name} Manager. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#useHttp--[EnableClusterConfiguration.useHttp]
+| management.http.host | Configures the IP address or hostname of the {geode-name} Manager running the HTTP service. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#host--[EnableClusterConfiguration.host]
+| management.http.port | Configures the port used by the {geode-name} Manager's HTTP service to listen for connections. | 7070 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#port--[EnableClusterConfiguration.port]
 
 |=====================================================================================================================
 
@@ -288,7 +290,7 @@ specified location and limited to the defined size.
 | security.peer.authenticator | Static creation method returning an Authenticator object, which is used by a peer to verify the credentials of a connecting node. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerAuthenticator--[EnableAuth.peerAuthenticator]
 | security.peer.verify-member-timeout | Configures the timeout in milliseconds used by a peer to verify membership of an unknown authenticated peer requesting a secure connection. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerVerifyMemberTimeout--[EnableAuth.peerVerifyMemberTimeout]
 | security.post-processor.class-name | Configures the name of a class implementing the org.apache.geode.security.PostProcessor interface that can be used to change the returned results of Region get operations. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPostProcessorClassName--[EnableSecurity.securityPostProcessorClassName]
-| security.shiro.ini-resource-path | Configures the Apache Geode System Property referring to the location of an Apache Shiro INI file that configures the Apache Shiro Security Framework in order to secure Apache Geode. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#shiroIniResourcePath--[EnableSecurity.shiroIniResourcePath]
+| security.shiro.ini-resource-path | Configures the {geode-name} System Property referring to the location of an Apache Shiro INI file that configures the Apache Shiro Security Framework in order to secure {geode-name}. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#shiroIniResourcePath--[EnableSecurity.shiroIniResourcePath]
 
 |=====================================================================================================================
 
@@ -299,14 +301,14 @@ specified location and limited to the defined size.
 | Name                                              | Description                   | Default                   | From
 
 | security.ssl.certificate.alias.cluster | Configures the alias to the stored SSL certificate used by the cluster to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
-| security.ssl.certificate.alias.default-alias | Configures the default alias to the stored SSL certificate used to secure communications across the entire GemFire/Geode system. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#defaultCertificateAlias--[EnableSsl.defaultCertificateAlias]
+| security.ssl.certificate.alias.default-alias | Configures the default alias to the stored SSL certificate used to secure communications across the entire {geode-name} system. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#defaultCertificateAlias--[EnableSsl.defaultCertificateAlias]
 | security.ssl.certificate.alias.gateway | Configures the alias to the stored SSL certificate used by the WAN Gateway Senders/Receivers to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
 | security.ssl.certificate.alias.jmx | Configures the alias to the stored SSL certificate used by the Manager's JMX based JVM MBeanServer and JMX clients to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
 | security.ssl.certificate.alias.locator | Configures the alias to the stored SSL certificate used by the Locator to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
 | security.ssl.certificate.alias.server | Configures the alias to the stored SSL certificate used by clients and servers to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
 | security.ssl.certificate.alias.web | Configures the alias to the stored SSL certificate used by the embedded HTTP server to secure communications (HTTPS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
 | security.ssl.ciphers | Comma-separated list of SSL ciphers or “any”. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#ciphers--[EnableSsl.ciphers]
-| security.ssl.components | Comma-delimited list of GemFire/Geode components (e.g. WAN) to be configured for SSL communication. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#components--[EnableSsl.components]
+| security.ssl.components | Comma-delimited list of {geode-name} components (e.g. WAN) to be configured for SSL communication. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#components--[EnableSsl.components]
 | security.ssl.keystore | Configures the system pathname to the Java KeyStore file storing certificates for SSL. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystore--[EnableSsl.keystore]
 | security.ssl.keystore.password | Configures the password used to access the Java KeyStore file. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystorePassword--[EnableSsl.keystorePassword]
 | security.ssl.keystore.type | Configures the password used to access the Java KeyStore file (e.g. JKS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystoreType--[EnableSsl.keystoreType]
@@ -328,7 +330,7 @@ specified location and limited to the defined size.
 | service.http.bind-address | Configures the IP address or hostname of the system NIC used by the embedded HTTP server to bind and listen for HTTP(S) connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#bindAddress--[EnableHttpService.bindAddress]
 | service.http.port | Configures the port used by the embedded HTTP server to listen for HTTP(S) connections. | 7070 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#port--[EnableHttpService.port]
 | service.http.ssl-require-authentication | Configures whether 2-way HTTP authentication is required. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#sslRequireAuthentication--[EnableHttpService.sslRequireAuthentication]
-| service.http.dev-rest-api-start | Configures whether to start the Developer REST API web service. A full installation of Apache Geode or Pivotal GemFire is required and you must set the $GEODE environment variable. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#startDeveloperRestApi--[EnableHttpService.startDeveloperRestApi]
+| service.http.dev-rest-api-start | Configures whether to start the Developer REST API web service. A full installation of {geode-name} is required and you must set the $GEODE environment variable. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#startDeveloperRestApi--[EnableHttpService.startDeveloperRestApi]
 | service.memcached.port | Configures the port of the embedded Memcached server (service). | 11211| {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#port--[EnableMemcachedServer.port]
 | service.memcached.protocol | Configures the protocol used by the embedded Memcached server (service). | ASCII | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#protocol--[EnableMemcachedServer.protocol]
 | service.redis.bind-address | Configures the IP address or hostname of the system NIC used by the embedded Redis server to bind an listen for connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableRedisServer.html#bindAddress--[EnableRedis.bindAddress]
@@ -360,12 +362,11 @@ name, use `spring.session.data.gemfire.session.region.name` in Spring Boot `appl
 |=====================================================================================================================
 
 [[geode-configuration-metadata-apachegeode]]
-=== Apache Geode Properties
+=== {geode-name} Properties
 
-While it is not recommended to use Apache Geode properties directly in your Spring applications, SBDG will not prevent
-you from doing so.  A complete reference to the Apache Geode specific properties can be found
+While it is not recommended to use {geode-name} properties directly in your Spring applications, SBDG will not prevent
+you from doing so.  A complete reference to the {geode-name} specific properties can be found
 {apache-geode-docs}/reference/topics/gemfire_properties.html[here].
 
-WARNING: Apache Geode (and Pivotal GemFire) are very strict about the properties that maybe specified in
-a `gemfire.properties` file.  You cannot mix Spring properties with `gemfire.*` properties in an Apache Geode
-or Pivotal GemFire, `gemfire.properties` file.
+WARNING: {geode-name} is very strict about the properties that maybe specified in a `gemfire.properties` file. You
+cannot mix Spring properties with `gemfire.*` properties in an {geode-name} `gemfire.properties` file.

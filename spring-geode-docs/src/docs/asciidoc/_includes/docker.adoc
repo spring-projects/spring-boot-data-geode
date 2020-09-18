@@ -5,6 +5,7 @@
 :geode-name: Apache Geode
 :testcontainers-url: https://www.testcontainers.org
 
+
 The state of modern software application development is moving towards https://www.docker.com/resources/what-container[_containerization_].
 Containers offer a controlled environment to predictably build (configure & package), run and manage your applications
 in a reliable and repeatable manner regardless of context. The intrinsic benefit of using Containers is a no brainer.
@@ -373,4 +374,4 @@ running in a Docker Container.
 
 Later, we will provide more information on how to scale up, or rather scale out, our {geode-name} cluster running in
 Docker. Additionally, we will provide details on how you can use {geode-name}'s Docker Image with **Testcontainers**
-when writing _Integration Tests_, which will formally become part of the Spring Test for Apache Geode (STDG) project.
+when writing _Integration Tests_, which will formally become part of the Spring Test for {geode-name} (STDG) project.
