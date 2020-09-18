@@ -1,5 +1,5 @@
 [[spring-boot-data-geode]]
-= Spring Boot for Apache Geode & Pivotal GemFire Reference Guide
+= Spring Boot for Apache Geode Reference Guide
 John Blum
 :revdate: {localdate}
 :revnumber: {version}
