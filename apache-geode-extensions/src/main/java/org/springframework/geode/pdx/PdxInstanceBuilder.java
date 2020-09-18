@@ -26,7 +26,6 @@ import org.apache.geode.pdx.PdxInstance;
 import org.apache.geode.pdx.PdxInstanceFactory;
 
 import org.springframework.geode.cache.SimpleCacheResolver;
-import org.springframework.util.ObjectUtils;
 
 /**
  * The {@link PdxInstanceBuilder} class is a <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder</a>
@@ -178,10 +177,14 @@ public class PdxInstanceBuilder {
 			.orElseThrow(() -> {
 
 				String message = String.format("Expected an instance of PDX but was an instance of type [%s];"
-						+ " Was PDX read-serialized set to true", ObjectUtils.nullSafeClassName(resolvedSource.get()));
+						+ " Was PDX read-serialized set to true", nullSafeClassName(resolvedSource.get()));
 
 				return new IllegalArgumentException(message);
 			});
+	}
+
+	private String nullSafeClassName(Object target) {
+		return target != null ? target.getClass().getName() : null;
 	}
 
 	@FunctionalInterface
