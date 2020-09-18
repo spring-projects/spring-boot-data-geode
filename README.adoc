@@ -16,8 +16,8 @@ using https://geode.apache.org/[{geode-name}] in a _Spring_ context.
 
 This project builds on https://spring.io/projects/spring-boot[Spring Boot] along with
 https://github.com/spring-projects/spring-data-geode[_Spring Data for {geode-name}_] (SDG),
-https://github.com/spring-projects/spring-session-data-geode[_Spring Session for {geode-name}] (SSDG),
-and https://github.com/spring-projects/spring-test-data-geode[Spring Test for {geode-name}] (STDG).
+https://github.com/spring-projects/spring-session-data-geode[_Spring Session for {geode-name}_] (SSDG),
+and https://github.com/spring-projects/spring-test-data-geode[_Spring Test for {geode-name}_] (STDG).
 
 [[project-goals]]
 === Project Goals
