@@ -1,5 +1,5 @@
 [[geode-samples-boot-configuration]]
-= Spring Boot Auto-configuration for Apache Geode & VMware Tanzu GemFire
+= Spring Boot Auto-configuration for Apache Geode
 John Blum
 :geode-version: {apache-geode-doc-version}
 :geode-docs: https://geode.apache.org/docs/guide/{geode-version}
@@ -402,20 +402,19 @@ there are no servers or cluster running yet.
 There are several ways in which to start a cluster. For example, you may use Spring to configure and bootstrap
 the cluster, which has been demonstrated link:../index.html#geode-cluster-configuration-bootstrapping[here].
 
-Although, for this example, we are going to use the tools provided with {geode-name}, i.e. _Gfsh_
-(GemFire/Geode Shell) for reasons that will become apparent later.
+Although, for this example, we are going to use the tools provided with {geode-name}, i.e. _Gfsh_ ({geode-name} Shell)
+for reasons that will become apparent later.
 
 NOTE: You need to https://geode.apache.org/releases/[download] and https://geode.apache.org/docs/guide/18/prereq_and_install.html[install]
-a full distribution of {geode-name} to make use of the provided tools. After installation, you will need to set
-the `GEODE` (or `GEMFIRE`) environment variable to the location of your installation. Additionally, add `$GEODE/bin`
-to your system `$PATH`.
+a full distribution of {geode-name} to make use of the provided tools. After installation, you will need to set the
+`GEODE` environment variable to the location of your installation. Additionally, add `$GEODE/bin` to your system `$PATH`.
 
 Once {geode-name} has been successfully installed, you can open a command prompt (terminal) and do:
 
 .Running Gfsh
 [source,txt]
 ----
-$ echo $GEMFIRE
+$ echo $GEODE
 /Users/jblum/pivdev/apache-geode-1.2.1
 
 
@@ -609,11 +608,11 @@ public class CustomerServiceApplication {
 
 That is, we additionally annotate our Customer Service application class with SDG's `@EnableClusterConfiguration`
 annotation. We have also set the `useHttp` attribute to `true`. This sends the configuration metadata from the client
-to the cluster via GemFire/Geode's Management REST API.
+to the cluster via {geode-name}'s Management REST API.
 
-This is useful when your GemFire/Geode cluster may be running behind a firewall, such as on public cloud infrastructure.
+This is useful when your {geode-name} cluster may be running behind a firewall, such as on public cloud infrastructure.
 However, there are other benefits to using HTTP as well. As stated, the client sends configuration metadata to
-GemFire/Geode's Management REST interface, which is a facade for the server-side Cluster Configuration Service. If
+{geode-name}'s Management REST interface, which is a facade for the server-side Cluster Configuration Service. If
 another peer (e.g. server) is added to the cluster as a member, then this member will get the same configuration. If
 the entire cluster goes down, it will have the same configuration when it is restarted.
 
@@ -879,18 +878,18 @@ First, we must secure the cluster (i.e. the Locator and Server).
 In a nutshell, when using the {geode-name} API (with no help from Spring), you must do the following:
 
 1. (Auth) Implement the `org.apache.geode.security.SecurityManager` interface.
-2. (Auth) Configure your custom `SecurityManager` using the GemFire/Geode `security-manager` property in `gemfire.properties`.
+2. (Auth) Configure your custom `SecurityManager` using the {geode-name} `security-manager` property in `gemfire.properties`.
 3. (Auth) Either create a `gfsecurity.properties` file and set the `security-username` and `security-password` properties, or...
 4. (Auth) Implement the `org.apache.geode.security.AuthInitialize` interface and set the `security-peer-auth-init` property
 in `gemfire.properties` as described in {geode-docs}/managing/security/implementing_authentication.html[Implementing Authentication]
 of the {geode-name} User Guide.
 5. (SSL) Then, you must create Java KeyStore (jks) files for both the keystore and truststore used to configure
 the SSL Socket.
-6. (SSL) Configure the Java KeyStores using the GemFire/Geode `ssl-keystore` and `ssl-truststore` properties
+6. (SSL) Configure the Java KeyStores using the {geode-name} `ssl-keystore` and `ssl-truststore` properties
 in `gemfire.properties`.
 7. (SSL) If you secured your Java KeyStores (recommended) then you must additionally set the `ssl-keystore-password`
 and `ssl-truststore-password` properties.
-8. (SSL) Optionally, configure the GemFire/Geode components that should be enabled with SSL using the
+8. (SSL) Optionally, configure the {geode-name} components that should be enabled with SSL using the
 `ssl-enabled-components` property (e.g. `locator` and `server` for client/server and Locator connections).
 9. Then launch the cluster, and its members using _Gfsh_ in the proper order.
 
@@ -906,7 +905,7 @@ include::{samples-dir}/boot/configuration/src/main/resources/geode/bin/start-sec
 ----
 
 NOTE: SBDG does provide server-side, peer Security _auto-configuration_ support. However, you must then configure
-and bootstrap your GemFire/Geode servers with Spring. Again, an example of configuring/bootstrapping GemFire/Geode
+and bootstrap your {geode-name} servers with Spring. Again, an example of configuring/bootstrapping {geode-name}
 servers with Spring is provided <<../_includes/configuration-auto.adoc#geode-cluster-configuration-bootstrapping,here>>.
 
 [[geode-samples-boot-configuration-clientserver-security-client]]

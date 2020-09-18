@@ -1,5 +1,6 @@
 [[geode-samples-caching-inline]]
 = Inline Caching with Spring
+:apache-geode-name: Apache Geode
 :apache-geode-version: {apache-geode-doc-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
@@ -20,10 +21,10 @@
 
 This guide walks you through building a simple Spring Boot application
 using {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]
-backed by Apache Geode as the caching provider for Inline Caching.
+backed by {apache-geode-name} as the caching provider for Inline Caching.
 
 It is assumed that the reader is familiar with the Spring _programming model_.  No prior knowledge of Spring's
-_Cache Abstraction_ or Apache Geode is required to utilize caching in your Spring Boot applications.
+_Cache Abstraction_ or {apache-geode-name} is required to utilize caching in your Spring Boot applications.
 
 Additionally, this Sample builds on the concepts from the link:caching-look-aside.html[Look-Aside Caching with Spring]
 guide.  Therefore, it would be helpful to have read that guide before proceeding through this guide.
@@ -31,8 +32,8 @@ guide.  Therefore, it would be helpful to have read that guide before proceeding
 Let's begin.
 
 TIP: Refer to the link:../index.html#geode-caching-provider-inline-caching[Inline Caching] section
-in the link:../index.html#geode-caching-provider[Caching with Apache Geode or VMware Tanzu GemFire] chapter
-in the reference documentation for more information.
+in the link:../index.html#geode-caching-provider[Caching with {apache-geode-name}] chapter in the reference documentation
+for more information.
 
 [#index-link]
 link:../index.html[Index]
@@ -160,10 +161,9 @@ expired or been evicted.  We neither configure eviction nor expiration for this 
 
 Both the `factorial(..)` and `sqrt(..)` methods have been annotated with Spring's `@Cacheable` annotation to demarcate
 these methods with caching behavior.  Of course, as explained in SBDG's <<../_includes/configuration-annotations.adoc#geode-caching-provider,documentation>>,
-caching with Spring's Cache Abstraction using Apache Geode (or Pivotal GemFire, even Pivotal Cloud Cache (PCC)
-when running in Pivotal CloudFoundry (PCF)) as the caching provider is enabled by default.  Therefore, there is nothing
-more you need do to start leverage caching in your Spring Boot applications than to annotate the service methods
-with the appropriate Spring or JSR-107, JCache API annotations.  Simple!
+caching with Spring's Cache Abstraction using {apache-geode-name} as the caching provider is enabled by default.
+Therefore, there is nothing more you need do to start leverage caching in your Spring Boot applications than to annotate
+the service methods with the appropriate Spring or JSR-107, JCache API annotations.  Simple!
 
 It is worth noting that we are starting with the same applied pattern of caching as you would when using the
 _Look-Aside Caching_ pattern.  This is key to minimizing the invasive nature of _Inline Caching_.  There is a subtle
@@ -187,7 +187,7 @@ The pertinent part of the configuration that enables _Inline Caching_ for our Ca
 the `inlineCachingForCalculatorApplicationRegionsConfigurer` bean definition.
 
 SBDG provides the `InlineCachingRegionConfigurer` class used in the bean definition to configure and enable the caches
-(a.k.a. as Regions in Apache Geode & Pivotal GemFire terminology) with _Inline Caching_ behavior.
+(a.k.a. as Regions in {apache-geode-name} terminology) with _Inline Caching_ behavior.
 
 The Configurer's job is to configure the appropriate Spring Data (SD) _Repository_ used as a Region's `CacheLoader`
 for "_read-through_" behavior as well as configure the same SD _Repository_ for a Region's `CacheWriter` for
@@ -238,19 +238,19 @@ that needs to be written back to a database (use https://spring.io/projects/spri
 or https://spring.io/projects/spring-data-jpa[Spring Data JPA]).
 
 This is what makes the Spring Data _Repository_ pattern so ideal.  It is very flexible and has a highly consistent
-API across a disparate grouping of data stores.  And due to that uniformity, it is easy to "adapt" the GemFire/Geode
-`CacheLoader`/`CacheWriter` interfaces to use a SD Repository under-the-hood.  Indeed, that is exactly what SBDG
-has done for you!
+API across a disparate grouping of data stores.  And due to that uniformity, it is easy to "adapt" the
+{apache-geode-name} `CacheLoader`/`CacheWriter` interfaces to use a SD Repository under-the-hood.  Indeed, that is
+exactly what SBDG has done for you!
 
 We will circle back to the `resultKeyGenerator` bean definition after we talk about the application domain model.
 
 Also notice the use of the `@EnableCachingDefinedRegions` annotation.
 
-Whenever you use a caching provider like Apache Geode or Redis, you must explicitly define or declare your caches
+Whenever you use a caching provider like {apache-geode-name} or Redis, you must explicitly define or declare your caches
 in some manner.  This is inconvenient since you have basically already declared the caches required by your application
 when using Spring's, or alternatively, the JSR-107, JCache API annotations (e.g. `@Cacheable`). Why should you have to
 do this again?  Well, using SBDG, you don't.  You simply have to declare the `@EnableCachingDefinedRegions` annotation
-and SBDG will take care of defining the necessary Apache Geode Regions backing the caches for you.
+and SBDG will take care of defining the necessary {apache-geode-name} Regions backing the caches for you.
 
 Regions for caches are not auto-configured for you because there are many different ways to "define" a Region, with
 different configuration, such as eviction and expiration polices, memory requirements, application callbacks, etc.
@@ -260,13 +260,12 @@ these Regions for you.
 TIP: If you have not done so already, you should definitely read about SBDG's support for _Inline Caching_
 in the link:../index.html#geode-caching-provider-inline-caching[Inline Caching] section.
 
-TIP: To learn more about how Apache Geode's (or Pivotal GemFire's) data loading functionality works, or specifically,
-how to {apache-geode-docs}/developing/outside_data_sources/sync_outside_data.html["Keep the Cache in Sync with Outside
-Data Sources"] follow the link.  You may also learn more by reading the _Javadoc_ for
-{apache-geode-javadoc}//org/apache/geode/cache/CacheLoader.html[`CacheLoader`]
+TIP: To learn more about how {apache-geode-name}'s data loading functionality works, or specifically, how to
+{apache-geode-docs}/developing/outside_data_sources/sync_outside_data.html["Keep the Cache in Sync with Outside Data Sources"]
+follow the link. You may also learn more by reading the _Javadoc_ for {apache-geode-javadoc}//org/apache/geode/cache/CacheLoader.html[`CacheLoader`]
 and {apache-geode-javadoc}/org/apache/geode/cache/CacheWriter.html[`CacheWriter`].
 
-TIP: To learn more about `@EnableCachingDefinedRegions`, see the Spring Data for Apache Geode
+TIP: To learn more about `@EnableCachingDefinedRegions`, see the Spring Data for {apache-geode-name}
 {spring-data-geode-docs}/#bootstrap-annotation-config-caching[documentation].
 
 [[geode-samples-caching-inline-example-calculator-backend]]
@@ -491,7 +490,7 @@ the `latency` drops to zero (and *_cacheMiss_* is *_false_*):
 
 image::{images-dir}/factorial-of-four-after.png[]
 
-That is because the result (i.e. *24*) of `factorial(4)` is "cached" in Apache Geode (as well as persisted to
+That is because the result (i.e. *24*) of `factorial(4)` is "cached" in {apache-geode-name} (as well as persisted to
 the database; _write-through_) and therefore, the `CaculatorService.factorial(:int)` method is *not* called.
 The result, however, is pulled from the cache, not the database.
 
@@ -532,6 +531,7 @@ and database consistent.  While the database can serve as a fallback option for 
 will serve an important role in reducing the contention and load on the backend database.
 
 As you have seen in this guide, the configuration of _Inline Caching_ is very simple to do with Spring Boot
-for Apache Geode (SBDG) when using Spring's Cache Abstraction along with Apache Geode as the caching provider.
+for {apache-geode-name} (SBDG) when using Spring's Cache Abstraction along with {apache-geode-name}
+as the caching provider.
 
 link:../index.html#geode-samples[Back to Samples]

@@ -1,9 +1,8 @@
 [[geode-samples-boot-actuator]]
-= Spring Boot Actuator for Apache Geode & VMware Tanzu GemFire
+= Spring Boot Actuator for Apache Geode
 :geode-version: {apache-geode-doc-version}
 :geode-name: Apache Geode
 :geode-docs: https://geode.apache.org/docs/guide/{geode-version}
-:gemfire-name: VMware Tanzu GemFire
 :images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
@@ -15,10 +14,10 @@
 
 
 This guide walks through using {spring-boot-docs}/production-ready.html[Spring Boot Actuator] to assess the state
-of your running {geode-name} or {gemfire-name}, Spring Boot application.
+of your running {geode-name}, Spring Boot application.
 
 The goal for SBDG's Spring Boot Actuator integration is to enable users to effectively manage and monitor their
-Spring Boot applications using {geode-name} or {gemfire-name} in a production environment.
+Spring Boot applications using {geode-name} in a production environment.
 
 In particular, SBDG's integration with Spring Boot Actuator currently focuses on enabling
 {spring-boot-docs}/production-ready-endpoints.html#production-ready-health[Health Information]
@@ -147,7 +146,7 @@ as designated by our `TemperatureReading` model class's, `@Region` annotation de
 [source,java]
 ----
 @Region("TemperatureReadings")
-public class TemperatureReading { ... }
+public class TemperatureReading {  }
 ----
 
 Additionally, the `readTempeature()` method uses our `TemperatureReadingRepository` to perform the necessary
@@ -401,7 +400,7 @@ management.endpoint.health.show-details=always
 [[geode-samples-boot-actuator-conclusion]]
 == Conclusion
 
-Hopefully this guide has shown you how to use the Spring Boot Actuator feature for {geode-name} and {gemfire-name}.
+Hopefully this guide has shown you how to use the Spring Boot Actuator feature for {geode-name}.
 
 You are encouraged to read more about {spring-boot-docs}/production-ready.html[Spring Boot's Actuator] functionality.
 

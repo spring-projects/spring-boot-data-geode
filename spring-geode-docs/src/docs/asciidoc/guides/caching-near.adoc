@@ -32,7 +32,7 @@ _Look-Aside Caching_ followed by the guide on _Inline Caching_, first, before co
 Let's begin.
 
 TIP: Refer to the link:../index.html#geode-caching-provider-near-caching[Near Caching] section
-in the link:../index.html#geode-caching-provider[Caching with Apache Geode or VMware Tanzu GemFire] chapter
+in the link:../index.html#geode-caching-provider[Caching with {apache-geode-name}] chapter
 in the reference documentation for more information.
 
 [#index-link]
@@ -168,7 +168,7 @@ include::{samples-dir}/caching/near/src/main/java/example/app/caching/near/serve
 ----
 
 TIP: For more information on configurating and bootstrapping a small cluster of {apache-geode-name} servers using Spring Boot,
-see link:../index.html#geode-cluster-configuration-bootstrapping[Running an {apache-geode-name} or Pivotal GemFire Cluster using Spring Boot].
+see link:../index.html#geode-cluster-configuration-bootstrapping[Running an {apache-geode-name} cluster using Spring Boot].
 
 [[geode-samples-caching-near-example-client-side]]
 === Client-side Configuration

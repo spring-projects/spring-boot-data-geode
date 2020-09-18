@@ -3,7 +3,6 @@
 :apache-geode-version: {apache-geode-doc-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
-:gemfire-name: VMware Tanzu GemFire
 :geode-name: Apache Geode
 :images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
@@ -35,7 +34,7 @@ on _Look-Aside Caching_ before continuing with this guide.
 Let's begin.
 
 TIP: Refer to the link:../index.html#geode-caching-provider-multi-site-caching[Multi-Site Caching] section
-in the link:../index.html#geode-caching-provider[Caching with Apache Geode or VMware Tanzu GemFire] chapter
+in the link:../index.html#geode-caching-provider[Caching with {geode-name}] chapter
 in the reference documentation for more information.
 
 [#index-link]
@@ -133,21 +132,21 @@ such as application service methods, it also provides an appropriate abstraction
 provider_ implementation you want, matching the unique requirements (or SLAs) of your use case.
 
 Various caching providers include, but are not limited to: `java.util.concurrent.ConcurrentMap`, {geode-name}, Caffeine,
-Couchbase, Ehcache, Hazelcast, Infinispan, Redis, {gemfire-name} or any _JCache_ (JSR-107) provider implementation. See
-the core Spring Framework's documentation on {spring-framework-docs}/integration.html#cache-store-configuration[Configuring the Cache Storage]
+Couchbase, Ehcache, Hazelcast, Infinispan, Redis, or any _JCache_ (JSR-107) provider implementation. See the core Spring
+Framework's documentation on {spring-framework-docs}/integration.html#cache-store-configuration[Configuring the Cache Storage]
 along with Spring Boot's {spring-boot-docs}/spring-boot-features.html#boot-features-caching-provider[Supported Cache Providers]
 for more details.
 
 NOTE: Not only is it easy to swap the underlying _caching provider_ in the Spring-based code snippet above, it is also
 a simple matter to change the underlying _System of Record_ (SOR), or persistent, data management technology given the
 Spring Data _Repository_ interface is a common abstraction for persistent storage (e.g. JDBC, JPA or R2DBC for an RDBMS,
-MongoDB for Document store, Neo4j for a Graph store, GemFire/Geode for a Key/Value store, and so on).  Some data
+MongoDB for Document store, Neo4j for a Graph store, {geode-name} for a Key/Value store, and so on).  Some data
 management technologies can be used as both a _System or Record_ (i.e. persistent data store) as well as a _Cache_,
 e.g. {geode-name}.
 
 TIP: See the Spring Boot for {geode-name} (SBDG) chapter on link:../index.html#geode-caching-provider[Caching]
-for more information on how {geode-name} (or {gemfire-name}) can be used to enable different caching patterns
-in your Spring Boot applications.
+for more information on how {geode-name} can be used to enable different caching patterns in your Spring Boot
+applications.
 
 [[geode-samples-caching-multisite-wan-background]]
 === WAN Topology
@@ -159,13 +158,13 @@ topologies: client/server, peer-to-peer (P2P) and WAN, or a multi-site configura
 The _Look-Aside Caching_ pattern is not only the least invasive pattern of caching, it can also be easily extended
 or composed with other caching patterns, typically without any code changes to the application. Of course, this all
 depends on the capabilities of the underlying _caching provider_, or more generally, data management technology.
-With {geode-name} or {gemfire-name}, this is very easy.
+With {geode-name}, this is very easy.
 
 When _Look-Aside Caching_ is extended or combined with other caching patterns (e.g. _Inline_, _Near_, _Multi-Site_,
 or a combination of), the value realized from your caching solution is greatly enhanced.
 
-By implementing _Multi-Site Caching_ with {geode-name} or {gemfire-name}'s WAN topology and configuration, your
-application's data is geographically distributed.
+By implementing _Multi-Site Caching_ with {geode-name}'s WAN topology and configuration, your application's data is
+geographically distributed.
 
 image::{images-dir}/Multi-Site-Caching-Pattern.png[]
 
@@ -174,7 +173,7 @@ Intranet (VPN), or even over the Internet.  This replication can be 1-way (_Acti
 (_Active-Active_).  By default, it uses asynchronous communication across sites.  Guaranteed message delivery along with
 persistent message queues can be configured. From a Spring Boot application's perspective, this simply appears as
 _Look-Aside Caching_, but all the logistics of data replication and sharing between the sites over WAN is managed by
-{geode-name} or {gemfire-name}.
+{geode-name}.
 
 You can imagine that having data redundantly distributed geographical is useful in Disaster Recovery (DR) situations.
 However, _Multi-Site Caching_ has many other useful benefits.
@@ -289,9 +288,9 @@ include::{samples-dir}/caching/multi-site/src/main/java/example/app/caching/mult
 ----
 
 The main Java class is annotated with `@SpringBootApplication` making it a proper Spring Boot application. Additionally,
-we declare SDG's `@EnableCachingDefinedRegions` annotation to create {geode-name} (or {gemfire-name}) `Regions` to back
-the caches used by the application (e.g. "CustomersByName"), which are declared on the application's components
-(e.g. `CustomerService`) using Spring's caching annotations, such as `@Cacheable`.
+we declare SDG's `@EnableCachingDefinedRegions` annotation to create {geode-name} `Regions` to back the caches used by
+the application (e.g. "CustomersByName"), which are declared on the application's components (e.g. `CustomerService`)
+using Spring's caching annotations, such as `@Cacheable`.
 
 TIP: It is also possible to annotate your Spring application components with JSR-107, _JCache_ API annotations since
 Spring recognizes _JCache_ annotations as well. See the {spring-framework-docs}/integration.html#cache-jsr-107[reference documentation]
@@ -335,7 +334,7 @@ TIP: Refer to the documentation on {apache-geode-docs}/topologies_and_comm/cs_co
 as well as {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[Multi-site (WAN) Configuration]
 for more details.
 
-Naturally, we use Spring Boot to configure and bootstrap an {geode-name} (or {gemfire-name}) server:
+Naturally, we use Spring Boot to configure and bootstrap an {geode-name} server:
 
 .`CacheServer` application
 [source,java]
@@ -376,7 +375,7 @@ Each member in the cluster must have a unique name, therefore we set the `spring
 serves to name our peer cache instance and member of the cluster. This is especially necessary when running the Locator
 and CacheServer as standalone processes in the same cluster.
 
-To allow us to connect to the cluster from _Gfsh_ (the GemFire/Geode Shell tool), we additionally configure the Manager
+To allow us to connect to the cluster from _Gfsh_ ({geode-name} Shell tool), we additionally configure the Manager
 port. Technically, the Manager allows any JMX compliant application (e.g. _JConsole_, _JVisualVM_, etc) to connect to
 the cluster. The Manager, like the Locator, is an embedded service, which could also be configured to run as standalone
 JVM process (recommended). By default, in most production {geode-name} clusters, the standalone Locators also serve as
@@ -466,8 +465,8 @@ talk about the final bit of configuration that enables _Multi-Site Caching_ with
 ==== `GatewaySender` and `GatewayReceiver` Configuration
 
 The final bit of configuration configures a `GatewaySender` for sending `Region` events from this cluster
-(i.e. cluster #1) to a remote cluster (e.g. cluster #2).  {geode-name} (or {gemfire-name}) Gateways are the essential
-component for enabling _Multi-Site Caching_ using a WAN topology:
+(i.e. cluster #1) to a remote cluster (e.g. cluster #2). {geode-name} Gateways are the essential component for enabling
+_Multi-Site Caching_ using a WAN topology:
 
 .Gateway Sender & Receiver
 [source,java]
@@ -515,11 +514,10 @@ using _Gfsh_.
 [[geode-samples-caching-multisite-example-run]]
 == Run the Example
 
-For this exercise, it would be helpful to have an installation of {geode-name} (or {gemfire-name}) installed on
-your system. Follow the instructions in the {apache-geode-docs}/prereq_and_install.html[User Guide] to get started.
+For this exercise, it would be helpful to have an installation of {geode-name} installed on your system. Follow the
+instructions in the {apache-geode-docs}/prereq_and_install.html[User Guide] to get started.
 
-Once you have installed {geode-name} (or {gemfire-name}) and set your environment variables accordingly, you can start
-_Gfsh_:
+Once you have installed {geode-name} and set your environment variables accordingly, you can start _Gfsh_:
 
 .Starting & Using Gfsh
 [source,text]
@@ -1163,8 +1161,8 @@ not include the `Customer` application domain model class on the cluster servers
 possible to deserialize an instance of `Customer` as a `Customer` on the servers in the cluster.
 
 Not having to implement `java.io.Serializable` nor include your application domain model types on the servers' classpath
-is actually a powerful feature of {geode-name} and {gemfire-name}. When no de/serialization strategy has been explicitly
-configured, SBDG will configure {geode-name}'s PDX Serialization framework.
+is actually a powerful feature of {geode-name}. When no de/serialization strategy has been explicitly configured, SBDG
+will configure {geode-name}'s PDX Serialization framework.
 
 PDX allows you to query objects in serialized form, without causing a deserialization, as long as you know the structure
 of your application domain model types. Using PDX can be helpful in situations where your application domain model types
@@ -1181,8 +1179,8 @@ leave as an exercise for the curious reader.
 == Summary
 
 You have now just learned and witnessed first-hand the power of _Look-Aside Caching_ enhanced with _Multi-Site Caching_,
-implemented with {geode-name} (or {gemfire-name}) WAN Gateway functionality. This is but a simple example. WAN Gateway
-functionality can accommodate a wide-range of different use cases and complex configuration.
+implemented with {geode-name} WAN Gateway functionality. This is but a simple example. WAN Gateway functionality can
+accommodate a wide-range of different use cases and complex configuration.
 
 Imagine if timely and accurate (i.e. "consistent") information is a major concern for your application use case
 and your application is backed by an RDBMS for its _System of Record_ (SOR). How do you keep the remote database

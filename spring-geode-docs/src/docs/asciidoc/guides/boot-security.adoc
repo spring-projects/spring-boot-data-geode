@@ -1,5 +1,5 @@
 [[geode-samples-boot-security]]
-= Spring Boot Security for Apache Geode & VMware Tanzu GemFire
+= Spring Boot Security for Apache Geode
 Patrick Johnson, John Blum
 :gemfire-name: VMware Tanzu GemFire
 :geode-name: Apache Geode
@@ -12,7 +12,7 @@ Patrick Johnson, John Blum
 :docinfodir: guides
 
 This guide walks you through building a simple Spring Boot application enabled with Security, specifically Auth
-and TLS using SSL. You should already be familiar with Spring Boot and {geode-name}/{gemfire-name}.
+and TLS using SSL. You should already be familiar with Spring Boot and {geode-name}.
 
 TIP: Refer to the link:../index.html#geode-security[Security] chapter in the reference documentation
 for more information.
@@ -138,7 +138,7 @@ TIP: Because SDBG auto-configures a `ClientCache` instance by default, you do no
 `@SpringBootApplication` class with SDG's `@ClientCacheApplication` annotation. In fact doing so disables some of the
 auto-configuration, like security, applied by SBDG OOTB.  The same is true when you declare one of the
 [`@PeerCacheApplication`, `@CacheServerApplication`] annotations, which changes your `@SpringBootApplication` class
-completely, from a client to a server-side GemFire/Geode process. Therefore, be careful! See the relevant
+completely, from a client to a server-side {geode-name} process. Therefore, be careful! See the relevant
 link:../index.html#geode-clientcache-applications[chapter] in the reference documentation for more details.
 
 [[geode-samples-boot-security-example-classes-server]]
@@ -154,12 +154,12 @@ This class is a Spring Boot, {geode-name} server application (i.e. `CacheServer`
 (i.e. `ClientCache`) to authenticate when connecting to the server and to communicate using SSL.
 
 Unlike the client application class above, we annotate this `@SpringBootApplication` class with `@CacheServerApplication`
-to override the default `ClientCache` auto-configured by SBDG OOTB. This makes the application a GemFire/Geode Server on
+to override the default `ClientCache` auto-configured by SBDG OOTB. This makes the application a {geode-name} server on
 startup, capable of serving clients.
 
-We must additionally annotate the server application class with SBDG's `@EnableSecurity` annotation to enable GemFire
-/ Geode Security on the server-side. By explicitly declaring a `PropertiesRealm` bean, we are using Apache Shiro as the
-auth provider, supplying the security credentials (users, roles and permissions) via a Java Properties file:
+We must additionally annotate the server application class with SBDG's `@EnableSecurity` annotation to enable
+{geode-name} Security on the server-side. By explicitly declaring a `PropertiesRealm` bean, we are using Apache Shiro
+as the auth provider, supplying the security credentials (users, roles and permissions) via a Java Properties file:
 
 .Apache Shiro Properties file containing the security credentials configuration
 [source,java]
@@ -349,5 +349,4 @@ https://security-app.apps.<cf-instance>.cf-app.com/message[https://security-app.
 
 Replace `<cf-instance>` with the name of your CloudFoundry instance to verify that the application is using SSL.
 
-Congratualtions! You have taken your first steps towards securing {geode-name} and {gemfire-name} applications
-with Spring Boot.
+Congratulations! You have taken your first steps towards securing an {geode-name} application with Spring Boot.
