@@ -4,31 +4,20 @@ description = "Apache Geode Extensions"
 
 dependencies {
 
-    compile("org.apache.geode:geode-core:$apacheGeodeVersion") {
-        exclude group: "org.apache.logging.log4j", module: "log4j-core"
-    }
-
-    compile("org.apache.geode:geode-cq:$apacheGeodeVersion") {
-        exclude group: "org.apache.logging.log4j", module: "log4j-core"
-    }
-
-    compile("org.apache.geode:geode-lucene:$apacheGeodeVersion") {
-        exclude group: "org.apache.logging.log4j", module: "log4j-core"
-    }
-
-    compile("org.apache.geode:geode-wan:$apacheGeodeVersion") {
-        exclude group: "org.apache.logging.log4j", module: "log4j-core"
-    }
+    compile "org.apache.geode:geode-core:$apacheGeodeVersion"
+    compile "org.apache.geode:geode-cq:$apacheGeodeVersion"
+    compile "org.apache.geode:geode-lucene:$apacheGeodeVersion"
+    compile "org.apache.geode:geode-wan:$apacheGeodeVersion"
 
     compile "com.fasterxml.jackson.core:jackson-databind"
+
+    testCompile "org.apache.geode:geode-membership:$apacheGeodeVersion"
+    testCompile "org.apache.geode:geode-serialization:$apacheGeodeVersion"
 
     testCompile "junit:junit"
     testCompile "org.assertj:assertj-core"
     testCompile "org.mockito:mockito-core"
     testCompile "org.projectlombok:lombok"
     testCompile "edu.umd.cs.mtc:multithreadedtc"
-
-    testCompile "org.apache.geode:geode-membership:$apacheGeodeVersion"
-    testCompile "org.apache.geode:geode-serialization:$apacheGeodeVersion"
 
 }

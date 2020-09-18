@@ -8,9 +8,6 @@ dependencies {
 	compile project(':spring-geode-starter')
 
 	compile "org.springframework.boot:spring-boot-starter-test"
-
-	compile('org.springframework.data:spring-data-geode-test') {
-		exclude group: "org.apache.logging.log4j", module: "log4j-core"
-	}
+	compile 'org.springframework.data:spring-data-geode-test'
 
 }

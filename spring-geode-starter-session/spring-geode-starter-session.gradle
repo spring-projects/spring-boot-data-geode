@@ -7,8 +7,6 @@ dependencies {
 
     compile project(':spring-geode-starter')
 
-    compile('org.springframework.session:spring-session-data-geode') {
-        exclude group: "org.apache.logging.log4j", module: "log4j-core"
-    }
+    compile 'org.springframework.session:spring-session-data-geode'
 
 }

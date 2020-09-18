@@ -1,7 +1,7 @@
 apply plugin: 'io.spring.convention.spring-module'
 apply from: MAVEN_POM_EDITOR_GRADLE
 
-description = "Spring Boot for Apache Geode Actuator Auto-Configuration"
+description = "Spring Boot Actuator Auto-Configuration for Apache Geode"
 
 dependencies {
 
@@ -15,10 +15,7 @@ dependencies {
     testCompile "org.mockito:mockito-core"
     testCompile "org.projectlombok:lombok"
     testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile "org.springframework.data:spring-data-geode-test"
     testCompile "edu.umd.cs.mtc:multithreadedtc"
-
-    testCompile("org.springframework.data:spring-data-geode-test") {
-        exclude group: "org.apache.logging.log4j", module: "log4j-core"
-    }
 
 }

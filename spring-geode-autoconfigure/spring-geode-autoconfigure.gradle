@@ -5,7 +5,7 @@ plugins {
 apply plugin: 'io.spring.convention.spring-module'
 apply from: MAVEN_POM_EDITOR_GRADLE
 
-description = "Spring Boot for Apache Geode Auto-Configuration"
+description = "Spring Boot Auto-Configuration for Apache Geode"
 
 dependencies {
 
@@ -17,10 +17,7 @@ dependencies {
 
 	optional "org.springframework.boot:spring-boot-autoconfigure-processor"
 	optional "org.springframework.boot:spring-boot-configuration-processor"
-
-	optional("org.springframework.session:spring-session-data-geode") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-core"
-	}
+	optional "org.springframework.session:spring-session-data-geode"
 
 	testCompile "jakarta.servlet:jakarta.servlet-api"
 	testCompile "junit:junit"
@@ -29,11 +26,8 @@ dependencies {
 	testCompile "org.projectlombok:lombok"
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 	testCompile "org.springframework.boot:spring-boot-starter-web"
+	testCompile "org.springframework.data:spring-data-geode-test"
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
-
-	testCompile("org.springframework.data:spring-data-geode-test") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-core"
-	}
 
 	testCompileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
@@ -48,4 +42,5 @@ dependencies {
 	//testRuntime("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:2.0.3.RELEASE") {
 	//	exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	//}
+
 }

@@ -14,10 +14,7 @@ dependencies {
 	compile "org.springframework:spring-context-support"
 	compile "org.springframework:spring-jcl"
 	compile "org.springframework.boot:spring-boot-starter"
-
-	compile("org.springframework.data:spring-data-geode") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-core"
-	}
+	compile "org.springframework.data:spring-data-geode"
 
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
@@ -36,10 +33,7 @@ dependencies {
 
 	testCompile "org.springframework.boot:spring-boot-starter-data-jpa"
 	testCompile "org.springframework.boot:spring-boot-starter-data-cassandra"
-
-	testCompile("org.springframework.data:spring-data-geode-test") {
-		exclude group: "org.apache.logging.log4j", module: "log4j-core"
-	}
+	testCompile "org.springframework.data:spring-data-geode-test"
 
 	testRuntime "org.hsqldb:hsqldb"
 
