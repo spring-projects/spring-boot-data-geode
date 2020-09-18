@@ -4,6 +4,24 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.10.RELEASE (2020-09-17)
+----------------------------------------------
+Aligns SBDG with Spring Boot 2.2.10.RELEASE along with the latest versions of Spring Framework, Spring Data
+and Spring Session.
+
+* Edits chapter on caching in reference documentation.
+* Fixes compiler syntax errors in code snippets contained in reference documentation.
+* Upgrades to Spring Framework 5.2.9.RELEASE.
+* Upgrades to Spring Boot 2.2.10.RELEASE.
+* Upgrades to Spring Data Moore-SR10
+* Upgrades to Spring Data for Apache Geode & VMware Tanzu (Pivotal) GemFire 2.2.10.RELEASE.
+* Upgrades to Spring Session BOM Corn-SR4.
+* Upgrades to Spring Session for Apache Geode & VMware Tanzu (Pivotal) GemFire 2.2.5.RELEASE
+* Upgrades to Byte Buddy 1.10.14.
+* Upgrades to Mockito 3.5.10.
+* Upgrades to VMware Tanzu (Pivotal) GemFire 9.8.9.
+
+
 Changes in version 1.1.10.RELEASE (2020-09-17)
 ----------------------------------------------
 Aligns SBDG with Spring Boot 2.1.17.RELEASE along with the latest versions of Spring Framework, Spring Data
