@@ -38,10 +38,9 @@ import org.springframework.data.gemfire.config.annotation.support.AbstractAnnota
 import org.springframework.util.StringUtils;
 
 /**
- * The {@link MemberNameConfiguration} class is a Spring {@link Configuration} class used to configure
- * an Apache Geode or Pivotal GemFire's member name in the distributed system, whether the member
- * is a {@link ClientCache client} in the client/server topology or a {@link Cache peer} in a cluster
- * using the P2P topology.
+ * The {@link MemberNameConfiguration} class is a Spring {@link Configuration} class used to configure an Apache Geode's
+ * member name in the distributed system, whether the member is a {@link ClientCache client} in the client/server
+ * topology or a {@link Cache peer} in a cluster using the P2P topology.
  *
  * @author John Blum
  * @see org.apache.geode.cache.Cache

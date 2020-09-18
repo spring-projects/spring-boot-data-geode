@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
 import java.util.Properties;
@@ -23,14 +22,13 @@ import org.apache.geode.distributed.Locator;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Spring Boot {@link ConfigurationProperties} used to configure an embedded Apache Geode / Pivotal GemFire
- * {@link Locator}.
+ * Spring Boot {@link ConfigurationProperties} used to configure an embedded Apache Geode {@link Locator}.
  *
  * A {@link Locator} enables location services used by nodes to join an existing cluster as a peer member
  * and is also used by clients to discover servers in the cluster.
  *
- * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
- * (SDG) {@link Properties}.
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode (SDG)
+ * {@link Properties}.
  *
  * @author John Blum
  * @see java.util.Properties

@@ -25,9 +25,8 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 /**
- * The {@link EnableClusterAware} helps an Spring Boot application using Apache Geode (or Pivotal GemFire
- * / Pivotal Cloud Cache (PCC)) decide whether it needs to operate in {@literal local-only mode}
- * or {@literal client/server}.
+ * The {@link EnableClusterAware} helps an Spring Boot application using Apache Geode decide whether it needs to operate
+ * in {@literal local-only mode} or {@literal client/server}.
  *
  * @author John Blum
  * @see java.lang.annotation.Annotation

@@ -38,8 +38,7 @@ import org.springframework.geode.boot.autoconfigure.repository.service.CustomerS
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration Tests testing the auto-configuration of Spring Data Repositories backed by either Apache Geode
- * or Pivotal GemFire.
+ * Integration Tests testing the auto-configuration of Spring Data Repositories backed by Apache Geode.
  *
  * @author John Blum
  * @see org.junit.Test

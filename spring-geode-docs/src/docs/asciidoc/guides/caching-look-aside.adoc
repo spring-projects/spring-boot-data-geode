@@ -173,9 +173,8 @@ With the `org.springframework.geode:spring-geode-starter` dependency on your app
 And the `BootGeodeLookAsideCachingApplication` class annotated with `@SpringBootApplication`, you have everything you
 need to begin using Spring's _Cache Abstraction_ in your application with Apache Geode as the caching provider.
 
-TIP: You can switch from open source Apache Geode to Pivotal GemFire (PCC) very easily simply by changing
-the artifactId from `spring-geode-starter` to `spring-gemfire-starter`.  No configuration or code changes
-are necessary.
+TIP: You can switch from open source Apache Geode to VMware Tanzu GemFire very easily simply by changing the artifactId
+from `spring-geode-starter` to `spring-gemfire-starter`.  No configuration or code changes are necessary.
 
 As an application developer, all you need do is focus on where in your application caching would be most beneficial.
 
@@ -246,9 +245,8 @@ After running the `BootGeodeLookAsideCachingApplication` class, if you open a We
 [[geode-samples-caching-lookaside-example-counterservice-configuration]]
 === Counter Service Configuration
 
-While Spring Boot for Apache Geode/Pivotal GemFire (PCC), SBDG, takes care of enabling Spring's caching infrastructure
-for you, configuring Apache Geode/Pivotal GemFire (PCC) as a caching provider, you still must define and declare
-your individual caches.
+While Spring Boot for Apache Geode (SBDG) takes care of enabling Spring's caching infrastructure for you, configuring
+Apache Geode as a caching provider, you still must define and declare your individual caches.
 
 No Spring caching provider is fully configured by Spring or Spring Boot for that matter.  Part of the reason for this
 is that there are many different ways to configure the caches.
@@ -268,9 +266,9 @@ include::{samples-dir}/caching/look-aside/src/main/java/example/app/caching/look
 ----
 
 The only thing of real significance here is the `@EnableCachingDefinedRegions` annotation. This Spring Data
-for Apache Geode/Pivotal GemFire (SDG) annotation is responsible for introspecting our Spring Boot application
-on Spring container startup, identifying all the caching annotations (both Spring Cache annotations as wells JSR-107,
-JCache annotations) used in our application components, and creating the appropriate caches.
+for Apache Geode (SDG) annotation is responsible for introspecting our Spring Boot application on Spring container
+startup, identifying all the caching annotations (both Spring Cache annotations as wells JSR-107, JCache annotations)
+used in our application components, and creating the appropriate caches.
 
 If you were not using SDG's `@EnablingCachingDefinedRegions` annotation, then you would need to define the Region
 using the equivalent _JavaConfig_:
@@ -547,9 +545,9 @@ B   | 2
 
 As you have learned, Spring makes enabling and using caching in your application really easy.
 
-With SBDG, using either Apache Geode or Pivotal GemFire as your caching provider in Spring's _Cache Abstraction_
-is as easy as making sure `org.springframework.geode:spring-geode-starter` is on your application's classpath. You just
-need to focus on areas of your application that would benefit from caching.
+With SBDG, using Apache Geode as your caching provider in Spring's _Cache Abstraction_ is as easy as making sure
+`org.springframework.geode:spring-geode-starter` is on your application's classpath. You just need to focus on areas
+of your application that would benefit from caching.
 
 You have now successfully used the _**Look-Aside Caching**_ pattern in your Spring Boot application.
 

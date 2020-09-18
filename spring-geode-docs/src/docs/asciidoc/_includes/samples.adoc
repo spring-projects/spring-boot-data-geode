@@ -1,12 +1,11 @@
 [[geode-samples]]
 == Samples
 
-This section contains working examples demonstrating how to use Spring Boot for Apache Geode and Pivotal GemFire (SBDG)
-effectively.
+This section contains working examples demonstrating how to use Spring Boot for Apache Geode (SBDG) effectively.
 
 Some examples focus on specific Use Cases (e.g. [(HTTP) Session state] caching) while other examples demonstrate how
 SBDG works under-the-hood to give users a better understanding of what is actually happening and how to debug problems
-with their Apache Geode / Pivotal GemFire, Spring Boot applications.
+with their Apache Geode, Spring Boot applications.
 
 .Example Spring Boot applications using Apache Geode
 |===
@@ -17,15 +16,15 @@ with their Apache Geode / Pivotal GemFire, Spring Boot applications.
 applications with Spring Boot.
 | {github-samples-url}/intro/getting-started[Getting Started]
 
-| link:guides/boot-configuration.html[Spring Boot Auto-Configuration for Apache Geode/Pivotal GemFire]
+| link:guides/boot-configuration.html[Spring Boot Auto-Configuration for Apache Geode]
 | Explains what auto-configuration is provided by SBDG out-of-the-box and what the auto-configuration is doing.
 | {github-samples-url}/boot/configuration[Boot Auto-Configuration]
 
-| link:guides/boot-actuator.html[Spring Boot Actuator for Apache Geode/Pivotal GemFire]
+| link:guides/boot-actuator.html[Spring Boot Actuator for Apache Geode]
 | Explains how to use Spring Boot Actuator for Apache Geode and how it works.
 | {github-samples-url}/boot/actuator[Boot Actuator]
 
-| link:guides/boot-security.html[Spring Boot Security for Apache Geode/Pivotal GemFire]
+| link:guides/boot-security.html[Spring Boot Security for Apache Geode]
 | Explains how to configure Auth and TLS with SSL when using Apache Geode and Pivotal Cloud Cache
 in Spring Boot applications.
 | {github-samples-url}/boot/security[Boot Security]

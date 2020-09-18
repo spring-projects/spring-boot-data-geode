@@ -1,8 +1,10 @@
 [[appendix]]
 == Appendix
+:geode-name: {apache-geode-name}
+:gemfire-name: {pivotal-gemfire-name}
+:cloud-cache-name: {pivotal-cloudcache-name}
 
-The following appendices provide additional help while developing Spring Boot applications backed by Apache Geode
-or Pivotal GemFire.
+The following appendices provide additional help while developing Spring Boot applications backed by {geode-name}.
 
 _Table of Contents_
 
@@ -24,9 +26,9 @@ include::configuration-properties.adoc[leveloffset=+1]
 [[geode-auto-configuration-disable]]
 === Disabling Auto-configuration
 
-If you would like to disable the _auto-configuration_ of any feature provided by Spring Boot for Apache Geode
-or Pivotal GemFire, then you can specify the _auto-configuration_ class in the `exclude` attribute
-of the `@SpringBootApplication` annotation, as follows:
+If you would like to disable the _auto-configuration_ of any feature provided by Spring Boot for {geode-name},
+then you can specify the _auto-configuration_ class in the `exclude` attribute of the `@SpringBootApplication`
+annotation, as follows:
 
 .Disable Auto-configuration of PDX
 [source,java]
@@ -58,7 +60,7 @@ public class MySpringBootApplication {
 [[geode-auto-configuration-disable-classes]]
 ==== Complete Set of Auto-configuration Classes
 
-The current set of _auto-configuration_ classes in Spring Boot for Apache Geode & Pivotal GemFire (SBDG) include:
+The current set of _auto-configuration_ classes in Spring Boot for {geode-name} (SBDG) include:
 
 * `CacheNameAutoConfiguration`
 * `CachingProviderAutoConfiguration`
@@ -77,30 +79,31 @@ The current set of _auto-configuration_ classes in Spring Boot for Apache Geode 
 * `SslAutoConfiguration`
 
 [[geode-gemfire-switch]]
-=== Switch from Apache Geode to Pivotal Cloud Cache (a.k.a. Pivotal GemFire)
+=== Switch from {geode-name} to {gemfire-name} for VMs (formerly known as Pivotal Cloud Cache)
 
-First, understand that {pivotal-gemfire-website}[Pivotal GemFire] is being succeeded by {pivotal-cloudcache-website}[Pivotal Cloud Cache] (PCC).
-Therefore, all references to Pivotal GemFire implies for Pivotal Cloud Cache (PCC) as well.
+First, understand that {pivotal-gemfire-website}[Pivotal GemFire] is being succeeded by
+{pivotal-cloudcache-website}[Pivotal Cloud Cache] (PCC) or {cloud-cache-name}. Therefore, all references to
+Pivotal GemFire implies for Pivotal Cloud Cache (PCC) or {cloud-cache-name} as well.
 
-When it comes to Spring's support, whether you are developing with Open Source Software (OSS) {apache-geode-website}[Apache Geode]
+When it comes to Spring's support, whether you are developing with Open Source Software (OSS) {apache-geode-website}[{geode-name}]
 or developing for {pivotal-cloudcache-website}[Pivotal Cloud Cache], Spring has you covered.
 
 At a strategic-level, this means:
 
-1. From _Open Source Software_ (e.g. Apache Geode) to _Commercial_ (e.g. Pivotal Cloud Cache)
+1. From _Open Source Software_ (e.g. {geode-name}) to _Commercial_ (e.g. Pivotal Cloud Cache)
 2. From _Non-Managed Environments_ (e.g. Standalone, Externally Managed) to _Managed Environments_ (e.g. Pivotal Platform)
 3. With _**little**_ to _**no code or configuration**_ changes necessary.  It just works!
 
 You may also migrate your Spring Boot applications away from Pivotal Platform using the commercial software offering,
-Pivotal Cloud Cache, and switch back to Open Source Apache Geode running in a standalone, externally managed environment.
+Pivotal Cloud Cache, and switch back to Open Source {geode-name} running in a standalone, externally managed environment.
 
 SBDG will never lock you in!  It is, and always will be, your choice!
 
-Technically, this means to go from Apache Geode to Pivotal Cloud Cache (PCC), you must change 2 things.
+Technically, this means to go from {geode-name} to Pivotal Cloud Cache (PCC), you must change 2 things.
 
 First, you must switch the dependency from `spring-geode-starter` to `spring-gemfire-starter`:
 
-.Maven POM with Spring Boot for Apache Geode
+.Maven POM with Spring Boot for {geode-name}
 [source,xml]
 [subs="verbatim,attributes"]
 ----
@@ -111,7 +114,7 @@ First, you must switch the dependency from `spring-geode-starter` to `spring-gem
 </dependency>
 ----
 
-.Gradle build file with Spring Boot for Apache Geode
+.Gradle build file with Spring Boot for {geode-name}
 [source,groovy]
 [subs="verbatim,attributes"]
 ----
@@ -122,7 +125,7 @@ dependencies {
 
 To:
 
-.Maven POM with Spring Boot for Pivotal GemFire
+.Maven POM with Spring Boot for {gemfire-name}
 [source,xml]
 [subs="verbatim,attributes"]
 ----
@@ -133,7 +136,7 @@ To:
 </dependency>
 ----
 
-.Gradle build file with Spring Boot for Pivotal GemFire
+.Gradle build file with Spring Boot for {gemfire-name}
 [source,groovy]
 [subs="verbatim,attributes"]
 ----
@@ -142,10 +145,10 @@ dependencies {
 }
 ----
 
-Second, to obtain the commercial Pivotal Cloud Cache (PCC) or Pivotal GemFire bits, you must declare the appropriate
-repository declaration in your Maven POM or Gradle build file:
+Second, to obtain the commercial Pivotal Cloud Cache (PCC) or {gemfire-name} bits, you must declare
+the appropriate repository declaration in your Maven POM or Gradle build file:
 
-.Maven Repository definition to acquire PCC or Pivotal GemFire bits
+.Maven Repository definition to acquire PCC or {gemfire-name} bits
 [source,xml]
 ----
 <repositories>
@@ -157,7 +160,7 @@ repository declaration in your Maven POM or Gradle build file:
 </repositories>
 ----
 
-.Gradle Repository definition to acquire PCC or Pivotal GemFire bits
+.Gradle Repository definition to acquire PCC or {gemfire-name} bits
 [source,groovy]
 ----
 repositories {
@@ -188,9 +191,9 @@ and password to configure access to the server in your Maven settings (i.e. ~/.m
 </settings>
 ----
 
-TIP: For more details on acquiring the Pivotal Cloud Cache (PCC) or Pivotal GemFire bits, see Pivotal GemFire's
+TIP: For more details on acquiring the Pivotal Cloud Cache (PCC) or {gemfire-name} bits, see {gemfire-name}'s
 https://gemfire.docs.pivotal.io/{pivotal-gemfire-version}/gemfire/getting_started/installation/obtain_gemfire_maven.html[documentation].
-When using the `spring-gemfire-starter`, you do not need to declare the Pivotal GemFire dependencies noted in
+When using the `spring-gemfire-starter`, you do not need to declare the {gemfire-name} dependencies noted in
 the documentation.  The `spring-gemfire-starter` does that for you!  You only need to declare the repository
 and configure your settings.
 
@@ -200,7 +203,7 @@ Done!
 
 It should just work without any code or configuration changes and if this is not the case, for whatever reason, then we
 will work to correct it, short of any feature differences between Pivotal Cloud Cache (PCC) that cannot be accomplished
-with Apache Geode itself, of course.
+with {geode-name} itself, of course.
 
 Spring Boot's _auto-configuration_ and _convention over configuration_ approach tries to determine the runtime
 environment in order to handle infrastructure logistics so you do not have to.  This is true inside or outside
@@ -208,29 +211,29 @@ of a managed environment so that we can provide users with a consistent and reli
 and issues that arise by switching environments in the first place.  Switching environments is especially common as you
 migrate your Spring Boot applications from DEV to TEST, followed by STAGING, and finally, to PRODUCTION.
 
-Of course, it will nearly always be easier to "run" Apache Geode as a "managed" service inside Pivotal Platform (PCF)
-using Pivotal Cloud Cache (PCC) than it will be to manage an externally run Apache Geode cluster, especially if your
+Of course, it will nearly always be easier to "run" {geode-name} as a "managed" service inside Pivotal Platform (PCF)
+using Pivotal Cloud Cache (PCC) than it will be to manage an externally run {geode-name} cluster, especially if your
 Use Cases require maximum performance and high availability.  We highly recommend this approach when and where possible,
 but it is still your choice.
 
 [[geode-cluster-configuration-bootstrapping]]
-=== Running an Apache Geode or Pivotal GemFire cluster using Spring Boot from your IDE
+=== Running an {geode-name} cluster using Spring Boot from your IDE
 
-As described in <<geode-clientcache-applications>>, it is possible to configure and run a small Apache Geode
-or Pivotal GemFire cluster from inside your IDE using Spring Boot.  This is extremely helpful during development
-since it allows you to manually spin up, test and debug your applications quickly and easily.
+As described in <<geode-clientcache-applications>>, it is possible to configure and run a small {geode-name} cluster
+from inside your IDE using Spring Boot.  This is extremely helpful during development since it allows you to manually
+spin up, test and debug your applications quickly and easily.
 
-Spring Boot for Apache Geode/Pivotal GemFire includes such a class:
+Spring Boot for {geode-name} includes such a class:
 
-.Spring Boot application class used to configure and bootstrap an Apache Geode/Pivotal GemFire server
+.Spring Boot application class used to configure and bootstrap an {geode-name} server
 [source,java]
 ----
 include::{docs-src-dir}/org/springframework/geode/docs/example/app/server/SpringBootApacheGeodeCacheServerApplication.java[tags=class]
 ----
 
-This class is a proper Spring Boot application that can be used to configure and bootstrap multiple Apache Geode
-or Pivotal GemFire servers and joining them together to form a small cluster simply by modifying
-the runtime configuration of this class ever so slightly.
+This class is a proper Spring Boot application that can be used to configure and bootstrap multiple {geode-name} servers
+and join them together to form a small cluster simply by modifying the runtime configuration of this class ever so
+slightly.
 
 Initially you will want to start a single, primary server with the embedded Locator and Manager service.
 
@@ -241,7 +244,7 @@ route data requests directly to the server hosting the data (a.k.a. single-hop a
 is partitioned/sharded across servers in the cluster.  Locator Pools include support for load balancing connections
 and handling automatic fail-over in the event of failed connections, among other things.
 
-The Manager service enables you to connect to this server using _Gfsh_ (the Apache Geode and Pivotal GemFire
+The Manager service enables you to connect to this server using _Gfsh_ (the {geode-name}
 {apache-geode-docs}/tools_modules/gfsh/chapter_overview.html[shell tool]).
 
 To start our primary server, create a run configuration in your IDE for the `SpringBootApacheGeodeCacheServerApplication`
@@ -421,9 +424,8 @@ Client Connections       : 0
 
 Now, let's start some additional servers to scale-out our cluster.
 
-To do so, you simply need to vary the name of the members we will add to our cluster as peers. Apache Geode
-and Pivotal GemFire require that the members in a cluster be named and the names of each member in the cluster
-be unique.
+To do so, you simply need to vary the name of the members we will add to our cluster as peers. {geode-name} requires
+that the members in a cluster be named and the names of each member in the cluster be unique.
 
 Additionally, since we are running multiple instances of our `SpringBootApacheGeodeCacheServerApplication` class,
 which also embeds a `CacheServer` instance enabling cache clients to connect, we need to be careful to vary our
@@ -548,47 +550,45 @@ Running                  : true
 Client Connections       : 0
 ----
 
-Congratulations!  You just started a small Apache Geode/Pivotal GemFire cluster, with 3 members, using Spring Boot
-from inside your IDE.
+Congratulations!  You just started a small {geode-name} cluster, with 3 members, using Spring Boot from inside your IDE.
 
-It is pretty simple to build and run a Spring Boot, Apache Geode/Pivotal GemFire, `ClientCache` application
-that connects to this cluster.  Simply include and use Spring Boot for Apache Geode/Pivotal GemFire, ;-).
+It is pretty simple to build and run a Spring Boot, {geode-name}, `ClientCache` application that connects to
+this cluster.  Simply include and use Spring Boot for {geode-name}, ;-).
 
 [[geode-testing]]
 === Testing
 
-https://github.com/spring-projects/spring-test-data-geode[Spring Test for Apache Geode & Pivotal GemFire] is a new,
-soon to be released and upcoming project to help developers write both _Unit_ and _Integration Tests_
-when using either Apache Geode or Pivotal GemFire in a Spring context.
+https://github.com/spring-projects/spring-test-data-geode[Spring Test for {geode-name}] is a new, soon to be released
+and upcoming project to help developers write both _Unit_ and _Integration Tests_ when using {geode-name}
+in a Spring context.
 
 In fact, the entire {github-url}/tree/master/spring-geode-autoconfigure/src/test/java/org/springframework/geode/boot/autoconfigure[test suite]
-in Spring Boot for Apache Geode & Pivotal GemFire is based on this project.
+in Spring Boot for {geode-name} is based on this project.
 
-All Spring projects integrating with either Apache Geode or Pivotal GemFire will use this new test framework for all
-their testing needs, making this new test framework for Apache Geode and Pivotal GemFire a proven and reliable solution
-for all your Apache Geode/Pivotal GemFire application testing needs when using Spring as well.
+All Spring projects integrating with either {geode-name} will use this new test framework for all their testing needs,
+making this new test framework for {geode-name} a proven and reliable solution for all your {geode-name} application
+testing needs when using Spring as well.
 
 Later on, this reference guide will include and dedicate an entire chapter on testing.
 
 [[geode-examples]]
 === Examples
 
-The definitive source of truth on how to best use Spring Boot for Apache Geode & Pivotal GemFire (or Pivotal Cloud Cache
-(PCC)) is to refer to the <<geode-samples,Samples>>.
+The definitive source of truth on how to best use Spring Boot for {geode-name} is to refer to the <<geode-samples,Samples>>.
 
 Refer to the Pivotal Cloud Cache (PCC), https://github.com/pivotal-cf/PCC-Sample-App-PizzaStore[Pizza Store],
-Spring Boot application for an example of how to use Spring Boot for Pivotal GemFire (SBDG) in a `ClientCache`
+Spring Boot application for an example of how to use Spring Boot for {gemfire-name} (SBDG) in a `ClientCache`
 application interfacing with PCC.
 
 Additionally, you may refer to the https://github.com/jxblum/temperature-service[Temperature Service], Spring Boot
 application, which implements a Temperature Sensor and Monitoring, Internet of Things (IOT) example. The example uses
-SBDG to showcase Apache Geode CQ, Function Implementations/Executions and positions Apache Geode as a _caching provider_
+SBDG to showcase {geode-name} CQ, Function Implementations/Executions and positions {geode-name} as a _caching provider_
 in Spring's Cache Abstraction.  It is a working, sophisticated and complete example, and is highly recommended
 as a good starting point for real-world use cases.
 
 You may also refer to the https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example]
-from the _Contact Application_ Reference Implementation (RI) for Spring Data for Apache Geode & Pivotal GemFire
-(SDG) as yet another example.
+from the _Contact Application_ Reference Implementation (RI) for Spring Data for {geode-name} (SDG)
+as yet another example.
 
 [[references]]
 === References
@@ -596,8 +596,8 @@ from the _Contact Application_ Reference Implementation (RI) for Spring Data for
 1. Spring Framework {spring-framework-docs}[Reference Guide] | {spring-framework-javadoc}[Javadoc]
 2. Spring Boot {spring-boot-docs-html}[Reference Guide] | {spring-boot-javadoc}[Javadoc]
 3. Spring Data Commons {spring-data-commons-docs-html}[Reference Guide] | {spring-data-commons-javadoc}[Javadoc]
-4. Spring Data for Apache Geode {spring-data-geode-docs-html}[Reference Guide] | {spring-data-geode-javadoc}[Javadoc]
-5. Spring Session for Apache Geode {spring-session-data-gemfire-docs}[Reference Guide] | {spring-session-data-gemfire-javadoc}[Javadoc]
-6. Spring Test for Apache Geode {spring-test-data-gemfire-website}[README]
-7. Apache Geode {apache-geode-docs}[User Guide] | {apache-geode-javadoc}[Javadoc]
-8. Pivotal GemFire {pivotal-gemfire-docs}[User Guide] | {pivotal-gemfire-javadoc}[Javadoc]
+4. Spring Data for {geode-name} {spring-data-geode-docs-html}[Reference Guide] | {spring-data-geode-javadoc}[Javadoc]
+5. Spring Session for {geode-name} {spring-session-data-gemfire-docs}[Reference Guide] | {spring-session-data-gemfire-javadoc}[Javadoc]
+6. Spring Test for {geode-name} {spring-test-data-gemfire-website}[README]
+7. {geode-name} {apache-geode-docs}[User Guide] | {apache-geode-javadoc}[Javadoc]
+8. {gemfire-name} {pivotal-gemfire-docs}[User Guide] | {pivotal-gemfire-javadoc}[Javadoc]

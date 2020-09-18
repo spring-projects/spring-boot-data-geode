@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.repository.repo;
 
 import org.springframework.data.repository.CrudRepository;
@@ -21,7 +20,7 @@ import org.springframework.geode.boot.autoconfigure.repository.model.Customer;
 
 /**
  * The {@link CustomerRepository} interface defines a Spring Data {@link CrudRepository} for performing basic CRUD
- * and simple query data access operations on {@link Customer} objects stored in Apache Geode or Pivotal GemFire.
+ * and simple query data access operations on {@link Customer} objects stored in Apache Geode.
  *
  * @author John Blum
  * @see org.springframework.data.repository.CrudRepository

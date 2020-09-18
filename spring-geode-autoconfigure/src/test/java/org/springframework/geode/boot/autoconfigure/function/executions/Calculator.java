@@ -13,20 +13,18 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.function.executions;
 
 import org.springframework.data.gemfire.function.annotation.OnMember;
 
 /**
- * The {@link Calculator} interface defines Apache Geode/Pivotal GemFire Functions.
+ * The {@link Calculator} interface defines Apache Geode Functions.
  *
  * @author John Blum
  * @see org.springframework.data.gemfire.function.annotation.OnRegion
  * @since 1.0.0
  */
 @OnMember(groups = "test")
-@SuppressWarnings("all")
 // TODO change Function returns type when SDG properly handles Function method return types/values
 public interface Calculator {
 

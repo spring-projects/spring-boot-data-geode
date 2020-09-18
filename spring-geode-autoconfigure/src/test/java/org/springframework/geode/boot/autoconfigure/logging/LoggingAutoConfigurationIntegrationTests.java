@@ -33,8 +33,8 @@ import org.springframework.geode.util.GeodeConstants;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration Tests asserting the configuration and behavior of Apache Geode & Pivotal GemFire logging
- * when configured with Spring Boot auto-configuration.
+ * Integration Tests asserting the configuration and behavior of Apache Geode logging when configured with
+ * Spring Boot auto-configuration.
  *
  * @author John Blum
  * @see java.util.Properties

@@ -36,8 +36,8 @@ import org.springframework.util.StringUtils;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} class used to configure the Apache Geode
- * / Pivotal GemFire {@link ClientCache} application or peer {@link Cache} member node name
- * (i.e. {@literal gemfire.name}) with the Spring Boot {@literal spring.application.name} property.
+ * {@link ClientCache} application or peer {@link Cache} member node name (i.e. {@literal gemfire.name})
+ * with the Spring Boot {@literal spring.application.name} property.
  *
  * @author John Blum
  * @see org.apache.geode.cache.Cache

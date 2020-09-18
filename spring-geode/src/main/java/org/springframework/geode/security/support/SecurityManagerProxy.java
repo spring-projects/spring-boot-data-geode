@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.geode.security.AuthenticationFailedException;
 import org.apache.geode.security.ResourcePermission;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -35,7 +36,7 @@ import org.springframework.util.Assert;
  * which is registered as a managed bean in a Spring context.
  *
  * The idea behind this {@link org.apache.geode.security.SecurityManager} is to enable users to be able to configure
- * and manage the {@code SecurityManager} as a Spring bean.  However, Apache Geode/Pivotal GemFire require
+ * and manage the {@code SecurityManager} as a Spring bean.  However, Apache Geode requires
  * the {@link org.apache.geode.security.SecurityManager} to be configured using a System property when launching
  * Apache Geode Servers with Gfsh, which makes it difficult to "manage" the {@code SecurityManager} instance.
  *
@@ -82,8 +83,7 @@ public class SecurityManagerProxy extends LazyWiringDeclarableSupport
 	private org.apache.geode.security.SecurityManager securityManager;
 
 	/**
-	 * Returns a reference to the single {@link SecurityManagerProxy} instance configured by
-	 * Apache Geode/Pivotal GemFire in startup.
+	 * Returns a reference to the single {@link SecurityManagerProxy} instance configured by Apache Geode in startup.
 	 *
 	 * @return a reference to the single {@link SecurityManagerProxy} instance.
 	 */
@@ -176,6 +176,6 @@ public class SecurityManagerProxy extends LazyWiringDeclarableSupport
 	protected BeanFactory locateBeanFactory() {
 
 		return Optional.ofNullable(this.beanFactory)
-			.orElseGet(() -> super.locateBeanFactory());
+			.orElseGet(super::locateBeanFactory);
 	}
 }

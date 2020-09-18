@@ -53,7 +53,7 @@ import example.echo.config.EchoClientConfiguration;
 import example.echo.config.EchoServerConfiguration;
 
 /**
- * Integration Tests testing the auto-configuration of Apache Geode/Pivotal GemFire SSL.
+ * Integration Tests testing the auto-configuration of Apache Geode SSL.
  *
  * @author John Blum
  * @see org.junit.Test

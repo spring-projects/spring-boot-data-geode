@@ -160,10 +160,9 @@ expired or been evicted.  We neither configure eviction nor expiration for this 
 
 Both the `factorial(..)` and `sqrt(..)` methods have been annotated with Spring's `@Cacheable` annotation to demarcate
 these methods with caching behavior.  Of course, as explained in SBDG's <<../_includes/configuration-annotations.adoc#geode-caching-provider,documentation>>,
-caching with Spring's Cache Abstraction using Apache Geode (or Pivotal GemFire, even Pivotal Cloud Cache (PCC)
-when running in Pivotal CloudFoundry (PCF)) as the caching provider is enabled by default.  Therefore, there is nothing
-more you need do to start leverage caching in your Spring Boot applications than to annotate the service methods
-with the appropriate Spring or JSR-107, JCache API annotations.  Simple!
+caching with Spring's Cache Abstraction using Apache Geode as the caching provider is enabled by default. Therefore,
+there is nothing more you need do to start leverage caching in your Spring Boot applications than to annotate
+the service methods with the appropriate Spring or JSR-107, JCache API annotations.  Simple!
 
 It is worth noting that we are starting with the same applied pattern of caching as you would when using the
 _Look-Aside Caching_ pattern.  This is key to minimizing the invasive nature of _Inline Caching_.  There is a subtle
@@ -187,7 +186,7 @@ The pertinent part of the configuration that enables _Inline Caching_ for our Ca
 the `inlineCachingForCalculatorApplicationRegionsConfigurer` bean definition.
 
 SBDG provides the `InlineCachingRegionConfigurer` class used in the bean definition to configure and enable the caches
-(a.k.a. as Regions in Apache Geode & Pivotal GemFire terminology) with _Inline Caching_ behavior.
+(a.k.a. as Regions in Apache Geode terminology) with _Inline Caching_ behavior.
 
 The Configurer's job is to configure the appropriate Spring Data (SD) _Repository_ used as a Region's `CacheLoader`
 for "_read-through_" behavior as well as configure the same SD _Repository_ for a Region's `CacheWriter` for
@@ -260,9 +259,9 @@ these Regions for you.
 TIP: If you have not done so already, you should definitely read about SBDG's support for _Inline Caching_
 in the link:../index.html#geode-caching-provider-inline-caching[Inline Caching] section.
 
-TIP: To learn more about how Apache Geode's (or Pivotal GemFire's) data loading functionality works, or specifically,
-how to {apache-geode-docs}/developing/outside_data_sources/sync_outside_data.html["Keep the Cache in Sync with Outside
-Data Sources"] follow the link.  You may also learn more by reading the _Javadoc_ for
+TIP: To learn more about how Apache Geode's data loading functionality works, or specifically, how to
+{apache-geode-docs}/developing/outside_data_sources/sync_outside_data.html["Keep the Cache in Sync with Outside Data Sources"]
+follow the link.  You may also learn more by reading the _Javadoc_ for
 {apache-geode-javadoc}//org/apache/geode/cache/CacheLoader.html[`CacheLoader`]
 and {apache-geode-javadoc}/org/apache/geode/cache/CacheWriter.html[`CacheWriter`].
 

@@ -36,11 +36,11 @@ Now, that we explained the motivation behind this chapter, let's outline what we
 * Refer you to the SDG _Annotations_ covered by SBDG's _Auto-configuration_
 * List all SDG _Annotations_ not covered by SBDG's _Auto-configuration_
 * Cover the SBDG, SSDG and SDG _Annotations_ that must be declared explicitly and that provide the most value and productivity
-when getting started using either Apache Geode or Pivotal GemFire in Spring [Boot] applications.
+when getting started using Apache Geode in Spring [Boot] applications.
 
-NOTE: SDG refers to {spring-data-geode-website}[Spring Data for Apache Geode & Pivotal GemFire]. SSDG refers to
-{spring-session-data-gemfire-website}[Spring Session for Apache Geode & Pivotal GemFire] and SBDG refers to
-_Spring Boot for Apache Geode & Pivotal GemFire_, this project.
+NOTE: SDG refers to {spring-data-geode-website}[Spring Data for Apache Geode]. SSDG refers to
+{spring-session-data-gemfire-website}[Spring Session for Apache Geode] and SBDG refers to
+_Spring Boot for Apache Geode_, this project.
 
 TIP: The list of SDG _Annotations_ covered by SBDG's _Auto-configuration_ is discussed in detail in the <<appendix, Appendix>>,
 in the section, <<geode-auto-configuration-annotations,Auto-configuration vs. Annotation-based configuration>>.
@@ -134,7 +134,7 @@ Still, all of these _Annotations_ are available for the application developer to
 === Productivity Annotations
 
 This section calls out the _Annotations_ we believe to be most beneficial for your application development purposes
-when using either Apache Geode or Pivotal GemFire in Spring Boot applications.
+when using Apache Geode in Spring Boot applications.
 
 [[geode-configuration-declarative-annotations-productivity-enableclusteraware]]
 ==== `@EnableClusterAware` (SBDG)
@@ -148,14 +148,14 @@ When you annotate your main `@SpringBootApplication` class with `@EnableClusterA
 ----
 @SpringBootApplication
 @EnableClusterAware
-class SpringBootApacheGeodeClientCacheApplication { ... }
+class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 
 Your Spring Boot, Apache Geode `ClientCache` application is able to seamlessly switch between client/server
 and local-only topologies with no code or configuration changes.
 
-When a cluster of Apache Geode or Pivotal GemFire servers is detected, the client application will send and receive data
-to and from the cluster.  If a cluster is not available, then the client automatically switches to storing data locally
+When a cluster of Apache Geode servers is detected, the client application will send and receive data to and from
+the cluster.  If a cluster is not available, then the client automatically switches to storing data locally
 on the client using `LOCAL` Regions.
 
 Additionally, the `@EnableClusterAware` annotation is meta-annotated with SDG's
@@ -228,9 +228,9 @@ For example, given:
 @Service
 class CustomerService {
 
-  @Cacheable("CustomersByAccountNumber" key="#account.number")
+  @Cacheable(cacheName = "CustomersByAccountNumber", key="#account.number")
   Customer findBy(Account account) {
-    ...
+    // ...
   }
 }
 ----
@@ -242,7 +242,7 @@ When your main `@SpringBootApplication` class is annotated with `@EnableCachingD
 ----
 @SpringBootApplication
 @EnableCachingDefineRegions
-class SpringBootApacheGeodeClientCacheApplication { ... }
+class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 
 Then, SBDG would create a client `PROXY` Region (or `PARTITION_REGION` if your application were a peer member of the
@@ -276,7 +276,6 @@ class Customer {
   @Indexed
   private String name;
 
-  ...
 }
 ----
 
@@ -290,7 +289,7 @@ the main `@SpringBootApplication` class is annotated with `@EnableEntityDefinedR
 @SpringBootApplication
 @EnableEntityDefinedRegions(basePackageClasses = Customer.class,
     clientRegionShortcut = ClientRegionShortcut.CACHING_PROXY)
-class SpringBootApacheGeodeClientCacheApplication { ... }
+class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 
 Like the `@EnableCachingDefinedRegions` annotation, you can set the client and server Region data management policy
@@ -339,7 +338,7 @@ Then, you could configure the `@EnableEntityDefinedRegions` as follows:
 ----
 @SpringBootApplication
 @EnableEntityDefinedRegions(basePackageClasses = { NonEntity.class, Account.class } )
-class SpringBootApacheGeodeClientCacheApplication { ... }
+class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 
 If `Customer`, `Address`, `PhoneNumber` and `Account` were all entity classes properly annotated with `@Region`, then
@@ -365,7 +364,7 @@ This is as simple as annotating your main `@SpringBootApplication` class with `@
 ----
 @SpringBootApplication
 @EnableClusterDefinedRegions
-class SpringBootApacheGeodeClientCacheApplication { ... }
+class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 
 Every Region that exists on the cluster of servers will have a corresponding `PROXY` Region defined and created on the
@@ -389,8 +388,9 @@ class SomeApplicationComponent {
 
     this.serverRegion.put(1, entity);
 
-    ...
+    // ...
   }
+}
 ----
 
 Of course, SBDG _auto-configures_ a `GemfireTemplate` for the "_ServerRegion_" Region (as described <<geode-configuration-declarative-auto-configuration-regiontemplates,here>>),
@@ -413,8 +413,9 @@ class SomeApplicationComponent {
 
     this.serverRegionTemplate.put(1, entity);
 
-    ...
+    // ...
   }
+}
 ----
 
 TIP: Refer to the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-cluster-defined[Configuring Cluster-defined Regions]
@@ -449,7 +450,6 @@ class Customer {
   @Indexed
   private String name;
 
-  ...
 }
 ----
 
@@ -461,14 +461,14 @@ As a result, when our main `@SpringBootApplication` class is annotated with `@En
 @SpringBootApplication
 @EnableEntityDefinedRegions(basePackageClasses = Customer.class)
 @EnableIndexing
-class SpringBootApacheGeodeClientCacheApplication { ... }
+class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 
 An Apache Geode OQL Index for the `Customer.name` field will be created thereby making OQL Queries on Customers by name
 use this Index.
 
-NOTE: Keep in mind that OQL Indexes are not persistent between restarts (i.e. Apache Geode & Pivotal GemFire
-maintains Indexes in-memory only).  An OQL Index is always rebuilt when the node is restarted.
+NOTE: Keep in mind that OQL Indexes are not persistent between restarts (i.e. Apache Geode  maintains Indexes
+in-memory only).  An OQL Index is always rebuilt when the node is restarted.
 
 When you combine `@EnableIndexing` with either `@EnableClusterConfiguration` or `@EnableClusterAware`, then the Index
 definitions will be pushed to the server-side Regions where OQL Queries are generally executed.
@@ -479,10 +479,10 @@ for more details.
 [[geode-configuration-declarative-annotations-productivity-enableexpiration]]
 ==== `@EnableExpiration` (SDG)
 
-It is often useful to define both _Eviction_ and _Expiration_ policies, particularly with a system like Apache Geode
-or Pivotal GemFire, especially given it primarily keeps data in-memory, on the JVM Heap.  As you can imagine your data
-volume size may far exceed the amount of available JVM Heap memory and/or keeping too much data on the JVM Heap
-can cause Garbage Collection (GC) issues.
+It is often useful to define both _Eviction_ and _Expiration_ policies, particularly with a system like Apache Geode,
+especially given it primarily keeps data in-memory, on the JVM Heap.  As you can imagine your data volume size may far
+exceed the amount of available JVM Heap memory and/or keeping too much data on the JVM Heap can cause Garbage Collection
+(GC) issues.
 
 TIP: You can enable off-heap (or main memory usage) capabilities by declaring SDG's `@EnableOffHeap` annotation.
 Refer to the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-off-heap[Configuring Off-Heap Memory]
@@ -521,7 +521,6 @@ class Customer {
   @Indexed
   private String name;
 
-  ...
 }
 ----
 
@@ -535,7 +534,7 @@ with `@EnableExpiration`:
 ----
 @SpringBootApplication
 @EnableExpiration
-class SpringBootApacheGeodeApplication { ... }
+class SpringBootApacheGeodeApplication {  }
 ----
 
 NOTE: Technically, this entity class specific Annotation-based Expiration policy is implemented using Apache Geode's
@@ -551,23 +550,22 @@ TIP: Refer to the SDG Reference Guide for more details on
 _Software Testing_ in general, and _Unit Testing_ in particular, are a very important development tasks to ensure
 the quality of your Spring Boot applications.
 
-Apache Geode and Pivotal GemFire can make testing difficult in some cases, especially when tests have to be written as
-_Integration Tests_ in order to assert the correct behavior.  This can be very costly and lengthens the feedback cycle.
-Fortunately, it is possible to write _Unit Tests_ as well!
+Apache Geode can make testing difficult in some cases, especially when tests have to be written as _Integration Tests_
+in order to assert the correct behavior.  This can be very costly and lengthens the feedback cycle. Fortunately, it is
+possible to write _Unit Tests_ as well!
 
-Spring has your back and once again provides a framework for testing Spring Boot applications using either Apache Geode
-or Pivotal GemFire.  This is where the {spring-test-data-gemfire-website}[Spring Test for Apache Geode & Pivotal GemFire (STDG)] project
-can help, particularly with _Unit Testing_.
+Spring has your back and once again provides a framework for testing Spring Boot applications using either Apache Geode.
+This is where the {spring-test-data-gemfire-website}[Spring Test for Apache Geode(STDG)] project can help, particularly
+with _Unit Testing_.
 
-For example, if you do not care what Apache Geode or Pivotal GemFire would actually do in certain cases and only care
-about the "contract", which is what mocking a collaborator is all about, then you could effectively mock Apache Geode
-or Pivotal GemFire's objects in order to isolate the "_Subject Under Test_" (SUT) and focus on the interaction(s)
-or outcomes you expect to happen.
+For example, if you do not care what Apache Geode would actually do in certain cases and only care about the "contract",
+which is what mocking a collaborator is all about, then you could effectively mock Apache Geode's objects in order to
+isolate the "_Subject Under Test_" (SUT) and focus on the interaction(s) or outcomes you expect to happen.
 
 With STDG, you don't have to change a bit of configuration to enable mocks in the _Unit Tests_ for your Spring Boot
 applications.  You simply only need to annotate the test class with `@EnableGemFireMockObjects`, like so:
 
-.Using Mock Apache Geode or Pivotal GemFire objects
+.Using Mock Apache Geode objects
 [source,java]
 ----
 @RunWith(SpringRunner.class)
@@ -576,7 +574,7 @@ class MyApplicationTestClass {
 
   @Test
   public void someTestCase() {
-    ...
+    // ...
   }
 
   @Configuration
@@ -588,8 +586,8 @@ class MyApplicationTestClass {
 
 Your Spring Boot configuration of Apache Geode will return mock objects for all Apache Geode objects, such as Regions.
 
-Mocking Apache Geode or Pivotal GemFire objects even works for GemFire/Geode objects created from the productivity
-annotations discussed in the previous sections above.
+Mocking Apache Geode objects even works for GemFire/Geode objects created from the productivity annotations discussed in
+the previous sections above.
 
 For example, given the following Spring Boot, Apache Geode `ClientCache` application class:
 
@@ -598,14 +596,14 @@ For example, given the following Spring Boot, Apache Geode `ClientCache` applica
 ----
 @SpringBootApplication
 @EnableEntityDefinedRegions(basePackageClasses = Customer.class)
-class SpringBootApacheGeodeClientCacheApplication { ... }
+class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 
 The "_Customers_" Region defined by the `Customer` entity class and created by the `@EnableEntityDefinedRegions`
 annotation would be a "mock" Region and not an actual Region.  You can still inject the Region in your test as before
 and assert interactions on the Region based on your application workflows:
 
-.Using Mock Apache Geode or Pivotal GemFire objects
+.Using Mock Apache Geode objects
 [source,java]
 ----
 @RunWith(SpringRunner.class)
@@ -624,10 +622,10 @@ class MyApplicationTestClass {
 
     assertThat(this.customers).containsValue(jonDoe);
 
-    ...
+    // ...
   }
 
-  ...
+  // ...
 
 }
 ----

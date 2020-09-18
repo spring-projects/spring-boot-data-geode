@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.configuration.support;
 
 import java.util.Properties;
@@ -21,12 +20,11 @@ import java.util.Properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Spring Boot {@link ConfigurationProperties} used to configure an embedded Apache Geode / Pivotal GemFire
- * {@literal Manager}.
+ * Spring Boot {@link ConfigurationProperties} used to configure an embedded Apache Geode {@literal Manager}.
  *
  * A {@literal Manager} allows users to manage a cluster with tools like {@literal Gfsh} or {@literal Pulse}.
  *
- * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode/Pivotal GemFire
+ * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode
  * (SDG) {@link Properties}.
  *
  * @author John Blum

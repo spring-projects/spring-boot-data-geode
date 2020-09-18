@@ -16,15 +16,15 @@ e.g. `log-level` no longer have any effect, regardless of whether the property (
 TIP: Refer to Apache Geode's {apache-geode-docs}/reference/topics/gemfire_properties.html[Documentation]
 for a complete list of valid `Properties`, including the `Properties` used to configure logging.
 
-Unfortunately, this also means the _Spring Data for Apache Geode & Pivotal GemFire_ (SDG)
+Unfortunately, this also means the _Spring Data for Apache Geode_ (SDG)
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html[`@EnableLogging`]
-annotation no longer has any effect on Apache Geode or Pivotal GemFire logging either and is the reason it has been
+annotation no longer has any effect on Apache Geode logging either and is the reason it has been
 https://jira.spring.io/browse/DATAGEODE-299[deprecated].  The reason `@EnableLogging` no longer has any effect on
 logging is because this annotation's attributes and associated SDG properties indirectly sets the corresponding
-Apache Geode or Pivotal GemFire properties, which again, are useless from Apache Geode `1.9.2` onward.
+Apache Geode properties, which again, are useless from Apache Geode `1.9.2` onward.
 
-By way of example, and to make this concrete, **none** of the following approaches have any effect on Apache Geode
-or Pivotal GemFire logging:
+By way of example, and to make this concrete, **none** of the following approaches have any effect
+on Apache Geode logging:
 
 .Command-line configuration
 [source,txt]
@@ -36,7 +36,7 @@ $ java -classpath ...:/path/to/MySpringBootApacheGeodeClientCacheApplication.jar
 .Externalized configuration using Apache Geode `gemfire.properties`
 [source,properties]
 ----
-# Apache Geode/Pivotal GemFire only/specific properties
+# Apache Geode only/specific properties
 log-level=INFO
 ----
 
@@ -66,11 +66,11 @@ class MySpringBootApacheGeodeClientApplication {
 That is to say, none of the approaches above have any effect without the **new** SBDG logging starter.
 
 [[geode-logging-configuration]]
-=== Configure Apache Geode & Pivotal GemFire Logging
+=== Configure Apache Geode Logging
 
-So, how do you configure logging for Apache Geode and Pivotal GemFire?
+So, how do you configure logging for Apache Geode?
 
-Effectively, 3 things are required to get Apache Geode or Pivotal GemFire to log output:
+Effectively, 3 things are required to get Apache Geode to log output:
 
 1) First, you must declare a logging provider on your Spring Boot application classpath (e.g. _Logback_).
 
@@ -103,7 +103,7 @@ or bridges `java.util.logging` (JUL) and Apache Log4j to SLF4J.  However, you st
 configuration, such as a `logback.xml` file for _Logback_, to configure logging not only for your Spring Boot
 application, but also for Apache Geode as well.
 
-SBDG has simplified the setup of Apache Geode and Pivotal GemFire logging.  Simply declare the
+SBDG has simplified the setup of Apache Geode logging.  Simply declare the
 `org.springframework.geode:spring-geode-starter-logging` dependency on your Spring Boot application classpath!
 
 Unlike Apache Geode's default Log4j XML configuration file (i.e. `log4j2.xml`), SBDG's provided `logback.xml`
@@ -129,8 +129,8 @@ SBDG's _Logback_ configuration defines 3 Loggers to control the log output from 
 <logger name="org.jgroups" level="${spring.boot.data.gemfire.jgroups.log.level:-ERROR}"/>
 ----
 
-The `com.gemstone.gemfire` Logger is a legacy Logger covering old Pivotal GemFire bits still present in Apache Geode
-for backwards compatibility reasons.  This Logger's use should be largely unnecessary.
+The `com.gemstone.gemfire` Logger is a legacy Logger covering old VMware Tanzu GemFire bits still present
+in Apache Geode for backwards compatibility reasons.  This Logger's use should be largely unnecessary.
 
 The `org.apache.geode` Logger is the primary Logger used to control log output from all Apache Geode components
 during the runtime operation of Apache Geode.  Both this Logger and the legacy `com.gemstone.gemfire` Logger default
@@ -238,7 +238,7 @@ For example, you could compose both the _Logback_ `ConsoleAppender` and `FileApp
 .Composing multiple `Appenders`
 [source,java]
 ----
-ConsoleAppender<ILoggingEvent> consoleAppender = ...;
+ConsoleAppender<ILoggingEvent> consoleAppender = ... ;
 
 FileAppender<ILoggingEvent> fileAppender = ...;
 

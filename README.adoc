@@ -1,45 +1,45 @@
 image:https://api.travis-ci.org/spring-projects/spring-boot-data-geode.svg?branch=master["Build Status", link="https://travis-ci.org/spring-projects/spring-boot-data-geode"]
 
 [[about]]
-== Spring Boot for Apache Geode & Pivotal GemFire
+== Spring Boot for Apache Geode & VMware Tanzu GemFire
 
-_Spring Boot for Apache Geode & Pivotal GemFire_ extends https://projects.spring.io/spring-boot/[_Spring Boot_] with
+_Spring Boot for Apache Geode & VMware Tanzu GemFire_ extends https://projects.spring.io/spring-boot/[_Spring Boot_] with
 _auto-configuration_ support as well as other _convention or configuration_ features to simplify the development
-of _Spring_ applications using either https://geode.apache.org/[Apache Geode] or https://pivotal.io/pivotal-gemfire[Pivotal GemFire]
+of _Spring_ applications using either https://geode.apache.org/[Apache Geode] or https://pivotal.io/pivotal-gemfire[VMware Tanzu GemFire]
 in a _Spring_ context.
 
 This project builds on both https://github.com/spring-projects/spring-data-geode[_Spring Data for Apache Geode_]
-and https://projects.spring.io/spring-data-gemfire/[_Spring Data for Pivotal GemFire_]
+and https://projects.spring.io/spring-data-gemfire/[_Spring Data for VMware Tanzu GemFire_]
 as well as https://spring.io/projects/spring-boot[Spring Boot].
 
 [[project-goals]]
 === Project Goals
 
 This project adds _Spring Boot_ **auto-configuration** support for both https://geode.apache.org/[Apache Geode]
-and https://pivotal.io/pivotal-gemfire[Pivotal GemFire].
+and https://pivotal.io/pivotal-gemfire[VMware Tanzu GemFire].
 
 Among other things, this project builds on https://projects.spring.io/spring-boot/[_Spring Boot_]
-as well as https://projects.spring.io/spring-data-gemfire/[_Spring Data for Apache Geode & Pivotal GemFire_]
+as well as https://projects.spring.io/spring-data-gemfire/[_Spring Data for Apache Geode & VMware Tanzu GemFire_]
 and additionally offers...
 
-1. _Auto-configures_ an _Apache Geode_ or _Pivotal GemFire_ (PCC)
+1. _Auto-configures_ an _Apache Geode_ or _VMware Tanzu GemFire_ (PCC)
 https://geode.apache.org/releases/latest/javadoc/org/apache/geode/cache/client/ClientCache.html[ClientCache]
-instance automatically when either _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_
+instance automatically when either _Spring Data for Apache Geode_ or _Spring Data for VMware Tanzu GemFire_
 are on the application's CLASSPATH.
 
-2. _Auto-configures_ either _Apache Geode_ or _Pivotal GemFire_ (PCC) as a _caching provider_ in
+2. _Auto-configures_ either _Apache Geode_ or _VMware Tanzu GemFire_ (PCC) as a _caching provider_ in
 https://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#cache[_Spring's Cache Abstraction_]
-when either _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_ are on the application's CLASSPATH.
+when either _Spring Data for Apache Geode_ or _Spring Data for VMware Tanzu GemFire_ are on the application's CLASSPATH.
 
-3. _Auto-configures_ _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_
+3. _Auto-configures_ _Spring Data for Apache Geode_ or _Spring Data for VMware Tanzu GemFire_
 https://docs.spring.io/spring-data-gemfire/docs/current/reference/html/#gemfire-repositories[Repositories]
-when _Spring Data for Apache Geode_ or _Spring Data for Pivotal GemFire_ are on the application's CLASSPATH
+when _Spring Data for Apache Geode_ or _Spring Data for VMware Tanzu GemFire_ are on the application's CLASSPATH
 and _Spring Boot_ detects SDG _Repositories_ in your _Spring Boot_ application.
 
-4. Provides additional support for _Spring Boot_/_Spring Data for Apache Geode_/_Pivotal GemFire_ applications
+4. Provides additional support for _Spring Boot_/_Spring Data for Apache Geode_/_VMware Tanzu GemFire_ applications
 deployed to PCF using Pivotal Cloud Cache (PCC).  Additionally, if your application requires (HTTP) Session State
 Caching services, you can also take advantage of
-https://github.com/spring-projects/spring-session-data-geode[_Spring Session for Apache Geode/Pivotal GemFire_].
+https://github.com/spring-projects/spring-session-data-geode[_Spring Session for Apache Geode/VMware Tanzu GemFire_].
 
 This, along with many other benefits, are provided by this project.
 
@@ -66,17 +66,17 @@ This, along with many other benefits, are provided by this project.
 === Examples
 
 The single, most relevant "_source of truth_" on how to get started quickly and effectively, using Spring Boot
-for Apache Geode & Pivotal GemFire (SBDG) to solve problems, is to start with the
+for Apache Geode & VMware Tanzu GemFire (SBDG) to solve problems, is to start with the
 https://docs.spring.io/spring-boot-data-geode-build/current/reference/html5/#geode-samples[Samples].
 There, you will find different examples with documentation and code showing you how to use SBDG to appropriately
 handle specific application concerns, like Caching.
 
 You can find an example of using SBDG in the Pivotal Cloud Cache (PCC) https://github.com/pivotal-cf/PCC-Sample-App-PizzaStore[Pizza Store]
-GitHub repository, which is a Spring Boot, Pivotal GemFire `ClientCache` application that connects to PCC when the app
+GitHub repository, which is a Spring Boot, VMware Tanzu GemFire `ClientCache` application that connects to PCC when the app
 is deployed to PCF.
 
 The https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example] found in the
-_Contacts Application Reference Implementation_ for _Spring Data for Apache Geode & Pivotal GemFire_ (SDG) uses SBDG
+_Contacts Application Reference Implementation_ for _Spring Data for Apache Geode & VMware Tanzu GemFire_ (SDG) uses SBDG
 to manage Books in a _System of Record_ Use Case.
 
 Then, there is a series of examples that walks a user through a series of steps starting by building a simple,
@@ -112,5 +112,5 @@ Please see our https://github.com/spring-projects/spring-boot-data-geode/securit
 [[license]]
 == License
 
-_Spring Boot_, _Spring Boot for Apache Geode_ and _Spring Boot for Pivotal GemFire_ is Open Source Software
+_Spring Boot_, _Spring Boot for Apache Geode_ and _Spring Boot for VMware Tanzu GemFire_ is Open Source Software
 released under the https://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].

@@ -35,10 +35,9 @@ import org.springframework.session.data.gemfire.config.annotation.web.http.GemFi
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration Tests asserting the configuration of Spring Session using Spring Boot's
+ * Integration Tests asserting the configuration of Spring Session using Spring Boot'
  * {@literal spring.session.store-type} configuration property set to {@literal none}
- * and assert neither Apache Geode nor Pivotal GemFire was configured as the Session
- * state management provider.
+ * and assert Apache Geode was not configured as the Session state management provider.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache

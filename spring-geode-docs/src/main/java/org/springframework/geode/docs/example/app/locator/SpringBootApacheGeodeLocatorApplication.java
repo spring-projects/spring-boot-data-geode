@@ -30,7 +30,7 @@ import org.springframework.geode.config.annotation.UseLocators;
 
 /**
  * The {@link SpringBootApacheGeodeLocatorApplication} class is a Spring Boot application that configures and bootstraps
- * an Apache Geode or Pivotal GemFire {@link Locator} application JVM process.
+ * an Apache Geode {@link Locator} application JVM process.
  *
  * @author John Blum
  * @see org.apache.geode.distributed.Locator

@@ -1,4 +1,4 @@
-<productname>Spring Boot for Apache Geode &amp; Pivotal GemFire</productname>
+<productname>Spring Boot for Apache Geode &amp; VMware Tanzu GemFire</productname>
 <releaseinfo>{spring-boot-data-geode-version}</releaseinfo>
 <copyright>
 <year>2020</year>

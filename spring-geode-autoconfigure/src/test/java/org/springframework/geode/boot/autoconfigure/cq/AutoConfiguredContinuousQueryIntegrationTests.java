@@ -54,7 +54,7 @@ import example.geode.query.cq.event.TemperatureReading;
 import example.geode.query.cq.event.TemperatureReadingsContinuousQueriesHandler;
 
 /**
- * Integration Tests testing the auto-configuration of Apache Geode/Pivotal GemFire Continuous Query.
+ * Integration Tests testing the auto-configuration of Apache Geode Continuous Query.
  *
  * @author John Blum
  * @see org.junit.Test

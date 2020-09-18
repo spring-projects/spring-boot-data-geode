@@ -32,8 +32,8 @@ import org.springframework.session.data.gemfire.config.annotation.web.http.GemFi
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} class used to configure Spring Boot
  * {@link ConfigurationProperties @ConfigurationProperites} classes and beans from the Spring {@link Environment}
- * containing Spring Session configuration properties used to configure either Apache Geode or Pivotal GemFire
- * to manage (HTTP) Session state.
+ * containing Spring Session configuration properties used to configure either Apache Geode to manage (HTTP) Session
+ * state.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache

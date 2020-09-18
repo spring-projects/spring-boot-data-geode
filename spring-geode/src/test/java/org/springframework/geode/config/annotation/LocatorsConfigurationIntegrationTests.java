@@ -162,7 +162,7 @@ public class LocatorsConfigurationIntegrationTests extends SpringApplicationCont
 	}
 
 	// TODO: replace with STDG when STDG is rebased on SD[G] Moore/2.2 and STDG includes dedicated mocking support
-	//  for Apache Geode/Pivotal GemFire Locator creation using SDG's o.s.d.g.LocatorFactoryBean
+	//  for Apache Geode Locator creation using SDG's o.s.d.g.LocatorFactoryBean
 	@EnableGemFireMockObjects
 	@PeerCacheApplication(logLevel = "error")
 	@UseLocators(locators = "mailbox[11235],skullbox[12480]", remoteLocators = "remotehost[10334]")

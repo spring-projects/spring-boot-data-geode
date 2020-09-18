@@ -1,6 +1,6 @@
-= Contributing to Spring Boot for Apache Geode & Pivotal GemFire
+= Contributing to Spring Boot for Apache Geode & VMware Tanzu GemFire
 
-Spring Boot for Apache Geode & Pivotal GemFire (SBDG) is released under the Apache 2.0 license. If you would like to
+Spring Boot for Apache Geode & VMware Tanzu GemFire (SBDG) is released under the Apache 2.0 license. If you would like to
 contribute something, or simply want to hack on the code this document should help you get started.
 
 == Sign the Contributor License Agreement

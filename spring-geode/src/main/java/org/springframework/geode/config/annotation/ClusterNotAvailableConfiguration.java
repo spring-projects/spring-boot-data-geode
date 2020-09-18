@@ -39,7 +39,7 @@ import org.springframework.lang.Nullable;
 
 /**
  * The {@link ClusterNotAvailableConfiguration} class is a Spring {@link Configuration @Configuration} class that
- * enables configuration when an Apache Geode or Pivotal GemFire cluster of servers is not available.
+ * enables configuration when an Apache Geode cluster of servers is not available.
  *
  * @author John Blum
  * @see org.springframework.beans.factory.config.BeanPostProcessor

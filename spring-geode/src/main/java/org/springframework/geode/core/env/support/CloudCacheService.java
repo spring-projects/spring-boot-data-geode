@@ -69,10 +69,10 @@ public class CloudCacheService extends Service {
 	}
 
 	/**
-	 * Returns an {@link Optional} Gfsh {@link URL}, if configured, used to connect to Pivotal GemFire's
+	 * Returns an {@link Optional} Gfsh {@link URL}, if configured, used to connect to Apache Geode's
 	 * Management REST API (service).
 	 *
-	 * @return an {@link Optional} Gfsh {@link URL} used to connect to Pivotal GemFire's Management REST API (service).
+	 * @return an {@link Optional} Gfsh {@link URL} used to connect to Apache Geode's Management REST API (service).
 	 * @see #withGfshUrl(URL)
 	 * @see java.util.Optional
 	 * @see java.net.URL
@@ -82,11 +82,11 @@ public class CloudCacheService extends Service {
 	}
 
 	/**
-	 * Returns an {@link Optional} {@link String} containing the list of Pivotal GemFire Locator network endpoints.
+	 * Returns an {@link Optional} {@link String} containing the list of Apache Geode Locator network endpoints.
 	 *
 	 * The format of the {@link String}, if present, is {@literal host1[port1],host2[port2], ...,hostN[portN]}.
 	 *
-	 * @return an {@link Optional} {@link String} containing the list of Pivotal GemFire Locator network endpoints.
+	 * @return an {@link Optional} {@link String} containing the list of Apache Geode Locator network endpoints.
 	 * @see #withLocators(String)
 	 */
 	public Optional<String> getLocators() {
@@ -96,11 +96,11 @@ public class CloudCacheService extends Service {
 	}
 
 	/**
-	 * Returns a {@link List} of Pivotal GemFire Locator network endpoints.
+	 * Returns a {@link List} of Apache Geode Locator network endpoints.
 	 *
 	 * Returns an {@link Collections#emptyList() empty List} if no Locators were configured.
 	 *
-	 * @return a {@link List} of Pivotal GemFire Locator network endpoints.
+	 * @return a {@link List} of Apache Geode Locator network endpoints.
 	 * @see #getLocators()
 	 */
 	public List<Locator> getLocatorList() {
@@ -121,10 +121,10 @@ public class CloudCacheService extends Service {
 	}
 
 	/**
-	 * Builder method used to configure the Gfsh {@link URL} to connect to the Pivotal GemFire
+	 * Builder method used to configure the Gfsh {@link URL} to connect to the Apache Geode
 	 * Management REST API (service).
 	 *
-	 * @param gfshUrl {@link URL} used to connect to the Pivotal GemFire Management REST API (service).
+	 * @param gfshUrl {@link URL} used to connect to the Apache Geode Management REST API (service).
 	 * @return this {@link CloudCacheService}.
 	 * @see #getGfshUrl()
 	 */

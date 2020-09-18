@@ -1,6 +1,6 @@
 [[geode-configuration-gemfire-properties]]
 == Using Geode Properties
-:gemfire-name: Pivotal GemFire
+:gemfire-name: VMWare Tanzu GemFire
 :geode-name: Apache Geode
 
 As of Spring Boot for {geode-name} & {gemfire-name} (SBDG) 1.3, it is now possible to declare {geode-name}

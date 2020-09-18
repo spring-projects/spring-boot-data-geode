@@ -42,11 +42,10 @@ import org.springframework.session.data.gemfire.config.annotation.web.http.GemFi
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration Tests for auto-configuration of Spring Session using either Apache Geode or Pivotal GemFire
- * as the {@link Session} state management provider.
+ * Integration Tests for auto-configuration of Spring Session using either Apache Geode as the {@link Session} state
+ * management provider.
  *
- * This test asserts that the Spring Boot auto-configuration properly configures Spring Session
- * with either Apache Geode or Pivotal GemFire
+ * This test asserts that the Spring Boot auto-configuration properly configures Spring Session with Apache Geode.
  *
  * @author John Blum
  * @see org.junit.Test

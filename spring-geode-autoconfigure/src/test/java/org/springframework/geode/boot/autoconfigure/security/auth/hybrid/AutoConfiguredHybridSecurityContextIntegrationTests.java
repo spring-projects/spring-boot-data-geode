@@ -42,8 +42,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * Pivotal Cloud Cache (PCC) service instance.
  *
  * This Use Case is common when users want to deploy their Spring Boot, {@link ClientCache} apps to
- * Pivotal CloudFoundry (PCF) however, want to connect those apps to an external Apache Geode or Pivotal GemFire
- * cluster.
+ * Pivotal CloudFoundry (PCF) however, want to connect those apps to an external Apache Geode cluster.
  *
  * @author John Blum
  * @see java.util.Properties

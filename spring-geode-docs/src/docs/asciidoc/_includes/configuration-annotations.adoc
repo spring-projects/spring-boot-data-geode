@@ -1,31 +1,30 @@
 [[geode-auto-configuration-annotations]]
 == Auto-configuration vs. Annotation-based configuration
 
-The question most often asked is, "_What Spring Data for Apache Geode/Pivotal GemFire annotations can I use,
-or must I use, when developing Apache Geode or Pivotal GemFire applications with Spring Boot?_"
+The question most often asked is, "_What Spring Data for Apache Geode annotations can I use, or must I use,
+when developing Apache Geode applications with Spring Boot?_"
 
 This section will answer this question and more.
 
-Readers should refer to the complimentary sample, link:guides/boot-configuration.html[Spring Boot Auto-configuration for Apache Geode & Pivotal GemFire],
-which showcases the _auto-configuration_ provided by Spring Boot for Apache Geode/Pivotal GemFire in action.
+Readers should refer to the complimentary sample, link:guides/boot-configuration.html[Spring Boot Auto-configuration for Apache Geode],
+which showcases the _auto-configuration_ provided by Spring Boot for Apache Geode in action.
 
 [[geode-autoconfiguration-annotations-background]]
 === Background
 
 To help answer this question, we must start by reviewing the complete collection of available
-Spring Data for Apache Geode/Pivotal GemFire (SDG) annotations.  These annotations are provided in the
+Spring Data for Apache Geode (SDG) annotations.  These annotations are provided in the
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/package-summary.html[org.springframework.data.gemfire.config.annotation]
 package. Most of the pertinent annotations begin with `@Enable...`, except for the base annotations:
 `@ClientCacheApplication`, `@PeerCacheApplication` and `@CacheServerApplication`.
 
-By extension, Spring Boot for Apache Geode/Pivotal GemFire (SBDG) builds on SDG's Annotation-based configuration model
-to implement _auto-configuration_ and apply Spring Boot's core concepts, like "_convention over configuration_",
-enabling GemFire/Geode applications to be built with Spring Boot reliably, quickly and easily.
+By extension, Spring Boot for Apache Geode (SBDG) builds on SDG's Annotation-based configuration model to implement
+_auto-configuration_ and apply Spring Boot's core concepts, like "_convention over configuration_", enabling Apache
+Geode applications to be built with Spring Boot reliably, quickly and easily.
 
 SDG provides this Annotation-based configuration model to, first and foremost, give application developers "_choice_"
-when building Spring applications using either Apache Geode or Pivotal GemFire. SDG makes no assumptions about what
-application developers are trying to do and fails fast anytime the configuration is ambiguous, giving users immediate
-feedback.
+when building Spring applications using Apache Geode. SDG makes no assumptions about what application developers are
+trying to do and fails fast anytime the configuration is ambiguous, giving users immediate feedback.
 
 Second, SDG's Annotations were meant to get application developers up and running quickly and reliably with ease.  SDG
 accomplishes this by applying sensible defaults so application developers do not need to know, or even have to learn,
@@ -84,8 +83,8 @@ By default, SBDG provides you with a `ClientCache` instance.  Technically, SBDG 
 an auto-configuration class with `@ClientCacheApplication`, internally.
 
 It is by convention that we assume most application developers' will be developing Spring Boot applications
-using Apache Geode or Pivotal GemFire as "client" applications in GemFire/Geode's client/server topology. This is
-especially true as users migrate their applications to a managed environment, such as Pivotal CloudFoundry (PCF)
+using Apache Geode as "client" applications in GemFire/Geode's client/server topology. This is especially true
+as users migrate their applications to a managed environment, such as Pivotal CloudFoundry (PCF)
 using Pivotal Cloud Cache (PCC).
 
 Still, users are free to "override" the default settings and declare their Spring applications to be actual peer `Cache`
@@ -97,7 +96,7 @@ For example:
 ----
 @SpringBootApplication
 @CacheServerApplication
-class MySpringBootPeerCacheServerApplication { ... }
+class MySpringBootPeerCacheServerApplication {  }
 ----
 
 By declaring the `@CacheServerApplication` annotation, you effectively override the SBDG default. Therefore, SBDG
@@ -220,7 +219,7 @@ You can do that by defining each Region explicitly, or more conveniently, you ca
 ----
 @SpringBootApplication
 @EnableCachingDefinedRegions
-class Application { ... }
+class Application {  }
 ----
 
 `@EnableCachingDefinedRegions` is optional, provided for convenience, and complimentary to caching when used
@@ -275,7 +274,7 @@ class GemFireFunctions {
 
   @GemfireFunction
   Object exampleFunction(Object arg) {
-    ...
+    // ...
   }
 }
 ----

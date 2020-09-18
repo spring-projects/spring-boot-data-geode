@@ -1,17 +1,16 @@
 [[geode-repositories]]
 == Spring Data Repositories
 
-Using Spring Data Repositories with Apache Geode or Pivotal GemFire makes short work of data access operations when
-using either Apache Geode or Pivotal GemFire as your System of Record (SOR) to persist your application's state.
+Using Spring Data Repositories with Apache Geode makes short work of data access operations when using Apache Geode
+as your System of Record (SOR) to persist your application's state.
 
 {spring-data-commons-docs-html}/#repositories[Spring Data Repositories] provides a convenient and highly powerful way
 to define basic CRUD and simple query data access operations easily just by specifying the contract of those data access
 operations in a Java interface.
 
-Spring Boot for Apache Geode & Pivotal GemFire _auto-configures_ the Spring Data for Apache Geode/Pivotal GemFire
-{spring-data-geode-docs-html}/#gemfire-repositories[Repository extension] when either is declared on your application's
-classpath.  You do not need to do anything special to enable it.  Simply start coding your application-specific
-Repository interfaces and the way you go.
+Spring Boot for Apache Geode _auto-configures_ the Spring Data for Apache Geode {spring-data-geode-docs-html}/#gemfire-repositories[Repository extension]
+when declared on your application's classpath.  You do not need to do anything special to enable it.  Simply start
+coding your application-specific Repository interfaces and the way you go.
 
 For example:
 
@@ -83,5 +82,5 @@ class SpringBootApacheGeodeClientCacheApplication {
 ----
 
 Again, see Spring Data Commons' {spring-data-commons-docs-html}/#repositories[Repositories abstraction] in general,
-and Spring Data for Apache Geode/Pivotal GemFire {spring-data-geode-docs-html}/#gemfire-repositories[Repositories extension]
+and Spring Data for Apache Geode {spring-data-geode-docs-html}/#gemfire-repositories[Repositories extension]
 in particular, for more details.

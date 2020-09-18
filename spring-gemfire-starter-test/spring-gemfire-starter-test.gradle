@@ -1,7 +1,7 @@
 apply plugin: 'io.spring.convention.spring-module'
 apply from: MAVEN_POM_EDITOR_GRADLE
 
-description = "Spring Boot Test Starter for Pivotal GemFire"
+description = "Spring Boot Test Starter for VMware Tanzu GemFire"
 
 dependencies {
 

@@ -5,21 +5,20 @@ Arguably, the most invaluable of applications are those that can process a strea
 and intelligently react in near real-time to the countless changes in the data over time.  The most useful
 of frameworks are those that can make processing a stream of events as they happen, as easy as possible.
 
-Spring Boot for Apache Geode & Pivotal GemFire does just that, without users having to perform any complex setup
-or configure any necessary infrastructure components to enable such functionality.  Developers can simply define
-the criteria for the data they are interested in and implement a handler to process the stream of events
-as they occur.
+Spring Boot for Apache Geode does just that, without users having to perform any complex setup or configure any
+necessary infrastructure components to enable such functionality.  Developers can simply define the criteria for
+the data they are interested in and implement a handler to process the stream of events as they occur.
 
-Apache Geode & Pivotal GemFire make defining criteria for data of interests easy when using
+Apache Geode make defining criteria for data of interests easy when using
 {apache-geode-docs}/developing/continuous_querying/chapter_overview.html[Continuous Query (CQ)]. With CQ, you can
-express the criteria matching the data of interests using a query predicate.  Apache Geode & Pivotal GemFire implements
+express the criteria matching the data of interests using a query predicate.  Apache Geode implements
 the {apache-geode-docs}/developing/querying_basics/query_basics.html[Object Query Language (OQL)] for defining
 and executing queries.  OQL is not unlike SQL, and supports projections, query predicates, ordering and aggregates.
 And, when used in CQs, they execute continuously, firing events when the data changes in such ways as to match
 the criteria expressed in the query predicate.
 
-Spring Boot for Apache Geode/Pivotal GemFire combines the ease of expressing interests in data using an OQL
-query statement with implementing the listener handler callback, in 1 easy step.
+Spring Boot for Apache Geode combines the ease of expressing interests in data using an OQL query statement with
+implementing the listener handler callback, in 1 easy step.
 
 For example, suppose we want to perform some follow up action anytime a customer's financial loan application
 is either approved or denied.
@@ -38,7 +37,7 @@ class EligibilityDecision {
 
     private final Timespan timespan;
 
-    ...
+    // ...
 
     enum Status {
 
@@ -64,7 +63,7 @@ class EligibilityDecisionPostProcessor {
                  FROM /EligibilityDecisions decisions
                  WHERE decisions.getStatus().name().equalsIgnoreCase('APPROVED')")
     public void processApprovedDecisions(CqEvent event) {
-        ...
+        // ...
     }
 
     @ContinuousQuery(name = "DeniedDecisionsHandler",
@@ -72,7 +71,7 @@ class EligibilityDecisionPostProcessor {
                  FROM /EligibilityDecisions decisions
                  WHERE decisions.getStatus().name().equalsIgnoreCase('DENIED')")
     public void processDeniedDecisions(CqEvent event) {
-        ...
+        // ...
     }
 }
 ----
@@ -83,6 +82,5 @@ anyway you like.  And, because our Continuous Query handler class is a component
 `ApplicationContext`, you can auto-wire any other beans necessary to carry out the application's intended function.
 
 This is not unlike Spring's {spring-framework-docs}/integration.html#jms-annotated[Annotation-driven listener endpoints]
-used in (JMS) message listeners/handlers, except in Spring Boot for Apache Geode/Pivotal GemFire, you do not need to do
-anything special to enable this functionality.  Just declare the `@ContinuousQuery` annotation on any POJO method
-and off you go.
+used in (JMS) message listeners/handlers, except in Spring Boot for Apache Geode, you do not need to do anything special
+to enable this functionality.  Just declare the `@ContinuousQuery` annotation on any POJO method and off you go.

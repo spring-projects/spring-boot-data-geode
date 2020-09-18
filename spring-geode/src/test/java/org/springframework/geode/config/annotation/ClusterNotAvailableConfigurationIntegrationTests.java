@@ -43,7 +43,7 @@ import example.app.crm.service.CustomerService;
 
 /**
  * Integration Tests asserting the functionality and behavior of {@link EnableClusterAware}
- * and {@link ClusterNotAvailableConfiguration} when the Apache Geode (or Pivotal GemFire) cluster of servers
+ * and {@link ClusterNotAvailableConfiguration} when the Apache Geode cluster of servers
  * is not available.
  *
  * @author John Blum

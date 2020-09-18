@@ -26,7 +26,7 @@ import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 
 /**
- * Spring Boot {@link EnableAutoConfiguration Auto-Configuration} for Apache Geode and Pivotal GemFire logging.
+ * Spring Boot {@link EnableAutoConfiguration Auto-Configuration} for Apache Geode logging.
  *
  * @author John Blum
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration

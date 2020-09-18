@@ -65,8 +65,8 @@ import org.springframework.util.StringUtils;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} class used to configure a {@link GemfireTemplate}
- * for each Apache Geode / Pivotal GemFire {@link Region} declared/defined in
- * the Spring {@link ConfigurableApplicationContext} in order to perform {@link Region} data access operations.
+ * for each Apache Geode {@link Region} declared/defined in the Spring {@link ConfigurableApplicationContext}
+ * in order to perform {@link Region} data access operations.
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache

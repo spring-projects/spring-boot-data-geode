@@ -15,21 +15,20 @@ Additionally, when the computations are handled in parallel, across the cluster 
 can be performed much faster.  This typically involves intelligently organizing the data using various partitioning
 (a.k.a. sharding) strategies to uniformly balance the data set across the cluster.
 
-Well, both Apache Geode and Pivotal GemFire address this very important application concern in its
+Well, Apache Geode address this very important application concern in its
 {apache-geode-docs}/developing/function_exec/chapter_overview.html[Function Execution] framework.
 
-Spring Data for Apache Geode/Pivotal GemFire {spring-data-geode-docs-html}/#function-annotations[builds] on
-this Function Execution framework by enabling developers to {spring-data-geode-docs-html}/#function-implementation[implement]
+Spring Data for Apache Geode {spring-data-geode-docs-html}/#function-annotations[builds] on this Function Execution
+framework by enabling developers to {spring-data-geode-docs-html}/#function-implementation[implement]
 and {spring-data-geode-docs-html}/#function-execution[execute] GemFire/Geode Functions using a very simple POJO-based,
 annotation configuration model.
 
 TIP: See {spring-data-geode-docs-html}/#_implementation_vs_execution[here] for the difference between
 Function implementation & executions.
 
-Taking this 1 step further, Spring Boot for Apache Geode/Pivotal GemFire _auto-configures_ and enables both Function
-implementation and execution out-of-the-box.  Therefore, you can immediately begin writing Functions and invoking them
-without having to worry about all the necessary plumbing to begin with.  You can rest assured that it will just work
-as expected.
+Taking this 1 step further, Spring Boot for Apache Geode _auto-configures_ and enables both Function implementation
+and execution out-of-the-box.  Therefore, you can immediately begin writing Functions and invoking them without having
+to worry about all the necessary plumbing to begin with.  You can rest assured that it will just work as expected.
 
 === Applying Functions
 
@@ -58,7 +57,7 @@ class EligibilityDeterminationFunction {
 
     @GemfireFunction(HA = true, hasResult = true, optimizeForWrite=true)
     public EligibilityDecision determineEligibility(FunctionContext functionContext, Person person, Timespan timespan) {
-        ...
+        // ...
     }
 }
 ----
@@ -97,7 +96,7 @@ class FinancialLoanApplicationService {
         this.execution = execution;
     }
 
-    @Cacheable("EligibilityDecisions", ...)
+    @Cacheable("EligibilityDecisions")
     EligibilityDecision processEligility(Person person, Timespan timespan) {
         return this.execution.determineEligibility(person, timespan);
     }
@@ -105,6 +104,6 @@ class FinancialLoanApplicationService {
 ----
 
 Just like caching, no addition configuration is required to enable and find your application Function implementations
-and executions. Simply build and run.  Spring Boot for Apache Geode/Pivotal GemFire handles the rest.
+and executions. Simply build and run.  Spring Boot for Apache Geode handles the rest.
 
 TIP: It is common to implement and register your application Functions on the server and execute them from the client.

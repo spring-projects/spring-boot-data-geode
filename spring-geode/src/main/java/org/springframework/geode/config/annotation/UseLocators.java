@@ -32,7 +32,7 @@ import org.springframework.core.annotation.AliasFor;
 
 /**
  * The {@link UseLocators} annotation configures the {@literal locators} and/or {@literal remote-locators}
- * Apache Geode/Pivotal GemFire properties used by a {@link Cache peer Cache member} to join a cluster of servers
+ * Apache Geode properties used by a {@link Cache peer Cache member} to join a cluster of servers
  * when using the P2P topology as well as when configuring the multi-site, WAN topology.
  *
  * @author John Blum

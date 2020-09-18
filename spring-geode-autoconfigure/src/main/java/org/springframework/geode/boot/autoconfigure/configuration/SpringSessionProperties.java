@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.boot.autoconfigure.configuration;
 
 import org.apache.geode.cache.RegionShortcut;
@@ -23,9 +22,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * Spring Boot {@link ConfigurationProperties} used to configure Spring Session for Apache Geode or Pivotal GemFire
- * (SSDG) in order to manage (HTTP) Session state with Spring Session, backed by either Apache Geode
- * or Pivotal GemFire.
+ * Spring Boot {@link ConfigurationProperties} used to configure Spring Session for Apache Geode (SSDG) in order to
+ * manage (HTTP) Session state with Spring Session, backed by Apache Geode.
  *
  * @author John Blum
  * @see org.springframework.boot.context.properties.ConfigurationProperties

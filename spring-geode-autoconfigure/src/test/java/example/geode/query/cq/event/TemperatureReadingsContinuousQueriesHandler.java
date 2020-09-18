@@ -26,7 +26,7 @@ import org.apache.geode.cache.query.CqEvent;
 import org.springframework.data.gemfire.listener.annotation.ContinuousQuery;
 
 /**
- * The {@link TemperatureReadingsContinuousQueriesHandler} class is a POJO containing Apache Geode/Pivotal GemFire
+ * The {@link TemperatureReadingsContinuousQueriesHandler} class is a POJO containing Apache Geode
  * Continuous Query (CQ) definitions.
  *
  * @author John Blum

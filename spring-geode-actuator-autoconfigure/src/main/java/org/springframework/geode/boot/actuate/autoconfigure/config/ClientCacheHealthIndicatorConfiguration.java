@@ -33,7 +33,7 @@ import org.springframework.geode.boot.actuate.GeodeContinuousQueriesHealthIndica
 import org.springframework.geode.boot.actuate.GeodePoolsHealthIndicator;
 
 /**
- * Spring {@link Configuration @Configuration} class declaring Spring beans for Apache Geode/Pivotal GemFire
+ * Spring {@link Configuration @Configuration} class declaring Spring beans for Apache Geode
  * {@link ClientCache} {@link HealthIndicator HealthIndicators}.
  *
  * @author John Blum

@@ -88,7 +88,7 @@
     {
       "name": "session",
       "type": "org.springframework.geode.boot.autoconfigure.configuration.support.SpringSessionProperties",
-      "description": "Configuration properties for Spring Session backed by Apache Geode or Pivotal GemFire."
+      "description": "Configuration properties for Spring Session backed by Apache Geode."
     },
     {
       "name": "ssl",
@@ -100,7 +100,7 @@
     {
       "name": "spring.data.gemfire.name",
       "type": "java.lang.String",
-      "description": "Name of the Apache Geode / Pivotal GemFire member."
+      "description": "Name of the Apache Geode member."
     },
     {
       "name": "spring.data.gemfire.locators",
@@ -149,7 +149,7 @@
       "name": "spring.data.gemfire.cache.log-level",
       "type": "java.lang.String",
       "default": "config",
-      "description": "Configure the log-level of an Apache Geode / Pivotal GemFire cache."
+      "description": "Configure the log-level of an Apache Geode cache."
     },
     {
       "name": "spring.data.gemfire.cache.name",
@@ -405,7 +405,7 @@
       "name": "spring.data.gemfire.logging.level",
       "type": "java.lang.String",
       "default": "config",
-      "description": "Configures the log-level of an Apache Geode / Pivotal GemFire cache; Alias for 'spring.data.gemfire.cache.log-level'."
+      "description": "Configures the log-level of an Apache Geode cache; Alias for 'spring.data.gemfire.cache.log-level'."
     },
     {
       "name": "spring.data.gemfire.logging.log-disk-space-limit",
@@ -840,7 +840,7 @@
       "name": "spring.data.gemfire.service.http.dev-rest-api-start",
       "type": "java.lang.Boolean",
       "default": false,
-      "description": "Configures whether to start the Developer REST API web service. A full installation of Apache Geode or Pivotal GemFire is required and you must set the $GEODE environment variable."
+      "description": "Configures whether to start the Developer REST API web service. A full installation of Apache Geode is required and you must set the $GEODE environment variable."
     },
     {
       "name": "spring.data.gemfire.service.memcached.port",

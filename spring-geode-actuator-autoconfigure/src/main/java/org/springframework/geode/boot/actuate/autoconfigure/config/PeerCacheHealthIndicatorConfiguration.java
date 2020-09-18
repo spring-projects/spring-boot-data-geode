@@ -43,8 +43,8 @@ import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.lang.Nullable;
 
 /**
- * Spring {@link Configuration @Configuration} class declaring Spring beans for Apache Geode/Pivotal GemFire
- * peer {@link Cache} {@link HealthIndicator HealthIndicators}.
+ * Spring {@link Configuration @Configuration} class declaring Spring beans for Apache Geode peer {@link Cache}
+ * {@link HealthIndicator HealthIndicators}.
  *
  * @author John Blum
  * @see org.apache.geode.cache.Cache

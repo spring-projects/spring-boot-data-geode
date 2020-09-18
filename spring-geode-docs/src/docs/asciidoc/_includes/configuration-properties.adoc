@@ -2,11 +2,11 @@
 == Configuration Metadata Reference
 
 The following 2 reference sections cover documented and well-known properties recognized and processed by
-_Spring Data for Apache Geode/Pivotal GemFire_ (SDG) as well as _Spring Session for Apache Geode/Pivotal GemFire_ (SSDG).
+_Spring Data for Apache Geode/_ (SDG) as well as _Spring Session for Apache Geode_ (SSDG).
 
 These properties may be used in Spring Boot `application.properties` files, or as JVM System properties, to configure
-different aspects of or enable individual features of Apache Geode or Pivotal GemFire in a Spring application.
-When combined with the power of Spring Boot, magical things begin to happen.
+different aspects of or enable individual features of Apache Geode in a Spring application. When combined with
+the power of Spring Boot, magical things begin to happen.
 
 [[geode-configuration-metadata-springdata]]
 === Spring Data Based Properties
@@ -20,7 +20,7 @@ property, use `spring.data.gemfire.cache.copy-on-read` in Spring Boot `applicati
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| name  | Name of the Apache Geode / Pivotal GemFire member. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
+| name  | Name of the Apache Geode member. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
 | locators | Comma-delimited list of Locator endpoints formatted as: locator1[port1],...,locatorN[portN]. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#locators--[PeerCacheApplication.locators]
 | use-bean-factory-locator | Enable the SDG BeanFactoryLocator when mixing Spring config with GemFire/Geode native config (e.g. cache.xml) and you wish to configure GemFire objects declared in cache.xml with Spring.  | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#useBeanFactoryLocator--[ClientCacheApplication.useBeanFactoryLocator]
 
@@ -38,7 +38,7 @@ property, use `spring.data.gemfire.cache.copy-on-read` in Spring Boot `applicati
 | cache.enable-auto-region-lookup | Configure whether to lookup Regions configured in GemFire/Geode native config and declare them as Spring beans. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAutoRegionLookup.html#enabled--[EnableAutoRegionLookup.enable]
 | cache.eviction-heap-percentage | Percentage of heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionHeapPercentage--[ClientCacheApplication.evictionHeapPercentage]
 | cache.eviction-off-heap-percentage | Percentage of off-heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionOffHeapPercentage--[ClientCacheApplication.evictionOffHeapPercentage]
-| cache.log-level | Configure the log-level of an Apache Geode / Pivotal GemFire cache. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#logLevel--[ClientCacheApplication.logLevel]
+| cache.log-level | Configure the log-level of an Apache Geode cache. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#logLevel--[ClientCacheApplication.logLevel]
 | cache.name | Alias for 'spring.data.gemfire.name'. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
 | cache.compression.bean-name | Name of a Spring bean implementing org.apache.geode.compression.Compressor. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#compressorBeanName--[EnableCompression.compressorBeanName]
 | cache.compression.region-names | Comma-delimited list of Region names for which compression will be configured. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#regionNames--[EnableCompression.regionNames]
@@ -188,7 +188,7 @@ specified location and limited to the defined size.
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| logging.level | Configures the log-level of an Apache Geode / Pivotal GemFire cache; Alias for 'spring.data.gemfire.cache.log-level'. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logLevel--[EnableLogging.logLevel]
+| logging.level | Configures the log-level of an Apache Geode cache; Alias for 'spring.data.gemfire.cache.log-level'. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logLevel--[EnableLogging.logLevel]
 | logging.log-disk-space-limit | Configures the amount of disk space allowed to store log files. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logDiskSpaceLimit--[EnableLogging.logDiskSpaceLimit]
 | logging.log-file | Configures the pathname of the log file used to log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFile--[EnableLogging.logFile]
 | logging.log-file-size | Configures the maximum size of a log file before the log file is rolled. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFileSizeLimit--[EnableLogging.logFileSize]
@@ -328,7 +328,7 @@ specified location and limited to the defined size.
 | service.http.bind-address | Configures the IP address or hostname of the system NIC used by the embedded HTTP server to bind and listen for HTTP(S) connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#bindAddress--[EnableHttpService.bindAddress]
 | service.http.port | Configures the port used by the embedded HTTP server to listen for HTTP(S) connections. | 7070 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#port--[EnableHttpService.port]
 | service.http.ssl-require-authentication | Configures whether 2-way HTTP authentication is required. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#sslRequireAuthentication--[EnableHttpService.sslRequireAuthentication]
-| service.http.dev-rest-api-start | Configures whether to start the Developer REST API web service. A full installation of Apache Geode or Pivotal GemFire is required and you must set the $GEODE environment variable. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#startDeveloperRestApi--[EnableHttpService.startDeveloperRestApi]
+| service.http.dev-rest-api-start | Configures whether to start the Developer REST API web service. A full installation of Apache Geode is required and you must set the $GEODE environment variable. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#startDeveloperRestApi--[EnableHttpService.startDeveloperRestApi]
 | service.memcached.port | Configures the port of the embedded Memcached server (service). | 11211| {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#port--[EnableMemcachedServer.port]
 | service.memcached.protocol | Configures the protocol used by the embedded Memcached server (service). | ASCII | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#protocol--[EnableMemcachedServer.protocol]
 | service.redis.bind-address | Configures the IP address or hostname of the system NIC used by the embedded Redis server to bind an listen for connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableRedisServer.html#bindAddress--[EnableRedis.bindAddress]
@@ -366,6 +366,5 @@ While it is not recommended to use Apache Geode properties directly in your Spri
 you from doing so.  A complete reference to the Apache Geode specific properties can be found
 {apache-geode-docs}/reference/topics/gemfire_properties.html[here].
 
-WARNING: Apache Geode (and Pivotal GemFire) are very strict about the properties that maybe specified in
-a `gemfire.properties` file.  You cannot mix Spring properties with `gemfire.*` properties in an Apache Geode
-or Pivotal GemFire, `gemfire.properties` file.
+WARNING: Apache Geode is very strict about the properties that maybe specified in a `gemfire.properties` file.  You
+cannot mix Spring properties with `gemfire.*` properties in an Apache Geode `gemfire.properties` file.

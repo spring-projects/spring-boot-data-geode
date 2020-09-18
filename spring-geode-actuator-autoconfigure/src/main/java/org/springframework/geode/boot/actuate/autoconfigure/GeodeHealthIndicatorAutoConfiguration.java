@@ -32,7 +32,7 @@ import org.springframework.geode.boot.actuate.autoconfigure.config.PeerCacheHeal
 import org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration;
 
 /**
- * Spring Boot {@link EnableAutoConfiguration auto-configuration} for Apache Geode/Pivotal GemFire
+ * Spring Boot {@link EnableAutoConfiguration auto-configuration} for Apache Geode
  * {@link HealthIndicator HealthIndicators}.
  *
  * @author John Blum

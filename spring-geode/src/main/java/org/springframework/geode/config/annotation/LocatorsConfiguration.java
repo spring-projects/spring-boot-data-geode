@@ -21,9 +21,6 @@ import java.util.Properties;
 
 import org.apache.geode.cache.Cache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
@@ -35,10 +32,13 @@ import org.springframework.data.gemfire.config.annotation.PeerCacheConfigurer;
 import org.springframework.data.gemfire.config.annotation.support.AbstractAnnotationConfigSupport;
 import org.springframework.util.StringUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The {@link LocatorsConfiguration} class is a Spring {@link Configuration} class used to configure Apache Geode
- * or Pivotal GemFire's {@literal locators} and/or {@literal remote-locators} properties used by a
- * {@link Cache peer Cache member} to join a cluster of servers when using the P2P topology.
+ * {@literal locators} and/or {@literal remote-locators} properties used by a {@link Cache peer Cache member}
+ * to join a cluster of servers when using the P2P topology.
  *
  * The {@literal remote-locators} property is used to configure the Locators that a cluster will use in order to
  * connect to a remote site in a multi-site (WAN) topology configuration.  To use Locators in a WAN configuration,

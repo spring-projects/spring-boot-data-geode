@@ -20,11 +20,11 @@ the core Spring Framework.
 
 Other Spring Data modules, such as Spring Data Redis, offer the
 https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html[RedisTemplate],
-and Spring Data for Apache Geode/Pivotal GemFire (SDG) offers the
+and Spring Data for Apache Geode (SDG) offers the
 {spring-data-gemfire-javadoc}/org/springframework/data/gemfire/GemfireTemplate.html[GemfireTemplate].
 
 The `GemfireTemplate` provides a highly consistent and familiar API to perform data access operations on Apache Geode
-or Pivotal GemFire cache `Regions`.
+cache `Regions`.
 
 `GemfireTemplate` offers:
 
@@ -33,8 +33,8 @@ or Pivotal GemFire cache `Regions`.
 3. Automatic enlistment in the presence of local, cache transactions.
 4. Protection from {apache-geode-javadoc}/org/apache/geode/cache/Region.html[Region API] breaking changes.
 
-Given these conveniences, Spring Boot for Apache Geode & Pivotal GemFire (SBDG) will auto-configure `GemfireTemplate`
-beans for each Region present in the GemFire/Geode cache.
+Given these conveniences, Spring Boot for Apache Geode (SBDG) will auto-configure `GemfireTemplate` beans for each
+Region present in the cache.
 
 Additionally, SBDG is careful not to create a `GemfireTemplate` if the user has already declared a `GemfireTemplate`
 bean in the Spring `ApplicationContext` for a given Region.
@@ -51,7 +51,7 @@ class GemFireConfiguration {
 
   @Bean("Example")
   ClientRegionFactoryBean<?, ?> exampleRegion (GemFireCache gemfireCache) {
-    ...
+    // ...
   }
 }
 ----
@@ -88,7 +88,7 @@ Given the following entity class:
 ----
 @Region("Customers")
 class Customer {
-  ...
+  // ...
 }
 ----
 
@@ -97,9 +97,9 @@ And configuration:
 [source,java]
 ----
 @Configuration
-@EnableEntityDefinedRegions(basePackageClasses = Customer.class}
+@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
 class GemFireConfiguration {
-  ...
+  // ...
 }
 ----
 
@@ -127,9 +127,8 @@ explicitly or implicitly, such as when using the `@EnableEntityDefineRegions` an
 SBDG auto-configures `GemfireTemplate` beans for Caching-defined Regions.
 
 When you are using Spring Framework's {spring-framework-docs}/integration.html#cache[Cache Abstraction] backed by
-either Apache Geode or Pivotal GemFire, 1 of the requirements is to configure Regions for each of the caches specified
-in the {spring-framework-docs}integration.html#cache-annotations[Caching Annotations] of your application service
-components.
+Apache Geode, 1 of the requirements is to configure Regions for each of the caches specified in the
+{spring-framework-docs}integration.html#cache-annotations[Caching Annotations] of your application service components.
 
 Fortunately, SBDG makes enabling and configuring caching easy and <<geode-caching-provider,automatic>> out-of-the-box.
 
@@ -183,8 +182,8 @@ when autowiring does not.
 [[geode-data-access-region-templates-native-defined]]
 === Native-defined Regions
 
-SBDG will even auto-configure `GemfireTemplate` beans for Regions defined using Apache Geode and Pivotal GemFire native
-configuration meta-data, such as `cache.xml`.
+SBDG will even auto-configure `GemfireTemplate` beans for Regions defined using Apache Geode native configuration
+metadata, such as `cache.xml`.
 
 Given the following GemFire/Geode native `cache.xml`:
 
@@ -208,7 +207,7 @@ And Spring configuration:
 @Configuration
 @EnableGemFireProperties(cacheXmlFile = "cache.xml")
 class GemFireConfiguration {
-  ...
+  // ...
 }
 ----
 
@@ -243,7 +242,7 @@ class GemFireConfiguration {
 
   @Bean
   public GemfireTemplate customersTemplate(GemFireCache cache) {
-    return new GemfireTemplate(cache.getRegion("/Customers");
+    return new GemfireTemplate(cache.getRegion("/Customers"));
   }
 }
 ----
@@ -254,7 +253,7 @@ Using our same Customers class, as above:
 ----
 @Region("Customers")
 class Customer {
-  ...
+  // ...
 }
 ----
 
@@ -278,7 +277,7 @@ class GemFireConfiguration {
 
   @Bean
   public GemfireTemplate vipCustomersTemplate(GemFireCache cache) {
-    return new GemfireTemplate(cache.getRegion("/Customers");
+    return new GemfireTemplate(cache.getRegion("/Customers"));
   }
 }
 ----

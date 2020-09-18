@@ -28,8 +28,8 @@ import org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer;
 import org.springframework.data.gemfire.config.annotation.PoolConfigurer;
 
 /**
- * A Spring {@link Configuration} class used to enable subscription on the Apache Geode & Pivotal GemFire
- * {@literal DEFAULT} {@link Pool} as well as the SDG {@literal gemfirePool} {@link Pool}, only.
+ * A Spring {@link Configuration} class used to enable subscription on the Apache Geode  {@literal DEFAULT} {@link Pool}
+ * as well as the SDG {@literal gemfirePool} {@link Pool}, only.
  *
  * @author John Blum
  * @see org.apache.geode.cache.client.Pool

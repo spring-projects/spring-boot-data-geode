@@ -1,5 +1,5 @@
 [[spring-boot-data-geode]]
-= Spring Boot for Apache Geode & Pivotal GemFire Reference Guide
+= Spring Boot for Apache Geode & VMware Tanzu GemFire Reference Guide
 John Blum
 :revdate: {localdate}
 :revnumber: {version}
@@ -19,6 +19,7 @@ John Blum
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
 :apache-geode-wiki: https://cwiki.apache.org/confluence/display/GEODE
+:pivotal-cloudcache-name: VMware Tanzu GemFire for VMs
 :pivotal-cloudcache-version: {pivotal-cloudcache-doc-version}
 :pivotal-cloudcache-docs: https://docs.pivotal.io/p-cloud-cache/{pivotal-cloudcache-version}
 :pivotal-cloudcache-website: https://pivotal.io/pivotal-cloud-cache
@@ -259,7 +260,3 @@ include::{include-dir}/cloudfoundry.adoc[]
 include::{include-dir}/docker.adoc[]
 include::{include-dir}/samples.adoc[]
 include::{include-dir}/appendix.adoc[]
-
-
-
-

@@ -168,7 +168,7 @@ include::{samples-dir}/caching/near/src/main/java/example/app/caching/near/serve
 ----
 
 TIP: For more information on configurating and bootstrapping a small cluster of {apache-geode-name} servers using Spring Boot,
-see link:../index.html#geode-cluster-configuration-bootstrapping[Running an {apache-geode-name} or Pivotal GemFire Cluster using Spring Boot].
+see link:../index.html#geode-cluster-configuration-bootstrapping[Running an {apache-geode-name} Cluster using Spring Boot].
 
 [[geode-samples-caching-near-example-client-side]]
 === Client-side Configuration
