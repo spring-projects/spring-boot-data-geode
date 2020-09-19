@@ -16,7 +16,7 @@ using https://geode.apache.org/[{geode-name}] in a _Spring_ context.
 
 This project builds on https://spring.io/projects/spring-boot[Spring Boot] along with
 https://github.com/spring-projects/spring-data-geode[_Spring Data for {geode-name}_] (SDG),
-https://github.com/spring-projects/spring-session-data-geode[_Spring Session for {geode-name}_] (SSDG),
+https://github.com/spring-projects/spring-session-data-geode[_Spring Session for {geode-name}_] (SSDG)
 and https://github.com/spring-projects/spring-test-data-geode[_Spring Test for {geode-name}_] (STDG).
 
 [[project-goals]]
@@ -72,7 +72,7 @@ This, along with many other benefits, are provided by this project.
 | `1.2.11.BUILD-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.2.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.2.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.2.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
 | `1.3.4.RELEASE`| https://docs.spring.io/spring-boot-data-geode-build/1.3.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.3.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.3.x/reference/html5/#geode-samples[Samples]
 | `1.3.5.BUILD-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.3.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.3.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.3.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
-| `1.4.0-M2`| https://docs.spring.io/spring-boot-data-geode-build/1.4.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x/reference/html5/#geode-samples[Samples]
+| `1.4.0-M3`| https://docs.spring.io/spring-boot-data-geode-build/1.4.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x/reference/html5/#geode-samples[Samples]
 | `1.4.0-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.4.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
 
 |===
