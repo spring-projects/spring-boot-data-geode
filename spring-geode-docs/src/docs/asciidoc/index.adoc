@@ -60,16 +60,16 @@ John Blum
 :spring-session-data-gemfire-docs: https://docs.spring.io/autorepo/docs/spring-session-data-geode-build/{spring-session-data-gemfire-version}/reference/html5
 :spring-session-data-gemfire-javadoc: https://docs.spring.io/autorepo/docs/spring-session-data-geode-build/{spring-session-data-gemfire-version}/api
 :spring-session-data-gemfire-website: https://spring.io/projects/spring-session-data-geode
-:spring-test-data-gemfire-website: https://github.com/spring-projects/spring-test-data-geode#spring-test-framework-for-apache-geode--pivotal-gemfire
+:spring-test-data-gemfire-website: https://github.com/spring-projects/spring-test-data-geode#spring-test-framework-for-apache-geode--vmware-tanzu-gemfire
 :wikipedia-docs: https://en.wikipedia.org/wiki
 
 
 [[abstract]]
 Welcome to _Spring Boot for {apache-geode-name} & {pivotal-gemfire-name}_.
 
-Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} provides the convenience of Spring Boot's _convention over configuration_
-approach using _auto-configuration_ with the Spring Framework's powerful abstractions and highly consistent programming
-model to truly simplify the development of {apache-geode-name} or {pivotal-gemfire-name} applications in a Spring context.
+Spring Boot for {apache-geode-name} provides the convenience of Spring Boot's _convention over configuration_ approach
+using _auto-configuration_ with the Spring Framework's powerful abstractions and highly consistent programming model to
+truly simplify the development of {apache-geode-name} or {pivotal-gemfire-name} applications in a Spring context.
 
 Secondarily, Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} aims to provide developers with a consistent
 experience whether building and running Spring Boot, {apache-geode-name} & {pivotal-gemfire-name} applications locally
@@ -110,6 +110,10 @@ which has been {spring-data-geode-docs-html}/#apis:continuous-query[extended] in
 including first-class {spring-data-geode-docs-html}/#bootstrap-annotation-config-pdx[configuration]
 and {spring-data-geode-docs-html}/#mapping.pdx-serializer[support] in SDGfootnote:SDG[].
 <<geode-data-serialization,Learn more>>.
+* _Data Initialization_ to quickly load (import) to hydrate the cache during application startup or write (export) data
+on application shutdown to move data between environments (e.g. TEST to DEV). <<geode-data-using,Learn more>>.
+* _Actuator_ - to gain insight into the runtime behavior and operation of your cache, whether a client or a peer.
+<<actuator,Learn more>>.
 * _Logging_ - quickly and conveniently enable or adjust {apache-geode-name} log levels in your Spring Boot application
 to gain insight into the runtime operations of the app as they occur.
 <<geode-logging,Learn more>>.
@@ -121,6 +125,8 @@ and {spring-data-geode-docs-html}/#bootstrap-annotation-config-ssl[SSL].
 <<geode-security,Learn more>>.
 * _HTTP Session state management_, by including Spring Session for {apache-geode-name} on your application's classpath.
 <<geode-session,Learn more>>.
+* _Testing_ - whether writing Unit or Integration Tests for Apache Geode in a Spring context, SBDG covers all
+your testing needs with the help of {spring-test-data-gemfire-website}[STDG].
 
 While Spring Data for {apache-geode-name} & {pivotal-gemfire-name} offers a simple, consistent, convenient
 and declarative approach to configure all these powerful {apache-geode-name} features, Spring Boot for {apache-geode-name}
