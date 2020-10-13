@@ -40,6 +40,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.jsontype.DefaultBaseTypeLimitingValidator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.junit.Before;
@@ -623,7 +624,8 @@ public class JsonCacheDataImporterExporterIntegrationTests extends SpringApplica
 				.identifiedAs(1L);
 
 			ObjectMapper objectMapper = newObjectMapper()
-				.activateDefaultTypingAsProperty(null, ObjectMapper.DefaultTyping.EVERYTHING, "@type");
+				.activateDefaultTypingAsProperty(new DefaultBaseTypeLimitingValidator(),
+					ObjectMapper.DefaultTyping.EVERYTHING, "@type");
 
 			String json = objectMapper.writeValueAsString(purchaseOrder);
 
