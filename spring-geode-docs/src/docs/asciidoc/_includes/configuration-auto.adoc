@@ -39,7 +39,7 @@ to see Spring Boot Auto-configuration for {geode-name} in action!
 You might ask how I can customize the _Auto-configuration_ provided by SBDG if I do not explicitly declare
 the annotation?
 
-For example, you mat want to customize the member's "_name_".  You know that the
+For example, you may want to customize the member's "_name_".  You know that the
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html[`@ClientCacheApplication`] annotation
 provides the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableGemFireProperties.html#name--[`name`] attribute
 so you can set the client member's "_name_".  But SBDG has already implicitly declared the `@ClientCacheApplication`
