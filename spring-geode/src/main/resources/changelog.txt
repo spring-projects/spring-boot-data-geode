@@ -4,6 +4,21 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.4.0.M4 (2020-10-21)
+----------------------------------------
+Upgrades SBDG to Spring Boot 2.4.0-M4.
+
+* Adapts SBDG to API contractual/behavioral (breaking) changes in Jackson introduced between 2.11.2 and 2.11.3.
+* Fixes documentation spelling, grammar and formatting errors.
+* Upgrades to Spring Framework 5.3.0-RC2.
+* Upgrades to Spring Boot 2.4.0-M4.
+* Upgrades to Spring Data for Apache Geode 2.4.0-RC2.
+* Upgrades to Spring Data BOM 2020.0.0-RC2 (Ockham-RC2).
+* Upgrades to Byte Buddy 1.10.17.
+* Upgrades to Gradle 6.7.
+* Upgrades to Mockito 3.5.15.
+
+
 Changes in version 1.4.0.M3 (2020-09-18)
 ----------------------------------------
 Upgrades SBDG to Spring Boot 2.4.0-M3.
