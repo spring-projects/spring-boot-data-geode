@@ -18,7 +18,7 @@ e.g. `log-level` no longer have any effect, regardless of whether the property (
 TIP: Refer to {geode-name}'s {apache-geode-docs}/reference/topics/gemfire_properties.html[Documentation]
 for a complete list of valid `Properties`, including the `Properties` used to configure logging.
 
-Unfortunately, this also means the _Spring Data for {geode-name} (SDG)
+Unfortunately, this also means the _Spring Data for {geode-name}_ (SDG)
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html[`@EnableLogging`]
 annotation no longer has any effect on {geode-name} logging either and is the reason it has been
 https://jira.spring.io/browse/DATAGEODE-299[deprecated]. The reason `@EnableLogging` no longer has any effect on logging
