@@ -83,6 +83,7 @@ import org.springframework.web.client.RestTemplate;
 	},
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
+@SuppressWarnings("unused")
 public class AutoConfiguredSessionLocalCachingIntegrationTests extends IntegrationTestsSupport {
 
 	private static final AtomicReference<String> sessionId = new AtomicReference<>(null);
