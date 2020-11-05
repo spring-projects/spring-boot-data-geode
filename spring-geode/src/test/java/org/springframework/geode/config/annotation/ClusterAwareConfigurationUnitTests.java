@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -51,6 +50,8 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.data.gemfire.support.ConnectionEndpoint;
 import org.springframework.data.gemfire.support.ConnectionEndpointList;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
+
+import org.slf4j.Logger;
 
 /**
  * Unit Tests for {@link EnableClusterAware} and {@link ClusterAwareConfiguration}.
