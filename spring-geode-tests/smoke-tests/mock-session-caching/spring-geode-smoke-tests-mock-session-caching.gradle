@@ -1,0 +1,22 @@
+plugins {
+	id "io.freefair.lombok" version "5.2.1"
+}
+
+apply plugin: 'io.spring.convention.spring-test'
+
+description = "Smoke Tests to assert (Spring) Session state caching using Apache Geode with Mock Objects auto-configured by Spring Boot."
+
+dependencies {
+
+	implementation "org.assertj:assertj-core"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+
+	implementation project(':spring-geode-starter-session')
+
+	implementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+
+	testImplementation project(":spring-geode-starter-test")
+
+}
