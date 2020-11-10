@@ -60,7 +60,7 @@ asciidoctorj {
 		'spring-version' : versions['org.springframework:spring-core'],
 		'spring-boot-version' : "${springBootVersion}",
 		'spring-boot-data-geode-version' : project.version,
-		'spring-data-commons-version' : "${springDataReleaseTrainVersion}",
+		'spring-data-commons-version' : "${springDataBomVersion}",
 		'spring-data-geode-version' : "${springDataGeodeVersion}",
 		'spring-session-data-gemfire-version' : "${springSessionDataGeodeVersion}",
 		'spring-session-data-geode-version' : "${springSessionDataGeodeVersion}",
