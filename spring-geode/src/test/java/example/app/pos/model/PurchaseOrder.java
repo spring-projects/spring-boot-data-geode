@@ -28,8 +28,6 @@ import org.springframework.data.gemfire.mapping.annotation.Region;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import org.jetbrains.annotations.NotNull;
-
 import lombok.Getter;
 import lombok.ToString;
 
@@ -104,7 +102,7 @@ public class PurchaseOrder implements Iterable<LineItem> {
 		return this;
 	}
 
-	@NotNull @Override
+	@NonNull @Override
 	public Iterator<LineItem> iterator() {
 		return Collections.unmodifiableList(this.lineItems).iterator();
 	}
