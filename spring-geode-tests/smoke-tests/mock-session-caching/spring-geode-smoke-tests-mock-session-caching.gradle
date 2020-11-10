@@ -8,6 +8,8 @@ description = "Smoke Tests to assert (Spring) Session state caching using Apache
 
 dependencies {
 
+	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+
 	implementation "org.assertj:assertj-core"
 	implementation "org.springframework.boot:spring-boot-starter-web"
 
