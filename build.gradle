@@ -11,7 +11,27 @@ buildscript {
 
 apply plugin: 'io.spring.convention.root'
 
-group = 'org.springframework.geode'
+allprojects {
+
+	group = 'org.springframework.geode'
+
+	repositories {
+
+		mavenCentral()
+
+		if (version.contains('-')) {
+			maven { url "https://repo.spring.io/milestone" }
+		}
+		if (version.endsWith('-SNAPSHOT')) {
+			maven { url "https://repo.spring.io/snapshot" }
+		}
+	}
+
+	configurations.all {
+		resolutionStrategy.cacheChangingModulesFor 0, "minutes"
+	}
+}
+
 description = 'Spring Boot for Apache Geode'
 
 //ext['spring.version'] = "$springVersion"
