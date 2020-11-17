@@ -2,14 +2,6 @@ apply plugin: 'io.spring.convention.spring-test'
 
 description = "Smoke Tests to assert that a Spring for Apache Geode project generated from Spring Initializer is a standard, non-Webapp Spring Boot application."
 
-/*
-repositories {
-	mavenCentral()
-	maven { url 'https://repo.spring.io/milestone' }
-	maven { url 'https://repo.spring.io/snapshot' }
-}
-*/
-
 dependencies {
 
 	implementation "org.assertj:assertj-core"
