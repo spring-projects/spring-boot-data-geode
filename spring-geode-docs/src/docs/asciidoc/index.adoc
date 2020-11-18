@@ -156,9 +156,9 @@ TIP: Refer to the corresponding Sample link:guides/getting-started.html[Guide] a
 to see Spring Boot for {apache-geode-name} in action!
 
 [[maven-gradle]]
-== Using Spring Boot for {apache-geode-name} & {pivotal-gemfire-name}
+== Using Spring Boot for {apache-geode-name}
 
-To use Spring Boot for {apache-geode-name}, declare the `spring-geode-starter` on your application classpath:
+To use Spring Boot for {apache-geode-name}, simply declare the `spring-geode-starter` on your application classpath:
 
 .Maven
 [source,xml]
@@ -182,11 +182,105 @@ dependencies {
 }
 ----
 
-TIP: To use {pivotal-gemfire-name} in place of {apache-geode-name}, simply change the `artifactId`
-from `spring-geode-starter` to `spring-gemfire-starter`.
+[[maven-gradle-bom]]
+=== Maven BOM
+
+If you anticipate using more than 1 Spring Boot for {apache-geode-name} (SBDG) module in your Spring Boot application,
+then you can also use the new `org.springframework.geode:spring-geode-bom` Maven BOM in your application Maven POM.
+
+Your application use case(s) may require more than 1 module if, for example, you need (HTTP) Session state management
+and replication (e.g. `spring-geode-starter-session`), or you need to enable Spring Boot Actuator endpoints for
+{apache-geode-name} (e.g. `spring-geode-starter-actuator`), or perhaps you need assistance writing complex Unit
+and distributed Integration Tests using STDG (e.g. `spring-geode-starter-test`).
+
+You can declare (include) and use any 1 of the SBDG modules:
+
+* `spring-geode-starter`
+* `spring-geode-starter-actuator`
+* `spring-geode-starter-logging`
+* `spring-geode-starter-session`
+* `spring-geode-starter-test`
+
+When more than 1 SBDG module is in play, then it makes sense to use the `spring-geode-bom` to manage all
+the dependencies so that the versions and transitive dependencies necessarily align properly.
+
+Your Spring Boot application Maven POM using the `spring-geode-bom` along with 2 or more module dependencies
+might appear as follows:
+
+.Spring Boot application Maven POM
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>{spring-boot-version}</version>
+    </parent>
+
+    <artifactId>my-spring-boot-application</artifactId>
+
+    <properties>
+        <spring-geode.version>{spring-boot-data-geode-version}</spring-geode.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.geode</groupId>
+                <artifactId>spring-geode-bom</artifactId>
+                <version>${spring-geode.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.geode</groupId>
+            <artifactId>spring-geode-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.geode</groupId>
+            <artifactId>spring-geode-starter-session</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.geode</groupId>
+            <artifactId>spring-geode-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
+----
+
+Notice that 1) the Spring Boot application Maven POM (`pom.xml`) contains a `<dependencyManagement>` section declaring
+the `org.springframework.geode:spring-geode-bom` and that 2) none of the `spring-geode-starter[-xyz]` dependencies
+specify an explicit `<version>`, which is 3) managed by the `spring-geode.version` property making it easy to switch
+between versions of SBDG as needed.
+
+If you change the version of SBDG, make sure to change the `org.springframework.boot:spring-boot-starter-parent` POM
+version to match.  SBDG is always 1 `major` version behind, but matches on `minor` version and `patch` version
+(and `version qualifier`, e.g. `SNAPSHOT`, `M#`, `RC#`, or `RELEASE`, if applicable).
+
+For example, SBDG `1.4.0` is based on Spring Boot `2.4.0`.  SBDG `1.3.5.RELEASE` is based on
+Spring Boot `2.3.5.RELEASE`. It is important that the versions align.
+
+Of course, all of these concerns are easy to do by simply going to https://start.spring.io[start.spring.io]
+and adding the "_Spring for {apache-geode-name}_" dependency.
+
+Clink on this https://start.spring.io/#!platformVersion={spring-boot-version}&dependencies=geode[link]
+to get started!
 
 ifeval::["{version-snapshot}" == "true"]
-Since you are using a SNAPSHOT version, you need to add the Spring Snapshot Maven Repository.
+[[maven-gradle-repository]]
+=== Repository declaration
+
+Since you are using a `SNAPSHOT` version, you need to add the Spring Snapshot Maven Repository.
 
 If you are using _Maven_, include the following `repository` declaration in your `pom.xml`:
 
@@ -196,7 +290,7 @@ If you are using _Maven_, include the following `repository` declaration in your
 <repositories>
     <repository>
         <id>spring-snapshot</id>
-        <url>https://repo.spring.io/libs-snapshot</url>
+        <url>https://repo.spring.io/snapshot</url>
     </repository>
 </repositories>
 ----
@@ -207,12 +301,15 @@ If you are using _Gradle_, include the following `repository` declaration in you
 [source,gradle]
 ----
 repositories {
-    maven { url: 'https://repo.spring.io/libs-snapshot' }
+    maven { url: 'https://repo.spring.io/snapshot' }
 }
 ----
 endif::[]
 
 ifeval::["{version-milestone}" == "true"]
+[[maven-gradle-repository]]
+=== Repository declaration
+
 Since you are using a Milestone version, you need to add the Spring Milestone Maven Repository.
 
 If you are using _Maven_, include the following `repository` declaration in your `pom.xml`:
@@ -223,7 +320,7 @@ If you are using _Maven_, include the following `repository` declaration in your
 <repositories>
     <repository>
         <id>spring-milestone</id>
-        <url>https://repo.spring.io/libs-milestone</url>
+        <url>https://repo.spring.io/milestone</url>
     </repository>
 </repositories>
 ----
@@ -234,7 +331,7 @@ If you are using _Gradle_, include the following `repository` declaration in you
 [source,gradle]
 ----
 repositories {
-    maven { url: 'https://repo.spring.io/libs-milestone' }
+    maven { url: 'https://repo.spring.io/milestone' }
 }
 ----
 endif::[]
