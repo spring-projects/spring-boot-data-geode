@@ -3,6 +3,7 @@
 :apache-geode-version: {apache-geode-doc-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
+:apache-geode-name: Apache Geode
 :images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
@@ -30,9 +31,10 @@ guide.  Therefore, it would be helpful to have read that guide before proceeding
 
 Let's begin.
 
-TIP: Refer to the link:../index.html#geode-caching-provider-inline-caching[Inline Caching] section
-in the link:../index.html#geode-caching-provider[Caching with Apache Geode or VMware Tanzu GemFire] chapter
-in the reference documentation for more information.
+TIP: Refer to the link:../index.html#geode-caching-provider-inline-caching[Inline Caching] section, and specifically
+the link:../index.html#geode-caching-provider-inline-caching-synchronous[Synchronous Inline Caching],
+in the link:../index.html#geode-caching-provider[Caching with {apache-geode-name}] chapter
+of the reference documentation for more information.
 
 [#index-link]
 link:../index.html[Index]
