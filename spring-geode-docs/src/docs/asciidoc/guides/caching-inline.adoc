@@ -360,7 +360,7 @@ This custom `KeyGenerator` was applied in the caching annotations of the service
 [source,java]
 ----
 @Service
-class CalcultorService ... {
+class CalculatorService ... {
 
   @Cacheable(... keyGenerator="resultKeyGenerator")
   public int factorial(int number) { .. }
@@ -387,7 +387,7 @@ in the `@Cacheable annotation on the individual service methods:
 [source,java]
 ----
 @Service
-class CalcultorService ... {
+class CalculatorService ... {
 
   @Cacheable(name = "Factorials" ...)
   public int factorial(int number) { .. }
