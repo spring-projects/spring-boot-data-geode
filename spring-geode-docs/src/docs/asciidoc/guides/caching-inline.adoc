@@ -31,9 +31,10 @@ guide.  Therefore, it would be helpful to have read that guide before proceeding
 
 Let's begin.
 
-TIP: Refer to the link:../index.html#geode-caching-provider-inline-caching[Inline Caching] section
-in the link:../index.html#geode-caching-provider[Caching with {apache-geode-name}] chapter in the reference documentation
-for more information.
+TIP: Refer to the link:../index.html#geode-caching-provider-inline-caching[Inline Caching] section, and specifically
+the link:../index.html#geode-caching-provider-inline-caching-synchronous[Synchronous Inline Caching],
+in the link:../index.html#geode-caching-provider[Caching with {apache-geode-name}] chapter
+of the reference documentation for more information.
 
 [#index-link]
 link:../index.html[Index]
