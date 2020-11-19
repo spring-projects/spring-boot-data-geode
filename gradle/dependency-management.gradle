@@ -18,6 +18,7 @@ dependencyManagement {
 		dependency "org.mockito:mockito-core:$mockitoVersion"
 		dependency "org.springframework.data:spring-data-gemfire:$springDataGemFireVersion"
 		dependency "org.springframework.data:spring-data-geode:$springDataGeodeVersion"
+		dependency "org.springframework.data:spring-data-gemfire-test:$springDataGeodeTestVersion"
 		dependency "org.springframework.data:spring-data-geode-test:$springDataGeodeTestVersion"
 		dependency "org.springframework.session:spring-session-data-gemfire:$springSessionDataGeodeVersion"
 		dependency "org.springframework.session:spring-session-data-geode:$springSessionDataGeodeVersion"
