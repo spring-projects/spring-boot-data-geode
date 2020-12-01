@@ -47,9 +47,9 @@ import org.springframework.util.Assert;
  */
 public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 
-	protected static final AsyncEventErrorHandler DEFAULT_EVENT_ERROR_HANDLER = eventError -> false;
+	protected static final AsyncEventErrorHandler DEFAULT_ASYNC_EVENT_ERROR_HANDLER = eventError -> false;
 
-	private AsyncEventErrorHandler asyncEventErrorHandler = DEFAULT_EVENT_ERROR_HANDLER;
+	private AsyncEventErrorHandler asyncEventErrorHandler = DEFAULT_ASYNC_EVENT_ERROR_HANDLER;
 
 	private final CrudRepository<T, ID> repository;
 
@@ -102,7 +102,7 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 	 * @see AsyncEventErrorHandler
 	 */
 	protected @NonNull AsyncEventErrorHandler getAsyncEventErrorHandler() {
-		return this.asyncEventErrorHandler != null ? this.asyncEventErrorHandler : DEFAULT_EVENT_ERROR_HANDLER;
+		return this.asyncEventErrorHandler != null ? this.asyncEventErrorHandler : DEFAULT_ASYNC_EVENT_ERROR_HANDLER;
 	}
 
 	/**
@@ -238,7 +238,7 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 		public AsyncEventError(@NonNull AsyncEvent<?, ?> event, @NonNull Throwable cause) {
 
 			Assert.notNull(event, "AsyncEvent must not be null");
-			Assert.notNull(cause, "The cause must not be null");
+			Assert.notNull(cause, "Cause must not be null");
 
 			this.event = event;
 			this.cause = cause;
