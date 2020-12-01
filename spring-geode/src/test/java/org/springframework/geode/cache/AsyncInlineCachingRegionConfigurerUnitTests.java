@@ -372,10 +372,8 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 		assertThat(regionConfigurer.withQueueDiskSynchronizationEnabled()).isSameAs(regionConfigurer);
 		assertThat(regionConfigurer.withQueueDispatcherThreadCount(8)).isSameAs(regionConfigurer);
 		assertThat(regionConfigurer.withQueueEventDispatchingPaused()).isSameAs(regionConfigurer);
-		assertThat(regionConfigurer.withQueueEventFilters(Arrays.asList(mockEventFilterOne, mockEventFilterTwo)))
-			.isSameAs(regionConfigurer);
-		assertThat(regionConfigurer.withQueueEventSubstitutionFilter(mockEventSubstitutionFilter))
-			.isSameAs(regionConfigurer);
+		assertThat(regionConfigurer.withQueueEventFilters(Arrays.asList(mockEventFilterOne, mockEventFilterTwo))).isSameAs(regionConfigurer);
+		assertThat(regionConfigurer.withQueueEventSubstitutionFilter(mockEventSubstitutionFilter)).isSameAs(regionConfigurer);
 		assertThat(regionConfigurer.withQueueForwardedExpirationDestroyEvents()).isSameAs(regionConfigurer);
 		assertThat(regionConfigurer.withQueueMaxMemory(51)).isSameAs(regionConfigurer);
 		assertThat(regionConfigurer.withQueueOrderPolicy(GatewaySender.OrderPolicy.THREAD)).isSameAs(regionConfigurer);
@@ -420,6 +418,50 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 
 		verifyNoInteractions(mockAsyncEventErrorHandler, mockAsyncEventQueue, mockRepository,
 			mockEventFilterOne, mockEventFilterTwo, mockEventSubstitutionFilter);
+	}
+
+	@Test
+	public void newAsyncEventQueueIsParallel() {
+
+		AsyncEventQueueFactory mockAsyncEventQueueFactory = mock(AsyncEventQueueFactory.class);
+
+		Cache mockCache = mock(Cache.class);
+
+		doReturn(mockAsyncEventQueueFactory).when(mockCache).createAsyncEventQueueFactory();
+
+		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
+
+		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
+			spy(AsyncInlineCachingRegionConfigurer.create(mockRepository, Predicate.isEqual("TestRegion")));
+
+		assertThat(regionConfigurer).isNotNull();
+		assertThat(regionConfigurer.withParallelQueue()).isSameAs(regionConfigurer);
+
+		regionConfigurer.newAsyncEventQueue(mockCache, "TestRegion");
+
+		verify(mockAsyncEventQueueFactory, times(1)).setParallel(eq(true));
+	}
+
+	@Test
+	public void newAsyncEventQueueIsSerial() {
+
+		AsyncEventQueueFactory mockAsyncEventQueueFactory = mock(AsyncEventQueueFactory.class);
+
+		Cache mockCache = mock(Cache.class);
+
+		doReturn(mockAsyncEventQueueFactory).when(mockCache).createAsyncEventQueueFactory();
+
+		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
+
+		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
+			spy(AsyncInlineCachingRegionConfigurer.create(mockRepository, Predicate.isEqual("TestRegion")));
+
+		assertThat(regionConfigurer).isNotNull();
+		assertThat(regionConfigurer.withSerialQueue()).isSameAs(regionConfigurer);
+
+		regionConfigurer.newAsyncEventQueue(mockCache, "TestRegion");
+
+		verify(mockAsyncEventQueueFactory, times(1)).setParallel(eq(false));
 	}
 
 	@Test

@@ -514,9 +514,10 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 	 * Builder method used to enable all {@link AsyncEventQueue AEQs} attached to {@link Region Regions} hosted
 	 * and distributed across the cache cluster to process cache events.
 	 *
-	 * Default is {@literal false}.
+	 * Default is {@literal false}, or {@literal serial}.
 	 *
 	 * @return this {@link AsyncInlineCachingRegionConfigurer}.
+	 * @see #withSerialQueue()
 	 */
 	public AsyncInlineCachingRegionConfigurer<T, ID> withParallelQueue() {
 		this.parallel = true;
@@ -736,6 +737,20 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 
 		this.orderPolicy = orderPolicy;
 
+		return this;
+	}
+
+	/**
+	 * Builder method used to enable a single {@link AsyncEventQueue AEQ} attached to a {@link Region Region}
+	 * (possibly) hosted and distributed across the cache cluster to process cache events.
+	 *
+	 * Default is {@literal false}, or {@literal serial}.
+	 *
+	 * @return this {@link AsyncInlineCachingRegionConfigurer}.
+	 * @see #withParallelQueue()
+	 */
+	public AsyncInlineCachingRegionConfigurer<T, ID> withSerialQueue() {
+		this.parallel = false;
 		return this;
 	}
 }
