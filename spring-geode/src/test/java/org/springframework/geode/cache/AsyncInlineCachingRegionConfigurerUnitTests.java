@@ -278,7 +278,7 @@ public class AsyncInlineCachingRegionConfigurerUnitTests {
 		AsyncInlineCachingRegionConfigurer<?, ?> regionConfigurer =
 			new AsyncInlineCachingRegionConfigurer<>(mockRepository, Predicate.isEqual("TestRegion"));
 
-		assertThat(regionConfigurer.generateId("MockRegion")).startsWith("MockRegion-AEQ:");
+		assertThat(regionConfigurer.generateId("MockRegion")).startsWith("MockRegion-AEQ-");
 
 		verifyNoInteractions(mockRepository);
 	}

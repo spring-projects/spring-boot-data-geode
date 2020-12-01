@@ -233,7 +233,7 @@ public class AsyncInlineCachingRegionConfigurer<T, ID> implements RegionConfigur
 
 		Assert.hasText(regionBeanName, () -> String.format("Region bean name [%s] must be specified", regionBeanName));
 
-		return regionBeanName.concat(String.format("-AEQ:%s", UUID.randomUUID().toString()));
+		return regionBeanName.concat(String.format("-AEQ-%s", UUID.randomUUID().toString()));
 	}
 
 	/**
