@@ -189,10 +189,13 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 	@Override
 	public final boolean processEvents(List<AsyncEvent> events) {
 
-		this.firedCount.incrementAndGet();
-		this.hasFired.set(true);
-
-		return doProcessEvents(events);
+		try {
+			return doProcessEvents(events);
+		}
+		finally {
+			this.firedCount.incrementAndGet();
+			this.hasFired.set(true);
+		}
 	}
 
 	/**

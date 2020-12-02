@@ -420,6 +420,41 @@ public class RepositoryAsyncEventListenerUnitTests {
 		assertThat(listener.hasFiredSinceLastCheck()).isFalse();
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void processEventsCountsInvocationsEvenWhenAnExceptionIsThrown() {
+
+		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
+
+		RepositoryAsyncEventListener<?, ?> listener = spy(new RepositoryAsyncEventListener<>(mockRepository));
+
+		doThrow(new IllegalStateException("TEST")).when(listener).doProcessEvents(any());
+
+		assertThat(listener).isNotNull();
+		assertThat(listener.getFiredCount()).isZero();
+		assertThat(listener.hasFired()).isFalse();
+		assertThat(listener.hasFiredSinceLastCheck()).isFalse();
+
+		try {
+			listener.processEvents(Collections.singletonList(mock(AsyncEvent.class)));
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("TEST");
+			assertThat(expected).hasNoCause();
+
+			throw expected;
+		}
+		finally {
+
+			assertThat(listener.getFiredCount()).isOne();
+			assertThat(listener.hasFired()).isTrue();
+			assertThat(listener.hasFiredSinceLastCheck()).isTrue();
+			assertThat(listener.getFiredCount()).isOne();
+			assertThat(listener.hasFired()).isTrue();
+			assertThat(listener.hasFiredSinceLastCheck()).isFalse();
+		}
+	}
+
 	@Test
 	public void constructAsyncEventError() {
 
