@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS golfers (
+  	name VARCHAR(256) PRIMARY KEY,
+  	hole NUMERIC(10),
+  	score NUMERIC(10)
+);
