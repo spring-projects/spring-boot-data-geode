@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
 import org.apache.geode.cache.Operation;
@@ -51,6 +52,10 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 
 	private AsyncEventErrorHandler asyncEventErrorHandler = DEFAULT_ASYNC_EVENT_ERROR_HANDLER;
 
+	private final AtomicBoolean hasFired = new AtomicBoolean(false);
+
+	private final AtomicLong firedCount = new AtomicLong(0L);
+
 	private final CrudRepository<T, ID> repository;
 
 	private final List<AsyncEventOperationRepositoryFunction<T, ID>> repositoryFunctions = new CopyOnWriteArrayList<>();
@@ -74,6 +79,41 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 			new CreateUpdateAsyncEventRepositoryFunction<>(this),
 			new RemoveAsyncEventRepositoryFunction<>(this)
 		));
+	}
+
+	/**
+	 * Determines whether this listener has (ever) been fired (triggered) by the GemFire/Geode AEQ system.
+	 *
+	 * @return a boolean value indicating whether this listener has been fired (triggered).
+	 * @see #hasFiredSinceLastCheck()
+	 */
+	@SuppressWarnings("unused")
+	public boolean hasFired() {
+		return getFiredCount() > 0;
+	}
+
+	/**
+	 * Determines whether this listener has been fired (triggered) by the GemFire/Geode AEQ system
+	 * since the last check.
+	 *
+	 * A call to this method clears the flag.
+	 *
+	 * @return a boolean value indicating whether this listener has been fired (triggered) since the last check.
+	 * @see #hasFired()
+	 */
+	@SuppressWarnings("unused")
+	public boolean hasFiredSinceLastCheck() {
+		return this.hasFired.compareAndSet(true, false);
+	}
+
+	/**
+	 * Determines how many times this listener has been fired (triggered) by the GemFire/Geode AEQ system.
+	 *
+	 * @return a {@link Long} value indicating how many times this listener has been fired (triggered).
+	 */
+	@SuppressWarnings("unused")
+	public long getFiredCount() {
+		return this.firedCount.get();
 	}
 
 	/**
@@ -147,8 +187,19 @@ public class RepositoryAsyncEventListener<T, ID> implements AsyncEventListener {
 	 * @see java.util.List
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
-	public boolean processEvents(List<AsyncEvent> events) {
+	public final boolean processEvents(List<AsyncEvent> events) {
+
+		this.firedCount.incrementAndGet();
+		this.hasFired.set(true);
+
+		return doProcessEvents(events);
+	}
+
+	/**
+	 * @see #processEvents(List)
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected boolean doProcessEvents(List<AsyncEvent> events) {
 
 		AtomicBoolean result = new AtomicBoolean(true);
 

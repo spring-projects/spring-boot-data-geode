@@ -386,6 +386,41 @@ public class RepositoryAsyncEventListenerUnitTests {
 	}
 
 	@Test
+	public void processEventsCountsInvocations() {
+
+		CrudRepository<?, ?> mockRepository = mock(CrudRepository.class);
+
+		RepositoryAsyncEventListener<?, ?> listener = spy(new RepositoryAsyncEventListener<>(mockRepository));
+
+		doReturn(true).when(listener).doProcessEvents(any());
+
+		assertThat(listener).isNotNull();
+		assertThat(listener.getRepository()).isEqualTo(mockRepository);
+		assertThat(listener.getFiredCount()).isZero();
+		assertThat(listener.hasFired()).isFalse();
+		assertThat(listener.hasFiredSinceLastCheck()).isFalse();
+
+		listener.processEvents(Collections.emptyList());
+
+		assertThat(listener.getFiredCount()).isOne();
+		assertThat(listener.hasFired()).isTrue();
+		assertThat(listener.hasFiredSinceLastCheck()).isTrue();
+		assertThat(listener.getFiredCount()).isOne();
+		assertThat(listener.hasFired()).isTrue();
+		assertThat(listener.hasFiredSinceLastCheck()).isFalse();
+
+		listener.processEvents(Collections.singletonList(mock(AsyncEvent.class)));
+		listener.processEvents(Collections.emptyList());
+
+		assertThat(listener.getFiredCount()).isEqualTo(3);
+		assertThat(listener.hasFired()).isTrue();
+		assertThat(listener.hasFiredSinceLastCheck()).isTrue();
+		assertThat(listener.getFiredCount()).isEqualTo(3);
+		assertThat(listener.hasFired()).isTrue();
+		assertThat(listener.hasFiredSinceLastCheck()).isFalse();
+	}
+
+	@Test
 	public void constructAsyncEventError() {
 
 		AsyncEvent<?, ?> mockEvent = mock(AsyncEvent.class);
