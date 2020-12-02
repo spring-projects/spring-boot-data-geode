@@ -44,6 +44,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.util.ReflectionUtils;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.geode.cache.RepositoryAsyncEventListener;
@@ -73,6 +74,7 @@ import example.app.caching.inline.async.config.AsyncInlineCachingConfiguration;
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.jpa.repository.config.EnableJpaRepositories
  * @see org.springframework.geode.cache.RepositoryAsyncEventListener
  * @see org.springframework.test.context.ActiveProfiles
@@ -91,7 +93,7 @@ import example.app.caching.inline.async.config.AsyncInlineCachingConfiguration;
 	webEnvironment = SpringBootTest.WebEnvironment.NONE
 )
 @SuppressWarnings("unused")
-public class AsyncInlineCachingUsingQueueBatchTimeIntervalIntegrationTests {
+public class AsyncInlineCachingUsingQueueBatchTimeIntervalIntegrationTests extends IntegrationTestsSupport {
 
 	private volatile AsyncEventQueue golfersEventQueue;
 
