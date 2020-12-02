@@ -1,0 +1,108 @@
+[[geode-samples-caching-inline]]
+= Inline Caching with Spring
+:apache-geode-name: Apache Geode
+:apache-geode-version: {apache-geode-doc-version}
+:apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
+:apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
+:images-dir: ./images
+:spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
+:spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
+:spring-data-geode-docs: https://docs.spring.io/spring-data/geode/docs/current/reference/html
+:spring-data-geode-javadoc: https://docs.spring.io/spring-data/geode/docs/current/api
+:spring-data-website: https://spring.io/projects/spring-data
+:spring-framework-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference
+:spring-framework-javadoc: https://docs.spring.io/spring/docs/current/javadoc-api
+:toc: left
+:toclevels: 2
+:stylesdir: ../
+:highlightjsdir: ../js/highlight
+:docinfodir: guides
+
+
+This guide walks you through building a simple Spring Boot application
+using {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]
+backed by {apache-geode-name} as the caching provider for Asynchronous, Inline Caching.
+
+It is assumed that the reader is familiar with the Spring _programming model_. No prior knowledge of Spring's
+_Cache Abstraction_ or {apache-geode-name} is required to utilize caching in your Spring Boot applications.
+
+Additionally, this Sample builds on the concepts from the link:caching-inline.html[Inline Caching with Spring]
+and link:caching-look-aside.html[Look-Aside Caching with Spring] guides. Therefore, it would be helpful to have read
+those guides before proceeding through this guide.
+
+Let's begin.
+
+TIP: Refer to the link:../index.html#geode-caching-provider-inline-caching[Inline Caching] section, and specifically,
+link:../index.html#geode-caching-provider-inline-caching-asynchronous[Asynchronous Inline Caching],
+in the link:../index.html#geode-caching-provider[Caching with {apache-geode-name}] chapter
+of the reference documentation for more information.
+
+[#index-link]
+link:../index.html[Index]
+
+link:../index.html#geode-samples[Back to Samples]
+
+[[geode-samples-caching-inline-asynchronous-background]]
+== Background
+
+In _Synchronous Inline Caching_, data is immediately read from or written to the primary data source, (a.k.a. the
+_System of Record_ (SOR)), before the cache is modified, thereby guaranteeing a degree of consistency. The "synchronous"
+arrangement of the _Inline Caching_ pattern is commonly referred to as "_Read/Write-Through_".
+
+With _Asynchronous Inline Caching_, data changes are written to the primary data source asynchronously, after the cache
+has already been modified. The "asynchronous" arrangement of the _Inline Caching_ pattern is commonly referred to as
+"_Write-Behind_". The cache entry is modified, then, and only then, will the primary data source possibly reflect the
+changes sometime later.
+
+It is possible for the primary data source (i.e. _System of Record_ (SOR)) and the cache to get out-of-sync. Clearly,
+the primary data source may contain information that the cache does not. Another application may be updating the primary
+data source and not using the cache. The cache entry change may not be promptly written to the primary data source until
+the "_Write-Behind_" operation is triggered, which is often implementation dependent. The data change might violate
+a database constraint, fail to commit and be rolled back. All sorts of reasons can cause the primary data source
+and the cache to become out-of-sync, or inconsistent.
+
+For this reason, throughput and latency are the primary applications concerns, rather than consistency, for when to use
+_Asynchronous Inline Caching_.
+
+The general pattern of Inline Caching is depicted as follows:
+
+image::{images-dir}/Inline-Caching-Overview.png[]
+
+The layer in the application/system architecture involving _Inline Caching_ logic sits between the cache and the primary
+data source:
+
+image::{images-dir}/Inline-Caching-Layer.png[]
+
+In _Synchronous, Read/Write-Through, Inline Caching_, the system/application architecture appears as follows:
+
+image::{images-dir}/Synchronous-Inline-Caching.png[]
+
+With _Asynchronous, Write-Behind, Inline Caching, the system/application architecture would then appear as:
+
+image::{images-dir}/Asynchronous-Inline-Caching.png[]
+
+IMPLEMENTATION
+
+As readers should know, the application cache is backed by an {apache-geode-name} Region.
+
+In _Synchronous_, _Read-Through_ and/or _Write-Through_, _Inline Caching_, a `CacheLoader` configured for the Region
+and used to "_Read-Through_" to the backend/primary data source on a cache miss. When a cache entry is written, then
+a configured `CacheWriter` for the Region is invoked to "_Write-Through_" to the backend/primary data source. The cache
+is only modified if the `CacheWriter` was successful in modify the backend/primary data source.
+
+Both the `CacheLoader` and `CacheWriter` are optional. That is, you can configure one side of
+_Synchronous Inline Caching_, either the "_Read-Through_", or the "_Write-Through_", both, or neither.
+
+With _Asynchronous, Write-Behind, Inline Caching_, you (may) configure the Region with an associated `AsyncEventQueue`
+(AEQ) and registered `AsyncEventListener`. When the cache is written to, the entry event is then forwarded and stored
+on the AEQ, where at sometime later, the registered `AsyncEventListener` for the AEQ will be invoked, which can then
+asynchronously modify the backend/primary data source.
+
+Unlike _Synchronous Inline Caching_, _Asynchronous Inline Caching_ does not have an equivalent for "_Read-Through_",
+such as "_Read-Behind_".
+
+NOTE: At some point later, we may consider the development of "_Read-Behind_" with with use of Reactive Programming
+and the Reactive Spring Data Repository abstraction.
+
+link:../index.html#geode-samples[Back to Samples]
+
