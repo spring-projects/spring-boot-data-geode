@@ -38,10 +38,12 @@ import lombok.ToString;
  * Abstract Data Type (ADT) modeling a golf tournament.
  *
  * @author John Blum
+ * @see example.app.caching.inline.async.client.model.Golfer
+ * @see example.app.caching.inline.async.client.model.GolfCourse
  * @since 1.4.0
  */
 @Getter
-@ToString
+@ToString(of = "name")
 @RequiredArgsConstructor(staticName = "newGolfTournament")
 @SuppressWarnings("unused")
 public class GolfTournament implements Iterable<GolfTournament.Pairing> {

@@ -34,11 +34,12 @@ import example.app.caching.inline.async.client.model.Golfer;
 import example.app.caching.inline.async.client.repo.GolferRepository;
 
 /**
- * Spring {@link Service} class used to manage {@link Golfer Golfers}.
+ * Spring {@link Service} class used to manage {@link Golfer Golfers} on the tour.
  *
  * @author John Blum
- * @see org.springframework.stereotype.Service
+ * @see org.apache.geode.cache.Region
  * @see org.springframework.data.gemfire.GemfireTemplate
+ * @see org.springframework.stereotype.Service
  * @see example.app.caching.inline.async.client.model.Golfer
  * @see example.app.caching.inline.async.client.repo.GolferRepository
  * @since 1.4.0

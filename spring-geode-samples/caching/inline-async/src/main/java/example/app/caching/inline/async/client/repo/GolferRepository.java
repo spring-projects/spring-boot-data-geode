@@ -21,7 +21,7 @@ import example.app.caching.inline.async.client.model.Golfer;
 
 /**
  * Spring Data {@link JpaRepository} and Data Access Object (DAO) used to perform basic CRUD and simple SQL query
- * data access operations on {@link Golfer Golfers} stored in an RDBMS (database) with JPA.
+ * data access operations on {@link Golfer Golfers} stored in an RDBMS (database) with JPA (Hibernate).
  *
  * @author John Blum
  * @see org.springframework.data.jpa.repository.JpaRepository

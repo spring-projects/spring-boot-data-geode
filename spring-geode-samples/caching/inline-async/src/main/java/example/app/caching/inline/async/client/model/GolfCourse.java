@@ -20,8 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.shiro.util.CollectionUtils;
-
+import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.util.Assert;
 
 import lombok.EqualsAndHashCode;
