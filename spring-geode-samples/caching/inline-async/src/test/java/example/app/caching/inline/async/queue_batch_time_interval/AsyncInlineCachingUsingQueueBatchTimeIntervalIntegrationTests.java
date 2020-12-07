@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
 import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.Region;
-import org.apache.geode.cache.RegionShortcut;
 import org.apache.geode.cache.asyncqueue.AsyncEventListener;
 import org.apache.geode.cache.asyncqueue.AsyncEventQueue;
 
@@ -42,7 +41,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.GemfireTemplate;
-import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.util.ReflectionUtils;
@@ -57,6 +55,7 @@ import example.app.caching.inline.async.client.model.Golfer;
 import example.app.caching.inline.async.client.repo.GolferRepository;
 import example.app.caching.inline.async.client.service.GolferService;
 import example.app.caching.inline.async.config.AsyncInlineCachingConfiguration;
+import example.app.caching.inline.async.config.AsyncInlineCachingRegionConfiguration;
 
 /**
  * Integration Tests for Spring Boot configured Async Inline Caching with Apache Geode using Queue Batch Time Interval.
@@ -179,10 +178,9 @@ public class AsyncInlineCachingUsingQueueBatchTimeIntervalIntegrationTests exten
 
 	@PeerCacheApplication
 	@EnableAutoConfiguration
-	@EnableEntityDefinedRegions(basePackageClasses = Golfer.class, serverRegionShortcut = RegionShortcut.REPLICATE)
-	@EnableJpaRepositories(basePackageClasses = GolferRepository.class)
 	@EntityScan(basePackageClasses = Golfer.class)
-	@Import(AsyncInlineCachingConfiguration.class)
+	@EnableJpaRepositories(basePackageClasses = GolferRepository.class)
+	@Import({ AsyncInlineCachingConfiguration.class, AsyncInlineCachingRegionConfiguration.class })
 	static class TestConfiguration {
 
 		@Bean

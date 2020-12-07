@@ -85,7 +85,7 @@ public class GolfTournamentService implements Closeable {
 	}
 
 	@SuppressWarnings("unused")
-	@Scheduled(fixedRate = 2500L)
+	@Scheduled(initialDelay = 5000L, fixedDelay = 2500L)
 	public void play() {
 
 		GolfTournament golfTournament = this.golfTournament;

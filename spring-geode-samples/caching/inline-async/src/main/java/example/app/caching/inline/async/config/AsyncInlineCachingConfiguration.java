@@ -43,7 +43,7 @@ import example.app.caching.inline.async.client.repo.GolferRepository;
 @SuppressWarnings("unused")
 public class AsyncInlineCachingConfiguration {
 
-	private static final String GOLFERS_REGION_NAME = "Golfers";
+	protected static final String GOLFERS_REGION_NAME = "Golfers";
 
 	@Bean
 	@Profile("queue-batch-size")

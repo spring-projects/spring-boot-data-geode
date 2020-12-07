@@ -34,6 +34,7 @@ import example.app.caching.inline.async.client.model.support.GolfCourseBuilder;
 import example.app.caching.inline.async.client.model.support.GolferBuilder;
 import example.app.caching.inline.async.client.service.GolfTournamentService;
 import example.app.caching.inline.async.config.AsyncInlineCachingConfiguration;
+import example.app.caching.inline.async.config.AsyncInlineCachingRegionConfiguration;
 
 /**
  * {@link SpringBootApplication} class simulating a golf tournament management application.
@@ -91,12 +92,12 @@ public class BootGeodeAsyncInlineCachingClientApplication {
 
 	@Configuration
 	@UseMemberName(APPLICATION_NAME)
-	@EnableCachingDefinedRegions(serverRegionShortcut = RegionShortcut.LOCAL)
+	@EnableCachingDefinedRegions(serverRegionShortcut = RegionShortcut.REPLICATE)
 	static class GeodeConfiguration { }
 
 	@PeerCacheApplication
 	@Profile("peer-cache")
-	@Import(AsyncInlineCachingConfiguration.class)
+	@Import({ AsyncInlineCachingConfiguration.class, AsyncInlineCachingRegionConfiguration.class })
 	static class PeerCacheApplicationConfiguration { }
 
 }

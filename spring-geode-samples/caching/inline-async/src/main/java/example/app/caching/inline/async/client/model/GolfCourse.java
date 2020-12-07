@@ -71,7 +71,7 @@ public class GolfCourse {
 		assertValidHoleNumber(holeNumber);
 		assertValidParForHole(par, holeNumber);
 
-		this.parForHole.set(indexForHole(holeNumber), par);
+		this.parForHole.add(indexForHole(holeNumber), par);
 
 		return this;
 	}

@@ -16,7 +16,6 @@
 package example.app.caching.inline.async.client.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +25,7 @@ import org.apache.geode.cache.Region;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.gemfire.GemfireTemplate;
+import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -70,25 +70,16 @@ public class GolferService {
 	public List<Golfer> getAllGolfersFromCache() {
 
 		Map<String, Golfer> golferMap =
-			nullSafeMap(this.golfersTemplate.getAll(resolveKeys(this.golfersTemplate.getRegion())));
+			CollectionUtils.nullSafeMap(this.golfersTemplate.getAll(resolveKeys(this.golfersTemplate.getRegion())));
 
-		return sort(new ArrayList<>(golferMap.values()));
+		return CollectionUtils.sort(new ArrayList<>(golferMap.values()));
 	}
 
 	public List<Golfer> getAllGolfersFromDatabase() {
-		return sort(this.golferRepository.findAll());
-	}
-
-	private <KEY, VALUE> Map<KEY, VALUE> nullSafeMap(Map<KEY, VALUE> map) {
-		return map != null ? map : Collections.emptyMap();
+		return CollectionUtils.sort(this.golferRepository.findAll());
 	}
 
 	private Set<String> resolveKeys(Region<String, ?> region) {
 		return RegionUtils.isClient(region) ? region.keySetOnServer() : region.keySet();
-	}
-
-	private <T extends Comparable<T>> List<T> sort(List<T> list) {
-		Collections.sort(list);
-		return list;
 	}
 }

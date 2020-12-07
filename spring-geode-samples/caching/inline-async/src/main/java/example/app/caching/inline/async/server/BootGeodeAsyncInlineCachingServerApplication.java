@@ -15,19 +15,15 @@
  */
 package example.app.caching.inline.async.server;
 
-import org.apache.geode.cache.RegionShortcut;
-
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
-import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 
-import example.app.caching.inline.async.client.model.Golfer;
 import example.app.caching.inline.async.config.AsyncInlineCachingConfiguration;
+import example.app.caching.inline.async.config.AsyncInlineCachingRegionConfiguration;
 
 /**
  * {@link SpringBootApplication} class implementing the server-side of the golf tournament management application.
@@ -36,7 +32,6 @@ import example.app.caching.inline.async.config.AsyncInlineCachingConfiguration;
  * @see java.time.Duration
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.builder.SpringApplicationBuilder
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.context.annotation.Profile
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
@@ -59,10 +54,8 @@ public class BootGeodeAsyncInlineCachingServerApplication {
 			.run(args);
 	}
 
-	@Configuration
 	@CacheServerApplication(name = APPLICATION_NAME)
-	@EnableEntityDefinedRegions(basePackageClasses = Golfer.class, serverRegionShortcut = RegionShortcut.LOCAL)
-	@Import(AsyncInlineCachingConfiguration.class)
+	@Import({ AsyncInlineCachingConfiguration.class, AsyncInlineCachingRegionConfiguration.class })
 	@SuppressWarnings("unused")
 	static class GeodeConfiguration { }
 

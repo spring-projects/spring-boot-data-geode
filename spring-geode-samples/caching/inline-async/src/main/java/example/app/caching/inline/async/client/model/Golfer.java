@@ -19,7 +19,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.gemfire.mapping.annotation.Region;
 import org.springframework.util.Assert;
 
 import lombok.AccessLevel;
@@ -41,14 +40,12 @@ import lombok.ToString;
  * @see javax.persistence.Entity
  * @see javax.persistence.Table
  * @see org.springframework.data.annotation.Id
- * @see org.springframework.data.gemfire.mapping.annotation.Region
  * @since 1.4.0
  */
 @Entity
 @Getter
 @ToString(of = "name")
 @Table(name = "golfers")
-@Region(name = "Golfers")
 @EqualsAndHashCode(of = "name")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RequiredArgsConstructor(staticName = "newGolfer")
