@@ -2,7 +2,13 @@
 build/
 out/
 target/
+.bak/
+.idea/
+.settings/
+_site/
+*.dat
 .gradle
+*.lk
 .springBeans
 *.iml
 *.ipr
@@ -10,11 +16,7 @@ target/
 *.log
 .classpath
 .project
-.settings/
-.idea/
-_site/
-.bak/
-*.dat
+deps*
 
 /samples/hello-world/vf.gf.dmn-events.cfg
 /samples/hello-world/vf.gf.dmn-license.cfg
