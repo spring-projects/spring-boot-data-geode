@@ -10,6 +10,8 @@ dependencies {
 
 	compile project(":spring-geode-starter")
 
+	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+
 	compile "org.projectlombok:lombok"
 	compile "org.springframework.boot:spring-boot-starter-data-jpa"
 	compile "org.springframework.boot:spring-boot-starter-web"
