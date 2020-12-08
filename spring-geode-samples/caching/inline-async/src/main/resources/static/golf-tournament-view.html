@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <title>Golf Tournament Cache View</title>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script>
+
+                function golfTournamentStandingsRunner(apiUrl, tableId) {
+
+                    $.ajax({
+                        type: "GET",
+                        url: apiUrl,
+                        dataType: "json",
+                        success: function(golfers) {
+                            var table = $(tableId + " tbody");
+                            $(tableId + " tbody tr").remove();
+                            var count = 1;
+                            $.each(golfers, function(index, golfer) {
+                                var backgroundColor = count % 2 == 0 ? "lightgray" : "white";
+                                table.append("<tr bgcolor=\"" + backgroundColor + "\"><td width=\"200\">" + golfer.name + "</td><td width=\"100\">" + golfer.hole + "</td><td width=\"100\">" + golfer.score + "</td></tr>");
+                                count++;
+                            })
+                        },
+                        error: function() {
+                            console.log("What?!");
+                        }
+                    })
+                }
+
+                function golfTournamentCacheStandingsRunner() {
+                    golfTournamentStandingsRunner("http://localhost:8080/golf/tournament/cache", "#golfersInCache");
+                }
+
+                function golfTournamentDatabaseStandingsRunner() {
+                    golfTournamentStandingsRunner("http://localhost:8080/golf/tournament/database", "#golfersInDatabase");
+                }
+
+                $(document).ready(function() {
+                    console.log("DOM Ready");
+                    //setTimeout(golfTournamentStandingsRunner, 2500);
+                    setInterval(golfTournamentCacheStandingsRunner, 2000);
+                    setInterval(golfTournamentDatabaseStandingsRunner, 2000);
+                });
+
+                $(window).on("load", function() {
+                    console.log("Window Ready");
+                });
+            </script>
+    </head>
+    <body>
+
+        <center><font color="darkgreen" size="36"><b><i>The Masters - CACHE vs DATABASE</i></b></font></center>
+
+        <table id="golfersCacheVsDatabase" width="100%" border="0">
+            <thead>
+                <tr>
+                    <td align="center" width="50%"><b>CACHE</b></td>
+                    <td align="center" width="50%"><b>DATABASE</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td align="center">
+                        <table id="golfersInCache" border="1">
+                            <thead>
+                                <tr>
+                                    <th width="200">Name</th>
+                                    <th width="100">Hole</th>
+                                    <th width="100">Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>?</td>
+                                    <td>--</td>
+                                    <td>--</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td align="center">
+                        <table id="golfersInDatabase" border="1">
+                            <thead>
+                            <tr>
+                                <th width="200">Name</th>
+                                <th width="100">Hole</th>
+                                <th width="100">Score</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>?</td>
+                                    <td>--</td>
+                                    <td>--</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
