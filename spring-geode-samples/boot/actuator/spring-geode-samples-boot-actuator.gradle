@@ -22,7 +22,7 @@ task runServer(type: JavaExec) {
 }
 
 bootJar {
-	mainClassName = 'example.app.temp.geode.client.BootGeodeClientApplication'
+	mainClass = 'example.app.temp.geode.client.BootGeodeClientApplication'
 }
 
 bootRun {

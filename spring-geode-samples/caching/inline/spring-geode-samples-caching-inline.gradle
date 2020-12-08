@@ -23,7 +23,7 @@ dependencies {
 }
 
 bootJar {
-	mainClassName = 'example.app.caching.inline.BootGeodeInlineCachingApplication'
+	mainClass = 'example.app.caching.inline.BootGeodeInlineCachingApplication'
 }
 
 bootRun {

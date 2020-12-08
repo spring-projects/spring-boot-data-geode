@@ -23,5 +23,5 @@ dependencies {
 }
 
 bootJar {
-	mainClassName = 'example.app.caching.multisite.client.BootGeodeMultiSiteCachingClientApplication'
+	mainClass = 'example.app.caching.multisite.client.BootGeodeMultiSiteCachingClientApplication'
 }

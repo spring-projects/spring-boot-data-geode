@@ -4,7 +4,7 @@ plugins {
 
 apply plugin: 'io.spring.convention.spring-sample-boot'
 
-description = "Spring Geode Sample demonstrating Apache Geode security."
+description = "Spring Geode Sample demonstrating Apache Geode security configured with Spring."
 
 dependencies {
 
@@ -18,5 +18,5 @@ dependencies {
 }
 
 bootJar {
-	mainClassName = 'example.app.security.client.BootGeodeSecurityClientApplication'
+	mainClass = 'example.app.security.client.BootGeodeSecurityClientApplication'
 }
