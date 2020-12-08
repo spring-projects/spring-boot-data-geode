@@ -22,6 +22,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 
+import javax.annotation.PreDestroy;
+
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -45,7 +47,7 @@ import example.app.caching.inline.async.client.model.Golfer;
  */
 @Service
 @SuppressWarnings("unused")
-public class GolfTournamentService implements Closeable {
+public class PgaTourService implements Closeable {
 
 	protected static final int SCORE_DELTA_BOUND = 2;
 
@@ -55,7 +57,7 @@ public class GolfTournamentService implements Closeable {
 
 	private final Random random = new Random(System.currentTimeMillis());
 
-	public GolfTournamentService(GolferService golferService) {
+	public PgaTourService(GolferService golferService) {
 
 		Assert.notNull(golferService, "GolferService must not be null");
 
@@ -66,12 +68,23 @@ public class GolfTournamentService implements Closeable {
 		return Optional.ofNullable(this.golfTournament);
 	}
 
-	@Override
+	@Override @PreDestroy
 	public void close() {
 		this.golfTournament = null;
 	}
 
-	public GolfTournamentService manage(GolfTournament golfTournament) {
+	public boolean isFinished() {
+
+		GolfTournament golfTournament = this.golfTournament;
+
+		return golfTournament == null || golfTournament.isFinished();
+	}
+
+	public boolean isNotFinished() {
+		return !isFinished();
+	}
+
+	public PgaTourService manage(GolfTournament golfTournament) {
 
 		GolfTournament currentGolfTournament = this.golfTournament;
 
@@ -90,13 +103,13 @@ public class GolfTournamentService implements Closeable {
 
 		GolfTournament golfTournament = this.golfTournament;
 
-		if (golfTournament != null) {
+		if (isNotFinished()) {
 			playHole(golfTournament);
 			finish(golfTournament);
 		}
 	}
 
-	private void playHole(@NonNull GolfTournament golfTournament) {
+	private synchronized void playHole(@NonNull GolfTournament golfTournament) {
 
 		GolfCourse golfCourse = golfTournament.getGolfCourse();
 
@@ -104,7 +117,7 @@ public class GolfTournamentService implements Closeable {
 
 		for (GolfTournament.Pairing pairing : golfTournament) {
 
-			int hole = pairing.playNextHole();
+			int hole = pairing.nextHole();
 
 			if (!occupiedHoles.contains(hole)) {
 				if (golfCourse.isValidHoleNumber(hole)) {
@@ -150,11 +163,8 @@ public class GolfTournamentService implements Closeable {
 
 	private void finish(@NonNull GolfTournament golfTournament) {
 
-		if (golfTournament.isFinished()) {
-
-			GolfCourse golfCourse = golfTournament.getGolfCourse();
-
-			for (GolfTournament.Pairing pairing : golfTournament) {
+		for (GolfTournament.Pairing pairing : golfTournament) {
+			if (pairing.signScorecard()) {
 				updateScore(this::calculateFinalScore, pairing.getPlayerOne());
 				updateScore(this::calculateFinalScore, pairing.getPlayerTwo());
 			}

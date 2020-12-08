@@ -25,43 +25,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 import example.app.caching.inline.async.client.model.GolfTournament;
 import example.app.caching.inline.async.client.model.Golfer;
-import example.app.caching.inline.async.client.service.GolfTournamentService;
 import example.app.caching.inline.async.client.service.GolferService;
 
 /**
- * Spring Web MVC {@link RestController} used to present a view of a {@link GolfTournament} running.
+ * Spring Web MVC {@link RestController} used to present a view of {@link Golfer Golfers} standings
+ * when playing in a {@link GolfTournament} on the {@literal PGA TOUR}.
  *
  * @author John Blum
- * @see example.app.caching.inline.async.client.model.Golfer
- * @see example.app.caching.inline.async.client.model.GolfTournament
- * @see example.app.caching.inline.async.client.service.GolferService
- * @see example.app.caching.inline.async.client.service.GolfTournamentService
  * @see org.springframework.web.bind.annotation.GetMapping
  * @see org.springframework.web.bind.annotation.RequestMapping
  * @see org.springframework.web.bind.annotation.RestController
+ * @see example.app.caching.inline.async.client.model.Golfer
+ * @see example.app.caching.inline.async.client.model.GolfTournament
+ * @see example.app.caching.inline.async.client.service.GolferService
  * @since 1.4.0
  */
 @RestController
 @RequestMapping("/golf/tournament")
 @SuppressWarnings("unused")
-public class GolfTournamentController {
+public class GolferController {
 
 	private final GolferService golferService;
 
-	private final GolfTournamentService golfTournamentService;
-
-	public GolfTournamentController(@NonNull GolferService golferService,
-			@NonNull GolfTournamentService golfTournamentService) {
+	public GolferController(@NonNull GolferService golferService) {
 
 		Assert.notNull(golferService, "GolferService must not be null");
-		Assert.notNull(golfTournamentService, "GolfTournamentService must not be null");
 
 		this.golferService = golferService;
-		this.golfTournamentService = golfTournamentService;
-	}
-
-	protected @NonNull GolfTournamentService getGolfTournamentService() {
-		return this.golfTournamentService;
 	}
 
 	protected @NonNull GolferService getGolferService() {

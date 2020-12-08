@@ -48,10 +48,11 @@ public class AsyncInlineCachingConfiguration {
 	@Bean
 	@Profile("queue-batch-size")
 	AsyncInlineCachingRegionConfigurer<Golfer, String> batchSizeAsyncInlineCachingConfigurer(
-			@Value("${spring.geode.sample.async-inline-caching.queue.batch-size:4}") int queueBatchSize,
+			@Value("${spring.geode.sample.async-inline-caching.queue.batch-size:25}") int queueBatchSize,
 			GolferRepository golferRepository) {
 
 		return AsyncInlineCachingRegionConfigurer.create(golferRepository, GOLFERS_REGION_NAME)
+			.withQueueBatchConflationEnabled()
 			.withQueueBatchSize(queueBatchSize)
 			.withQueueBatchTimeInterval(Duration.ofMinutes(60))
 			.withQueueDispatcherThreadCount(1);

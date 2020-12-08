@@ -32,7 +32,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import example.app.caching.inline.async.client.model.GolfTournament;
 import example.app.caching.inline.async.client.model.support.GolfCourseBuilder;
 import example.app.caching.inline.async.client.model.support.GolferBuilder;
-import example.app.caching.inline.async.client.service.GolfTournamentService;
+import example.app.caching.inline.async.client.service.PgaTourService;
 import example.app.caching.inline.async.config.AsyncInlineCachingConfiguration;
 import example.app.caching.inline.async.config.AsyncInlineCachingRegionConfiguration;
 
@@ -55,8 +55,9 @@ import example.app.caching.inline.async.config.AsyncInlineCachingRegionConfigura
  * @see example.app.caching.inline.async.client.model.GolfCourse
  * @see example.app.caching.inline.async.client.model.GolfTournament
  * @see example.app.caching.inline.async.client.model.Golfer
- * @see example.app.caching.inline.async.client.service.GolfTournamentService
+ * @see example.app.caching.inline.async.client.service.PgaTourService
  * @see example.app.caching.inline.async.config.AsyncInlineCachingConfiguration
+ * @see example.app.caching.inline.async.config.AsyncInlineCachingRegionConfiguration
  * @since 1.4.0
  */
 @SpringBootApplication
@@ -74,7 +75,7 @@ public class BootGeodeAsyncInlineCachingClientApplication {
 	static class GolfApplicationConfiguration {
 
 		@Bean
-		ApplicationRunner runGolfTournament(GolfTournamentService golfTournamentService) {
+		ApplicationRunner runGolfTournament(PgaTourService pgaTourService) {
 
 			return args -> {
 
@@ -84,7 +85,7 @@ public class BootGeodeAsyncInlineCachingClientApplication {
 					.buildPairings()
 					.play();
 
-				golfTournamentService.manage(golfTournament);
+				pgaTourService.manage(golfTournament);
 
 			};
 		}

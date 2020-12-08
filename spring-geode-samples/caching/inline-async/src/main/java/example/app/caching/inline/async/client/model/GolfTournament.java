@@ -23,12 +23,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.StreamSupport;
 
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.util.Assert;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -53,31 +55,23 @@ public class GolfTournament implements Iterable<GolfTournament.Pairing> {
 
 	private GolfCourse golfCourse;
 
-	private final List<Pairing> pairings = new ArrayList<>();
+	private final List<Pairing> pairings = Collections.synchronizedList(new ArrayList<>());
 
-	private final Set<Golfer> players = new HashSet<>();
+	private final Set<Golfer> players = Collections.synchronizedSet(new HashSet<>());
 
-	@Override
-	public Iterator<GolfTournament.Pairing> iterator() {
-		return Collections.unmodifiableList(this.pairings).iterator();
+	public Iterable<Golfer> getPlayers() {
+		return Collections.unmodifiableSet(this.players);
 	}
 
 	public boolean isFinished() {
-
-		Set<Pairing> finishedPairings = new HashSet<>(this.pairings.size());
 
 		for (Pairing pairing : this) {
 			if (pairing.getHole() < 18) {
 				return false;
 			}
-			else {
-				finishedPairings.add(pairing);
-			}
 		}
 
-		this.pairings.removeAll(finishedPairings);
-
-		return this.pairings.isEmpty();
+		return true;
 	}
 
 	public GolfTournament at(GolfCourse golfCourse) {
@@ -109,6 +103,11 @@ public class GolfTournament implements Iterable<GolfTournament.Pairing> {
 		return this;
 	}
 
+	@Override
+	public Iterator<GolfTournament.Pairing> iterator() {
+		return Collections.unmodifiableList(this.pairings).iterator();
+	}
+
 	public GolfTournament play() {
 
 		Assert.state(this.golfCourse != null, "No golf course was declared");
@@ -134,8 +133,11 @@ public class GolfTournament implements Iterable<GolfTournament.Pairing> {
 
 	@Getter
 	@ToString
+	@EqualsAndHashCode
 	@RequiredArgsConstructor(staticName = "of")
 	public static class Pairing {
+
+		private final AtomicBoolean signedScorecard = new AtomicBoolean(false);
 
 		@NonNull
 		private final Golfer playerOne;
@@ -143,17 +145,27 @@ public class GolfTournament implements Iterable<GolfTournament.Pairing> {
 		@NonNull
 		private final Golfer playerTwo;
 
-		public int getHole() {
-			return getPlayerOne().getHole();
-		}
-
-		public void setHole(int hole) {
+		public synchronized void setHole(int hole) {
 			this.playerOne.setHole(hole);
 			this.playerTwo.setHole(hole);
 		}
 
-		public int playNextHole() {
+		public synchronized int getHole() {
+			return getPlayerOne().getHole();
+		}
+
+		public boolean in(@NonNull Golfer golfer) {
+			return this.playerOne.equals(golfer) || this.playerTwo.equals(golfer);
+		}
+
+		public synchronized int nextHole() {
 			return getHole() + 1;
+		}
+
+		public synchronized boolean signScorecard() {
+
+			return getHole() >= 18
+				&& this.signedScorecard.compareAndSet(false, true);
 		}
 	}
 }
