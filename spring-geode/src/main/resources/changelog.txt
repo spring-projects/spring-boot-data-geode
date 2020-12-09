@@ -4,6 +4,33 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.4.0 (2020-12-09)
+-------------------------------------
+Aligns SBDG with Spring Boot 2.4.0 along with the latest versions of Spring Framework, Spring Data, Spring Session,
+and Spring Test.
+
+* Adds new Sample Guide and Code Example covering Asynchronous Inline Caching.
+* Adds documentation on using the new spring-geode-bom Maven BOM to manage SBDG module dependencies
+in Spring Boot application Maven POM files.
+* Adds additional builder methods on the AsyncInlineCachingRegionConfigurer to configure and AEQ;
+e.g. withSerialQueue().
+* Add metadata to the RepositoryAsyncEventListener.process(:List<AsyncEvent) method to track how many times the
+process(..) method has been called, whether it has been called at all and whether it has been called
+since the last check.
+* Fixes bug AEQ ID generation in for Async Inline Caching support, which causes a conflict in Apache Geodes JMX
+Management infrastructure, MBean ObjectNames.
+* Upgrades to Spring Framework 5.3.1
+* Upgrades to Spring Boot 2.4.0
+* Upgrades to Spring Data BOM 2020.0.1.
+* Upgrades to Spring Data for Apache Geode 2.4.1
+* Upgrades to Spring Session BOM 2020.0.1.
+* Upgrades to Spring Test for Apache Geode 0.0.21.RELEASE.
+* Upgrades to Spring Build Conventions Gradle Plugin 0.0.35.RELEASE.
+* Upgrades to Gradle 6.7.1.
+* Upgrades to Freefair Lombok Gradle Plugin 5.3.0.
+* Upgrades to Mockito 3.6.28.
+
+
 Changes in version 1.3.6.RELEASE (2020-11-19)
 ---------------------------------------------
 Aligns SBDG with Spring Boot 2.3.6.RELEASE along with the latest versions of Spring Framework, Spring Data,
