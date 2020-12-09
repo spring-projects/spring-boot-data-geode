@@ -69,8 +69,8 @@ public class AsyncInlineCachingConfiguration {
 			GolferRepository golferRepository) {
 
 		return AsyncInlineCachingRegionConfigurer.create(golferRepository, GOLFERS_REGION_NAME)
-			.withQueueBatchTimeInterval(Duration.ofMillis(queueBatchTimeIntervalMilliseconds))
 			.withQueueBatchSize(1000000)
+			.withQueueBatchTimeInterval(Duration.ofMillis(queueBatchTimeIntervalMilliseconds))
 			.withQueueDispatcherThreadCount(1);
 	}
 	// end::queue-batch-time-interval[]

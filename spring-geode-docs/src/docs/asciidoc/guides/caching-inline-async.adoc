@@ -1,9 +1,10 @@
 [[geode-samples-caching-inline]]
-= Inline Caching with Spring
+= Asynchronous Inline Caching with Spring
 :apache-geode-name: Apache Geode
 :apache-geode-version: {apache-geode-doc-version}
 :apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
+:apache-geode-website: https://geode.apache.org/
 :images-dir: ./images
 :spring-boot-docs: https://docs.spring.io/spring-boot/docs/current/reference/html
 :spring-boot-javadoc: https://docs.spring.io/spring-boot/docs/current/api
@@ -21,7 +22,7 @@
 
 This guide walks you through building a simple Spring Boot application
 using {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]
-backed by {apache-geode-name} as the caching provider for Asynchronous, Inline Caching.
+backed by {apache-geode-website}[{apache-geode-name}] as the caching provider for Asynchronous Inline Caching.
 
 It is assumed that the reader is familiar with the Spring _programming model_. No prior knowledge of Spring's
 _Cache Abstraction_ or {apache-geode-name} is required to utilize caching in your Spring Boot applications.
@@ -55,18 +56,18 @@ has already been modified. The "asynchronous" arrangement of the _Inline Caching
 "_Write-Behind_". The cache entry is modified, then, and only then, will the primary data source reflect the changes
 sometime later.
 
-Due to the asynchronous nature of _Async Inline Caching_, it is possible for the primary data source  (i.e. _System
-of Record_ (SOR)) and the cache to get out-of-sync. Additionally, the primary data source may contain information that
-the cache does not. That is to say, another application may be updating the primary data source and not using the cache.
-The cache entry change may not be promptly written to the primary data source until the "_Write-Behind_" operation is
-triggered, which is often implementation dependent. A data change could violate a database constraint, fail to commit
-and be rolled back. All sorts of reasons can cause the primary data source and the cache to become out-of-sync,
-or inconsistent.
+Due to the asynchronous nature of _Asynchronous Inline Caching_, it is possible for the primary data source (i.e.
+_System of Record_ (SOR)) and cache to be out-of-sync. Additionally, the primary data source may contain information
+that the cache does not. That is, another application may be updating the primary data source and not using the cache.
+Conversely, a cache entry change may not be promptly written to the primary data source until the "_Write-Behind_"
+operation is triggered, which is often implementation dependent. A data change could violate a database constraint,
+fail to commit and be rolled back. All sorts of reasons can cause the primary data source and the cache to get
+out-of-sync, or become inconsistent.
 
-For this reason, throughput and latency are the primary application concerns, rather than consistency, when using
-the _Asynchronous Inline Caching_ pattern.
+For this reason, throughput and latency are the primary application concerns and motivation, rather than consistency,
+when using the _Asynchronous Inline Caching_ pattern.
 
-The general pattern of Inline Caching is depicted as follows:
+The general pattern of _Inline Caching_ is depicted as follows:
 
 image::{images-dir}/Inline-Caching-Overview.png[]
 
@@ -79,13 +80,13 @@ In _Synchronous, Read/Write-Through, Inline Caching_, the system/application arc
 
 image::{images-dir}/Synchronous-Inline-Caching.png[]
 
-With _Asynchronous, Write-Behind, Inline Caching, the system/application architecture would then appear as:
+With _Asynchronous, Write-Behind, Inline Caching_, the system/application architecture would instead appear as:
 
 image::{images-dir}/Asynchronous-Inline-Caching.png[]
 
 IMPLEMENTATION
 
-As readers should know, the application cache is backed by an {apache-geode-name} Region.
+As readers should know or will learn, the application cache is backed by an {apache-geode-name} Region.
 
 In _Synchronous_, _Read-Through_ and/or _Write-Through_, _Inline Caching_, a `CacheLoader` is configured for the Region
 and used to "_Read-Through_" to the backend/primary data source on a cache miss. When a cache entry is written, a
@@ -97,7 +98,7 @@ _Synchronous Inline Caching_ or the other, either "_Read-Through_" or "_Write-Th
 
 With _Asynchronous, Write-Behind, Inline Caching_, you (may) configure the Region with an associated `AsyncEventQueue`
 (AEQ) and registered `AsyncEventListener`. When the cache is written to, the entry event is then forwarded and stored
-on the AEQ, where at sometime later, the registered `AsyncEventListener` for the AEQ will be invoked to process the
+on the AEQ, where at some time later, the registered `AsyncEventListener` for the AEQ will be invoked to process the
 (batch of) `AsyncEvents`, which can then asynchronously modify the backend/primary data source.
 
 Unlike _Synchronous Inline Caching_, _Asynchronous Inline Caching_ does not have an equivalent for "_Read-Through_",
@@ -106,6 +107,11 @@ such as "_Read-Behind_", particularly in a Reactive sense.
 NOTE: At some point later, we may consider the development of "_Read-Behind_" with with use of Reactive Programming
 and the Reactive Spring Data Repository abstraction.
 
+TIP: It should also be intuitive that the listener registered on the AEQ attached to the (cache) Region does not have to
+process the events by writing to a backend data store. It could write to a message queue, to the file system, or do
+just about anything a user desires. However, OOTB SBDB provides support to inject a Spring Data Repository into an
+AEQ listener to write to any backend data store supported by the Spring Data Repository abstraction.
+
 link:../index.html#geode-samples[Back to Samples]
 
 [[geode-samples-caching-inline-asynchronous-example]]
@@ -113,19 +119,19 @@ link:../index.html#geode-samples[Back to Samples]
 
 For our example, we have built a Golf Tournament application that runs a simulation with a set of professional golfers
 playing at _The Masters_.  The (12) golfers play 18 holes of golf in pairs and proceed from hole 1 to hole 18 in under
-a minute. For each hole played, their score of the whole is calculated. At the end of the round, each golfers final
-score is calculated relative to par for the course (72).
+a minute. For each hole played, their score of the hole is calculated. At the end of the round, each golfer's final
+score is calculated relative to par for the golf course (72).
 
-The Golf Tournament application is a Spring Boot application using {apache-geode-name} to persist the golfers score in
+The Golf Tournament application is a Spring Boot application using {apache-geode-name} to cache the golfers score in
 realtime as the players complete each hole.  However, to make the play "official", the golfer's score is recorded to a
-backend database, asynchronously using _Asynchronous_, _Write-Behind_, _Inline Caching_. It is assumed that there is
-additional validation required (e.g. such as signing scorecards, etc) that goes on before the final score is accepted
+backend database (RDBMS), asynchronously using _Asynchronous_, _Write-Behind_, _Inline Caching_. It is assumed that
+there is additional validation required (e.g. signing scorecards) that goes on before the final score is accepted
 and recorded to the _System of Record_ (SOR), in the "history books", so to speak.
 
-Now that the problem context is established, let's review a few of the classes.
+Now that the problem context has been established, let's review a few of the application classes.
 
-NOTE: Each of the application domain classes are code snippets or a preview of the actual class, and not actual code.
-See the actual Sample code for more detail.
+NOTE: Each of the application domain classes are code snippets or simply a preview of the actual class, and not actual
+code. See the actual Sample {github-samples-url}/caching/inline-async[code] for more detail.
 
 We start by defining our Golf Tournament application domain model types, starting with the `Golfer` class. Essentially,
 the `Golfer` class models a person who plays golf and is defined as:
@@ -167,7 +173,7 @@ class GolfCourse {
 ----
 
 Next, a non-entity, `GolfTournament` class has been defined to model the golf tournament being played. It expects a name
-for the tournament, the golf course` where the tournament is held and played, and a `Set` of `Golfers` (players)
+for the tournament, the `GolfCourse` where the tournament is held and played, and a `Set` of `Golfers` (players)
 registered to play.
 
 Additionally, the `GolfTournament` class contains an inner class, the `Pairing` class, to group the registered players
@@ -213,13 +219,12 @@ interface GolferRepository extends JpaRepository<Golfer, String> { }
 NOTE: While `GolferRepository` extends from the `JpaRepository` interface directly, it is recommended to extend
 the `CrudRepository` interface instead, keeping your application SD _Repositories_ agnostic from the underlying
 data store. The reason `GolferRepository` extends from the `JpaRepository` interface directly, is to make it absolutely
-clear that the `Golfer` state will be persisted to a backend database (RDBMS) using JPA along with Hibernate as the
-provider.
+clear that the `Golfer` state will be persisted to a backend database (RDBMS) with JPA using Hibernate as the provider.
 
 The `GolferRepository` will be used by SBDG's _Asynchronous Inline Caching_ framework and infrastructure components.
 
 The _Repository_ is injected into and used by the `AsyncEventListener` registered on the AEQ attached to the "Golfers"
-Region to perform asynchronous, _Write-Behind_, _Inline Caching_, operations to the backend database
+Region to perform _Asynchronous_, _Write-Behind_, _Inline Caching_, operations to the backend database
 and _System of Record_ (SOR).
 
 We'll see in a moment how this association is made and how _Asynchronous Inline Caching_ is setup, made simple by SBDG.
@@ -260,12 +265,12 @@ include::{samples-dir}/caching/inline-async/src/main/java/example/app/caching/in
 ----
 
 This is a Spring `@Scheduled` service method called every 2.5 seconds after an initial delay of 5 seconds. Essentially,
-the service method runs through the pairings, where each `Golfer` plays all 18 holes, their scores are calculated
-and recorded for each hole until the round is completed, whether the players score is then calculated relative to par
-for course and recorded to the cache, and eventually the database.
+the service method iterates through the pairings and each `Golfer` plays all 18 holes. Their scores are calculated
+and recorded for each hole until the round is completed, where the players score is then calculated relative to par
+for the golf course and recorded to the cache, which eventually updates the database.
 
 To get everything started, a Spring Boot application class (i.e. a class annotated with the `@SpringBootApplication`
-annotation) is used to bootstrap the application.
+annotation) is used to bootstrap the Golf Tournament application.
 
 .`BootGeodeAsyncInlineCachingClientApplication` class
 [source,java]
@@ -281,8 +286,8 @@ The `GolfTournament` is kicked off in the `ApplicationRunner`.
 include::{samples-dir}/caching/inline-async/src/main/java/example/app/caching/inline/async/client/BootGeodeAsyncInlineCachingClientApplication.java[tags=application-configuration]
 ----
 
-As the golf tournament progresses (in the `@Scheduled`, PgaTourService.play()` service method), the updates to the
-`Golfers` in the pairs are written to the "_Golfers_" cache (i.e. "_Golfers_" Region) by calling
+As the golf tournament progresses (in the `@Scheduled`, `PgaTourService.play()` service method), updates to the `Golfers`
+in the pairs are written to the "_Golfers_" cache (i.e. "_Golfers_" Region) by calling
 the `GolferService.update(:Golfer)` service method:
 
 .`GolferService` class, `update(:Golfer)` method
@@ -291,8 +296,8 @@ the `GolferService.update(:Golfer)` service method:
 include::{samples-dir}/caching/inline-async/src/main/java/example/app/caching/inline/async/client/service/GolferService.java[tags=cache-put]
 ----
 
-This method simply "puts" the `Golfer` in the cache (i.e. "_Golfers_" Region) mapped to the `Golfer's name` (as a
-key/value cache entry).
+This service method simply "puts" the `Golfer` in the cache (i.e. "_Golfers_" Region) mapped to the `Golfer's name`
+(as a key/value cache entry).
 
 The cache/Region entry `put` operation results in cache event being added to the AEQ, which will eventually trigger
 the SBDG framework-provided `AsyncEventListener` with our injected `GolferRepository` to write the `Golfer's` state
@@ -307,13 +312,13 @@ as follows:
 include::{samples-dir}/caching/inline-async/src/main/java/example/app/caching/inline/async/config/AsyncInlineCachingConfiguration.java[tags=class]
 ----
 
-The Spring `@Configuration` class used to enable _Async Inline Caching_ consists of 2 different AEQ configuration
-arrangements and bean definitions.
+The Spring `@Configuration` class used to enable _Async Inline Caching_ consists of 2 different AEQ configurations
+and bean definitions.
 
 The first is a AEQ configured with a "preference" for being triggered on the *batch size*, i.e. the number of events
 present in the AEQ:
 
-.`AsyncInlineCachingConfiguration` class
+.AEQ batch size configuration
 [source,java]
 ----
 include::{samples-dir}/caching/inline-async/src/main/java/example/app/caching/inline/async/config/AsyncInlineCachingConfiguration.java[tags=queue-batch-size]
@@ -322,18 +327,24 @@ include::{samples-dir}/caching/inline-async/src/main/java/example/app/caching/in
 The second AEQ configuration uses a "preference" for being triggered based on a *batch time interval*, i.e. after
 a period of time has elapsed, such as 5 seconds.
 
+.AEQ batch time interval configuration
+[source,java]
+----
+include::{samples-dir}/caching/inline-async/src/main/java/example/app/caching/inline/async/config/AsyncInlineCachingConfiguration.java[tags=queue-batch-time-interval]
+----
+
 NOTE: The default AEQ _batch time interval_ in {apache-geode-name} is *5 milliseconds* (5 ms). However, to demonstrate
-the asynchronous nature of the cache to database update, a much longer delay was used. Likewise, the default AEQ
-_batch size_ is *100*.
+the asynchronous nature of the cache to database updates, a much longer delay was used. Likewise, the default AEQ
+_batch size_ in {apache-geode-name} is *100*.
 
 In both AEQ configurations and bean definitions, the _batch size_ and _batch time interval_ have been set (overriding
-the {apache-geode-name} defaults) in order to show the effects of each AEQ settings independently. As you can imagine,
-particularly in a highly concurrent and transactional application with frequent updates, it would be hard to determine
-whether the AEQ event processing (and listener) was triggered by the _batch time interval_ or the _batch size_. And,
-with a default *5 millisecond* _batch time interval_, it is hard to witness the asynchronous nature of the cache
-to database updates to begin with.
+the {apache-geode-name} defaults) in order to show the effects of each AEQ configuration independently. As you can
+imagine, particularly in a highly concurrent and transactional application with frequent updates, it would be hard to
+determine whether the AEQ event processing (via the listener) was triggered by the _batch time interval_ or the
+_batch size_. And, with a default *5 millisecond* _batch time interval_, it is hard to witness the asynchronous nature
+of the cache to database updates to begin with.
 
-We will have more to say on the AEQ configuration below.
+We will have more to say on the AEQ configuration below, in the conclusion.
 
 The final class in the golf application is a `GolferController` class annotated with Spring's `@RestController`
 annotation in order to expose our golf application functionality as an API in a REST-ful interface:
@@ -346,10 +357,10 @@ include::{samples-dir}/caching/inline-async/src/main/java/example/app/caching/in
 
 The Spring Web MVC `@RestController` class exposes two REST-ful API web service endpoints returning JSON data:
 
-* http://localhost:8080/api/golf/tournament/cache - used to get the current state of the golfers from the cache
-* http://localhost:8080/api/golf/tournament/database - used to get the current state of the golfers from the database
+* http://localhost:8080/api/golf/tournament/cache - used to get the current state of the `Golfers` from the cache
+* http://localhost:8080/api/golf/tournament/database - used to get the current state of the `Golfers` from the database
 
-Both web service endpoints are consumed by the `golf-tournament-view.html` page, which uses jQuery and AJAX to make
+Both web service endpoints are consumed by the `golf-tournament-view.html` page, which uses _jQuery_ and AJAX to make
 periodic HTTP requests to refresh the page.
 
 [[geode-samples-caching-inline-asynchronous-example-run]]
@@ -370,20 +381,22 @@ That is, in our `BootGeodeAsyncInlineCachingClientApplication` class, we also ap
 include::{samples-dir}/caching/inline-async/src/main/java/example/app/caching/inline/async/client/BootGeodeAsyncInlineCachingClientApplication.java[tags=peer-cache-configuration]
 ----
 
-It should be noted that an AEQ can only be created and registered on a Region existing on the server-side of
+It should be noted that AEQs can only be created and registered on Regions existing on the server-side of
 an {apache-geode-name} system. That is, you cannot add an AEQ to a client-side Region. Therefore, in all your
 _Async Inline Caching_ Uses Cases (UC), synchronous or asynchronous, it will be the servers in an {apache-geode-name}
 cluster that are responsible for _Write-Behind_ functionality to the backend data store, not a Spring Boot,
 {apache-geode-name} client application.
 
-However, for demonstration purposes, we override SBDG's default, auto-configuration providing a `ClientCache` instance
-by simply enabling the "_peer-cache_" Spring Profile, which replaces the `ClientCache` instance with a peer `Cache`
-instance instead.
+However, for demonstration purposes, we override SBDG's _auto-configuration_ providing a `ClientCache` instance
+by default simply by enabling the "_peer-cache_" Spring Profile, which replaces the `ClientCache` instance with
+a peer `Cache` instance instead.
 
-Finally, when running this application, you must decide on your AEQ management strategy. For example, do you want
-the AEQ listener to be triggered by *batch size* (i.e. the number of cache events) or using the *batch time interval*.
-Each strategy can be enabled using a Spring Profile, either "_queue-batch-size_" or "_queue-batch-time-interval_".
-This allows you to experiment with different AEQ management strategies to observe the effects.
+Finally, when running this application, you must decide on your AEQ management strategy.
+
+For example, do you want the AEQ listener to be triggered by *batch size* (i.e. the number of cache events) or using
+the *batch time interval*. Each strategy can be enabled using a Spring Profile, either "_queue-batch-size_"
+or "_queue-batch-time-interval_". This allows you to experiment with different AEQ management strategies and observe
+the effects.
 
 In total, the Spring Profiles you need to enable would appear as follows:
 
@@ -395,7 +408,7 @@ In total, the Spring Profiles you need to enable would appear as follows:
 
 Of course, you can replace "_queue-batch-size_" with "_queue-batch-time-interval_".
 
-The final configuration of the Spring Boot application, as seen in IntelliJ IDEA is:
+The final run configuration of the Spring Boot application, as seen in IntelliJ IDEA is:
 
 image::{images-dir}/BootGeodeAsyncInlineCachingClientApplication-IntelliJ-IDEA-Run-Configuration.png[]
 
@@ -417,49 +430,50 @@ $ gradlew --no-daemon :spring-geode-sample-caching-inline-async:bootRun
 
 This is convenient since the Spring Profiles are already configured for you.
 
-However, when you switch to using the "_queue-batch-time-interval_" you will see a similar effect and behavior, but
-with on a slightly different schedule for the database updates, i.e. at a fixed 5 second interval.
+However, when you switch to using the "_queue-batch-time-interval_" you will see a similar effect and behavior, but on
+a slightly different schedule for the database updates, i.e. at a fixed 5 second interval.
 
 [[geode-samples-caching-inline-asynchronous-example-conclusion]]
 == Conclusion
 
-_Asynchronous Inline Caching_ can be a powerful pattern of caching applied to your diverse Spring Boot application
-workflows depending on the use case and requirements.
+_Asynchronous Inline Caching_ can be a powerful pattern of caching applied to your Spring Boot application workflows
+depending on the use case and requirements.
 
-If throughput and latency are important to create the necessary responsiveness in your application design and user
-experience, and consistency (i.e. between the cache and the backend _System of Record_ (SOR), or database) is not
-as important of a concern, then you might want to consider _Asynchronous Inline Caching_.
+If throughput and latency are absolutely critical to your application design in order to achieve the necessary
+responsiveness and quality of experience your users' expect, and consistency (i.e. between the cache and the backend
+_System of Record_ (SOR), or database) is not as important of a concern, then you might want to consider
+_Asynchronous Inline Caching_.
 
-There are many factors to consider in the configuration of the AEQ that is at the heart of an _Asynchronous Inline
-Caching_ configuration, such as the appropriate *batch size* and *batch time interval*. Neither setting is exclusive
+There are many factors to consider in the configuration of the AEQ that is at the heart of the _Asynchronous Inline
+Caching_ pattern, such as the appropriate *batch size* and *batch time interval*. Neither setting is exclusive
 from the other, in fact. Both settings are considered when {apache-geode-name} makes a decision of when to trigger
-the listener registered on the AEQ to process the events from operations on the Region to which the AEQ is attached.
+the listener registered on the AEQ to process the events for operations originating from the Region to which the AEQ
+is attached.
 
-You must decide on your *batch size*, based on how many events might occur in a given period of time. If the frequency
-is quite high, then you might need a smaller *batch size*, for instance. The AEQ is in-memory, therefore you must be
-conscious of memory constraints on your system, especially during peak loads. Of course, the AEQ can be configured
-to overflow events to disk and even persist events between restarts, but ideally you want these events to be processed
-in as near realtime as possible.
+You must decide on the *batch size*, based on how many events might occur in a given period of time. If the frequency
+is quite high, then you might need a smaller *batch size*, for instance. The AEQ is in-memory after all, therefore you
+must be conscious of memory constraints on your system, especially during peak loads. Of course, the AEQ can be
+configured to overflow events to disk and even persist events between restarts, but ideally you want these events
+to be processed in as near realtime as possible.
 
-However, when the load on your application is low and events occur sporadically, you also must be mindful that the
+However, when the load on your application is low and events occur sporadically, you must also be mindful that the
 events do not sit in the AEQ for too long.  If you have *batch size* of 1000, and there are currently only 20 events
 (well, any number of events less than 1000) sitting in the AEQ waiting to be processed, then the *batch time interval*
 becomes important, especially so that these remaining events (less than the configured *batch size*) don't wait in the
-queue indefinitely.
+queue indefinitely. The configured Queue Dispatcher Thread count plays into this as well.
 
 Other factors to consider are whether you can conflate the events in the AEQ. This minimizes the number of events for
 a single logical Object to the latest update. Additionally, do you need to overflow events to disk after the configured
 maximum queue memory is reached, or should events simply be discarded? Do you need to maintain the events in the queue
 between restarts (i.e. configure the AEQ to be persistent)? Do the disk writes for overflow and/or persistence need to
 be synchronous? Do the events in the queue need to be ordered based on some `OrderPolicy`? Do the events need to be
-filtered? How many dispatcher threads do you require? Etc. Etc. There are many important things consider in the
-configuration of the AEQ when using _Asynchronous Inline Caching_ for _Write-Behind_ capabilities.
+filtered? How many dispatcher threads do you require? Etc. Etc.
 
-Usually, it is safe to start with the defaults and adjust as needed, and as your measurements and tests dictate.
+There are many important things consider in the configuration of the AEQ when using _Asynchronous Inline Caching_
+for _Write-Behind_ capabilities. Usually, it is safe to start with the defaults and adjust as needed, and as your
+measurements and tests dictate.
 
-We hope that you found this guide useful and that it has armed you with more knowledge to tackle difficult problems,
-the type of application problems where the _Asynchronous Inline Caching_ pattern can be applied with immediate benefits.
-
-Good luck.
+We hope that you found this guide useful and informative when tackling difficult problems, the kind of application
+problems where the _Asynchronous Inline Caching_ pattern can be applied with immediate benefits.
 
 link:../index.html#geode-samples[Back to Samples]

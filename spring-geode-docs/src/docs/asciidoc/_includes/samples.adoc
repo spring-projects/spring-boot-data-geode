@@ -43,7 +43,7 @@ This sample builds on the *_Look-Aside Caching_* sample above.
 | link:guides/caching-inline-async.html[Asynchronous Inline Caching with Spring's Cache Abstraction and {geode-name}]
 | Explains how to enable and use the Spring Cache Abstraction with {geode-name} as the caching provider for Asynchronous
 Inline Caching. This sample builds on the *_Look-Aside Caching_* and *Inline Caching* samples above.
-| {github-samples-url}/caching/[Asynchronous Inline Caching]
+| {github-samples-url}/caching/inline-async[Asynchronous Inline Caching]
 
 | link:guides/caching-near.html[Near Caching with Spring's Cache Abstraction and {geode-name}]
 | Explains how to enable and use the Spring Cache Abstraction with {geode-name} as the caching provider for Near Caching.

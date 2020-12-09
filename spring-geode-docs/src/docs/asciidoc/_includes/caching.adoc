@@ -242,7 +242,7 @@ to see _Inline Caching_ using {geode-name} in action!
 The next pattern of caching we will discuss in this chapter is _Inline Caching_.
 
 There are two different configurations of _Inline Caching_ that developers can apply to their Spring Boot applications
-when using _Inline Caching_ pattern: Synchronous (_Read/Write-Through_) and Asynchronous (_Write-Behind_).
+when using the _Inline Caching_ pattern: Synchronous (_Read/Write-Through_) and Asynchronous (_Write-Behind_).
 
 NOTE: Asynchronous (currently) only offers write capabilities, from the cache to the backend, external data source.
 There is no option to asynchronously and automatically load the cache when the value becomes available in the backend,
@@ -497,6 +497,9 @@ from the SBDG test suite. A dedicated sample will be provided in a future releas
 
 [[geode-caching-provider-inline-caching-asynchronous]]
 ===== Asynchronous Inline Caching
+
+TIP: Refer to the corresponding Sample link:guides/caching-inline-async.html[Guide]
+and {github-samples-url}/caching/inline-async[Code] to see _Asynchronous Inline Caching_ using {geode-name} in action!
 
 If consistency between the cache and your external, backend data source is not a concern, and you only need to write
 from the cache to the backend data store periodically, then you can employ asynchronous (_Write-Behind_) _Inline Caching_.
