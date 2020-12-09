@@ -39,12 +39,14 @@ import example.app.caching.inline.async.client.repo.GolferRepository;
  * @see example.app.caching.inline.async.client.repo.GolferRepository
  * @since 1.4.0
  */
+// tag::class[]
 @Configuration
 @SuppressWarnings("unused")
 public class AsyncInlineCachingConfiguration {
 
 	protected static final String GOLFERS_REGION_NAME = "Golfers";
 
+	// tag::queue-batch-size[]
 	@Bean
 	@Profile("queue-batch-size")
 	AsyncInlineCachingRegionConfigurer<Golfer, String> batchSizeAsyncInlineCachingConfigurer(
@@ -54,10 +56,12 @@ public class AsyncInlineCachingConfiguration {
 		return AsyncInlineCachingRegionConfigurer.create(golferRepository, GOLFERS_REGION_NAME)
 			.withQueueBatchConflationEnabled()
 			.withQueueBatchSize(queueBatchSize)
-			.withQueueBatchTimeInterval(Duration.ofMinutes(60))
+			.withQueueBatchTimeInterval(Duration.ofMinutes(15))
 			.withQueueDispatcherThreadCount(1);
 	}
+	// end::queue-batch-size[]
 
+	// tag::queue-batch-time-interval[]
 	@Bean
 	@Profile("queue-batch-time-interval")
 	AsyncInlineCachingRegionConfigurer<Golfer, String> batchTimeIntervalAsyncInlineCachingConfigurer(
@@ -69,4 +73,6 @@ public class AsyncInlineCachingConfiguration {
 			.withQueueBatchSize(1000000)
 			.withQueueDispatcherThreadCount(1);
 	}
+	// end::queue-batch-time-interval[]
 }
+// end::class[]

@@ -137,7 +137,7 @@ public class AsyncInlineCachingUsingQueueBatchSizeIntegrationTests extends Integ
 
 		assertThat(golfersEventQueue).isNotNull();
 		assertThat(golfersEventQueue.getBatchSize()).isEqualTo(2);
-		assertThat(golfersEventQueue.getBatchTimeInterval()).isEqualTo(Duration.ofMinutes(60).toMillis());
+		assertThat(golfersEventQueue.getBatchTimeInterval()).isEqualTo(Duration.ofMinutes(15).toMillis());
 		assertThat(golfersEventQueue.getDispatcherThreads()).isEqualTo(1);
 		assertThat(golfersEventQueue.isParallel()).isFalse();
 

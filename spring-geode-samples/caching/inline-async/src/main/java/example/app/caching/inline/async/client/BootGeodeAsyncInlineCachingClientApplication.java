@@ -52,14 +52,15 @@ import example.app.caching.inline.async.config.AsyncInlineCachingRegionConfigura
  * @see org.springframework.geode.cache.AsyncInlineCachingRegionConfigurer
  * @see org.springframework.geode.config.annotation.UseMemberName
  * @see org.springframework.scheduling.annotation.EnableScheduling
+ * @see example.app.caching.inline.async.client.model.Golfer
  * @see example.app.caching.inline.async.client.model.GolfCourse
  * @see example.app.caching.inline.async.client.model.GolfTournament
- * @see example.app.caching.inline.async.client.model.Golfer
  * @see example.app.caching.inline.async.client.service.PgaTourService
  * @see example.app.caching.inline.async.config.AsyncInlineCachingConfiguration
  * @see example.app.caching.inline.async.config.AsyncInlineCachingRegionConfiguration
  * @since 1.4.0
  */
+// tag::class[]
 @SpringBootApplication
 @SuppressWarnings("unused")
 public class BootGeodeAsyncInlineCachingClientApplication {
@@ -70,16 +71,18 @@ public class BootGeodeAsyncInlineCachingClientApplication {
 		SpringApplication.run(BootGeodeAsyncInlineCachingClientApplication.class, args);
 	}
 
+	// tag::application-configuration[]
 	@Configuration
 	@EnableScheduling
 	static class GolfApplicationConfiguration {
 
+		// tag::application-runner[]
 		@Bean
 		ApplicationRunner runGolfTournament(PgaTourService pgaTourService) {
 
 			return args -> {
 
-				GolfTournament golfTournament = GolfTournament.newGolfTournament("Masters")
+				GolfTournament golfTournament = GolfTournament.newGolfTournament("The Masters")
 					.at(GolfCourseBuilder.buildAugustaNational())
 					.register(GolferBuilder.buildGolfers(GolferBuilder.FAVORITE_GOLFER_NAMES))
 					.buildPairings()
@@ -89,16 +92,23 @@ public class BootGeodeAsyncInlineCachingClientApplication {
 
 			};
 		}
+		// end::application-runner[]
 	}
+	// end::application-configuration[]
 
+	// tag::geode-configuration[]
 	@Configuration
 	@UseMemberName(APPLICATION_NAME)
 	@EnableCachingDefinedRegions(serverRegionShortcut = RegionShortcut.REPLICATE)
 	static class GeodeConfiguration { }
+	// end::geode-configuration[]
 
+	// tag::peer-cache-configuration[]
 	@PeerCacheApplication
 	@Profile("peer-cache")
 	@Import({ AsyncInlineCachingConfiguration.class, AsyncInlineCachingRegionConfiguration.class })
 	static class PeerCacheApplicationConfiguration { }
+	// end::peer-cache-configuration[]
 
 }
+// end::class[]

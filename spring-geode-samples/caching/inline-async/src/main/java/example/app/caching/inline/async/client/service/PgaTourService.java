@@ -45,6 +45,7 @@ import example.app.caching.inline.async.client.model.Golfer;
  * @see example.app.caching.inline.async.client.model.Golfer
  * @since 1.4.0
  */
+// tag::class[]
 @Service
 @SuppressWarnings("unused")
 public class PgaTourService implements Closeable {
@@ -73,15 +74,12 @@ public class PgaTourService implements Closeable {
 		this.golfTournament = null;
 	}
 
-	public boolean isFinished() {
-
-		GolfTournament golfTournament = this.golfTournament;
-
+	public boolean isFinished(@Nullable GolfTournament golfTournament) {
 		return golfTournament == null || golfTournament.isFinished();
 	}
 
-	public boolean isNotFinished() {
-		return !isFinished();
+	public boolean isNotFinished(@Nullable GolfTournament golfTournament) {
+		return !isFinished(golfTournament);
 	}
 
 	public PgaTourService manage(GolfTournament golfTournament) {
@@ -97,17 +95,18 @@ public class PgaTourService implements Closeable {
 		return this;
 	}
 
-	@SuppressWarnings("unused")
+	// tag::play[]
 	@Scheduled(initialDelay = 5000L, fixedDelay = 2500L)
 	public void play() {
 
 		GolfTournament golfTournament = this.golfTournament;
 
-		if (isNotFinished()) {
+		if (isNotFinished(golfTournament)) {
 			playHole(golfTournament);
 			finish(golfTournament);
 		}
 	}
+	// end::play[]
 
 	private synchronized void playHole(@NonNull GolfTournament golfTournament) {
 
@@ -171,3 +170,4 @@ public class PgaTourService implements Closeable {
 		}
 	}
 }
+// end::class[]

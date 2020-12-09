@@ -44,6 +44,7 @@ import example.app.caching.inline.async.client.repo.GolferRepository;
  * @see example.app.caching.inline.async.client.repo.GolferRepository
  * @since 1.4.0
  */
+// tag::class[]
 @Service
 @SuppressWarnings("unused")
 public class GolferService {
@@ -62,10 +63,12 @@ public class GolferService {
 		this.golferRepository = golferRepository;
 	}
 
+	// tag::cache-put[]
 	@CachePut(cacheNames = "Golfers", key = "#golfer.name")
 	public Golfer update(Golfer golfer) {
 		return golfer;
 	}
+	// end::cache-put[]
 
 	public List<Golfer> getAllGolfersFromCache() {
 
@@ -83,3 +86,4 @@ public class GolferService {
 		return RegionUtils.isClient(region) ? region.keySetOnServer() : region.keySet();
 	}
 }
+// end::class[]

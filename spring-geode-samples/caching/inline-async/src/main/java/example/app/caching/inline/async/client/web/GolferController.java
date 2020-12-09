@@ -40,8 +40,9 @@ import example.app.caching.inline.async.client.service.GolferService;
  * @see example.app.caching.inline.async.client.service.GolferService
  * @since 1.4.0
  */
+// tag::class[]
 @RestController
-@RequestMapping("/golf/tournament")
+@RequestMapping("/api/golf/tournament")
 @SuppressWarnings("unused")
 public class GolferController {
 
@@ -68,3 +69,4 @@ public class GolferController {
 		return getGolferService().getAllGolfersFromDatabase();
 	}
 }
+// end::class[]
