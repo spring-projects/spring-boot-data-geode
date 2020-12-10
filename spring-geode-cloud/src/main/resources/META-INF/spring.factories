@@ -1,0 +1,2 @@
+org.springframework.cloud.bindings.boot.BindingsPropertiesProcessor=\
+  org.springframework.geode.cloud.bindings.boot.GeodeBindingsPropertiesProcessor
