@@ -1,0 +1,22 @@
+apply plugin: 'io.spring.convention.spring-module'
+apply from: MAVEN_POM_EDITOR_GRADLE
+
+description = "Spring Boot Cloud for Apache Geode"
+
+dependencies {
+
+	compile project(":spring-geode-autoconfigure")
+
+	implementation "org.springframework.cloud:spring-cloud-bindings:${springCloudBindingsVersion}"
+
+	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+
+	testCompile "junit:junit"
+	testCompile "org.assertj:assertj-core"
+	testCompile "org.mockito:mockito-core"
+	testCompile "org.projectlombok:lombok"
+	testCompile "org.springframework.boot:spring-boot-starter-test"
+	testCompile "org.springframework.data:spring-data-geode-test"
+	testCompile "edu.umd.cs.mtc:multithreadedtc"
+
+}
