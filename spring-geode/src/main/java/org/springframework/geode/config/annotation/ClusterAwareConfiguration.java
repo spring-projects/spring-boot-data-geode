@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.apache.geode.cache.server.CacheServer;
 
+import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Condition;
@@ -64,6 +65,7 @@ import org.slf4j.LoggerFactory;
  * @see java.net.SocketAddress
  * @see org.apache.geode.cache.client.ClientRegionShortcut
  * @see org.apache.geode.cache.server.CacheServer
+ * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.context.ApplicationListener
  * @see org.springframework.context.ConfigurableApplicationContext
  * @see org.springframework.context.annotation.Condition
@@ -76,6 +78,8 @@ import org.slf4j.LoggerFactory;
  * @see org.springframework.core.env.PropertySource
  * @see org.springframework.core.type.AnnotatedTypeMetadata
  * @see org.springframework.data.gemfire.config.annotation.support.AbstractAnnotationConfigSupport
+ * @see org.springframework.data.gemfire.support.ConnectionEndpoint
+ * @see org.springframework.data.gemfire.support.ConnectionEndpointList
  * @since 1.2.0
  */
 @Configuration
@@ -216,7 +220,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 											? DEFAULT_CACHE_SERVER_PORT
 											: DEFAULT_LOCATOR_PORT;
 
-										String[] propertyValueArray = trim(propertyValue.split(","));
+										String[] propertyValueArray = propertyValue.split(",");
 
 										ConnectionEndpointList list =
 											ConnectionEndpointList.parse(defaultPort, propertyValueArray);
@@ -232,18 +236,6 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			return connectionEndpoints;
 		}
 
-		// TODO: remove when DATAGEODE-228, a BUG in SDG, is fixed!
-		private String[] trim(String[] array) {
-
-			array = ArrayUtils.nullSafeArray(array, String.class);
-
-			for (int index = 0; index < array.length; index++) {
-				array[index] = StringUtils.trimAllWhitespace(array[index]);
-			}
-
-			return array;
-		}
-
 		int countConnections(ConnectionEndpointList connectionEndpoints) {
 
 			int count = 0;
@@ -255,6 +247,10 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 				try {
 					socket = connect(connectionEndpoint);
 					count++;
+
+					if (getLogger().isInfoEnabled()) {
+						getLogger().info("Successfully connected to {}", connectionEndpoint);
+					}
 				}
 				catch (IOException cause) {
 
@@ -307,6 +303,31 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 				if (!environment.containsProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY)) {
 					System.setProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
 						LOCAL_CLIENT_REGION_SHORTCUT.name());
+				}
+
+				if (getLogger().isInfoEnabled()) {
+					getLogger().info("No cluster found; Spring Boot application will run in LOCAL-only mode");
+				}
+			}
+			else {
+				if (getLogger().isInfoEnabled()) {
+					getLogger().info("Cluster was found; auto-configuration made [{}] successful connections;"
+						+ " Spring Boot application will run in a client/server topology", connectionCount);
+				}
+
+				if (getLogger().isInfoEnabled()) {
+					if (CloudPlatform.CLOUD_FOUNDRY.isActive(environment)) {
+						getLogger().info("Spring Boot application is running in a client/server topology,"
+							+ " connected to VMware Tanzu GemFire for VMs");
+					}
+					else if (CloudPlatform.KUBERNETES.isActive(environment)) {
+						getLogger().info("Spring Boot application is running in a client/server topology,"
+							+ " connected to VMware Tanzu GemFire for K8S");
+					}
+					else {
+						getLogger().info("Spring Boot application is running in a client/server topology,"
+							+ " connected to a standalone Apache Geode-based cluster");
+					}
 				}
 			}
 		}
