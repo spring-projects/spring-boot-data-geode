@@ -35,6 +35,7 @@ import org.springframework.data.gemfire.GemfireUtils;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.RegionConfigurer;
 import org.springframework.data.gemfire.config.annotation.support.CacheTypeAwareRegionFactoryBean;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 /**
@@ -60,7 +61,7 @@ import org.springframework.lang.Nullable;
 public class ClusterNotAvailableConfiguration {
 
 	@Bean
-	BeanPostProcessor localClientRegionBeanPostProcessor(Environment environment) {
+	BeanPostProcessor localClientRegionBeanPostProcessor(@NonNull Environment environment) {
 
 		return new BeanPostProcessor() {
 
@@ -78,7 +79,7 @@ public class ClusterNotAvailableConfiguration {
 
 	@Bean
 	@SuppressWarnings("unused")
-	RegionConfigurer localClientRegionConfigurer(Environment environment) {
+	RegionConfigurer localClientRegionConfigurer(@NonNull Environment environment) {
 
 		return new RegionConfigurer() {
 
@@ -89,19 +90,20 @@ public class ClusterNotAvailableConfiguration {
 		};
 	}
 
-	protected boolean isClientRegion(Object bean) {
+	protected boolean isClientRegion(@Nullable Object bean) {
 		return bean instanceof CacheTypeAwareRegionFactoryBean || bean instanceof ClientRegionFactoryBean;
 	}
 
-	protected Object configureAsLocalClientRegion(Environment environment, Object clientRegion) {
+	protected @NonNull Object configureAsLocalClientRegion(@NonNull Environment environment,
+			@NonNull Object clientRegion) {
 
 		return clientRegion instanceof ClientRegionFactoryBean
 			? configureAsLocalClientRegion(environment, (ClientRegionFactoryBean<?, ?>) clientRegion)
 			: configureAsLocalClientRegion(environment, (CacheTypeAwareRegionFactoryBean<?, ?>) clientRegion);
 	}
 
-	protected <K, V> CacheTypeAwareRegionFactoryBean<K, V> configureAsLocalClientRegion(Environment environment,
-			CacheTypeAwareRegionFactoryBean<K, V> clientRegion) {
+	protected @NonNull <K, V> CacheTypeAwareRegionFactoryBean<K, V> configureAsLocalClientRegion(
+			@NonNull Environment environment, @NonNull CacheTypeAwareRegionFactoryBean<K, V> clientRegion) {
 
 		ClientRegionShortcut shortcut =
 			environment.getProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
@@ -113,8 +115,8 @@ public class ClusterNotAvailableConfiguration {
 		return clientRegion;
 	}
 
-	protected <K, V> ClientRegionFactoryBean<K, V> configureAsLocalClientRegion(Environment environment,
-			ClientRegionFactoryBean<K, V> clientRegion) {
+	protected @NonNull <K, V> ClientRegionFactoryBean<K, V> configureAsLocalClientRegion(
+			@NonNull Environment environment, @NonNull ClientRegionFactoryBean<K, V> clientRegion) {
 
 		ClientRegionShortcut shortcut =
 			environment.getProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
@@ -138,12 +140,15 @@ public class ClusterNotAvailableConfiguration {
 		@Conditional(NotCloudFoundryEnvironmentCondition.class)
 		static class IsNotCloudFoundryEnvironmentCondition { }
 
+		@Conditional(NotKubernetesEnvironmentCondition.class)
+		static class IsNotKubernetesEnvironmentCondition { }
+
 	}
 
 	public static final class ClusterNotAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition {
 
 		@Override
-		public synchronized boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+		public synchronized boolean matches(@NonNull ConditionContext context, @NonNull AnnotatedTypeMetadata metadata) {
 			return !super.matches(context, metadata);
 		}
 	}
@@ -151,8 +156,16 @@ public class ClusterNotAvailableConfiguration {
 	public static final class NotCloudFoundryEnvironmentCondition implements Condition {
 
 		@Override
-		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+		public boolean matches(@NonNull ConditionContext context, @NonNull AnnotatedTypeMetadata metadata) {
 			return !CloudPlatform.CLOUD_FOUNDRY.isActive(context.getEnvironment());
+		}
+	}
+
+	public static final class NotKubernetesEnvironmentCondition implements Condition {
+
+		@Override
+		public boolean matches(@NonNull ConditionContext context, @NonNull AnnotatedTypeMetadata metadata) {
+			return !CloudPlatform.KUBERNETES.isActive(context.getEnvironment());
 		}
 	}
 }

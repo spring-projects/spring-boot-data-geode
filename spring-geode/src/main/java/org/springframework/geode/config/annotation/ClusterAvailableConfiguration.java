@@ -16,8 +16,6 @@
 package org.springframework.geode.config.annotation;
 
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform;
-import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration;
@@ -47,11 +45,16 @@ public class ClusterAvailableConfiguration {
 			super(ConfigurationPhase.PARSE_CONFIGURATION);
 		}
 
+		@Conditional(ClusterAvailableCondition.class)
+		static class IsClusterAvailableCondition { }
+
+		/*
 		@ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
 		static class IsCloudFoundryEnvironmentCondition { }
 
-		@Conditional(ClusterAvailableCondition.class)
-		static class IsClusterAvailableCondition { }
+		@ConditionalOnCloudPlatform(CloudPlatform.KUBERNETES)
+		static class IsKubernetesEnvironmentCondition { }
+		*/
 
 	}
 

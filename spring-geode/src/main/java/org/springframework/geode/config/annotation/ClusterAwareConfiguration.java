@@ -49,6 +49,8 @@ import org.springframework.data.gemfire.support.ConnectionEndpoint;
 import org.springframework.data.gemfire.support.ConnectionEndpointList;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.geode.core.util.ObjectUtils;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 import org.slf4j.Logger;
@@ -74,6 +76,7 @@ import org.slf4j.LoggerFactory;
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.context.event.ContextClosedEvent
  * @see org.springframework.core.env.ConfigurableEnvironment
+ * @see org.springframework.core.env.EnumerablePropertySource
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertySource
  * @see org.springframework.core.type.AnnotatedTypeMetadata
@@ -125,8 +128,11 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			clusterAvailable.set(null);
 		}
 
+		/**
+		 * @inheritDoc
+		 */
 		@Override
-		public synchronized boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+		public synchronized boolean matches(@NonNull ConditionContext context, @NonNull AnnotatedTypeMetadata metadata) {
 
 			if (clusterAvailable.get() == null) {
 				registerApplicationListener(context);
@@ -136,7 +142,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			return isMatch(context);
 		}
 
-		ConditionContext registerApplicationListener(ConditionContext conditionContext) {
+		@NonNull ConditionContext registerApplicationListener(@NonNull ConditionContext conditionContext) {
 
 			Optional.ofNullable(conditionContext)
 				.map(ConditionContext::getResourceLoader)
@@ -148,7 +154,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			return conditionContext;
 		}
 
-		boolean isMatch(ConditionContext context) {
+		boolean isMatch(@NonNull ConditionContext context) {
 
 			Environment environment = context.getEnvironment();
 
@@ -157,7 +163,16 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 					Boolean.class, false));
 		}
 
-		ConditionContext doMatch(ConditionContext conditionContext) {
+		/**
+		 * Performs the actual conditional match to determine whether this Spring Boot for Apache Geode application
+		 * can connect to an available Apache Geode cluster available in any environment (e.g. Standalone or Cloud).
+		 *
+		 * @param conditionContext Spring {@link ConditionContext} which captures the context in which the condition(s)
+		 * are evaluated; must not be {@literal null}.
+		 * @return the given {@link ConditionContext}.
+		 * @see org.springframework.context.annotation.ConditionContext
+		 */
+		@NonNull ConditionContext doMatch(@NonNull ConditionContext conditionContext) {
 
 			Environment environment = conditionContext.getEnvironment();
 
@@ -174,7 +189,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			return conditionContext;
 		}
 
-		Logger getLogger() {
+		@NonNull Logger getLogger() {
 			return logger;
 		}
 
@@ -186,7 +201,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			);
 		}
 
-		List<ConnectionEndpoint> getConfiguredConnectionEndpoints(Environment environment) {
+		List<ConnectionEndpoint> getConfiguredConnectionEndpoints(@NonNull Environment environment) {
 
 			List<ConnectionEndpoint> connectionEndpoints = new ArrayList<>();
 
@@ -209,6 +224,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 							String[] propertyNames = enumerablePropertySource.getPropertyNames();
 
 							Arrays.stream(ArrayUtils.nullSafeArray(propertyNames, String.class))
+								.filter(StringUtils::hasText)
 								.filter(propertyName-> pattern.matcher(propertyName).find())
 								.forEach(propertyName -> {
 
@@ -216,7 +232,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 
 									if (StringUtils.hasText(propertyValue)) {
 
-										int defaultPort = propertyName.contains("servers")
+										int defaultPort = propertyName.toLowerCase().contains("servers")
 											? DEFAULT_CACHE_SERVER_PORT
 											: DEFAULT_LOCATOR_PORT;
 
@@ -236,7 +252,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			return connectionEndpoints;
 		}
 
-		int countConnections(ConnectionEndpointList connectionEndpoints) {
+		int countConnections(@NonNull ConnectionEndpointList connectionEndpoints) {
 
 			int count = 0;
 
@@ -245,7 +261,9 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 				Socket socket = null;
 
 				try {
+
 					socket = connect(connectionEndpoint);
+
 					count++;
 
 					if (getLogger().isInfoEnabled()) {
@@ -270,7 +288,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			return count;
 		}
 
-		Socket connect(ConnectionEndpoint connectionEndpoint) throws IOException {
+		@NonNull Socket connect(@NonNull ConnectionEndpoint connectionEndpoint) throws IOException {
 
 			SocketAddress socketAddress =
 				new InetSocketAddress(connectionEndpoint.getHost(), connectionEndpoint.getPort());
@@ -282,7 +300,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			return socket;
 		}
 
-		boolean close(Socket socket) {
+		boolean close(@Nullable Socket socket) {
 
 			return ObjectUtils.<Boolean>doOperationSafely(() -> {
 
@@ -296,7 +314,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			}, cause -> false);
 		}
 
-		void configureTopology(Environment environment, ConnectionEndpointList connectionEndpoints,
+		void configureTopology(@NonNull Environment environment, @NonNull ConnectionEndpointList connectionEndpoints,
 				int connectionCount) {
 
 			if (connectionCount < 1) {
@@ -306,12 +324,12 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 				}
 
 				if (getLogger().isInfoEnabled()) {
-					getLogger().info("No cluster found; Spring Boot application will run in LOCAL-only mode");
+					getLogger().info("No cluster found; Spring Boot application will run in standalone (LOCAL) mode");
 				}
 			}
 			else {
 				if (getLogger().isInfoEnabled()) {
-					getLogger().info("Cluster was found; auto-configuration made [{}] successful connections;"
+					getLogger().info("Cluster was found; Auto-configuration made [{}] successful connection(s);"
 						+ " Spring Boot application will run in a client/server topology", connectionCount);
 				}
 
@@ -332,7 +350,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			}
 		}
 
-		boolean isMatch(ConnectionEndpointList connectionEndpoints, int connectionCount) {
+		boolean isMatch(@NonNull ConnectionEndpointList connectionEndpoints, int connectionCount) {
 			return connectionCount > 0;
 		}
 	}
