@@ -4,6 +4,26 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.12.RELEASE (2020-12-10)
+----------------------------------------------
+Aligns SBDG with Spring Boot 2.2.12.RELEASE along with the latest versions of Spring Framework, Spring Data
+and Spring Session.
+
+* Adds documentation on using the 'spring-geode-bom' in the 'Using Spring Boot for Apache Geode' section
+of the SBDG Reference Documentation.
+* Edits TIP in the Inline Caching Sample Guide to include a reference to the specific documentation on
+Synchronous, Inline Caching in the SBDG Reference Documentation.
+* Add section on 'Gradle Dependency Management' under the 'Using Spring Boot for Apache Geode' section
+of the SBDG Reference Documentation.
+* Upgrade to Spring Framework 5.2.12.RELEASE.
+* Upgrade to Spring Boot 2.2.12.RELEASE.
+* Upgrade to Spring Data ReleaseTrain (BOM) Moore-SR12.
+* Upgrade to Spring Data for Apache Geode & VMware Tanzu (Pivotal) GemFire 2.2.12.RELEASE.
+* Upgrade to Freefair Lombok Gradle Plugin 5.3.0.
+* Upgrade to Gradle 6.7.1.
+* Upgrade to Mockito 3.6.28.
+
+
 Changes in version 1.2.11.RELEASE (2020-11-09)
 ----------------------------------------------
 Aligns SBDG with Spring Boot 2.2.11.RELEASE along with the latest versions of Spring Framework, Spring Data
