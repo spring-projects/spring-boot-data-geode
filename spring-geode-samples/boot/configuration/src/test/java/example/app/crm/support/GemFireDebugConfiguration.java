@@ -20,12 +20,9 @@ import java.util.Optional;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.distributed.internal.InternalDistributedSystem;
-import org.apache.geode.internal.admin.SSLConfig;
+import org.apache.geode.internal.net.SSLConfig;
 import org.apache.geode.internal.net.SSLConfigurationFactory;
 import org.apache.geode.internal.security.SecurableCommunicationChannel;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -34,6 +31,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.lang.Nullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Debug {@link Configuration} for Apache Geode based Spring Boot Tests.
