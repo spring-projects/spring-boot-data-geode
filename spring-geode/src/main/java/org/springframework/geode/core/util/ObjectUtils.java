@@ -87,68 +87,96 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 	}
 
 	/**
-	 * Executes the given {@link ExceptionThrowingOperation} handling any checked {@link Exception} thrown during
-	 * the normal execution of the operation by rethrowing an {@link IllegalStateException} wrapping
-	 * the checked {@link Exception}.
+	 * Safely executes the given {@link ExceptionThrowingOperation} handling any checked {@link Exception}
+	 * thrown during the normal execution of the operation by rethrowing an {@link IllegalStateException}
+	 * wrapping the original checked {@link Exception}.
 	 *
-	 * @param <T> {@link Class type} of value returned from the operation execution.
-	 * @param operation {@link ExceptionThrowingOperation} to execute.
-	 * @return the result of the given {@link ExceptionThrowingOperation} or throw an {@link IllegalStateException}
-	 * wrapping the checked {@link Exception} thrown by the operation.
+	 * @param <T> {@link Class type} of {@link Object value} returned from the execution of the operation.
+	 * @param operation {@link ExceptionThrowingOperation} to execute; must not be {@literal null}.
+	 * @return the result of the {@link ExceptionThrowingOperation}.
+	 * @throws IllegalStateException wrapping any checked {@link Exception} thrown by the operation.
 	 * @see org.springframework.geode.core.util.ObjectUtils.ExceptionThrowingOperation
 	 * @see #doOperationSafely(ExceptionThrowingOperation, Object)
 	 */
 	@Nullable
-	public static <T> T doOperationSafely(ExceptionThrowingOperation<T> operation) {
+	public static <T> T doOperationSafely(@NonNull ExceptionThrowingOperation<T> operation) {
 		return doOperationSafely(operation, (T) null);
 	}
 
 	/**
-	 * Executes the given {@link ExceptionThrowingOperation} handling any checked {@link Exception} thrown
-	 * during the normal execution of the operation, returning the {@link Object default value} in its place
-	 * or throwing a {@link RuntimeException} if the {@link Object default value} is {@literal null}.
+	 * Safely executes the given {@link ExceptionThrowingOperation} handling any checked {@link Exception}
+	 * thrown during the normal execution of the operation by returning the given {@link Object default value}
+	 * or throwing an {@link IllegalStateException} if the {@link Object default value} is {@literal null}.
 	 *
-	 * @param <T> {@link Class type} of value returned from the operation execution as well as
-	 * the {@link Object default value}.
-	 * @param operation {@link ExceptionThrowingOperation} to execute.
-	 * @param defaultValue {@link Object value} to return if the operation results in a checked {@link Exception}.
-	 * @return the result of the given {@link ExceptionThrowingOperation}, returning the {@link Object default value}
-	 * if the operation throws a checked {@link Exception} or throws an {@link IllegalStateException} wrapping
-	 * the checked {@link Exception} if the {@link Object default value} is {@literal null}.
-	 * @throws IllegalStateException if the {@link ExceptionThrowingOperation} throws a checked {@link Exception}
-	 * and {@link Object default value} is {@literal null}.
+	 * @param <T> {@link Class type} of {@link Object value} returned from the execution of the operation
+	 * as well as the {@link Class type} of the {@link Object default value}.
+	 * @param operation {@link ExceptionThrowingOperation} to execute; must not be {@literal null}.
+	 * @param defaultValue {@link Object value} to return if the execution of the operation
+	 * results in a checked {@link Exception}.
+	 * @return the result of the {@link ExceptionThrowingOperation}, returning the {@link Object default value}
+	 * if the execution of the operation throws a checked {@link Exception}
+	 * @throws IllegalStateException wrapping any checked {@link Exception} thrown by the operation
+	 * when the {@link Object default value} is {@literal null}.
 	 * @see org.springframework.geode.core.util.ObjectUtils.ExceptionThrowingOperation
-	 * @see #doOperationSafely(ExceptionThrowingOperation, Function)
+	 * @see #doOperationSafely(ExceptionThrowingOperation, Supplier)
 	 * @see #returnValueThrowOnNull(Object, RuntimeException)
 	 */
 	@Nullable
-	public static <T> T doOperationSafely(ExceptionThrowingOperation<T> operation, T defaultValue) {
+	public static <T> T doOperationSafely(@NonNull ExceptionThrowingOperation<T> operation, @NonNull T defaultValue) {
+
+		Supplier<T> valueSupplier = () -> defaultValue;
+
+		return doOperationSafely(operation, valueSupplier);
+	}
+
+	/**
+	 * Safely executes the given {@link ExceptionThrowingOperation} handling any checked {@link Exception}
+	 * thrown during the normal execution of the operation by returning a {@link Object default value}
+	 * supplied by the given {@link Supplier}, or throws an {@link IllegalStateException}
+	 * if the {@link Supplier supplied value} is {@literal null}.
+	 *
+	 * @param <T> {@link Class type} of {@link Object value} returned from the execution of the operation
+	 * as well as the {@link Class type} of the {@link Object default value}.
+	 * @param operation {@link ExceptionThrowingOperation} to execute; must not be {@literal null}.
+	 * @param valueSupplier {@link Supplier} of the {@link Object value} to return if the execution of the operation
+	 * results in a checked {@link Exception}; must not be {@literal null}.
+	 * @return the result of the {@link ExceptionThrowingOperation}, returning the {@link Supplier supplied value}
+	 * if the execution of the operation throws a checked {@link Exception}
+	 * @throws IllegalStateException wrapping any checked {@link Exception} thrown by the operation
+	 * when the {@link Supplier supplied value} is {@literal null}.
+	 * @see org.springframework.geode.core.util.ObjectUtils.ExceptionThrowingOperation
+	 * @see #doOperationSafely(ExceptionThrowingOperation, Function)
+	 * @see #returnValueThrowOnNull(Object, RuntimeException)
+	 * @see java.util.function.Supplier
+	 */
+	public static <T> T doOperationSafely(@NonNull ExceptionThrowingOperation<T> operation,
+			@NonNull Supplier<T> valueSupplier) {
 
 		Function<Throwable, T> exceptionHandlingFunction = cause ->
-			returnValueThrowOnNull(defaultValue, newIllegalStateException(cause, "Failed to execute operation"));
+			returnValueThrowOnNull(valueSupplier.get(), newIllegalStateException(cause, "Failed to execute operation"));
 
 		return doOperationSafely(operation, exceptionHandlingFunction);
 	}
 
 	/**
-	 * Executes the given {@link ExceptionThrowingOperation} handling any checked {@link Exception} thrown
-	 * during the normal execution of the operation by invoking the provided {@link Exception} handling
-	 * {@link Function}.
+	 * Safely executes the given {@link ExceptionThrowingOperation} handling any checked {@link Exception}
+	 * thrown during the normal execution of the operation by invoking the provided {@link Exception}
+	 * handling {@link Function}.
 	 *
-	 * @param <T> {@link Class type} of value returned from the operation execution.
-	 * @param operation {@link ExceptionThrowingOperation} to execute.
-	 * @param exceptionHandlingFunction {@link Function} used to handle any {@link Exception} thrown by
-	 * the {@link ExceptionThrowingOperation operation}.
-	 * @return the result of executing the given {@link ExceptionThrowingOperation}.
+	 * @param <T> {@link Class type} of {@link Object value} returned from the execution of the operation.
+	 * @param operation {@link ExceptionThrowingOperation} to execute; must not be {@literal null}.
+	 * @param exceptionHandlingFunction {@link Function} used to handle any checked {@link Exception}
+	 * thrown by {@link ExceptionThrowingOperation}; must not be {@literal null}.
+	 * @return the result of the {@link ExceptionThrowingOperation}.
 	 * @see org.springframework.geode.core.util.ObjectUtils.ExceptionThrowingOperation
 	 * @see java.util.function.Function
 	 * @see java.lang.Throwable
 	 */
-	public static <T> T doOperationSafely(ExceptionThrowingOperation<T> operation,
-			Function<Throwable, T> exceptionHandlingFunction) {
+	public static <T> T doOperationSafely(@NonNull ExceptionThrowingOperation<T> operation,
+			@NonNull Function<Throwable, T> exceptionHandlingFunction) {
 
 		try {
-			return operation.doExceptionThrowingOperation();
+			return operation.run();
 		}
 		catch (Exception cause) {
 
@@ -404,6 +432,6 @@ public abstract class ObjectUtils extends org.springframework.util.ObjectUtils {
 
 	@FunctionalInterface
 	public interface ExceptionThrowingOperation<T> {
-		T doExceptionThrowingOperation() throws Exception;
+		T run() throws Exception;
 	}
 }

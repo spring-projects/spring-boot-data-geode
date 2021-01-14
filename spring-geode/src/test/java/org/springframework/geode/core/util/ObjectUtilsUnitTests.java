@@ -25,6 +25,7 @@ import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newR
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.junit.Test;
 
@@ -162,11 +163,39 @@ public class ObjectUtilsUnitTests {
 			"default value")).isEqualTo("default value");
 	}
 
+	@Test
+	public void doOperationSafelyReturnsSuppliedValue() {
+
+		Supplier<String> suppliedValue = () -> "supplied value";
+
+		assertThat(ObjectUtils.<String>doOperationSafely(() -> { throw newRuntimeException("test"); }, suppliedValue))
+			.isEqualTo("supplied value");
+	}
+
 	@Test(expected = IllegalStateException.class)
-	public void doOperationSafelyThrowsIllegalStateException() {
+	public void doOperationSafelyWithNullDefaultValueThrowsIllegalStateException() {
 
 		try {
 			ObjectUtils.doOperationSafely(() -> { throw newRuntimeException("test"); }, (Object) null);
+		}
+		catch (IllegalStateException expected) {
+
+			assertThat(expected).hasMessage("Failed to execute operation");
+			assertThat(expected).hasCauseInstanceOf(RuntimeException.class);
+			assertThat(expected.getCause()).hasMessage("test");
+			assertThat(expected.getCause()).hasNoCause();
+
+			throw expected;
+		}
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void doOperationSafelyWithNullSuppliedValueThrowsIllegalStateException() {
+
+		Supplier<String> suppliedValue = () -> null;
+
+		try {
+			ObjectUtils.<String>doOperationSafely(() -> { throw newRuntimeException("test"); }, suppliedValue);
 		}
 		catch (IllegalStateException expected) {
 
