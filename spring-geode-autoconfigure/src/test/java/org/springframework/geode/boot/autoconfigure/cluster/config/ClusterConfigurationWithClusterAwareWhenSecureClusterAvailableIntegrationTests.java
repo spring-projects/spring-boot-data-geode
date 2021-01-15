@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.springframework.geode.boot.autoconfigure.cluster;
+package org.springframework.geode.boot.autoconfigure.cluster.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
