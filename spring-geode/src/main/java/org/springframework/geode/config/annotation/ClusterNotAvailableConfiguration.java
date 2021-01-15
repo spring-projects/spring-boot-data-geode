@@ -148,8 +148,10 @@ public class ClusterNotAvailableConfiguration {
 	public static final class ClusterNotAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition {
 
 		@Override
-		public synchronized boolean matches(@NonNull ConditionContext context, @NonNull AnnotatedTypeMetadata metadata) {
-			return !super.matches(context, metadata);
+		public synchronized boolean matches(@NonNull ConditionContext conditionContext,
+				@NonNull AnnotatedTypeMetadata metadata) {
+
+			return !super.matches(conditionContext, metadata);
 		}
 	}
 
