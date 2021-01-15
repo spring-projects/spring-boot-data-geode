@@ -49,6 +49,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.GemfireUtils;
@@ -61,6 +62,7 @@ import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.geode.security.TestSecurityManager;
 import org.springframework.geode.util.GeodeConstants;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.lang.NonNull;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -139,6 +141,8 @@ public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClie
 	@Profile(("cluster-aware-with-secure-client"))
 	static class TestGeodeClientConfiguration {
 
+		static final String DEFAULT_TRUSTSTORE_PASSWORD = "unknown";
+		static final String SSL_PROFILE = "ssl";
 		static final String TEST_TRUSTED_KEYSTORE_FILENAME = "test-trusted.keystore";
 
 		@Bean
@@ -146,27 +150,37 @@ public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClie
 
 			return restTemplate -> {
 
-				try {
+				if (areProfilesActive(environment, SSL_PROFILE)) {
+					try {
 
-					KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+						char[] trustStorePassword =
+							environment.getProperty("spring.data.gemfire.security.ssl.truststore.password",
+								DEFAULT_TRUSTSTORE_PASSWORD).toCharArray();
 
-					keyStore.load(new ClassPathResource(TEST_TRUSTED_KEYSTORE_FILENAME).getInputStream(),
-						environment.getProperty("spring.data.gemfire.security.ssl.truststore.password").toCharArray());
+						KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 
-					SSLContext sslContext = SSLContexts.custom()
-						.loadTrustMaterial(keyStore, TrustAllStrategy.INSTANCE)
-						.build();
+						keyStore.load(new ClassPathResource(TEST_TRUSTED_KEYSTORE_FILENAME).getInputStream(),
+							trustStorePassword);
 
-					HttpClient httpClient = HttpClients.custom()
-						.setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier()))
-						.build();
+						SSLContext sslContext = SSLContexts.custom()
+							.loadTrustMaterial(keyStore, TrustAllStrategy.INSTANCE)
+							.build();
 
-					restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
-				}
-				catch (Exception cause) {
-					throw new RuntimeException(cause);
+						HttpClient httpClient = HttpClients.custom()
+							.setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier()))
+							.build();
+
+						restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
+					}
+					catch (Exception cause) {
+						throw new RuntimeException(cause);
+					}
 				}
 			};
+		}
+
+		private boolean areProfilesActive(@NonNull Environment environment, @NonNull String... profiles) {
+			return environment.acceptsProfiles(Profiles.of(profiles));
 		}
 	}
 
