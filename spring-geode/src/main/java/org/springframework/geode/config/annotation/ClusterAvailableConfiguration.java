@@ -16,11 +16,16 @@
 package org.springframework.geode.config.annotation;
 
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform;
 import org.springframework.boot.cloud.CloudPlatform;
+import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration;
+import org.springframework.lang.NonNull;
+
+import org.slf4j.Logger;
 
 /**
  * The {@link ClusterAvailableConfiguration} class is a Spring {@link Configuration} class that enables configuration
@@ -30,9 +35,13 @@ import org.springframework.data.gemfire.config.annotation.EnableClusterConfigura
  * @see org.springframework.boot.autoconfigure.condition.AnyNestedCondition
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform
  * @see org.springframework.boot.cloud.CloudPlatform
+ * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.context.annotation.Conditional
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.core.env.Environment
+ * @see org.springframework.core.type.AnnotatedTypeMetadata
  * @see org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration
+ * @see org.springframework.geode.config.annotation.ClusterAwareConfiguration
  * @since 1.2.0
  */
 @Configuration
@@ -47,17 +56,115 @@ public class ClusterAvailableConfiguration {
 			super(ConfigurationPhase.PARSE_CONFIGURATION);
 		}
 
-		@Conditional(ClusterAvailableCondition.class)
-		static class IsClusterAvailableCondition { }
+		//@ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
+		@Conditional(CloudFoundryClusterAvailableCondition.class)
+		static class IsCloudFoundryClusterAvailableCondition { }
 
-		@ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
-		static class IsCloudFoundryEnvironmentCondition { }
+		//@ConditionalOnCloudPlatform(CloudPlatform.KUBERNETES)
+		@Conditional(KubernetesClusterAvailableCondition.class)
+		static class IsKubernetesClusterAvailableCondition { }
 
-		@ConditionalOnCloudPlatform(CloudPlatform.KUBERNETES)
-		static class IsKubernetesEnvironmentCondition { }
+		@Conditional(StandaloneClusterAvailableCondition.class)
+		static class IsStandaloneClusterAvailableCondition { }
 
 	}
 
-	public static final class ClusterAvailableCondition extends ClusterAwareConfiguration.ClusterAwareCondition { }
+	protected static abstract class AbstractCloudPlatformAvailableCondition
+			extends ClusterAwareConfiguration.ClusterAwareCondition {
+
+		protected abstract String getCloudPlatformName();
+
+		@Override
+		protected String getRuntimeEnvironmentName() {
+			return getCloudPlatformName();
+		}
+
+		protected abstract boolean isCloudPlatformActive(@NonNull Environment environment);
+
+		protected boolean isInfoLoggingEnabled() {
+			return getLogger().isInfoEnabled();
+		}
+
+		protected boolean isMatchingStrictOrLoggable(boolean match, boolean strictMatch) {
+			return match && (strictMatch || isInfoLoggingEnabled());
+		}
+
+		@Override
+		protected void logConnectedRuntimeEnvironment(@NonNull Logger logger) {
+
+			if (logger.isInfoEnabled()) {
+				logger.info("Spring Boot application is running in a client/server topology,"
+					+ " inside a [{}] Cloud-managed Environment", getRuntimeEnvironmentName());
+			}
+		}
+
+		protected void logRuntimeEnvironment(@NonNull Logger logger) {
+
+			if (logger.isInfoEnabled()) {
+				logger.info("Spring Boot application is running in a [{}] Cloud-managed Environment",
+					getRuntimeEnvironmentName());
+			}
+		}
+
+		@Override
+		public synchronized final boolean matches(@NonNull ConditionContext conditionContext,
+				@NonNull AnnotatedTypeMetadata typeMetadata) {
+
+			boolean match = isCloudPlatformActive(conditionContext.getEnvironment());
+			boolean strictMatch = isStrictMatch(typeMetadata, conditionContext);
+
+			if (isMatchingStrictOrLoggable(match, strictMatch)) {
+				logRuntimeEnvironment(getLogger());
+				match |= super.matches(conditionContext, typeMetadata);
+			}
+
+			return match;
+		}
+	}
+
+	public static final class CloudFoundryClusterAvailableCondition extends AbstractCloudPlatformAvailableCondition {
+
+		protected static final String CLOUD_FOUNDRY_NAME = "CloudFoundry";
+		protected static final String RUNTIME_ENVIRONMENT_NAME = "VMware Tanzu GemFire for VMs";
+
+		@Override
+		protected String getCloudPlatformName() {
+			return CLOUD_FOUNDRY_NAME;
+		}
+
+		@Override
+		protected String getRuntimeEnvironmentName() {
+			return RUNTIME_ENVIRONMENT_NAME;
+		}
+
+		@Override
+		protected boolean isCloudPlatformActive(@NonNull Environment environment) {
+			return CloudPlatform.CLOUD_FOUNDRY.isActive(environment);
+		}
+	}
+
+	public static final class KubernetesClusterAvailableCondition extends AbstractCloudPlatformAvailableCondition {
+
+		protected static final String KUBERNETES_NAME = "Kubernetes";
+		protected static final String RUNTIME_ENVIRONMENT_NAME = "VMware Tanzu GemFire for K8S";
+
+		@Override
+		protected String getCloudPlatformName() {
+			return KUBERNETES_NAME;
+		}
+
+		@Override
+		protected String getRuntimeEnvironmentName() {
+			return RUNTIME_ENVIRONMENT_NAME;
+		}
+
+		@Override
+		protected boolean isCloudPlatformActive(@NonNull Environment environment) {
+			return CloudPlatform.KUBERNETES.isActive(environment);
+		}
+	}
+
+	public static final class StandaloneClusterAvailableCondition
+		extends ClusterAwareConfiguration.ClusterAwareCondition { }
 
 }

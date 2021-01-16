@@ -47,12 +47,16 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.boot.autoconfigure.condition.AllNestedConditions
  * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.context.annotation.Bean
+ * @see org.springframework.context.annotation.Condition
+ * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.context.annotation.Conditional
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.env.Environment
+ * @see org.springframework.core.type.AnnotatedTypeMetadata
  * @see org.springframework.data.gemfire.client.ClientRegionFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.RegionConfigurer
  * @see org.springframework.data.gemfire.config.annotation.support.CacheTypeAwareRegionFactoryBean
+ * @see org.springframework.geode.config.annotation.ClusterAwareConfiguration
  * @since 1.2.0
  */
 @Configuration
@@ -149,9 +153,9 @@ public class ClusterNotAvailableConfiguration {
 
 		@Override
 		public synchronized boolean matches(@NonNull ConditionContext conditionContext,
-				@NonNull AnnotatedTypeMetadata metadata) {
+				@NonNull AnnotatedTypeMetadata typeMetadata) {
 
-			return !super.matches(conditionContext, metadata);
+			return !super.matches(conditionContext, typeMetadata);
 		}
 	}
 

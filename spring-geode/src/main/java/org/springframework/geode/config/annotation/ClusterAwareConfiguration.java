@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -43,20 +44,24 @@ import org.apache.geode.cache.client.Pool;
 import org.apache.geode.cache.client.PoolManager;
 import org.apache.geode.cache.server.CacheServer;
 
-import org.springframework.boot.cloud.CloudPlatform;
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportAware;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.gemfire.config.annotation.support.AbstractAnnotationConfigSupport;
 import org.springframework.data.gemfire.support.ConnectionEndpoint;
 import org.springframework.data.gemfire.support.ConnectionEndpointList;
@@ -86,19 +91,21 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.geode.cache.client.Pool
  * @see org.apache.geode.cache.client.PoolManager
  * @see org.apache.geode.cache.server.CacheServer
- * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.context.ApplicationListener
  * @see org.springframework.context.ConfigurableApplicationContext
  * @see org.springframework.context.annotation.Condition
  * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Import
+ * @see org.springframework.context.annotation.ImportAware
  * @see org.springframework.context.event.ContextClosedEvent
+ * @see org.springframework.core.annotation.AnnotationAttributes
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.EnumerablePropertySource
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertySource
  * @see org.springframework.core.type.AnnotatedTypeMetadata
+ * @see org.springframework.core.type.AnnotationMetadata
  * @see org.springframework.data.gemfire.config.annotation.support.AbstractAnnotationConfigSupport
  * @see org.springframework.data.gemfire.support.ConnectionEndpoint
  * @see org.springframework.data.gemfire.support.ConnectionEndpointList
@@ -107,9 +114,10 @@ import org.slf4j.LoggerFactory;
  */
 @Configuration
 @Import({ ClusterAvailableConfiguration.class, ClusterNotAvailableConfiguration.class })
-public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
+public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport implements ImportAware {
 
 	static final boolean DEFAULT_CLUSTER_CONDITION_MATCH = false;
+	static final boolean DEFAULT_CLUSTER_CONDITION_STRICT_MATCH = false;
 
 	static final int DEFAULT_CACHE_SERVER_PORT = CacheServer.DEFAULT_PORT;
 	static final int DEFAULT_LOCATOR_PORT = 10334;
@@ -117,16 +125,21 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 
 	static final ClientRegionShortcut LOCAL_CLIENT_REGION_SHORTCUT = ClientRegionShortcut.LOCAL;
 
-	static final Logger logger = LoggerFactory.getLogger(ClusterAwareConfiguration.class);
-
 	static final String LOCALHOST = "localhost";
 	static final String MATCHING_PROPERTY_PATTERN = "spring\\.data\\.gemfire\\.pool\\..*locators|servers";
+	static final String STRICT_MATCH_ATTRIBUTE_NAME = "strictMatch";
 
 	static final String SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_PROPERTY =
 		"spring.boot.data.gemfire.cluster.condition.match";
 
+	static final String SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_STRICT_PROPERTY =
+		"spring.boot.data.gemfire.cluster.condition.match.strict";
+
 	static final String SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY =
 		"spring.data.gemfire.cache.client.region.shortcut";
+
+	private static final AtomicBoolean strictMatchConfiguration =
+		new AtomicBoolean(DEFAULT_CLUSTER_CONDITION_STRICT_MATCH);
 
 	private static final Function<ConditionContext, Boolean> configuredMatchFunction = conditionContext ->
 		Optional.ofNullable(conditionContext)
@@ -135,9 +148,33 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 				Boolean.class, DEFAULT_CLUSTER_CONDITION_MATCH))
 			.orElse(DEFAULT_CLUSTER_CONDITION_MATCH);
 
+	private static final Logger logger = LoggerFactory.getLogger(ClusterAwareConfiguration.class);
+
+	/**
+	 * @inheritDoc
+	 */
 	@Override
-	protected Class<? extends Annotation> getAnnotationType() {
+	protected @NonNull Class<? extends Annotation> getAnnotationType() {
 		return EnableClusterAware.class;
+	}
+
+	protected boolean isStrictMatchConfigured(@NonNull AnnotationAttributes enableClusterAwareAttributes) {
+		return enableClusterAwareAttributes != null
+			&& Boolean.TRUE.equals(enableClusterAwareAttributes.getBoolean(STRICT_MATCH_ATTRIBUTE_NAME));
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	@Override
+	public void setImportMetadata(@NonNull AnnotationMetadata importMetadata) {
+
+		if (isAnnotationPresent(importMetadata)) {
+
+			AnnotationAttributes enableClusterAwareAttributes = getAnnotationAttributes(importMetadata);
+
+			strictMatchConfiguration.set(isStrictMatchConfigured(enableClusterAwareAttributes));
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -145,7 +182,9 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 
 		private static final AtomicReference<Boolean> clusterAvailable = new AtomicReference<>(null);
 
-		private static ApplicationListener<ContextClosedEvent> clusterAwareConditionResetOnContextClosedApplicationListener() {
+		protected static final String RUNTIME_ENVIRONMENT_NAME = "Apache Geode-based Cluster on Bare Metal";
+
+		private static @NonNull ApplicationListener<ContextClosedEvent> clusterAwareConditionResetOnContextClosedApplicationListener() {
 			return contextClosedEvent-> reset();
 		}
 
@@ -157,18 +196,86 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			clusterAvailable.set(null);
 		}
 
+		public static boolean wasClusterAvailabilityEvaluated() {
+			return clusterAvailable.get() != null;
+		}
+
+		/**
+		 * Returns a {@link String} containing a description of the runtime environment.
+		 *
+		 * @return a {@link String} containing a description of the runtime environment.
+		 */
+		protected String getRuntimeEnvironmentName() {
+			return RUNTIME_ENVIRONMENT_NAME;
+		}
+
 		/**
 		 * @inheritDoc
 		 */
 		@Override
 		public synchronized boolean matches(@NonNull ConditionContext conditionContext,
-				@NonNull AnnotatedTypeMetadata metadata) {
+				@NonNull AnnotatedTypeMetadata typeMetadata) {
 
-			return isMatch(conditionContext) || doCachedMatch(conditionContext);
+			boolean matches = isMatch(conditionContext) || doCachedMatch(conditionContext);
+			boolean strictMatch = isStrictMatch(typeMetadata, conditionContext);
+
+			failOnStrictMatchAndNoMatches(strictMatch, matches);
+
+			return matches;
 		}
 
 		boolean isMatch(@NonNull ConditionContext conditionContext) {
 			return isAvailable() || configuredMatchFunction.apply(conditionContext);
+		}
+
+		protected boolean isStrictMatch(@NonNull AnnotatedTypeMetadata typeMetadata,
+				@NonNull ConditionContext conditionContext) {
+
+			Environment environment = conditionContext.getEnvironment();
+
+			Function<ConfigurableListableBeanFactory, Boolean> isStrictMatchEnabledFunction = beanFactory -> {
+
+				boolean strictMatchEnabled = strictMatchConfiguration.get();
+
+				if (!strictMatchEnabled) {
+
+					String annotationName = EnableClusterAware.class.getName();
+
+					strictMatchEnabled = beanFactory != null
+						&& Arrays.stream(ArrayUtils.nullSafeArray(beanFactory.getBeanDefinitionNames(), String.class))
+							.map(beanFactory::getBeanDefinition)
+							.filter(AnnotatedBeanDefinition.class::isInstance)
+							.map(AnnotatedBeanDefinition.class::cast)
+							.map(AnnotatedBeanDefinition::getMetadata)
+							.filter(annotationMetadata -> annotationMetadata.hasAnnotation(annotationName))
+							.findFirst()
+							.map(annotationMetadata -> annotationMetadata.getAnnotationAttributes(annotationName))
+							.map(AnnotationAttributes::fromMap)
+							.map(annotationAttributes -> annotationAttributes.getBoolean(STRICT_MATCH_ATTRIBUTE_NAME))
+							.orElse(DEFAULT_CLUSTER_CONDITION_STRICT_MATCH);
+				}
+
+				return strictMatchEnabled;
+			};
+
+			return environment.getProperty(SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_STRICT_PROPERTY,
+				Boolean.class, isStrictMatchEnabledFunction.apply(conditionContext.getBeanFactory()));
+		}
+
+		protected boolean isStrictMatchAndNoMatches(boolean strictMatch, boolean matches) {
+			return strictMatch && !matches;
+		}
+
+		protected void failOnStrictMatchAndNoMatches(boolean strictMatch, boolean matches) {
+
+			if (isStrictMatchAndNoMatches(strictMatch, matches)) {
+
+				String message =
+					String.format("Failed to find available cluster in [%1$s] when strictMatch was [%2$s]",
+						getRuntimeEnvironmentName(), strictMatch);
+
+				throw new ClusterNotAvailableException(message);
+			}
 		}
 
 		/**
@@ -236,7 +343,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 		}
 
 		boolean isMatch(@NonNull ConnectionEndpointList connectionEndpoints, int connectionCount) {
-			return connectionCount > 0;
+			return isConnected(connectionCount);
 		}
 
 		protected @NonNull Logger getLogger() {
@@ -438,39 +545,54 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport {
 			}, cause -> false);
 		}
 
-		protected void configureTopology(@NonNull Environment environment, @NonNull ConnectionEndpointList connectionEndpoints,
-				int connectionCount) {
+		protected boolean isConnected(int connectionCount) {
+			return connectionCount > 0;
+		}
 
-			if (connectionCount < 1) {
+		protected boolean isNotConnected(int connectionCount) {
+			return !isConnected(connectionCount);
+		}
+
+		protected void configureTopology(@NonNull Environment environment,
+				@NonNull ConnectionEndpointList connectionEndpoints, int connectionCount) {
+
+			if (isConnected(connectionCount)) {
+				logConnectedRuntimeEnvironment(getLogger(), connectionCount);
+			}
+			else {
+
 				if (!environment.containsProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY)) {
 					System.setProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
 						LOCAL_CLIENT_REGION_SHORTCUT.name());
 				}
 
-				if (getLogger().isInfoEnabled()) {
-					getLogger().info("No cluster found; Spring Boot application is running in standalone [LOCAL] mode");
-				}
+				logUnconnectedRuntimeEnvironment(getLogger());
 			}
-			else {
-				if (getLogger().isInfoEnabled()) {
-					getLogger().info("Cluster was found; Auto-configuration made [{}] successful connection(s);"
-						+ " Spring Boot application is running in a client/server topology", connectionCount);
-				}
+		}
 
-				if (getLogger().isInfoEnabled()) {
-					if (CloudPlatform.CLOUD_FOUNDRY.isActive(environment)) {
-						getLogger().info("Spring Boot application is running in a client/server topology,"
-							+ " inside a VMware Tanzu GemFire for VMs environment");
-					}
-					else if (CloudPlatform.KUBERNETES.isActive(environment)) {
-						getLogger().info("Spring Boot application is running in a client/server topology,"
-							+ " inside a VMware Tanzu GemFire for K8S environment");
-					}
-					else {
-						getLogger().info("Spring Boot application is running in a client/server topology,"
-							+ " using a standalone Apache Geode-based cluster");
-					}
-				}
+		protected void logConnectedRuntimeEnvironment(@NonNull Logger logger, int connectionCount) {
+
+			if (logger.isInfoEnabled()) {
+				logger.info("Cluster was found; Auto-configuration made [{}] successful connection(s);",
+					connectionCount);
+			}
+
+			logConnectedRuntimeEnvironment(logger);
+		}
+
+		protected void logConnectedRuntimeEnvironment(@NonNull Logger logger) {
+
+			if (logger.isInfoEnabled()) {
+				logger.info("Spring Boot application is running in a client/server topology,"
+					+ " using a standalone Apache Geode-based cluster");
+			}
+		}
+
+		protected void logUnconnectedRuntimeEnvironment(@NonNull Logger logger) {
+
+			if (logger.isInfoEnabled()) {
+				logger.info("No cluster was found; Spring Boot application will run in standalone [LOCAL] mode"
+					+ " unless strictMode is false and the application is running in a Cloud-managed Environment.");
 			}
 		}
 	}

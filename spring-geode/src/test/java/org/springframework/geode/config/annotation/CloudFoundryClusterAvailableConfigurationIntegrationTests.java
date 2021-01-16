@@ -37,7 +37,7 @@ import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockO
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Integration Tests for {@link EnableClusterAware} and {@link ClusterAvailableConfiguration.ClusterAvailableCondition}
+ * Integration Tests for {@link EnableClusterAware} and {@link ClusterAvailableConfiguration.StandaloneClusterAvailableCondition}
  * specifically when the Spring Boot application is run in CloudFoundry.
  *
  * @author John Blum
