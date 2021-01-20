@@ -4,6 +4,19 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.2.13.RELEASE (2021-01-19)
+----------------------------------------------
+Aligns SBDG with Spring Boot 2.2.13.RELEASE along with the latest versions of Spring Framework, Spring Data
+and Spring Session.
+
+* Upgrade to Spring Boot 2.2.13.RELEASE.
+* Upgrade to Spring Session for Apache Geode & VMware Tanzu (Pivotal) GemFire 2.2.7.RELEASE.
+* Upgrade to Byte Buddy 1.10.19.
+* Upgrade to Gradle 6.8.
+* Upgrade to Mockito 3.7.7.
+* Upgrade to Testcontainers 1.15.1.
+
+
 Changes in version 1.4.1 (2021-01-15)
 ----------------------------------------------
 Aligns SBDG with Spring Boot 2.4.1 along with the latest versions of Spring Framework, Spring Data
