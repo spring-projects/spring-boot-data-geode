@@ -293,13 +293,13 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 		 */
 		protected boolean doCachedMatch(@NonNull ConditionContext conditionContext) {
 
-			Supplier<Boolean> evaluateConditionMatch = () -> {
+			Supplier<Boolean> evaluateConditionMatches = () -> {
 				registerApplicationListener(conditionContext);
 				return doMatch(conditionContext);
 			};
 
-			UnaryOperator<Boolean> clusterAvailableUpdateFunction = currentClusterAvailableState ->
-				ObjectUtils.initialize(currentClusterAvailableState, evaluateConditionMatch);
+			UnaryOperator<Boolean> clusterAvailableUpdateFunction = currentClusterAvailable ->
+				ObjectUtils.initialize(currentClusterAvailable, evaluateConditionMatches);
 
 			return clusterAvailable.updateAndGet(clusterAvailableUpdateFunction);
 		}
