@@ -154,7 +154,8 @@ class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 
 Your Spring Boot, {geode-name} `ClientCache` application is able to seamlessly switch between client/server
-and local-only topologies with no code or configuration changes.
+and local-only topologies with no code or configuration changes, regardless of the runtime environment
+(e.g. local/standalone vs. cloud-managed environments).
 
 When a cluster of {geode-name} servers is detected, the client application will send and receive data to and from the
 cluster. If a cluster is not available, then the client automatically switches to storing data locally on the client
@@ -166,7 +167,7 @@ Additionally, the `@EnableClusterAware` annotation is meta-annotated with SDG's
 The `@EnableClusterConfiguration` enables configuration metadata defined on the client (e.g. Region and Index
 definitions) as needed by the application based on requirements and use cases, to be sent to the cluster of servers.
 If those schema objects are not already present, they will be created by the servers in the cluster in such a way that
-the servers will remember the configuration on a restart as well as provide the configuration to new servers joining
+the servers will remember the configuration on restart as well as provide the configuration to new servers joining
 the cluster when scaling out.  This feature is careful not to stomp on any existing Region or Index objects already
 present on the servers, particularly since you may already have data stored in the Regions.
 
@@ -180,6 +181,66 @@ host and port, and configuring the data management policy used by the servers wh
 TIP: Refer to the section in the SDG Reference Guide on
 {spring-data-geode-docs-html}/#bootstrap-annotation-config-cluster[Configuring Cluster Configuration Push]
 for more details.
+
+[[geode-configuration-declarative-annotations-productivity-enableclusteraware-strictmatch]]
+===== @EnableClusterAware, strictMatch
+
+The `strictMatch` attribute has been added to the `@EnableClusterAware` annotation to enable _fail-fast_ behavior.
+`strictMatch` is set to `false` by default.
+
+Essentially, when you set `strictMatch` to `true`, then you are saying that your Spring Boot, {geode-name} `ClientCache`
+application requires an  {geode-name} cluster to exist, i.e. the application requires a client/server topology
+to operate and that the application should fail to start and run if a cluster is not present. The application
+should not startup in a LOCAL-only capacity.
+
+When `strictMatch` is set to `true` and an {geode-name} cluster is not present, then your Spring Boot, {geode-name}
+`ClientCache` application will fail to start with a `ClusterNotFoundException`. The application will not attempt to
+startup in a LOCAL-only capacity.
+
+You can explicitly set the `strictMatch` attribute programmatically using the `@EnableClusterAware` annotation:
+
+.Set `@EnableClusterAware.strictMatch`
+[source,java]
+----
+@SpringBootApplication
+@EnableClusterAware(strictMatch = true)
+class SpringBootApacheGeodeClientCacheApplication {  }
+----
+
+Alternatively, you can set `strictMatch` using the corresponding property in Spring Boot `application.properties`:
+
+.Set `strictMatch` using a property
+[source,properties]
+----
+# Spring Boot application.properties
+
+spring.boot.data.gemfire.cluster.condition.match.strict=true
+----
+
+This is convenient when you need to apply this configuration setting conditionally based on a Spring Profile.
+
+When you adjust the _log-level_ of the `org.springframework.geode.config.annotation.ClusterAwareConfiguration` _Logger_
+to `INFO`, then you will get more details from the `@EnableClusterAware` functionality when applying the logic
+to determine the presence of an {geode-name} cluster, such as which explicitly or implicitly configured connections
+were successful.
+
+For example:
+
+.`@EnableClusterAware` INFO log output
+[source,txt]
+----
+2021-01-20 14:02:28,740  INFO fig.annotation.ClusterAwareConfiguration: 476 - Failed to connect to localhost[40404]
+2021-01-20 14:02:28,745  INFO fig.annotation.ClusterAwareConfiguration: 476 - Failed to connect to localhost[10334]
+2021-01-20 14:02:28,746  INFO fig.annotation.ClusterAwareConfiguration: 470 - Successfully connected to localhost[57649]
+2021-01-20 14:02:28,746  INFO fig.annotation.ClusterAwareConfiguration: 576 - Cluster was found; Auto-configuration made [1] successful connection(s);
+2021-01-20 14:02:28,746  INFO fig.annotation.ClusterAwareConfiguration: 586 - Spring Boot application is running in a client/server topology, using a standalone Apache Geode-based cluster
+----
+
+NOTE: An attempt is always made to connect to `localhost` on the default _Locator_ port, `10334`,
+as well as the default `CacheServer` port, `40404`.
+
+TIP: You can force a successful match always by setting the `spring.boot.data.gemfire.cluster.condition.match` property
+to `true` in Spring Boot `application.properties`. This is sometimes useful for testing purposes.
 
 [[geode-configuration-declarative-annotations-productivity-regions]]
 ==== `@EnableCachingDefinedRegions`, `@EnableClusterDefinedRegions` & `@EnableEntityDefinedRegions` (SDG)
