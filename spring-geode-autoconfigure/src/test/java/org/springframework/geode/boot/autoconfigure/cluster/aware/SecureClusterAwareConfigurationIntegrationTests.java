@@ -25,10 +25,12 @@ import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLContext;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 
@@ -110,6 +112,9 @@ import example.app.books.model.ISBN;
 @SuppressWarnings("unused")
 public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
+	private static final String SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY =
+		"spring.data.gemfire.cache.client.region.shortcut";
+
 	@BeforeClass
 	public static void startGeodeServer() throws IOException {
 		startGemFireServer(TestGeodeServerConfiguration.class,
@@ -119,6 +124,18 @@ public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClie
 	@Autowired
 	@Qualifier("booksTemplate")
 	private GemfireTemplate booksTemplate;
+
+	@Before
+	public void assertBooksClientRegionIsProxy() {
+
+		assertThat(System.getProperties())
+			.doesNotContainKeys(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY);
+
+		assertThat(this.booksTemplate).isNotNull();
+		assertThat(this.booksTemplate.getRegion()).isNotNull();
+		assertThat(this.booksTemplate.getRegion().getAttributes()).isNotNull();
+		assertThat(this.booksTemplate.getRegion().getAttributes().getDataPolicy()).isEqualTo(DataPolicy.EMPTY);
+	}
 
 	@Test
 	public void clientServerConfigurationAndConfigurationIsSuccessful() {
