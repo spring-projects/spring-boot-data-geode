@@ -15,6 +15,8 @@
  */
 package org.springframework.geode.config.annotation;
 
+import java.util.Set;
+
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.context.annotation.ConditionContext;
@@ -23,6 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration;
+import org.springframework.data.gemfire.support.ConnectionEndpointList;
+import org.springframework.data.gemfire.util.CollectionUtils;
 import org.springframework.lang.NonNull;
 
 import org.slf4j.Logger;
@@ -49,6 +53,9 @@ import org.slf4j.Logger;
 @EnableClusterConfiguration(requireHttps = false, useHttp = true)
 @SuppressWarnings("unused")
 public class ClusterAvailableConfiguration {
+
+	private static final Set<CloudPlatform> SUPPORTED_CLOUD_PLATFORMS =
+		CollectionUtils.asSet(CloudPlatform.CLOUD_FOUNDRY, CloudPlatform.KUBERNETES);
 
 	public static final class AnyClusterAvailableCondition extends AnyNestedCondition {
 
@@ -90,6 +97,24 @@ public class ClusterAvailableConfiguration {
 		}
 
 		@Override
+		public synchronized final boolean matches(@NonNull ConditionContext conditionContext,
+				@NonNull AnnotatedTypeMetadata typeMetadata) {
+
+			boolean match = isCloudPlatformActive(conditionContext.getEnvironment());
+			boolean strictMatch = isStrictMatch(conditionContext, typeMetadata);
+
+			if (isMatchingStrictOrLoggable(match, strictMatch)) {
+				match |= super.matches(conditionContext, typeMetadata);
+			}
+
+			if (match && !wasClusterAvailabilityEvaluated()) {
+				set(true);
+			}
+
+			return match;
+		}
+
+		@Override
 		protected void logConnectedRuntimeEnvironment(@NonNull Logger logger) {
 
 			if (logger.isInfoEnabled()) {
@@ -98,31 +123,23 @@ public class ClusterAvailableConfiguration {
 			}
 		}
 
-		protected void logRuntimeEnvironment(@NonNull Logger logger) {
+		@Override
+		protected void logUnconnectedRuntimeEnvironment(@NonNull Logger logger) {
 
 			if (logger.isInfoEnabled()) {
-				logger.info("Spring Boot application is running in a [{}] Cloud-managed Environment",
-					getRuntimeEnvironmentName());
+				logger.info("No cluster was found; Spring Boot application is running in a [{}]"
+						+ " Cloud-managed Environment", getRuntimeEnvironmentName());
 			}
 		}
 
 		@Override
-		public synchronized final boolean matches(@NonNull ConditionContext conditionContext,
-				@NonNull AnnotatedTypeMetadata typeMetadata) {
-
-			boolean match = isCloudPlatformActive(conditionContext.getEnvironment());
-			boolean strictMatch = isStrictMatch(typeMetadata, conditionContext);
-
-			if (isMatchingStrictOrLoggable(match, strictMatch)) {
-				logRuntimeEnvironment(getLogger());
-				match |= super.matches(conditionContext, typeMetadata);
-			}
-
-			return match;
+		protected void configureTopology(@NonNull Environment environment,
+				@NonNull ConnectionEndpointList connectionEndpoints, int connectionCount) {
+			// do nothing!
 		}
 	}
 
-	public static final class CloudFoundryClusterAvailableCondition extends AbstractCloudPlatformAvailableCondition {
+	public static class CloudFoundryClusterAvailableCondition extends AbstractCloudPlatformAvailableCondition {
 
 		protected static final String CLOUD_FOUNDRY_NAME = "CloudFoundry";
 		protected static final String RUNTIME_ENVIRONMENT_NAME = "VMware Tanzu GemFire for VMs";
@@ -139,11 +156,11 @@ public class ClusterAvailableConfiguration {
 
 		@Override
 		protected boolean isCloudPlatformActive(@NonNull Environment environment) {
-			return CloudPlatform.CLOUD_FOUNDRY.isActive(environment);
+			return environment != null && CloudPlatform.CLOUD_FOUNDRY.isActive(environment);
 		}
 	}
 
-	public static final class KubernetesClusterAvailableCondition extends AbstractCloudPlatformAvailableCondition {
+	public static class KubernetesClusterAvailableCondition extends AbstractCloudPlatformAvailableCondition {
 
 		protected static final String KUBERNETES_NAME = "Kubernetes";
 		protected static final String RUNTIME_ENVIRONMENT_NAME = "VMware Tanzu GemFire for K8S";
@@ -160,11 +177,36 @@ public class ClusterAvailableConfiguration {
 
 		@Override
 		protected boolean isCloudPlatformActive(@NonNull Environment environment) {
-			return CloudPlatform.KUBERNETES.isActive(environment);
+			return environment != null && CloudPlatform.KUBERNETES.isActive(environment);
 		}
 	}
 
-	public static final class StandaloneClusterAvailableCondition
-		extends ClusterAwareConfiguration.ClusterAwareCondition { }
+	public static class StandaloneClusterAvailableCondition
+			extends ClusterAwareConfiguration.ClusterAwareCondition {
 
+		@Override
+		public synchronized boolean matches(@NonNull ConditionContext conditionContext,
+				@NonNull AnnotatedTypeMetadata typeMetadata) {
+
+			return isNotSupportedCloudPlatform(conditionContext)
+				&& super.matches(conditionContext, typeMetadata);
+		}
+
+		private boolean isNotSupportedCloudPlatform(@NonNull ConditionContext conditionContext) {
+			return conditionContext != null && isNotSupportedCloudPlatform(conditionContext.getEnvironment());
+		}
+
+		private boolean isNotSupportedCloudPlatform(@NonNull Environment environment) {
+
+			CloudPlatform activeCloudPlatform = environment != null
+				? CloudPlatform.getActive(environment)
+				: null;
+
+			return !isSupportedCloudPlatform(activeCloudPlatform);
+		}
+
+		private boolean isSupportedCloudPlatform(@NonNull CloudPlatform cloudPlatform) {
+			return cloudPlatform != null && SUPPORTED_CLOUD_PLATFORMS.contains(cloudPlatform);
+		}
+	}
 }
