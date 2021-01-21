@@ -118,7 +118,7 @@ public class ClusterAwareConfigurationUnitTests extends IntegrationTestsSupport 
 
 		doReturn(false).when(this.condition).isMatch(eq(mockConditionContext));
 		doReturn(true).when(this.condition).doCachedMatch(eq(mockConditionContext));
-		doReturn(false).when(this.condition).isStrictMatch(any(), eq(mockConditionContext));
+		doReturn(false).when(this.condition).isStrictMatch(eq(mockConditionContext), any());
 
 		assertThat(this.condition.matches(mockConditionContext, null)).isTrue();
 
@@ -126,7 +126,7 @@ public class ClusterAwareConfigurationUnitTests extends IntegrationTestsSupport 
 
 		order.verify(this.condition, times(1)).isMatch(eq(mockConditionContext));
 		order.verify(this.condition, times(1)).doCachedMatch(eq(mockConditionContext));
-		order.verify(this.condition, times(1)).isStrictMatch(any(), eq(mockConditionContext));
+		order.verify(this.condition, times(1)).isStrictMatch(eq(mockConditionContext), any());
 
 		verifyNoInteractions(mockConditionContext);
 	}
@@ -137,7 +137,7 @@ public class ClusterAwareConfigurationUnitTests extends IntegrationTestsSupport 
 		ConditionContext mockConditionContext = mock(ConditionContext.class);
 
 		doReturn(true).when(this.condition).isMatch(eq(mockConditionContext));
-		doReturn(false).when(this.condition).isStrictMatch(any(), eq(mockConditionContext));
+		doReturn(false).when(this.condition).isStrictMatch(eq(mockConditionContext), any());
 
 		assertThat(this.condition.matches(mockConditionContext, null)).isTrue();
 
@@ -145,7 +145,7 @@ public class ClusterAwareConfigurationUnitTests extends IntegrationTestsSupport 
 
 		order.verify(this.condition, times(1)).isMatch(eq(mockConditionContext));
 		order.verify(this.condition, never()).doCachedMatch(any());
-		order.verify(this.condition, times(1)).isStrictMatch(any(), eq(mockConditionContext));
+		order.verify(this.condition, times(1)).isStrictMatch(eq(mockConditionContext), any());
 
 		verifyNoInteractions(mockConditionContext);
 	}

@@ -188,14 +188,45 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 			return contextClosedEvent-> reset();
 		}
 
+		/**
+		 * Determines whether an Apache Geode-based Cluster is available in the runtime environment.
+		 *
+		 * @return a boolean value indicating whether an Apache Geode-based Cluster is available in
+		 * the runtime environment.
+		 * @see #wasClusterAvailabilityEvaluated()
+		 */
 		public static boolean isAvailable() {
 			return Boolean.TRUE.equals(clusterAvailable.get());
 		}
 
+		/**
+		 * Resets the state of this {@link Condition} to reevaluate whether an Apache Geode-based Cluster
+		 * is available in the runtime environment.
+		 *
+		 * @see #set(Boolean)
+		 */
 		public static void reset() {
-			clusterAvailable.set(null);
+			set(null);
 		}
 
+		/**
+		 * Sets the state of the {@code clusterAvailable} variable.
+		 *
+		 * @param available state to set the {@code clusterAvailable} variable to.
+		 * @see #reset()
+		 */
+		protected static void set(@Nullable Boolean available) {
+			clusterAvailable.set(available);
+		}
+
+		/**
+		 * Determines whether the {@link Condition} that determines whether an Apache Geode-based Cluster is available
+		 * in the runtime environment has been evaluated.
+		 *
+		 * @return a boolean value indicating whether the {@link Condition} that determines
+		 * whether an Apache Geode-based Cluster is available in the runtime environment has been evaluated.
+		 * @see #isAvailable()
+		 */
 		public static boolean wasClusterAvailabilityEvaluated() {
 			return clusterAvailable.get() != null;
 		}
@@ -217,7 +248,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 				@NonNull AnnotatedTypeMetadata typeMetadata) {
 
 			boolean matches = isMatch(conditionContext) || doCachedMatch(conditionContext);
-			boolean strictMatch = isStrictMatch(typeMetadata, conditionContext);
+			boolean strictMatch = isStrictMatch(conditionContext, typeMetadata);
 
 			failOnStrictMatchAndNoMatches(strictMatch, matches);
 
@@ -228,8 +259,8 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 			return isAvailable() || configuredMatchFunction.apply(conditionContext);
 		}
 
-		protected boolean isStrictMatch(@NonNull AnnotatedTypeMetadata typeMetadata,
-				@NonNull ConditionContext conditionContext) {
+		protected boolean isStrictMatch(@NonNull ConditionContext conditionContext,
+				@NonNull AnnotatedTypeMetadata typeMetadata) {
 
 			Environment environment = conditionContext.getEnvironment();
 
@@ -324,9 +355,11 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 		 * are evaluated; must not be {@literal null}.
 		 * @return the given {@link ConditionContext}.
 		 * @see org.springframework.context.annotation.ConditionContext
+		 * @see #doCachedMatch(ConditionContext)
 		 * @see #getConnectionEndpoints(Environment)
 		 * @see #countConnections(ConnectionEndpointList)
 		 * @see #configureTopology(Environment, ConnectionEndpointList, int)
+		 * @see #logRuntimeEnvironment(Logger, int)
 		 * @see #isMatch(ConnectionEndpointList, int)
 		 */
 		protected boolean doMatch(@NonNull ConditionContext conditionContext) {
@@ -338,6 +371,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 			int connectionCount = countConnections(connectionEndpoints);
 
 			configureTopology(environment, connectionEndpoints, connectionCount);
+			logRuntimeEnvironment(getLogger(), connectionCount);
 
 			return isMatch(connectionEndpoints, connectionCount);
 		}
@@ -556,17 +590,19 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 		protected void configureTopology(@NonNull Environment environment,
 				@NonNull ConnectionEndpointList connectionEndpoints, int connectionCount) {
 
-			if (isConnected(connectionCount)) {
-				logConnectedRuntimeEnvironment(getLogger(), connectionCount);
-			}
-			else {
-
+			if (isNotConnected(connectionCount)) {
 				if (!environment.containsProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY)) {
 					System.setProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
 						LOCAL_CLIENT_REGION_SHORTCUT.name());
 				}
+			}
+		}
 
-				logUnconnectedRuntimeEnvironment(getLogger());
+		protected void logConnectedRuntimeEnvironment(@NonNull Logger logger) {
+
+			if (logger.isInfoEnabled()) {
+				logger.info("Spring Boot application is running in a client/server topology,"
+					+ " using a standalone Apache Geode-based cluster");
 			}
 		}
 
@@ -580,11 +616,13 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 			logConnectedRuntimeEnvironment(logger);
 		}
 
-		protected void logConnectedRuntimeEnvironment(@NonNull Logger logger) {
+		protected void logRuntimeEnvironment(@NonNull Logger logger, int connectionCount) {
 
-			if (logger.isInfoEnabled()) {
-				logger.info("Spring Boot application is running in a client/server topology,"
-					+ " using a standalone Apache Geode-based cluster");
+			if (isConnected(connectionCount)) {
+				logConnectedRuntimeEnvironment(logger, connectionCount);
+			}
+			else {
+				logUnconnectedRuntimeEnvironment(logger);
 			}
 		}
 
