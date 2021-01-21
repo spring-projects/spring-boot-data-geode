@@ -36,6 +36,7 @@ import org.springframework.data.gemfire.config.annotation.ClientCacheApplication
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -65,6 +66,7 @@ import example.app.crm.model.Customer;
  * @since 1.2.0
  */
 @ActiveProfiles("cloudfoundry-cluster-test")
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	properties = "spring.main.cloud-platform=CLOUD_FOUNDRY",
