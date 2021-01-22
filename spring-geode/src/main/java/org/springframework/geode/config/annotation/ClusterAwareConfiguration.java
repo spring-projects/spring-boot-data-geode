@@ -601,7 +601,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 		protected void logConnectedRuntimeEnvironment(@NonNull Logger logger) {
 
 			if (logger.isInfoEnabled()) {
-				logger.info("Spring Boot application is running in a client/server topology,"
+				logger.info("Spring Boot application is running in a client/server topology"
 					+ " using a standalone Apache Geode-based cluster");
 			}
 		}
@@ -609,7 +609,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 		protected void logConnectedRuntimeEnvironment(@NonNull Logger logger, int connectionCount) {
 
 			if (logger.isInfoEnabled()) {
-				logger.info("Cluster was found; Auto-configuration made [{}] successful connection(s);",
+				logger.info("Cluster was found; Auto-configuration made [{}] successful connection(s)",
 					connectionCount);
 			}
 
@@ -630,7 +630,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 
 			if (logger.isInfoEnabled()) {
 				logger.info("No cluster was found; Spring Boot application will run in standalone [LOCAL] mode"
-					+ " unless strictMode is false and the application is running in a Cloud-managed Environment.");
+					+ " unless strictMode is false and the application is running in a Cloud-managed Environment");
 			}
 		}
 	}
