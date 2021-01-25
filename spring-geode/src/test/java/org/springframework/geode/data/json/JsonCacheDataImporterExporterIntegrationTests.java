@@ -295,7 +295,8 @@ public class JsonCacheDataImporterExporterIntegrationTests extends SpringApplica
 
 		return new ObjectMapper()
 			.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
-			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+			.findAndRegisterModules();
 	}
 
 	private PdxInstance serializeToPdx(RegionService regionService, Object value) {
@@ -600,7 +601,9 @@ public class JsonCacheDataImporterExporterIntegrationTests extends SpringApplica
 			assertThat(expected).hasMessageStartingWith("Could not deserialize as java class '%s'",
 				TimedType.class.getName());
 			assertThat(expected.getCause()).isInstanceOf(InvalidDefinitionException.class);
-			assertThat(expected.getCause()).hasMessageStartingWith("Cannot construct instance of `java.time.LocalDate`");
+			assertThat(expected.getCause())
+				.hasMessageStartingWith("Java 8 date/time type `java.time.LocalDate` not supported by default:"
+					+ " add Module \"com.fasterxml.jackson.datatype:jackson-datatype-jsr310\" to enable handling");
 			assertThat(expected.getCause()).hasNoCause();
 
 			throw expected;
@@ -646,7 +649,7 @@ public class JsonCacheDataImporterExporterIntegrationTests extends SpringApplica
 				PurchaseOrder.class.getName());
 			assertThat(expected.getCause()).isInstanceOf(MismatchedInputException.class);
 			assertThat(expected.getCause())
-				.hasMessageStartingWith("Cannot deserialize instance of `java.lang.Long` out of START_ARRAY token");
+				.hasMessageStartingWith("Cannot deserialize value of type `java.lang.Long` from Array value (token `JsonToken.START_ARRAY`)");
 			assertThat(expected.getCause()).hasNoCause();
 
 			throw expected;
