@@ -1,7 +1,11 @@
 apply plugin: 'io.spring.convention.spring-module'
 apply from: MAVEN_POM_EDITOR_GRADLE
 
-description = "Spring Boot Cloud for Apache Geode"
+description = "Spring Cloud for Apache Geode"
+
+repositories {
+	maven { url "https://repo.spring.io/release" }
+}
 
 dependencies {
 
