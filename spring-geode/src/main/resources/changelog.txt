@@ -4,6 +4,22 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.5.0-M1 (2021-01-25)
+----------------------------------------
+Aligns SBDG with Spring Boot 2.5.0-M1 along with the latest versions of Spring Framework, Spring Data
+and Spring Session.
+
+* Includes runtime dependency on 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310' in the spring-geode module
+for developer convenience when using the JSON Cache Data Import/Export feature.
+* Upgrades to Spring Boot 2.5.0-M1.
+* Upgrades to Spring Data BOM 2021.0.0-M2/Pascal-M2
+* Upgrades to Spring Data for Apache Geode 2.5.0-M2.
+* Upgrades to Spring Session 2021.0.0-M1.
+* Upgrades to Spring Session for Apache Geode 2.5.0-M1.
+* Upgrades to Spring Build Conventions Gradle Plugin 0.0.36.
+* Upgrades to Gradle 6.8.1.
+
+
 Changes in version 1.4.2 (2021-01-22)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.4.2 along with the latest versions of Spring Framework, Spring Data
