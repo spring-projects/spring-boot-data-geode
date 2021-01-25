@@ -20,6 +20,8 @@ dependencies {
 
 	optional "org.springframework:spring-test"
 
+	runtime "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+
 	testCompile "junit:junit"
 	testCompile "org.assertj:assertj-core"
 	testCompile "org.mockito:mockito-core"
