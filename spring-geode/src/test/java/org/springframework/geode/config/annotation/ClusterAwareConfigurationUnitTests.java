@@ -66,6 +66,7 @@ import org.springframework.data.gemfire.tests.integration.IntegrationTestsSuppor
 import org.springframework.geode.config.annotation.ClusterAwareConfiguration.PoolConnectionEndpoint;
 import org.springframework.geode.config.annotation.ClusterAwareConfiguration.SocketCreationException;
 import org.springframework.lang.NonNull;
+import org.springframework.mock.env.MockEnvironment;
 
 import org.slf4j.Logger;
 
@@ -160,14 +161,14 @@ public class ClusterAwareConfigurationUnitTests extends IntegrationTestsSupport 
 		doReturn(mockEnvironment).when(mockConditionContext).getEnvironment();
 		doReturn(true).when(mockEnvironment)
 			.getProperty(eq(ClusterAwareConfiguration.SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_PROPERTY),
-				eq(Boolean.class), eq(ClusterAwareConfiguration.DEFAULT_CLUSTER_CONDITION_MATCH));
+				eq(Boolean.class), eq(ClusterAwareConfiguration.DEFAULT_CLUSTER_AWARE_CONDITION_MATCH));
 
 		assertThat(this.condition.isMatch(mockConditionContext)).isTrue();
 
 		verify(mockConditionContext, times(1)).getEnvironment();
 		verify(mockEnvironment, times(1))
 			.getProperty(eq(ClusterAwareConfiguration.SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_PROPERTY),
-				eq(Boolean.class), eq(ClusterAwareConfiguration.DEFAULT_CLUSTER_CONDITION_MATCH));
+				eq(Boolean.class), eq(ClusterAwareConfiguration.DEFAULT_CLUSTER_AWARE_CONDITION_MATCH));
 
 		verifyNoMoreInteractions(mockConditionContext, mockEnvironment);
 	}
@@ -727,18 +728,19 @@ public class ClusterAwareConfigurationUnitTests extends IntegrationTestsSupport 
 		assertThat(System.getProperties())
 			.doesNotContainKey(ClusterAwareConfiguration.SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY);
 
-		ConfigurableEnvironment mockEnvironment = mock(ConfigurableEnvironment.class);
+		MockEnvironment mockEnvironment = spy(new MockEnvironment());
 
 		ConnectionEndpointList connectionEndpoints =
 			new ConnectionEndpointList(new ConnectionEndpoint("localhost", 1234));
 
 		this.condition.configureTopology(mockEnvironment, connectionEndpoints,0);
 
-		assertThat(System.getProperty(ClusterAwareConfiguration.SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY))
+		assertThat(mockEnvironment.getProperty(ClusterAwareConfiguration.SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY))
 			.isEqualTo("LOCAL");
 
 		verify(mockEnvironment, times(1))
 			.containsProperty(eq(ClusterAwareConfiguration.SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY));
+		verify(mockEnvironment, times(1)).getPropertySources();
 	}
 
 	@Test

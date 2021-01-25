@@ -23,7 +23,6 @@ import org.junit.AfterClass;
 import org.junit.Test;
 
 import org.apache.geode.cache.client.ClientCache;
-import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.core.NestedExceptionUtils;
@@ -90,8 +89,8 @@ public class PropertyConfiguredStrictMatchingClusterNotAvailableConfigurationInt
 			throw expected;
 		}
 		finally {
-			assertThat(System.getProperty(ClusterAwareConfiguration.SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY))
-				.isEqualTo(ClientRegionShortcut.LOCAL.name());
+			assertThat(System.getProperties())
+				.doesNotContainKeys(ClusterAwareConfiguration.SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY);
 		}
 	}
 

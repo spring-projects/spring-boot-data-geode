@@ -75,6 +75,6 @@ public @interface EnableClusterAware {
 	 *
 	 * @return a boolean value indicating whether strict matching mode is enabled.
 	 */
-	boolean strictMatch() default ClusterAwareConfiguration.DEFAULT_CLUSTER_CONDITION_STRICT_MATCH;
+	boolean strictMatch() default ClusterAwareConfiguration.DEFAULT_CLUSTER_AWARE_CONDITION_STRICT_MATCH;
 
 }

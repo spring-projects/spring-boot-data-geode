@@ -58,6 +58,7 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -116,8 +117,8 @@ import org.slf4j.LoggerFactory;
 @Import({ ClusterAvailableConfiguration.class, ClusterNotAvailableConfiguration.class })
 public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport implements ImportAware {
 
-	static final boolean DEFAULT_CLUSTER_CONDITION_MATCH = false;
-	static final boolean DEFAULT_CLUSTER_CONDITION_STRICT_MATCH = false;
+	static final boolean DEFAULT_CLUSTER_AWARE_CONDITION_MATCH = false;
+	static final boolean DEFAULT_CLUSTER_AWARE_CONDITION_STRICT_MATCH = false;
 
 	static final int DEFAULT_CACHE_SERVER_PORT = CacheServer.DEFAULT_PORT;
 	static final int DEFAULT_LOCATOR_PORT = 10334;
@@ -129,6 +130,9 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 	static final String MATCHING_PROPERTY_PATTERN = "spring\\.data\\.gemfire\\.pool\\..*locators|servers";
 	static final String STRICT_MATCH_ATTRIBUTE_NAME = "strictMatch";
 
+	static final String CLUSTER_AWARE_CONFIGURATION_PROPERTY_SOURCE_NAME =
+		ClusterAwareConfiguration.class.getSimpleName().concat("PropertySource");
+
 	static final String SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_PROPERTY =
 		"spring.boot.data.gemfire.cluster.condition.match";
 
@@ -139,14 +143,14 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 		"spring.data.gemfire.cache.client.region.shortcut";
 
 	private static final AtomicBoolean strictMatchConfiguration =
-		new AtomicBoolean(DEFAULT_CLUSTER_CONDITION_STRICT_MATCH);
+		new AtomicBoolean(DEFAULT_CLUSTER_AWARE_CONDITION_STRICT_MATCH);
 
 	private static final Function<ConditionContext, Boolean> configuredMatchFunction = conditionContext ->
 		Optional.ofNullable(conditionContext)
 			.map(ConditionContext::getEnvironment)
 			.map(environment -> environment.getProperty(SPRING_BOOT_DATA_GEMFIRE_CLUSTER_CONDITION_MATCH_PROPERTY,
-				Boolean.class, DEFAULT_CLUSTER_CONDITION_MATCH))
-			.orElse(DEFAULT_CLUSTER_CONDITION_MATCH);
+				Boolean.class, DEFAULT_CLUSTER_AWARE_CONDITION_MATCH))
+			.orElse(DEFAULT_CLUSTER_AWARE_CONDITION_MATCH);
 
 	private static final Logger logger = LoggerFactory.getLogger(ClusterAwareConfiguration.class);
 
@@ -283,7 +287,7 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 							.map(annotationMetadata -> annotationMetadata.getAnnotationAttributes(annotationName))
 							.map(AnnotationAttributes::fromMap)
 							.map(annotationAttributes -> annotationAttributes.getBoolean(STRICT_MATCH_ATTRIBUTE_NAME))
-							.orElse(DEFAULT_CLUSTER_CONDITION_STRICT_MATCH);
+							.orElse(DEFAULT_CLUSTER_AWARE_CONDITION_STRICT_MATCH);
 				}
 
 				return strictMatchEnabled;
@@ -587,14 +591,31 @@ public class ClusterAwareConfiguration extends AbstractAnnotationConfigSupport i
 			return !isConnected(connectionCount);
 		}
 
+		private void configureEnvironment(@NonNull Environment environment) {
+
+			if (environment != null) {
+				if (!environment.containsProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY)) {
+					if (environment instanceof ConfigurableEnvironment) {
+
+						MutablePropertySources propertySources = ((ConfigurableEnvironment) environment).getPropertySources();
+
+						propertySources.addFirst(new MapPropertySource(CLUSTER_AWARE_CONFIGURATION_PROPERTY_SOURCE_NAME,
+							Collections.singletonMap(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
+								LOCAL_CLIENT_REGION_SHORTCUT.name())));
+					}
+					else {
+						System.setProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
+							LOCAL_CLIENT_REGION_SHORTCUT.name());
+					}
+				}
+			}
+		}
+
 		protected void configureTopology(@NonNull Environment environment,
 				@NonNull ConnectionEndpointList connectionEndpoints, int connectionCount) {
 
 			if (isNotConnected(connectionCount)) {
-				if (!environment.containsProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY)) {
-					System.setProperty(SPRING_DATA_GEMFIRE_CACHE_CLIENT_REGION_SHORTCUT_PROPERTY,
-						LOCAL_CLIENT_REGION_SHORTCUT.name());
-				}
+				configureEnvironment(environment);
 			}
 		}
 
