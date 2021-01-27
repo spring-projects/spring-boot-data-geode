@@ -1,6 +1,8 @@
 :spring-docs: https://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/
 :sbdg-docs: https://docs.spring.io/spring-boot-data-geode-build/current/reference/html5/
 :sbdg-javadoc: https://docs.spring.io/spring-boot-data-geode-build/current/api/
+:sbdg-version: 1.4.2
+:spring-boot-version: 2.4.2
 :geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :geode-name: Apache Geode
 :gemfire-name: VMware Tanzu GemFire
@@ -10,22 +12,23 @@ image:https://api.travis-ci.org/spring-projects/spring-boot-data-geode.svg?branc
 [[about]]
 == Spring Boot for {geode-name}
 
-_Spring Boot for {geode-name}_ extends https://projects.spring.io/spring-boot/[_Spring Boot_] with _auto-configuration_
-support as well as other _convention & configuration_ features to simplify the development of _Spring_ applications
-using https://geode.apache.org/[{geode-name}] in a _Spring_ context.
+_Spring Boot for {geode-name}_ extends https://projects.spring.io/spring-boot/[_Spring Boot_] to include
+_auto-configuration_ along with other _convention/configuration_ features in order to simplify the development
+of _Spring_ applications using https://geode.apache.org/[{geode-name}] in a _Spring_ context.
 
 This project builds on https://spring.io/projects/spring-boot[Spring Boot] along with
 https://github.com/spring-projects/spring-data-geode[_Spring Data for {geode-name}_] (SDG),
 https://github.com/spring-projects/spring-session-data-geode[_Spring Session for {geode-name}_] (SSDG)
 and https://github.com/spring-projects/spring-test-data-geode[_Spring Test for {geode-name}_] (STDG).
 
-[[project-goals]]
-=== Project Goals
+[[project-features]]
+=== Project Features
 
-This project adds _Spring Boot_ **auto-configuration** and *actuator* support for https://geode.apache.org/[{geode-name}].
+This project adds _Spring Boot_ **auto-configuration** and *actuator* support for https://geode.apache.org/[{geode-name}]
+as well as integration with other Spring projects in addition to 3rd party Java libraries.
 
 Among other things, this project builds on https://projects.spring.io/spring-boot/[_Spring Boot_]
-as well as https://projects.spring.io/spring-data-geode/[_Spring Data for {geode-name}_] (SDG) and additionally offers...
+and https://projects.spring.io/spring-data-geode/[_Spring Data for {geode-name}_] (SDG) to offer:
 
 1. _Auto-configures_ an _{geode-name}_ {geode-javadoc}/org/apache/geode/cache/client/ClientCache.html[ClientCache]
 instance automatically when _Spring Data for {geode-name}_ (SDG) is on the application's CLASSPATH.
@@ -34,12 +37,12 @@ instance automatically when _Spring Data for {geode-name}_ (SDG) is on the appli
 when _Spring Data for {geode-name}_ (SDG) is on the application's CLASSPATH to solve caching uses cases.
 
 3. _Auto-configures_ _Spring Data for {geode-name}_ (SDG) {sbdg-docs}#geode-repositories[Repositories]
-when _Spring Data for {geode-name}_ (SDG) is on the application's CLASSPATH and _Spring Boot_ detects SDG _Repositories_
-in your _Spring Boot_ application to solve persistent use cases.
+when _Spring Data for {geode-name}_ (SDG) is on the application's CLASSPATH and _Spring Boot_ detects
+SDG _Repositories_ in your _Spring Boot_ application to solve persistent use cases.
 
 4. _Auto-configures_ _{geode-name}_ {sbdg-docs}#geode-functions[Functions] when _Spring Data for {geode-name}_ (SDG)
 is on the application's CLASSPATH and _Spring Boot_ auto-detects SDG Function implementations or executions to solve
-your distributed compute problems.
+distributed compute problems.
 
 5. _Auto-configures_ _{geode-name}_ {sbdg-docs}#geode-continuous-query[CQ] when _Spring Data for {geode-name}_ (SDG)
 is on the application's CLASSPATH and _Spring Boot_ auto-detects SDG CQ query declarations on application components
@@ -48,7 +51,8 @@ to solve (near) realtime event stream processing use cases.
 6. _Auto-configures_ _{geode-name} as a {sbdg-docs}#geode-session[HTTP Session state management provider]
 when _Spring Session for {geode-name}_ (SSDG) is on the application's CLASSPATH.
 
-7. _Auto-configures_ _{geode-name}_ {sbdg-docs}#geode-security[Security], both {sbdg-docs}#geode-security-auth[Authentication & Authorization (Auth)]
+7. _Auto-configures_ _{geode-name}_ {sbdg-docs}#geode-security[Security]
+including {sbdg-docs}#geode-security-auth[Authentication & Authorization (Auth)]
 as well as {sbdg-docs}#geode-security-ssl[Transport Layer Security (TLS) using SSL].
 
 8. Provides additional support for _Spring Boot_ and _Spring Data for {geode-name}_ applications deployed to
@@ -59,8 +63,10 @@ with _Spring Test for {geode-name}_ (STDG).
 
 This, along with many other benefits, are provided by this project.
 
-[[documentation]]
-=== Documentation
+[[learn]]
+=== Learn
+
+The following SBDG versions are still maintained and developed.
 
 .Current/Supported Versions
 |===
@@ -91,40 +97,270 @@ The following SBDG versions have reached their End-of-Life (EOL).
 
 |===
 
+See _Spring Boot's_ https://github.com/spring-projects/spring-boot/wiki/Supported-Versions#releases[Release]
+in https://github.com/spring-projects/spring-boot/wiki/Supported-Versions[Support Versions] for more details.
+
+[[get-started]]
+=== Get Started!
+
+To start using SBDG immediately, simply add the following dependency to your _Spring Boot_ application Maven POM
+or Gradle build file:
+
+.SBDG Maven POM dependency
+[source,xml]
+----
+<dependency>
+    <groupId>org.springframework.geode</groupId>
+    <artifactId>spring-geode-starter</artifactId>
+    <version>{sbdg-version}</version>
+</dependency>
+----
+
+.SBDG Gradle build dependency
+[source,groovy]
+----
+dependencies {
+    compile "org.springframework.geode:spring-geode-starter:{sbdg-version}"
+}
+----
+
+If you trying a SNAPSHOT or MILESTONE version of SBDG, perhaps to pick up a bug fix, improvement or new feature,
+be sure to declare the appropriate Spring Repository.  For example, the Spring Milestone Repository
+
+.Spring Milestone Repository declared in Maven POM
+[source,xml]
+----
+<repositories>
+    <repository>
+        <name>spring-milestone</name>
+        <url>https://repo.spring.io/milestone</url>
+    </repository>
+</repositories>
+----
+
+.Spring Milestone Repository declare in build.gradle
+[source,groovy]
+----
+repositories {
+    maven { url "https://repo.spring.io/milestone" }
+}
+----
+
+NOTE: To use a SNAPSHOT, simply change the URL from `https://repo.spring.io/milestone`
+to `https://repo.spring.io/snapshot`.
+
+NOTE: Spring SNAPSHOT and MILESTONE artifacts are not published to Maven Central. Only GA release bits are published to
+Maven Central. When using GA bits, you do not need to declare a Repository for Maven Central when using Maven. You do
+need to declare `mavenCentral()` when using Gradle.
+
+[[get-started-spring-initializer]]
+==== Getting Started with Spring Initializer
+
+To make the task of creating a project even easier, the Spring Team recommends that you start at
+https://start.spring.io[start.spring.io].
+
+Use this https://start.spring.io/#!platformVersion={spring-boot-version}&dependencies=geode[link] to create
+a _Spring Boot_ project using {geode-name}.
+
+In addition to declaring the SBDG dependency, `org.springframework.geode:spring-geode-starter`, the Maven POM or Gradle
+build file generated with _Spring Initializer_ at _start.spring.io_ includes the SBDG BOM, conveniently declared in a
+dependency management block in both Maven and Gradle projects. This is convenient when you anticipate that you will need
+to use more than SBDG 1 module.
+
+For example, if you will also be using the `org.springframework.geode:spring-geode-starter-session` module for your
+(HTTP) Session management needs, or perhaps the `org.springframework.geode:spring-geode-starter-test` module to write
+Unit & Integration Tests for your _Spring Boot_, {geode-name} applications, then you can simply add the dependency
+and let the BOM manage versions appropriately for you.
+
+[[get-started-application]]
+==== Simple Spring Boot, {geode-name} application
+
+In this section, we will build a really simple _Spring Boot_ application using {geode-name} showing you how to
+get started quickly, easily and reliably.
+
+For our example, we will create and persist a `User` to {geode-name} then lookup the `User` by name. We start by
+defining our `User` application domain model class.
+
+.User class
+[source,java]
+----
+@Getter
+@ToString
+@EqualsAndHashCode
+@RequiredArgsConstructor
+@Region("Users")
+class User {
+
+	@lombok.NonNull @Id
+	private final String name;
+
+}
+----
+
+We use https://projectlombok.org/[Project Lombok] to simplify the implementation of our `User` class. Otherwise, the
+only requirement to store `Users` in {geode-name} is to declare the `User` to data store mapping. We do this by
+annotating the `User` class with the SDG `@Region` mapping annotation along with declaring the `User.name` property
+to be the ID of `User` instances.
+
+By declaring the `@Region` mapping annotation we are stating that instances of `User` will be stored in an {geode-name}
+cache `Region` named "Users". The _Spring Data_ `@Id` annotation serves to declare the identifier for a `User` object
+stored in {geode-name}. This is not unlike JPA's `@javax.persistence.Table` and `@javax.persistence.Id` mapping
+annotations.
+
+NOTE: An {geode-name} `Region` is equivalent to a database table and the cache is equivalent to a database schema.
+A database schema is a namespace for a collection of tables whereas an {geode-name} cache is a namespace or group of
+`Regions` that hold the data. Each data store has its own data structure to organize and manage data. An RDBMS uses
+a tabular data structure. Graph databases use a graph. Well, {geode-name} uses a `Region`, which is simply a key/value
+data structure, or a map. In fact, an {geode-name} `Region` implements `java.util.Map` (indirectly) and is essentially
+a distributed, horizontally scalable, highly concurrent, low-latency (among other things) `Map` implementation.
+
+Next, let's define a _Spring Data_ `CrudRepository` to persist and access `Users` stored in {geode-name}.
+
+.UserRepository
+[source,java]
+----
+interface UserRepository extends CrudRepository<User, String> { }
+----
+
+Finally, let's create a _Spring Boot application_ to tie everything together.
+
+.Spring Boot, {geode-name} application
+[source,java]
+----
+@Slf4j
+@SpringBootApplication
+@EnableClusterAware
+@EnableEntityDefinedRegions(basePackageClasses = User.class)
+public class UserApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(UserApplication.class, args);
+	}
+
+	@Bean
+	@SuppressWarnings("unused")
+	ApplicationRunner runner(UserRepository userRepository) {
+
+		return args -> {
+
+			long count = userRepository.count();
+
+			assertThat(count).isZero();
+
+			log.info("Number of Users [{}]", count);
+
+			User jonDoe = new User("jonDoe");
+
+			log.info("Created User [{}]", jonDoe);
+
+			userRepository.save(jonDoe);
+
+			log.info("Saved User [{}]", jonDoe);
+
+			count = userRepository.count();
+
+			assertThat(count).isOne();
+
+			log.info("Number of Users [{}]", count);
+
+			User jonDoeFoundById = userRepository.findById(jonDoe.getName()).orElse(null);
+
+			assertThat(jonDoeFoundById).isEqualTo(jonDoe);
+
+			log.info("Found User by ID (name) [{}]", jonDoeFoundById);
+		};
+	}
+}
+
+@Getter
+@ToString
+@EqualsAndHashCode
+@RequiredArgsConstructor
+@Region("Users")
+class User {
+
+	@lombok.NonNull @Id
+	private final String name;
+
+}
+
+interface UserRepository extends CrudRepository<User, String> { }
+----
+
+The `UserApplication` class is annotated with `@SpringBootApplication` making it a proper _Spring Boot_ application.
+With SBDG on the classpath, this effectively makes our application an {geode-name} application as well. SBDG will
+_auto-configure_ an {geode-name} `ClientCache` instance by default when SBDG is on the application classpath.
+
+With the SDG `@Region` mapping annotation, we declared that instances of `User` will be stored in the "Users" `Region`.
+However, we have not yet created a "Users" `Region`. This is where the `@EnableEntityDefinedRegions` annotation comes
+into play. Like JPA/Hibernate's ability to create database tables from our `@Entity` declared classes, SDG's
+`@EnableEntityDefineRegions` annotation scans the classpath for application entity classes (e.g. `User`)
+and detects any classes annotated with `@Region` in order to create the `Region` named. The `basePackageClasses`
+attribute is a type-safe way to pinpoint the scan.
+
+While useful and convenient during development, `@EnableEntityDefinedRegions` was not made into an _auto-configuration_
+feature by default since there many ways to define and configure a `Region`, which varies from data type to data type
+(e.g. transactional data vs. reference data), and varies greatly by use case and requirements.
+
+We make use of 1 more powerful annotation, SBDG's `@EnableClusterAware`, which allows you to switch between local-only,
+embedded development to a client/server topology. You can learn more in SBDG's reference documentation
+(see {sbdg-docs}#geode-configuration-declarative-annotations-productivity-enableclusteraware[here]
+and in the {sbdg-docs}guides/getting-started.html[_Getting Started_] Sample).
+
+Our Java `main` method uses _Spring Boot's_ `SpringApplication` class to bootstrap the application.
+
+Finally, use declare the `ApplicationRunner` bean to persist a `User`, then lookup the stored `User` by ID (or "name").
+Along, the way, we log the output to see the application in action.
+
+.Application log output (output slightly formatted to fit this screen)
+[source,text]
+----
+...
+2021-01-26 20:46:34.842  INFO 33218 --- [main] example.app.user.UserApplication : Started UserApplication in 4.561 seconds (JVM running for 5.152)
+2021-01-26 20:46:34.996  INFO 33218 --- [main] example.app.user.UserApplication : Number of Users [0]
+2021-01-26 20:46:34.996  INFO 33218 --- [main] example.app.user.UserApplication : Created User [User(name=jonDoe)]
+2021-01-26 20:46:35.025  INFO 33218 --- [main] example.app.user.UserApplication : Saved User [User(name=jonDoe)]
+2021-01-26 20:46:35.027  INFO 33218 --- [main] example.app.user.UserApplication : Number of Users [1]
+2021-01-26 20:46:35.029  INFO 33218 --- [main] example.app.user.UserApplication : Found User by ID (name) [User(name=jonDoe)]
+...
+----
+
+That's it! That's all!
+
+You have now created a _Spring Boot_ application using {geode-name} to persist and access data.
+
+[[get-started-next]]
+===== Where To Next
+
+To continue your journey of learning, see the {sbdg-docs}[Reference Documentation] and jump into the examples
+noted below.
+
 [[examples]]
 === Examples
 
-The single, most relevant "_source of truth_" on how to get started quickly and effectively, using Spring Boot
-for {geode-name} (SBDG) to solve problems, is to start with the {sbdg-docs}#geode-samples[Samples]. There, you will find
-different examples with documentation and code showing you how to use SBDG to appropriately handle specific application
-concerns, like Caching.
+The single, most relevant "_source of truth_" on how to get started quickly, easily and reliably, using Spring Boot
+for {geode-name} (SBDG) to solve problems, is to start with the {sbdg-docs}#geode-samples[Samples]. There, you will
+find different examples with documentation and code showing you how to use SBDG to effectively handle specific
+application concerns, like Caching.
 
-You can find an example of using SBDG in the Pivotal Cloud Cache (PCC) https://github.com/pivotal-cf/PCC-Sample-App-PizzaStore[Pizza Store]
-GitHub repository, which is a Spring Boot, {geode-name} `ClientCache` application that connects to PCC when the app
-is deployed to PCF.
+Additionally, there are examples that walk you through the evolution of SBDG to really showcase what SBDG affords you.
+The examples start by building a simple, Spring Boot application using {geode-name}'s API only. Then, the app is rebuilt
+using Spring Data for {geode-name} (SDG) to show the simplifications that SDG brings to the table. Finally, the app is
+rebuilt once more using SBDG to demonstrate the full power of {geode-name} when combined with _Spring Boot_. The examples
+can be found in the https://github.com/kohlmu-pivotal/PCCDemo[PCCDemo] GitHub repository. Each app can be deployed to
+Pivotal CloudFoundry (PCF) and bound to a Pivotal Cloud Cache (PCC) service instance. By using SBDG, little to no code
+or configuration changes are required to run the app locally and then later deploy the same app to a managed environment
+like PCF. It just works!
 
-The https://github.com/jxblum/contacts-application/tree/master/boot-example[boot-example] found in the
-_Contacts Application Reference Implementation_ for _Spring Data for {geode-name}_ (SDG) uses SBDG
-to manage Books in a _System of Record_ Use Case.
-
-Then, there is a series of examples that walks a user through a series of steps starting by building a simple,
-Spring Boot client application using the {geode-name} API only.  Next, the app is rebuilt using Spring Data
-for {geode-name} (SDG) to show the simplifications that SDG affords you as a developer.  Finally, the app is rebuilt
-once more using SBDG to demonstrate the power of {geode-name} when combined with Spring Boot.  The example can be found
-in the https://github.com/kohlmu-pivotal/PCCDemo[PCCDemo] GitHub repository.  Each app can be deployed to PCF
-and bound to a Pivotal Cloud Cache (PCC) service instance.  With SBDG, little to no code or configuration changes are
-necessary to run the app locally and then later deploy the same app to a managed environment like PCF.  It just works!
-
-Finally, the https://github.com/jxblum/temperature-service/tree/using-spring-boot[Temperature Service] example is
-an _Internet of Things_ (IoT) and _Event Stream Processing_ (ESP) Use Case that manages Temperature Sensors and Monitors
-and uses SBDG to make the application configuration and implementation as simple as can be.
-
-Overtime, we will be adding even more relevant and practical examples, so please keep checking back.
+Then, there is the https://github.com/jxblum/temperature-service/tree/using-spring-boot[Temperature Service] example app
+showcasing an  _Internet of Things_ (IoT) and _Event Stream Processing_ (ESP) Use Case to manage Temperature Sensors
+and Monitors, powered by {geode-name} with the help of SBDG to make the application configuration and implementation
+as simple as can be.
 
 [[spring-boot-project-site]]
 == Spring Boot Project Site
 
-You can find the documentation, issue management, support, samples, and guides for using _Spring Boot_
+You can find documentation, issue management, support, samples, and guides for using _Spring Boot_
 at https://projects.spring.io/spring-boot/
 
 [[code-of-conduct]]
