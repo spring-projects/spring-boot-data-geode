@@ -87,7 +87,7 @@ and Spring Data for {pivotal-gemfire-name} are commonly known as SDG.]) since th
 Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} automatically applies _auto-configuration_ to several key
 application concerns (_Use Cases_) including, but not limited to:
 
-* _Look-Aside, Inline, Near_ and _Multi-Site Caching_, using {apache-geode-name} as a caching provider in
+* _Look-Aside, [Async] Inline, Near_ and _Multi-Site Caching_, using {apache-geode-name} as a caching provider in
 {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction].
 <<geode-caching-provider,Learn more>>.
 * {wikipedia-docs}/System_of_record[_System of Record_ (SOR)], persisting application state reliably in {apache-geode-name}
@@ -124,6 +124,24 @@ and {spring-data-geode-docs-html}/#bootstrap-annotation-config-ssl[SSL].
 While Spring Data for {apache-geode-name} & {pivotal-gemfire-name} offers a simple, consistent, convenient
 and declarative approach to configure all these powerful {apache-geode-name} features, Spring Boot for {apache-geode-name}
 & {pivotal-gemfire-name} makes it even easier to do as we will explore throughout this reference documentation.
+
+[[introduction-goals]]
+=== Goals
+
+While the SBDG project has many goals and objectives, the primary goals of this project centers around
+three key principles:
+
+1. From **_Open Source_** ({apache-geode-name}) to **_Commercial_** ({pivotal-gemfire-name})
+2. From **_Non-Managed_** (self-managed/hosted or on-premise installations) to **_Managed_**
+({pivotal-cloudcache-name}, {vmware-gemfire-name}) environments
+3. With **little to no code or configuration changes** necessary
+
+It is also possible to go in the reverse direction, from _Managed_ back to a _Non-Managed_ environment
+and even from _Commercial_ back to the _Open Source_ offering, again, with _little to no code or configuration_ changes;
+it simply just works!
+
+NOTE: SBDG's promise is to deliver on these principles as much as is technically possible and is technically allowed
+by {apache-geode-name}.
 
 [[getting-started]]
 == Getting Started
@@ -410,6 +428,7 @@ repositories {
 }
 ----
 endif::[]
+
 
 include::{include-dir}/clientcache-applications.adoc[]
 include::{include-dir}/configuration-auto.adoc[]
