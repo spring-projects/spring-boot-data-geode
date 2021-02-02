@@ -299,28 +299,29 @@ _auto-configure_ an {geode-name} `ClientCache` instance by default when SBDG is 
 
 With the SDG `@Region` mapping annotation, we declared that instances of `User` will be stored in the "Users" `Region`.
 However, we have not yet created a "Users" `Region`. This is where the `@EnableEntityDefinedRegions` annotation comes
-into play. Like JPA/Hibernate's ability to create database tables from our `@Entity` declared classes, SDG's
+in handy. Like JPA/Hibernate's ability to create database tables from our `@Entity` declared classes, SDG's
 `@EnableEntityDefineRegions` annotation scans the classpath for application entity classes (e.g. `User`)
-and detects any classes annotated with `@Region` in order to create the `Region` named. The `basePackageClasses`
-attribute is a type-safe way to pinpoint the scan.
+and detects any classes annotated with `@Region` in order to create the "named" `Region` required by the application
+to persist data. The `basePackageClasses` attribute is a type-safe way to pinpoint the scan.
 
 While useful and convenient during development, `@EnableEntityDefinedRegions` was not made into an _auto-configuration_
-feature by default since there many ways to define and configure a `Region`, which varies from data type to data type
-(e.g. transactional data vs. reference data), and varies greatly by use case and requirements.
+feature by default since there are many ways to define and configure a `Region`, which varies from data type to data
+type (e.g. transactional data vs. reference data), and varies greatly by use case and requirements.
 
 We make use of 1 more powerful annotation, SBDG's `@EnableClusterAware`, which allows you to switch between local-only,
 embedded development to a client/server topology with no code or configuration changes.
 
-TIP: You can learn more in SBDG's reference documentation
+TIP: You can learn more about the `@EnableClusterAware` annotation in SBDG's reference documentation
 (see {sbdg-docs}#geode-configuration-declarative-annotations-productivity-enableclusteraware[here]
 and in the {sbdg-docs}guides/getting-started.html[_Getting Started_] Sample).
 
-Our Java `main` method uses _Spring Boot's_ `SpringApplication` class to bootstrap the application.
+Our Java `main` method uses _Spring Boot's_ `SpringApplication` class to bootstrap the the {geode-name} `ClientCache`
+application.
 
-Finally, we declare an `ApplicationRunner` bean to persist a `User`, then lookup the stored `User` by ID (or "name").
+Finally, we declare an `ApplicationRunner` bean to persist a `User` and then lookup the stored `User` by ID (or "name").
 Along the way, we log the operations to see the application in action.
 
-.Application log output (slightly formatted to fit this screen)
+.Example application log output (formatted to fit this screen)
 [source,text]
 ----
 ...
@@ -340,8 +341,7 @@ We have just created a simple _Spring Boot_ application using {geode-name} to pe
 [[get-started-next]]
 ===== Where To Next
 
-To continue your journey of learning, see the {sbdg-docs}[Reference Documentation] and jump into the examples
-directly below.
+To continue your journey of learning, see the {sbdg-docs}[Reference Documentation] and jump into the <<examples>> below.
 
 [[examples]]
 === Examples
