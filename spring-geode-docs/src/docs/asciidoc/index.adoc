@@ -437,7 +437,6 @@ repositories {
 ----
 endif::[]
 
-
 include::{include-dir}/clientcache-applications.adoc[]
 include::{include-dir}/configuration-auto.adoc[]
 include::{include-dir}/configuration-declarative.adoc[]
@@ -452,6 +451,7 @@ include::{include-dir}/data.adoc[]
 include::{include-dir}/data-serialization.adoc[]
 include::{include-dir}/logging.adoc[]
 include::{include-dir}/security.adoc[]
+include::{include-dir}/testing.adoc[]
 include::{include-dir}/geode-api-ext.adoc[]
 include::{include-dir}/actuator.adoc[]
 include::{include-dir}/session.adoc[]
