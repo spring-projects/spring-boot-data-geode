@@ -20,8 +20,9 @@ dependencies {
 
 	testCompile "junit:junit"
 	testCompile "org.mockito:mockito-core"
-	testCompile "org.springframework:spring-test"
 	testCompile "edu.umd.cs.mtc:multithreadedtc"
+
+	testCompile project(":spring-geode-starter-test")
 
 }
 
