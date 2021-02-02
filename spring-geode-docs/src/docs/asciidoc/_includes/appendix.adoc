@@ -12,7 +12,7 @@ _Table of Contents_
 3. <<geode-auto-configuration-disable>>
 4. <<geode-gemfire-switch>>
 5. <<geode-cluster-configuration-bootstrapping>>
-6. <<geode-testing>>
+6. <<geode-testing-support>>
 7. <<geode-examples>>
 8. <<references>>
 
@@ -429,7 +429,7 @@ Congratulations!  You just started a small {geode-name} cluster, with 3 members,
 It is pretty simple to build and run a Spring Boot, {geode-name} `ClientCache` application that connects to this cluster.
 Simply include and use Spring Boot for {geode-name}.
 
-[[geode-testing]]
+[[geode-testing-support]]
 === Testing
 
 https://github.com/spring-projects/spring-test-data-geode[Spring Test for {geode-name}] is a new, soon to be released
