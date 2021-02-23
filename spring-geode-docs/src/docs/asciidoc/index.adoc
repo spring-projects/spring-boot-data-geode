@@ -133,7 +133,7 @@ three key principles:
 
 1. From **_Open Source_** ({apache-geode-name}) to **_Commercial_** ({pivotal-gemfire-name})
 2. From **_Non-Managed_** (self-managed/hosted or on-premise installations) to **_Managed_**
-({pivotal-cloudcache-name}, {vmware-gemfire-name}) environments
+({pivotal-cloudcache-name}, {pivotal-gemfire-name}) environments
 3. With **little to no code or configuration changes** necessary
 
 It is also possible to go in the reverse direction, from _Managed_ back to a _Non-Managed_ environment
