@@ -1,5 +1,7 @@
 buildscript {
 	dependencies {
+		// Cannot upgrade to Spring Build Conventions Gradle Plugin after 0.0.35.RELEASE since the Gradle build
+		// can no longer resolve VMware Tanzu (Pivotal) GemFire bits.
 		classpath 'io.spring.gradle:spring-build-conventions:0.0.35.RELEASE'
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 	}
