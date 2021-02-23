@@ -4,6 +4,28 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.5.0-M2 (2021-02-22)
+----------------------------------------
+Aligns SBDG with Spring Boot 2.5.0-M2 along with the latest versions of Spring Framework, Spring Data, Spring Session
+and Spring Test for Apache Geode.
+
+* States project goals in the reference documentation under the 'Introduction'.
+* Adds new chapter on 'Testing' in the reference documentation.
+* Adds new quick-start module to the Spring Geode Samples.
+* Edits README to include a new 'Get Started' section and a revised table containing the current and EOL versions
+along with links (URL) to the documentation for learning.
+* Upgrade to Gradle 6.8.2.
+* Upgrade to VMware Tanzu (Pivotal) GemFire 9.10.6.
+* Upgrade to Spring Build Conventions Gradle Plugin 0.0.37.
+* Upgrade to Spring Framework 5.3.4.
+* Upgrade to Spring Boot 2.5.0-M2.
+* Upgrade to Spring Data Pascal-M4.
+* Upgrade to Spring Data BOM 2021.0.0-M4 (Pascal-M4).
+* Upgrade to Spring Data for Apache Geode 2.5.0-M4.
+* Upgrade to Spring Test for Apache Geode 0.0.22.
+* Upgrade to Testcontainers 1.15.2.
+
+
 Changes in version 1.4.3 (2021-02-22)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.4.3 along with the latest versions of Spring Framework, Spring Data, Spring Session
