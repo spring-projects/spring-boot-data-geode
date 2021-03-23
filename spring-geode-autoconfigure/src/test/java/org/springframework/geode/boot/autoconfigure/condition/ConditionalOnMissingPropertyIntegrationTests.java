@@ -46,21 +46,24 @@ public class ConditionalOnMissingPropertyIntegrationTests extends SpringBootAppl
 	private Function<SpringApplicationBuilder, SpringApplicationBuilder> springApplicationBuilderFunction =
 		Function.identity();
 
-	private Function<SpringApplicationBuilder, SpringApplicationBuilder> allMatchingPropertiesFunction = builder -> {
-		builder.properties(Collections.singletonMap("example.app.config.propOne", ""));
-		builder.properties(Collections.singletonMap("example.app.config.propTwo", "test"));
-		return builder;
-	};
+	private final Function<SpringApplicationBuilder, SpringApplicationBuilder> allMatchingPropertiesFunction =
+		builder -> {
+			builder.properties(Collections.singletonMap("example.app.config.propOne", ""));
+			builder.properties(Collections.singletonMap("example.app.config.propTwo", "test"));
+			return builder;
+		};
 
-	private Function<SpringApplicationBuilder, SpringApplicationBuilder> nonMatchingPropertyFunction = builder -> {
-		builder.properties(Collections.singletonMap("example.app.cfg.propertyOne", ""));
-		return builder;
-	};
+	private final Function<SpringApplicationBuilder, SpringApplicationBuilder> nonMatchingPropertyFunction =
+		builder -> {
+			builder.properties(Collections.singletonMap("example.app.cfg.propertyOne", ""));
+			return builder;
+		};
 
-	private Function<SpringApplicationBuilder, SpringApplicationBuilder> singleMatchingPropertyFunction = builder -> {
-		builder.properties(Collections.singletonMap("example.app.config.propTwo", "test"));
-		return builder;
-	};
+	private final Function<SpringApplicationBuilder, SpringApplicationBuilder> singleMatchingPropertyFunction =
+		builder -> {
+			builder.properties(Collections.singletonMap("example.app.config.propTwo", "test"));
+			return builder;
+		};
 
 	@Override
 	protected SpringApplicationBuilder processBeforeBuild(SpringApplicationBuilder springApplicationBuilder) {

@@ -53,13 +53,13 @@ public class CacheNameAutoConfigurationIntegrationTests extends SpringBootApplic
 	private Function<SpringApplicationBuilder, SpringApplicationBuilder> springApplicationBuilderFunction =
 		Function.identity();
 
-	private Function<SpringApplicationBuilder, SpringApplicationBuilder> springApplicationNamePropertyFunction =
+	private final Function<SpringApplicationBuilder, SpringApplicationBuilder> springApplicationNamePropertyFunction =
 		builder -> {
 			builder.properties(Collections.singletonMap("spring.application.name", "SpringApplicationNameTest"));
 			return builder;
 		};
 
-	private Function<SpringApplicationBuilder, SpringApplicationBuilder> springDataGemFireNamePropertyFunction =
+	private final Function<SpringApplicationBuilder, SpringApplicationBuilder> springDataGemFireNamePropertyFunction =
 		builder -> {
 			builder.properties(Collections.singletonMap("spring.data.gemfire.name", "SpringDataGemFireNameTest"));
 			return builder;
