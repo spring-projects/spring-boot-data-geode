@@ -66,7 +66,7 @@ import org.slf4j.Logger;
 @RunWith(MockitoJUnitRunner.class)
 public class GemFirePropertiesFromEnvironmentAutoConfigurationUnitTests {
 
-	private TestEnvironmentSourcedGemFirePropertiesAutoConfiguration configuration =
+	private final TestEnvironmentSourcedGemFirePropertiesAutoConfiguration configuration =
 		spy(new TestEnvironmentSourcedGemFirePropertiesAutoConfiguration());
 
 	@Test

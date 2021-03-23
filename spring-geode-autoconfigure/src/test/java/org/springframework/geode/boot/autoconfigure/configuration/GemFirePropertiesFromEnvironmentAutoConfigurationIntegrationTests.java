@@ -51,7 +51,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 1.3.0
  */
 @ActiveProfiles("application-gemfire-properties")
-@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
 	"gemfire.distributed-system-id=123",

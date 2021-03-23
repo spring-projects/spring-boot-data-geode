@@ -65,8 +65,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
-@RunWith(SpringRunner.class)
 @ActiveProfiles("gemfire-config-test")
+@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
 public class GemFirePropertiesIntegrationTests extends IntegrationTestsSupport {

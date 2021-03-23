@@ -56,9 +56,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
+@ActiveProfiles("session-config-test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@ActiveProfiles("session-config-test")
 @SuppressWarnings("unused")
 public class SpringSessionPropertiesIntegrationTests extends IntegrationTestsSupport {
 
@@ -67,6 +67,7 @@ public class SpringSessionPropertiesIntegrationTests extends IntegrationTestsSup
 
 	@Autowired
 	@Qualifier("MockSessionSerializer")
+	@SuppressWarnings("rawtypes")
 	private SessionSerializer mockSessionSerializer;
 
 	@Autowired
@@ -143,6 +144,7 @@ public class SpringSessionPropertiesIntegrationTests extends IntegrationTestsSup
 		}
 
 		@Bean("MockSessionSerializer")
+		@SuppressWarnings("rawtypes")
 		SessionSerializer mockSessionSerializer() {
 			return mock(SessionSerializer.class);
 		}

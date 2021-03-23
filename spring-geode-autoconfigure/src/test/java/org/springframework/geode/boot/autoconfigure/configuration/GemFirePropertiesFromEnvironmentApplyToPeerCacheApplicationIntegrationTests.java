@@ -56,7 +56,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 1.3.0
  */
 @ActiveProfiles("peer-application-gemfire-properties")
-@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
 	"spring.application.name=GemFirePropertiesFromEnvironmentApplyToPeerCacheApplicationIntegrationTests",
