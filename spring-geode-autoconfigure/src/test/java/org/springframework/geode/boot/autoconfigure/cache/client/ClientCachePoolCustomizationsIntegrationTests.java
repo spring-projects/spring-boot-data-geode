@@ -43,6 +43,9 @@ import org.springframework.data.gemfire.config.annotation.EnablePool;
 import org.springframework.data.gemfire.config.annotation.PoolConfigurer;
 import org.springframework.data.gemfire.tests.integration.SpringBootApplicationIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.lang.NonNull;
+
+import org.opentest4j.AssertionFailedError;
 
 /**
  * Integration Tests testing the custom configuration of the {@literal DEFAULT} {@link Pool}
@@ -86,8 +89,8 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 			.forEach(System::clearProperty);
 	}
 
-	private void testNamedPoolWasCustomized(ConfigurableApplicationContext applicationContext,
-			String poolName, boolean poolBeanPresent) {
+	private void testNamedPoolWasCustomized(@NonNull ConfigurableApplicationContext applicationContext,
+			@NonNull String poolName, boolean poolBeanPresent) {
 
 		ClientCache clientCache = applicationContext.getBean(ClientCache.class);
 
@@ -104,6 +107,7 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 			assertThat(namedPoolBean).isNotNull();
 			assertThat(namedPoolBean.getName()).isEqualTo(poolName);
 			assertThat(namedPoolBean.getServerGroup()).isEqualTo("TestServerGroup");
+			assertThat(namedPoolBean.getThreadLocalConnections()).isTrue();
 		}
 
 		Pool namedPool = PoolManager.find(poolName);
@@ -111,6 +115,7 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 		assertThat(namedPool).isNotNull();
 		assertThat(namedPool.getName()).isEqualTo(poolName);
 		assertThat(namedPool.getServerGroup()).isEqualTo("TestServerGroup");
+		assertThat(namedPool.getThreadLocalConnections()).isTrue();
 
 		if (DEFAULT_POOL_NAME.equals(poolName)) {
 			assertThat(namedPool).isSameAs(clientCache.getDefaultPool());
@@ -122,13 +127,14 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 		}
 	}
 
-	private void testNamedPoolWasNotCustomized(ConfigurableApplicationContext applicationContext, String poolName, boolean poolBeanPresent) {
+	private void testNamedPoolWasNotCustomized(@NonNull ConfigurableApplicationContext applicationContext,
+			@NonNull String poolName, boolean poolBeanPresent) {
 
 		try {
 			testNamedPoolWasCustomized(applicationContext, poolName, poolBeanPresent);
 			fail("Pool [%s] should not have been modified", poolName);
 		}
-		catch (Throwable ignore) { }
+		catch (AssertionFailedError ignore) { }
 	}
 
 	@Test
@@ -154,7 +160,7 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 	}
 
 	@Test
-	public void usingClientCacheDefaultPoolPropertiesModifiesDefaultPool() {
+	public void usingClientCacheDefaultPoolPropertiesConfigurationModifiesDefaultPool() {
 
 		System.setProperty("spring.data.gemfire.pool.default.server-group", "TestServerGroup");
 		System.setProperty("spring.data.gemfire.pool.default.thread-local-connections", Boolean.TRUE.toString());
@@ -306,7 +312,12 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 
 		@Bean
 		PoolConfigurer allPoolsConfigurer() {
-			return (beanName, poolFactoryBean) -> poolFactoryBean.setServerGroup("TestServerGroup");
+
+			return (beanName, poolFactoryBean) -> {
+
+				poolFactoryBean.setServerGroup("TestServerGroup");
+				poolFactoryBean.setThreadLocalConnections(true);
+			};
 		}
 	}
 
@@ -320,7 +331,12 @@ public class ClientCachePoolCustomizationsIntegrationTests extends SpringBootApp
 
 		@Bean
 		PoolConfigurer allPoolsConfigurer() {
-			return (beanName, poolFactoryBean) -> poolFactoryBean.setServerGroup("TestServerGroup");
+
+			return (beanName, poolFactoryBean) -> {
+
+				poolFactoryBean.setServerGroup("TestServerGroup");
+				poolFactoryBean.setThreadLocalConnections(true);
+			};
 		}
 	}
 }
