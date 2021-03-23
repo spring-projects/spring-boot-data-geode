@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TlsEnabledAutoConfigurationIntegrationTests.TestConfiguration.class,
 	properties = {
-		"VCAP_APPLICATION={ \"name\": \"MockedTlsEnabledAutoConfigurationIntegrationTests\", \"uris\": [] }",
+		"VCAP_APPLICATION={ \"name\": \"TlsEnabledAutoConfigurationIntegrationTests\", \"uris\": [] }",
 		"VCAP_SERVICES={ \"p-cloudcache\": [{ \"credentials\": { \"tls-enabled\": \"true\" }, \"name\": \"jblum-pcc\", \"tags\": [ \"gemfire\", \"cloudcache\", \"database\", \"pivotal\" ]}]}"
 	}
 )
