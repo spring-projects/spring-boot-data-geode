@@ -133,6 +133,7 @@ public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClie
 
 		assertThat(this.booksTemplate).isNotNull();
 		assertThat(this.booksTemplate.getRegion()).isNotNull();
+		assertThat(this.booksTemplate.getRegion().getName()).isEqualTo("Books");
 		assertThat(this.booksTemplate.getRegion().getAttributes()).isNotNull();
 		assertThat(this.booksTemplate.getRegion().getAttributes().getDataPolicy()).isEqualTo(DataPolicy.EMPTY);
 	}
