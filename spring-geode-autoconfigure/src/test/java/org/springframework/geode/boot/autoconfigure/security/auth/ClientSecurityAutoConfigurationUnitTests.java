@@ -212,7 +212,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		vcapProperties.setProperty("vcap.services.test-pcc.name", "test-pcc");
 		vcapProperties.setProperty("vcap.services.test-pcc.tags", "gemfire,cloudcache,test,geode,pivotal");
 
-		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
+		PropertySource<?> vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
 
 		MutablePropertySources propertySources = new MutablePropertySources();
 
@@ -229,7 +229,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 
 		assertThat(propertySources.contains("boot.data.gemfire.cloudcache")).isTrue();
 
-		PropertySource propertySource = propertySources.get("boot.data.gemfire.cloudcache");
+		PropertySource<?> propertySource = propertySources.get("boot.data.gemfire.cloudcache");
 
 		assertThat(propertySource).isNotNull();
 		assertThat(propertySource.getName()).isEqualTo("boot.data.gemfire.cloudcache");
@@ -266,7 +266,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		vcapProperties.setProperty("vcap.services.test-pcc.credentials.users[1].roles", "cluster_operator");
 		vcapProperties.setProperty("vcap.services.test-pcc.tags", "gemfire,cloudcache,test");
 
-		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
+		PropertySource<?> vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
 
 		MutablePropertySources propertySources = new MutablePropertySources();
 
@@ -283,7 +283,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 
 		assertThat(propertySources.contains("boot.data.gemfire.cloudcache")).isTrue();
 
-		PropertySource propertySource = propertySources.get("boot.data.gemfire.cloudcache");
+		PropertySource<?> propertySource = propertySources.get("boot.data.gemfire.cloudcache");
 
 		assertThat(propertySource).isNotNull();
 		assertThat(propertySource.getName()).isEqualTo("boot.data.gemfire.cloudcache");
@@ -310,7 +310,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		vcapProperties.setProperty("vcap.services.test-pcc.credentials.tls-enabled", "true");
 		vcapProperties.setProperty("vcap.services.test-pcc.tags", "junk,gemfire,mock,cloudcache,test");
 
-		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
+		PropertySource<?> vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
 
 		MutablePropertySources propertySources = new MutablePropertySources();
 
@@ -327,7 +327,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 
 		assertThat(propertySources.contains("boot.data.gemfire.cloudcache")).isTrue();
 
-		PropertySource propertySource = propertySources.get("boot.data.gemfire.cloudcache");
+		PropertySource<?> propertySource = propertySources.get("boot.data.gemfire.cloudcache");
 
 		assertThat(propertySource).isNotNull();
 		assertThat(propertySource.getName()).isEqualTo("boot.data.gemfire.cloudcache");
@@ -347,7 +347,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		vcapProperties.setProperty("vcap.application.name", "TestApp");
 		vcapProperties.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
 
-		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
+		PropertySource<?> vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
 
 		propertySources.addFirst(vcapPropertySource);
 
@@ -387,7 +387,7 @@ public class ClientSecurityAutoConfigurationUnitTests {
 		vcapProperties.setProperty("vcap.application.name", "TestApp");
 		vcapProperties.setProperty("vcap.application.uris", "test-app.apps.cloud.skullbox.com");
 
-		PropertySource vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
+		PropertySource<?> vcapPropertySource = new PropertiesPropertySource("vcap", vcapProperties);
 
 		propertySources.addFirst(vcapPropertySource);
 
