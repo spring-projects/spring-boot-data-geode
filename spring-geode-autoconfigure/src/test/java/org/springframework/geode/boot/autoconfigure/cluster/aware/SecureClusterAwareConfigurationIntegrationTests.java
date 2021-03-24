@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLContext;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -60,6 +61,7 @@ import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedReg
 import org.springframework.data.gemfire.config.annotation.EnableManager;
 import org.springframework.data.gemfire.config.support.RestTemplateConfigurer;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
+import org.springframework.geode.config.annotation.ClusterAwareConfiguration;
 import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.geode.security.TestSecurityManager;
 import org.springframework.geode.util.GeodeConstants;
@@ -119,6 +121,11 @@ public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClie
 	public static void startGeodeServer() throws IOException {
 		startGemFireServer(TestGeodeServerConfiguration.class,
 			"-Dspring.profiles.active=cluster-aware-with-secure-server,ssl");
+	}
+
+	@BeforeClass @AfterClass
+	public static void resetClusterAwareCondition() {
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
 	}
 
 	@Autowired

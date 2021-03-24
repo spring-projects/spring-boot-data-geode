@@ -57,6 +57,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -85,6 +86,7 @@ import example.app.books.model.ISBN;
  * @since 1.0.0
  */
 @ActiveProfiles("cluster-configuration-with-auth-client")
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes = ClusterConfigurationWithAuthenticationIntegrationTests.GeodeClientConfiguration.class,

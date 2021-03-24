@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import javax.annotation.Resource;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,6 +41,7 @@ import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedReg
 import org.springframework.data.gemfire.mapping.annotation.Region;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.geode.config.annotation.ClusterAwareConfiguration;
 import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -77,6 +79,11 @@ public class SpringBootApacheGeodeIntegrationTest extends ForkingClientServerInt
 	@BeforeClass
 	public static void startGeodeServer() throws IOException {
 		startGemFireServer(TestGeodeServerConfiguration.class);
+	}
+
+	@BeforeClass @AfterClass
+	public static void resetClusterAwareCondition() {
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
 	}
 
 	@Resource(name = "Users")
