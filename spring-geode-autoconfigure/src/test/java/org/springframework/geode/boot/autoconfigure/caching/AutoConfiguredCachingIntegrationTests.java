@@ -36,8 +36,6 @@ import org.springframework.data.gemfire.util.RegionUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import org.assertj.core.api.Assertions;
-
 import example.app.books.NonBeanType;
 import example.app.books.model.Book;
 import example.app.books.service.support.CachingBookService;
@@ -73,53 +71,53 @@ public class AutoConfiguredCachingIntegrationTests extends IntegrationTestsSuppo
 
 	private void assertBook(Book book, String title) {
 
-		Assertions.assertThat(book).isNotNull();
-		Assertions.assertThat(book.isNew()).isFalse();
-		Assertions.assertThat(book.getTitle()).isEqualTo(title);
+		assertThat(book).isNotNull();
+		assertThat(book.isNew()).isFalse();
+		assertThat(book.getTitle()).isEqualTo(title);
 	}
 
 	@Test
 	public void bookServiceWasConfiguredCorrectly() {
 
-		Assertions.assertThat(this.bookService).isNotNull();
-		Assertions.assertThat(this.bookService.isCacheMiss()).isFalse();
+		assertThat(this.bookService).isNotNull();
+		assertThat(this.bookService.isCacheMiss()).isFalse();
 	}
 
 	@Test
 	public void cachedBooksRegionWasConfiguredCorrectly() {
 
-		Assertions.assertThat(this.cachedBooks).isNotNull();
+		assertThat(this.cachedBooks).isNotNull();
 		assertThat(this.cachedBooks.getName()).isEqualTo("CachedBooks");
 		assertThat(this.cachedBooks.getFullPath()).isEqualTo(RegionUtils.toRegionPath("CachedBooks"));
-		Assertions.assertThat(this.cachedBooks).isEmpty();
+		assertThat(this.cachedBooks).isEmpty();
 	}
 
 	@Test
 	public void geodeAsTheCachingProviderWasAutoConfiguredCorrectly() {
 
-		Assertions.assertThat(this.cachedBooks).isEmpty();
+		assertThat(this.cachedBooks).isEmpty();
 
 		Book bookOne = this.bookService.findByTitle("Star Wars 3 - Revenge of the Sith");
 
 		assertBook(bookOne, "Star Wars 3 - Revenge of the Sith");
-		Assertions.assertThat(this.bookService.isCacheMiss()).isTrue();
-		Assertions.assertThat(this.cachedBooks).hasSize(1);
-		Assertions.assertThat(this.cachedBooks.get(bookOne.getTitle())).isEqualTo(bookOne);
+		assertThat(this.bookService.isCacheMiss()).isTrue();
+		assertThat(this.cachedBooks).hasSize(1);
+		assertThat(this.cachedBooks.get(bookOne.getTitle())).isEqualTo(bookOne);
 
 		Book bookOneAgain = this.bookService.findByTitle(bookOne.getTitle());
 
-		Assertions.assertThat(bookOneAgain).isEqualTo(bookOne);
-		Assertions.assertThat(this.bookService.isCacheMiss()).isFalse();
-		Assertions.assertThat(this.cachedBooks).hasSize(1);
-		Assertions.assertThat(this.cachedBooks.get(bookOne.getTitle())).isEqualTo(bookOne);
+		assertThat(bookOneAgain).isEqualTo(bookOne);
+		assertThat(this.bookService.isCacheMiss()).isFalse();
+		assertThat(this.cachedBooks).hasSize(1);
+		assertThat(this.cachedBooks.get(bookOne.getTitle())).isEqualTo(bookOne);
 
 		Book bookTwo = this.bookService.findByTitle("Star Wars 6 - Return of the Jedi");
 
 		assertBook(bookTwo, "Star Wars 6 - Return of the Jedi");
-		Assertions.assertThat(this.bookService.isCacheMiss()).isTrue();
-		Assertions.assertThat(this.cachedBooks).hasSize(2);
-		Assertions.assertThat(this.cachedBooks.get(bookOne.getTitle())).isEqualTo(bookOne);
-		Assertions.assertThat(this.cachedBooks.get(bookTwo.getTitle())).isEqualTo(bookTwo);
+		assertThat(this.bookService.isCacheMiss()).isTrue();
+		assertThat(this.cachedBooks).hasSize(2);
+		assertThat(this.cachedBooks.get(bookOne.getTitle())).isEqualTo(bookOne);
+		assertThat(this.cachedBooks.get(bookTwo.getTitle())).isEqualTo(bookTwo);
 	}
 
 	@SpringBootApplication(scanBasePackageClasses = NonBeanType.class)
