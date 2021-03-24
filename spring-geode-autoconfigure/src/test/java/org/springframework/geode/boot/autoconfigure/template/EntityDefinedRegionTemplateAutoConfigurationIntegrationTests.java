@@ -39,6 +39,7 @@ import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedReg
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.app.books.model.Author;
@@ -59,9 +60,11 @@ import example.app.books.model.ISBN;
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration
+ * @see org.springframework.test.annotation.DirtiesContext
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
  */
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")

@@ -48,6 +48,7 @@ import org.springframework.geode.config.annotation.ClusterAwareConfiguration;
 import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.geode.util.CacheUtils;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -72,11 +73,13 @@ import example.app.books.model.ISBN;
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.DataImportExportAutoConfiguration
+ * @see org.springframework.test.annotation.DirtiesContext
  * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.3.0
  */
 @ActiveProfiles("IMPORT-CLIENT")
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes = ClientCacheDataImportExportAutoConfigurationIntegrationTests.TestGeodeClientConfiguration.class,
@@ -91,14 +94,14 @@ import example.app.books.model.ISBN;
 public class ClientCacheDataImportExportAutoConfigurationIntegrationTests
 		extends ForkingClientServerIntegrationTestsSupport {
 
-	@AfterClass
-	public static void resetClusterAwareCondition() {
-		ClusterAwareConfiguration.ClusterAwareCondition.reset();
-	}
-
 	@BeforeClass
 	public static void startGeodeServer() throws IOException {
 		startGemFireServer(TestGeodeServerConfiguration.class,"-Dspring.profiles.active=IMPORT-SERVER");
+	}
+
+	@BeforeClass @AfterClass
+	public static void resetClusterAwareCondition() {
+		ClusterAwareConfiguration.ClusterAwareCondition.reset();
 	}
 
 	@Autowired
@@ -110,6 +113,8 @@ public class ClientCacheDataImportExportAutoConfigurationIntegrationTests
 		assertThat(this.booksTemplate).isNotNull();
 		assertThat(this.booksTemplate.getRegion()).isNotNull();
 		assertThat(this.booksTemplate.getRegion().getName()).isEqualTo("Books");
+		assertThat(this.booksTemplate.getRegion().getAttributes()).isNotNull();
+		assertThat(this.booksTemplate.getRegion().getAttributes().getDataPolicy()).isEqualTo(DataPolicy.EMPTY);
 	}
 
 	private void assertBook(Book book, String title, LocalDate publishedDate, ISBN isbn, Author author) {
