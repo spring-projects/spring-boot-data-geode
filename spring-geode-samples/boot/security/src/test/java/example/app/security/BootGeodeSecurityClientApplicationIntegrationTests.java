@@ -35,6 +35,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.app.security.client.BootGeodeSecurityClientApplication;
@@ -50,6 +51,7 @@ import example.app.security.server.BootGeodeSecurityServerApplication;
  * @see org.apache.geode.security.NotAuthorizedException
  * @see org.apache.shiro.authz.UnauthorizedException
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.dao.DataAccessResourceFailureException
  * @see org.springframework.data.gemfire.GemfireTemplate
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -57,6 +59,7 @@ import example.app.security.server.BootGeodeSecurityServerApplication;
  * @see example.app.security.server.BootGeodeSecurityServerApplication
  * @since 1.3.0
  */
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BootGeodeSecurityClientApplication.class)
 public class BootGeodeSecurityClientApplicationIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
@@ -74,7 +77,8 @@ public class BootGeodeSecurityClientApplicationIntegrationTests extends ForkingC
 	@Test
 	public void dataReadNotAllowed() {
 
-		Exception exception = assertThrows(DataAccessResourceFailureException.class, () -> this.customersTemplate.get(2L));
+		Exception exception = assertThrows(DataAccessResourceFailureException.class,
+			() -> this.customersTemplate.get(2L));
 
 		assertThat(exception).hasCauseInstanceOf(ServerOperationException.class);
 		assertThat(exception.getCause()).hasMessageContaining("remote server");
