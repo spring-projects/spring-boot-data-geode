@@ -67,7 +67,7 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 
 	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap.properties";
 
-	private static Properties vcapApplicationProperties = new Properties();
+	private static final Properties vcapApplicationProperties = new Properties();
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {

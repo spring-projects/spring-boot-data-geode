@@ -75,7 +75,7 @@ public class AutoConfiguredHybridSecurityContextIntegrationTests
 
 	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap-hybrid.properties";
 
-	private static Properties vcapApplicationProperties = new Properties();
+	private static final Properties vcapApplicationProperties = new Properties();
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
