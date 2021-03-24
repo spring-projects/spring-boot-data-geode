@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
-import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
+import org.springframework.data.gemfire.tests.integration.ClientServerIntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.process.ProcessWrapper;
 import org.springframework.data.gemfire.tests.util.FileSystemUtils;
 import org.springframework.data.gemfire.tests.util.FileUtils;
@@ -57,14 +57,21 @@ import example.app.golf.model.Golfer;
  *
  * @author John Blum
  * @see org.junit.Test
+ * @see com.fasterxml.jackson.databind.ObjectMapper
  * @see org.apache.geode.cache.Region
+ * @see org.springframework.boot.ApplicationRunner
  * @see org.springframework.boot.SpringApplication
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.boot.builder.SpringApplicationBuilder
+ * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Profile
+ * @see org.springframework.data.gemfire.GemfireTemplate
+ * @see org.springframework.data.gemfire.tests.process.ProcessWrapper
+ * @see org.springframework.data.gemfire.tests.integration.ClientServerIntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.DataImportExportAutoConfiguration
  * @since 1.3.0
  */
-public class CacheDataExportAutoConfigurationIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
+public class CacheDataExportAutoConfigurationIntegrationTests extends ClientServerIntegrationTestsSupport {
 
 	private static final File GEODE_WORKING_DIRECTORY =
 		new File(String.format("cache-data-export-%d", System.currentTimeMillis()));

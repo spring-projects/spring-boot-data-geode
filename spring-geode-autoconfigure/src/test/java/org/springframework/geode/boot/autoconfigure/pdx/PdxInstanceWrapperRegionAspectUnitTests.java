@@ -59,7 +59,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
  */
 public class PdxInstanceWrapperRegionAspectUnitTests {
 
-	private PdxInstanceWrapperRegionAspect aspect = new PdxInstanceWrapperRegionAspect();
+	private final PdxInstanceWrapperRegionAspect aspect = new PdxInstanceWrapperRegionAspect();
 
 	@Test
 	public void regionGetAdviceWrapsPdx() throws Throwable {

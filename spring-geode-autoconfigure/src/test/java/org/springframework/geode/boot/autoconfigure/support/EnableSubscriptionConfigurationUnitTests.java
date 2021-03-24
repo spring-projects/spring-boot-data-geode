@@ -24,6 +24,8 @@ import org.junit.Test;
 
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.client.PoolFactoryBean;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -37,10 +39,10 @@ import org.springframework.util.ReflectionUtils;
  */
 public class EnableSubscriptionConfigurationUnitTests {
 
-	private EnableSubscriptionConfiguration configuration = new EnableSubscriptionConfiguration();
+	private final EnableSubscriptionConfiguration configuration = new EnableSubscriptionConfiguration();
 
 	@SuppressWarnings("unchecked")
-	private <T> T getFieldValue(Object target, String fieldName) {
+	private <T> T getFieldValue(@Nullable Object target, @NonNull String fieldName) {
 
 		return Optional.ofNullable(target)
 			.map(Object::getClass)
