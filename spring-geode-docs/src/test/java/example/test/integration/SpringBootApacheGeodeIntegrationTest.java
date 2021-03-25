@@ -66,7 +66,7 @@ import lombok.ToString;
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.5.0
  */
-@ActiveProfiles("spring-geode-docs-integration-test-client")
+@ActiveProfiles({ "spring-geode-docs-integration-test-client", "no-ssl" })
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(
