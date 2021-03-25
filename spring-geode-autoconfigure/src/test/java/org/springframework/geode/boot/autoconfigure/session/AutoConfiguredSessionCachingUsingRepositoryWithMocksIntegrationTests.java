@@ -80,7 +80,7 @@ public class AutoConfiguredSessionCachingUsingRepositoryWithMocksIntegrationTest
 
 		session.setAttribute(jonDoe.getName(), jonDoe);
 
-		assertThat(session.<Session>getAttribute(jonDoe.getName())).isEqualTo(jonDoe);
+		assertThat(session.<User>getAttribute(jonDoe.getName())).isEqualTo(jonDoe);
 
 		this.sessionRepository.save(session);
 
@@ -93,7 +93,7 @@ public class AutoConfiguredSessionCachingUsingRepositoryWithMocksIntegrationTest
 		assertThat(loadedSession.getCreationTime()).isEqualTo(session.getCreationTime());
 		assertThat(loadedSession.getLastAccessedTime()).isAfterOrEqualTo(beforeLastAccessTime);
 		assertThat(loadedSession.isExpired()).isFalse();
-		assertThat(loadedSession.<Session>getAttribute(jonDoe.getName())).isEqualTo(jonDoe);
+		assertThat(loadedSession.<User>getAttribute(jonDoe.getName())).isEqualTo(jonDoe);
 	}
 
 	@SpringBootApplication
