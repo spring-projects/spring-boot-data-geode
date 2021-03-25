@@ -61,18 +61,21 @@ import example.app.security.server.BootGeodeSecurityServerApplication;
  */
 @DirtiesContext
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = BootGeodeSecurityClientApplication.class)
+@SpringBootTest(
+	classes = BootGeodeSecurityClientApplication.class,
+	properties = "spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=true"
+)
 public class BootGeodeSecurityClientApplicationIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
-
-	@Autowired
-	@Qualifier("customersTemplate")
-	@SuppressWarnings("unused")
-	private GemfireTemplate customersTemplate;
 
 	@BeforeClass
 	public static void startGeodeServer() throws IOException {
 		startGemFireServer(BootGeodeSecurityServerApplication.class);
 	}
+
+	@Autowired
+	@Qualifier("customersTemplate")
+	@SuppressWarnings("unused")
+	private GemfireTemplate customersTemplate;
 
 	@Test
 	public void dataReadNotAllowed() {
