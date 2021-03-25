@@ -18,6 +18,7 @@ package org.springframework.geode.boot.autoconfigure.cluster.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -61,7 +62,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ClusterConfigurationWithClusterAwareWhenNonSecureClusterAvailableIntegrationTests
 		extends IntegrationTestsSupport {
 
-	@AfterClass
+	@BeforeClass @AfterClass
 	public static void resetClusterAwareCondition() {
 		ClusterAwareConfiguration.ClusterAwareCondition.reset();
 	}
@@ -73,7 +74,7 @@ public class ClusterConfigurationWithClusterAwareWhenNonSecureClusterAvailableIn
 	private ClusterConfigurationConfiguration configuration;
 
 	@Test
-	public void configurationStatesManagementRestApiRequiresHttps() {
+	public void configurationStatesManagementRestApiDoesNotRequireHttps() {
 
 		boolean configurationRequiresHttps =
 			ObjectUtils.invoke(this.configuration, "resolveManagementRequireHttps");
@@ -82,8 +83,12 @@ public class ClusterConfigurationWithClusterAwareWhenNonSecureClusterAvailableIn
 	}
 
 	@Test
-	public void environmentStatesManagementRestApiRequiresHttps() {
-		assertThat(this.environment.containsProperty("spring.data.gemfire.management.require-https")).isFalse();
+	public void environmentStatesManagementRestApiDoesNotRequireHttps() {
+
+		boolean environmentRequiresHttps =
+			this.environment.containsProperty("spring.data.gemfire.management.require-https");
+
+		assertThat(environmentRequiresHttps).isFalse();
 	}
 
 	@SpringBootApplication

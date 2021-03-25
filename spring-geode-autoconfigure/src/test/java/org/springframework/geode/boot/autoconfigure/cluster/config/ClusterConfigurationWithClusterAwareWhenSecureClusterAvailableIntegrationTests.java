@@ -18,6 +18,7 @@ package org.springframework.geode.boot.autoconfigure.cluster.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -65,7 +66,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ClusterConfigurationWithClusterAwareWhenSecureClusterAvailableIntegrationTests
 		extends IntegrationTestsSupport {
 
-	@AfterClass
+	@BeforeClass @AfterClass
 	public static void resetClusterAwareCondition() {
 		ClusterAwareConfiguration.ClusterAwareCondition.reset();
 	}
@@ -87,8 +88,11 @@ public class ClusterConfigurationWithClusterAwareWhenSecureClusterAvailableInteg
 
 	@Test
 	public void environmentStatesManagementRestApiRequiresHttps() {
-		assertThat(this.environment.getProperty("spring.data.gemfire.management.require-https", Boolean.class))
-			.isTrue();
+
+		boolean environmentRequiresHttps =
+			this.environment.getProperty("spring.data.gemfire.management.require-https", Boolean.class);
+
+		assertThat(environmentRequiresHttps).isTrue();
 	}
 
 	@SpringBootApplication
