@@ -28,6 +28,7 @@ import org.apache.geode.distributed.Locator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -42,6 +43,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.apache.geode.distributed.Locator
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.test.context.ContextConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -50,7 +52,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 @SuppressWarnings("unused")
-public class SpringBootLocatorApplicationIntegrationTests {
+public class SpringBootLocatorApplicationIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired(required = false)
 	private GemFireCache clientCache;

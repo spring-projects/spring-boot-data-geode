@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.distributed.event.ApplicationContextMembershipListener;
 import org.springframework.geode.distributed.event.MembershipListenerAdapter;
@@ -45,7 +46,10 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.apache.geode.cache.Cache
  * @see org.springframework.context.ConfigurableApplicationContext
  * @see org.springframework.context.support.AbstractRefreshableApplicationContext
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
+ * @see org.springframework.geode.distributed.event.ApplicationContextMembershipListener
+ * @see org.springframework.geode.distributed.event.MembershipListenerAdapter
  * @see org.springframework.geode.test.context.TestRefreshableApplicationContextLoader
  * @see org.springframework.test.context.ContextConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -58,7 +62,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 	loader = TestRefreshableApplicationContextLoader.class
 )
 @SuppressWarnings({ "unused" })
-public class SpringBootApacheGeodePeerCacheApplicationUnitTests {
+public class SpringBootApacheGeodePeerCacheApplicationUnitTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private ConfigurableApplicationContext applicationContext;

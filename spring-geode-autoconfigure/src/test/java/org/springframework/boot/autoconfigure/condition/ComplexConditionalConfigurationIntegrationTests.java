@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +38,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StringUtils;
@@ -53,7 +53,9 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.boot.autoconfigure.condition.AnyNestedCondition
  * @see org.springframework.context.annotation.Condition
  * @see org.springframework.context.annotation.Conditional
+ * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.test.context.ContextConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.2.0
@@ -61,7 +63,7 @@ import org.springframework.util.StringUtils;
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 @SuppressWarnings("unused")
-public class ComplexConditionalConfigurationIntegrationTests {
+public class ComplexConditionalConfigurationIntegrationTests extends IntegrationTestsSupport {
 
 	private static final AtomicBoolean importBeanDefinitionRegistrarCalled = new AtomicBoolean(false);
 
@@ -121,7 +123,7 @@ public class ComplexConditionalConfigurationIntegrationTests {
 
 	}
 
-	static final class MockConditionOne implements Condition {
+	static final class MockConditionOne implements org.springframework.context.annotation.Condition {
 
 		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
@@ -129,7 +131,7 @@ public class ComplexConditionalConfigurationIntegrationTests {
 		}
 	}
 
-	static final class MockConditionTwo implements Condition {
+	static final class MockConditionTwo implements org.springframework.context.annotation.Condition {
 
 		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {

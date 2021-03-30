@@ -26,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.gemfire.GemfireTemplate;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -37,6 +38,7 @@ import org.springframework.web.context.WebApplicationContext;
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.data.gemfire.GemfireTemplate
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.test.context.junit4.SpringRunner
  * @see example.app.InitializerApplication
  * @since 1.2.0
@@ -44,7 +46,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @SuppressWarnings("unused")
-public class InitializerApplicationSmokeTests {
+public class InitializerApplicationSmokeTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private ApplicationContext applicationContext;
