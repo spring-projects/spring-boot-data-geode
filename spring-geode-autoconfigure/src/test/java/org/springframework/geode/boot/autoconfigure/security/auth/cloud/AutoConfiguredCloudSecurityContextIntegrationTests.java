@@ -38,7 +38,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * managed context (e.g. CloudFoundry).
  *
  * @author John Blum
- * @see java.security.Principal
  * @see java.util.Properties
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
@@ -65,6 +64,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AutoConfiguredCloudSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
 
+	private static final String LOCATOR_PORT_PLACEHOLDER_REGEX = "%LOCATOR_PORT%";
 	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap-cloud.properties";
 
 	private static final Properties vcapApplicationProperties = new Properties();
@@ -72,17 +72,28 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
 
-		startGemFireServer(GemFireServerConfiguration.class, "-Dspring.profiles.active=security-cloud");
-		loadVcapApplicationProperties();
+		int locatorPort = findAvailablePort();
+
+		startGemFireServer(GemFireServerConfiguration.class,
+			String.format("-Dspring.data.gemfire.locator.port=%d", locatorPort),
+			"-Dspring.profiles.active=security-cloud");
+
+		loadVcapApplicationProperties(locatorPort);
+
 		unsetTestAutoConfiguredPoolServersPortSystemProperty();
 	}
 
-	private static void loadVcapApplicationProperties() throws IOException {
+	private static void loadVcapApplicationProperties(int locatorPort) throws IOException {
 
 		vcapApplicationProperties.load(new ClassPathResource(VCAP_APPLICATION_PROPERTIES).getInputStream());
 
-		vcapApplicationProperties.stringPropertyNames().forEach(property ->
-			System.setProperty(property, vcapApplicationProperties.getProperty(property)));
+		vcapApplicationProperties.stringPropertyNames().forEach(propertyName -> {
+
+			String propertyValue = String.valueOf(vcapApplicationProperties.getProperty(propertyName))
+				.replaceAll(LOCATOR_PORT_PLACEHOLDER_REGEX, String.valueOf(locatorPort));
+
+			System.setProperty(propertyName, propertyValue);
+		});
 	}
 
 	private static void unsetTestAutoConfiguredPoolServersPortSystemProperty() {
@@ -98,7 +109,7 @@ public class AutoConfiguredCloudSecurityContextIntegrationTests
 	static class GemFireClientConfiguration extends BaseGemFireClientConfiguration { }
 
 	@SpringBootApplication
-	@EnableLocator(port = 55221)
+	@EnableLocator
 	@CacheServerApplication(name = "AutoConfiguredCloudSecurityContextIntegrationTestsServer")
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 

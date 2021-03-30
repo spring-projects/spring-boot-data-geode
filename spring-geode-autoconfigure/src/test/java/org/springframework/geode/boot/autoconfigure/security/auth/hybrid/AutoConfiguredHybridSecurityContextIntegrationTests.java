@@ -51,9 +51,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.core.io.ClassPathResource
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.EnableLocator
  * @see org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration
+ * @see org.springframework.geode.boot.autoconfigure.PeerSecurityAutoConfiguration
  * @see org.springframework.geode.boot.autoconfigure.security.auth.AbstractAutoConfiguredSecurityContextIntegrationTests
  * @see org.springframework.test.annotation.DirtiesContext
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -64,7 +66,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(
 	classes = AutoConfiguredHybridSecurityContextIntegrationTests.GemFireClientConfiguration.class,
 	properties = {
-		"spring.data.gemfire.pool.locators=localhost[54441]",
+		"spring.data.gemfire.pool.locators=localhost[${test.security.hybrid.gemfire.pool.locators.port:54441}]",
 		"spring.data.gemfire.security.username=phantom",
 		"spring.data.gemfire.security.password=s3cr3t"
 	},
@@ -73,6 +75,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AutoConfiguredHybridSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
 
+	private static final String LOCATOR_PORT_PLACEHOLDER_REGEX = "%LOCATOR_PORT%";
 	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap-hybrid.properties";
 
 	private static final Properties vcapApplicationProperties = new Properties();
@@ -80,17 +83,34 @@ public class AutoConfiguredHybridSecurityContextIntegrationTests
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
 
-		startGemFireServer(GemFireServerConfiguration.class,"-Dspring.profiles.active=security-hybrid");
-		loadVcapApplicationProperties();
+		int locatorPort = findAvailablePort();
+
+		startGemFireServer(GemFireServerConfiguration.class,
+			String.format("-Dspring.data.gemfire.locator.port=%d", locatorPort),
+			"-Dspring.profiles.active=security-hybrid");
+
+		loadVcapApplicationProperties(locatorPort);
+
+		setTestSecuritySystemProperties(locatorPort);
+
 		unsetTestAutoConfiguredPoolServersPortSystemProperty();
 	}
 
-	private static void loadVcapApplicationProperties() throws IOException {
+	private static void loadVcapApplicationProperties(int locatorPort) throws IOException {
 
 		vcapApplicationProperties.load(new ClassPathResource(VCAP_APPLICATION_PROPERTIES).getInputStream());
 
-		vcapApplicationProperties.stringPropertyNames().forEach(property ->
-			System.setProperty(property, vcapApplicationProperties.getProperty(property)));
+		vcapApplicationProperties.stringPropertyNames().forEach(propertyName -> {
+
+			String propertyValue = String.valueOf(vcapApplicationProperties.getProperty(propertyName))
+				.replaceAll(LOCATOR_PORT_PLACEHOLDER_REGEX, String.valueOf(locatorPort));
+
+			System.setProperty(propertyName, propertyValue);
+		});
+	}
+
+	private static void setTestSecuritySystemProperties(int locatorPort) {
+		System.setProperty("test.security.hybrid.gemfire.pool.locators.port", String.valueOf(locatorPort));
 	}
 
 	private static void unsetTestAutoConfiguredPoolServersPortSystemProperty() {
@@ -99,14 +119,16 @@ public class AutoConfiguredHybridSecurityContextIntegrationTests
 
 	@AfterClass
 	public static void cleanUpUsedResources() {
+
 		vcapApplicationProperties.stringPropertyNames().forEach(System::clearProperty);
+		System.clearProperty("test.security.hybrid.gemfire.pool.locators.port");
 	}
 
 	@SpringBootApplication
 	static class GemFireClientConfiguration extends BaseGemFireClientConfiguration { }
 
 	@SpringBootApplication
-	@EnableLocator(port = 54441)
+	@EnableLocator
 	@CacheServerApplication(name = "AutoConfiguredHybridSecurityContextIntegrationTestsServer")
 	static class GemFireServerConfiguration extends BaseGemFireServerConfiguration {
 
