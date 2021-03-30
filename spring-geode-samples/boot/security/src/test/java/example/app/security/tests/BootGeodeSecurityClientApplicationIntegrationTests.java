@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package example.app.security;
+package example.app.security.tests;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -62,8 +62,12 @@ import example.app.security.server.BootGeodeSecurityServerApplication;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
 	classes = BootGeodeSecurityClientApplication.class,
-	properties = "spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=true"
+	properties = {
+		"spring.boot.data.gemfire.security.auth.environment.post-processor.enabled=true",
+		"spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=true"
+	}
 )
+@SuppressWarnings("unused")
 public class BootGeodeSecurityClientApplicationIntegrationTests extends ForkingClientServerIntegrationTestsSupport {
 
 	@BeforeClass
