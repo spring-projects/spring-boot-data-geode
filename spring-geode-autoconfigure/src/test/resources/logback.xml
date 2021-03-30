@@ -13,11 +13,16 @@
 
 	<logger name="ch.qos.logback" level="${logback.log.level:-ERROR}"/>
 
-	<logger name="org.apache" level="${logback.log.level:-ERROR}"/>
+	<logger name="org.apache" level="${apache.logback.log.level:-ERROR}"/>
 
-	<logger name="org.springframework" level="${logback.log.level:-ERROR}"/>
+	<logger name="org.apache.geode" level="${apache-geode.logback.log.level:-ERROR}"/>
 
-	<logger name="org.springframework.geode.config.annotation.ClusterAwareConfiguration" level="${logback.log.level:-ERROR}"/>
+	<logger name="org.springframework" level="${spring.logback.log.level:-ERROR}"/>
+
+	<logger name="org.springframework.geode" level="${spring-geode.logback.log.level:-ERROR}"/>
+
+	<logger name="org.springframework.geode.config.annotation.ClusterAwareConfiguration"
+			level="${spring-geode.logback.log.level:-ERROR}"/>
 
 	<logger name="org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration" level="WARN">
 		<appender-ref ref="testAppender"/>
