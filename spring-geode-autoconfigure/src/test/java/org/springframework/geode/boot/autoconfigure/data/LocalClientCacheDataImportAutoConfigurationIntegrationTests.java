@@ -28,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.geode.boot.autoconfigure.DataImportExportAutoConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -43,6 +44,7 @@ import example.app.golf.model.Golfer;
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.annotation.Profile
  * @see org.springframework.data.gemfire.GemfireTemplate
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.DataImportExportAutoConfiguration
  * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -57,7 +59,7 @@ import example.app.golf.model.Golfer;
 		"spring.boot.data.gemfire.cache.data.import.active-profiles=IMPORT-LOCAL"
 	}
 )
-public class LocalClientCacheDataImportAutoConfigurationIntegrationTests {
+public class LocalClientCacheDataImportAutoConfigurationIntegrationTests extends IntegrationTestsSupport {
 
 	@Autowired
 	@SuppressWarnings("unused")

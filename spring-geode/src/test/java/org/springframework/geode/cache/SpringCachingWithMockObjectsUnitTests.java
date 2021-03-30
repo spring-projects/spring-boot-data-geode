@@ -40,6 +40,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
@@ -51,12 +52,15 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author John Blum
  * @see org.junit.Test
  * @see org.mockito.Mockito
+ * @see org.springframework.beans.factory.FactoryBean
+ * @see org.springframework.beans.factory.InitializingBean
  * @see org.springframework.cache.Cache
  * @see org.springframework.cache.CacheManager
  * @see org.springframework.cache.annotation.Cacheable
  * @see org.springframework.cache.annotation.EnableCaching
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Configuration
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.stereotype.Service
  * @see org.springframework.test.context.ContextConfiguration
  * @see org.springframework.test.context.junit4.SpringRunner
@@ -65,7 +69,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 @SuppressWarnings("unused")
-public class SpringCachingWithMockObjectsUnitTests {
+public class SpringCachingWithMockObjectsUnitTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private TestCacheableService testService;

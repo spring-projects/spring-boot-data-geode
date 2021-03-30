@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.app.model.Contact;
@@ -35,16 +36,14 @@ import example.app.service.ContactsService;
  * @author John Blum
  * @see org.junit.Test
  * @see org.springframework.boot.test.context.SpringBootTest
+ * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.test.context.junit4.SpringRunner
- * @see example.app.model.Contact
- * @see example.app.repo.ContactRepository
- * @see example.app.service.ContactsService
  * @since 1.2.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @SuppressWarnings("unused")
-public class DatabaseWithLookAsideCachingApplicationSmokeTests {
+public class DatabaseWithLookAsideCachingApplicationSmokeTests extends IntegrationTestsSupport {
 
 	@Autowired
 	private ContactRepository contactRepository;
