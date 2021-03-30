@@ -21,15 +21,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Resource;
 
-import org.apache.geode.cache.Region;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.apache.geode.cache.Region;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import example.app.caching.inline.model.Operator;
@@ -46,14 +47,12 @@ import example.app.caching.inline.service.CalculatorService;
  * @see org.apache.geode.cache.Region
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
+ * @see org.springframework.test.annotation.DirtiesContext
  * @see org.springframework.test.context.junit4.SpringRunner
- * @see example.app.caching.inline.model.Operator
- * @see example.app.caching.inline.model.ResultHolder
- * @see example.app.caching.inline.repo.CalculatorRepository
- * @see example.app.caching.inline.service.CalculatorService
  * @since 1.1.0
  */
 // tag::class[]
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
 	"spring.boot.data.gemfire.security.ssl.environment.post-processor.enabled=false"
