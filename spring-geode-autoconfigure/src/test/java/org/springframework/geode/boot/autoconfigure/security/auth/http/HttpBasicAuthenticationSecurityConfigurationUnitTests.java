@@ -68,7 +68,7 @@ import org.springframework.web.client.RestTemplate;
 @SuppressWarnings("deprecation")
 public class HttpBasicAuthenticationSecurityConfigurationUnitTests {
 
-	private TestHttpBasicAuthenticationSecurityConfiguration httpSecurityConfiguration =
+	private final TestHttpBasicAuthenticationSecurityConfiguration httpSecurityConfiguration =
 		spy(new TestHttpBasicAuthenticationSecurityConfiguration());
 
 	private <T> T constructInstance(Class<T> type, Class<?>[] parameterTypes, Object... args)
