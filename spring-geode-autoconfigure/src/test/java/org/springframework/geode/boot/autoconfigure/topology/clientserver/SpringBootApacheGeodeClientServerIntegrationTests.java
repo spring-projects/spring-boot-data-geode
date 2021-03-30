@@ -156,7 +156,7 @@ class User {
 
 	@Id
 	@lombok.NonNull
-	private String name;
+	private final String name;
 
 }
 
