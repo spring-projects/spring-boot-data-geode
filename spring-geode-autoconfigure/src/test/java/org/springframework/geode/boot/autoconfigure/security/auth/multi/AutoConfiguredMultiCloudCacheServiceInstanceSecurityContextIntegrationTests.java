@@ -64,7 +64,7 @@ public class AutoConfiguredMultiCloudCacheServiceInstanceSecurityContextIntegrat
 
 	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap-multi.properties";
 
-	private static Properties vcapApplicationProperties = new Properties();
+	private static final Properties vcapApplicationProperties = new Properties();
 
 	@BeforeClass
 	public static void startGemFireServer() throws IOException {
@@ -74,7 +74,7 @@ public class AutoConfiguredMultiCloudCacheServiceInstanceSecurityContextIntegrat
 		unsetTestAutoConfiguredPoolServersPortSystemProperty();
 	}
 
-	public static void loadVcapApplicationProperties() throws IOException {
+	private static void loadVcapApplicationProperties() throws IOException {
 
 		vcapApplicationProperties.load(new ClassPathResource(VCAP_APPLICATION_PROPERTIES).getInputStream());
 
@@ -82,7 +82,7 @@ public class AutoConfiguredMultiCloudCacheServiceInstanceSecurityContextIntegrat
 			System.setProperty(property, vcapApplicationProperties.getProperty(property)));
 	}
 
-	public static void unsetTestAutoConfiguredPoolServersPortSystemProperty() {
+	private static void unsetTestAutoConfiguredPoolServersPortSystemProperty() {
 		System.clearProperty(GEMFIRE_POOL_SERVERS_PROPERTY);
 	}
 

@@ -46,10 +46,12 @@ import org.springframework.util.StringUtils;
 
 import example.echo.config.EchoClientConfiguration;
 import example.echo.config.EchoServerConfiguration;
-import lombok.Data;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -162,15 +164,16 @@ public abstract class AbstractAutoConfiguredSecurityContextIntegrationTests
 		}
 	}
 
-	@Data
+	@Getter
 	@ToString(of = "name")
 	@EqualsAndHashCode(of = "name")
 	@RequiredArgsConstructor(staticName = "with")
 	static class User implements Principal, Serializable {
 
 		@NonNull
-		private String name;
+		private final String name;
 
+		@Setter(AccessLevel.PRIVATE)
 		private String password;
 
 		User having(String password) {
