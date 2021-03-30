@@ -16,7 +16,6 @@
 package example.app.security;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
@@ -77,20 +76,25 @@ public class BootGeodeSecurityClientApplicationIntegrationTests extends ForkingC
 	@SuppressWarnings("unused")
 	private GemfireTemplate customersTemplate;
 
-	@Test
+	@Test(expected = DataAccessResourceFailureException.class)
 	public void dataReadNotAllowed() {
 
-		Exception exception = assertThrows(DataAccessResourceFailureException.class,
-			() -> this.customersTemplate.get(2L));
+		try {
+			this.customersTemplate.get(2L);
+		}
+		catch (DataAccessResourceFailureException expected) {
 
-		assertThat(exception).hasCauseInstanceOf(ServerOperationException.class);
-		assertThat(exception.getCause()).hasMessageContaining("remote server");
-		assertThat(exception.getCause()).hasCauseInstanceOf(NotAuthorizedException.class);
-		assertThat(exception.getCause().getCause()).hasMessageContaining("jdoe not authorized for DATA:READ");
-		assertThat(exception.getCause().getCause()).hasCauseInstanceOf(UnauthorizedException.class);
-		assertThat(exception.getCause().getCause().getCause())
-			.hasMessageContaining("Subject does not have permission [DATA:READ");
-		assertThat(exception.getCause().getCause().getCause()).hasNoCause();
+			assertThat(expected).hasCauseInstanceOf(ServerOperationException.class);
+			assertThat(expected.getCause()).hasMessageContaining("remote server");
+			assertThat(expected.getCause()).hasCauseInstanceOf(NotAuthorizedException.class);
+			assertThat(expected.getCause().getCause()).hasMessageContaining("jdoe not authorized for DATA:READ");
+			assertThat(expected.getCause().getCause()).hasCauseInstanceOf(UnauthorizedException.class);
+			assertThat(expected.getCause().getCause().getCause())
+				.hasMessageContaining("Subject does not have permission [DATA:READ");
+			assertThat(expected.getCause().getCause().getCause()).hasNoCause();
+
+			throw expected;
+		}
 	}
 
 	@Test
