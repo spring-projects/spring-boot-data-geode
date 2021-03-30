@@ -65,7 +65,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AutoConfiguredCloudSecurityContextIntegrationTests
 		extends AbstractAutoConfiguredSecurityContextIntegrationTests {
 
-	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap.properties";
+	private static final String VCAP_APPLICATION_PROPERTIES = "application-vcap-cloud.properties";
 
 	private static final Properties vcapApplicationProperties = new Properties();
 
