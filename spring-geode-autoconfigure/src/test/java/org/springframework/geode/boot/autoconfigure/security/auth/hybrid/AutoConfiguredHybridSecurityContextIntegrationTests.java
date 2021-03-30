@@ -85,7 +85,7 @@ public class AutoConfiguredHybridSecurityContextIntegrationTests
 		unsetTestAutoConfiguredPoolServersPortSystemProperty();
 	}
 
-	public static void loadVcapApplicationProperties() throws IOException {
+	private static void loadVcapApplicationProperties() throws IOException {
 
 		vcapApplicationProperties.load(new ClassPathResource(VCAP_APPLICATION_PROPERTIES).getInputStream());
 
@@ -93,7 +93,7 @@ public class AutoConfiguredHybridSecurityContextIntegrationTests
 			System.setProperty(property, vcapApplicationProperties.getProperty(property)));
 	}
 
-	public static void unsetTestAutoConfiguredPoolServersPortSystemProperty() {
+	private static void unsetTestAutoConfiguredPoolServersPortSystemProperty() {
 		System.clearProperty(GEMFIRE_POOL_SERVERS_PROPERTY);
 	}
 
