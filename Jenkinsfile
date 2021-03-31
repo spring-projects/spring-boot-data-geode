@@ -10,12 +10,19 @@ currentBuild.result = SUCCESS
 
 try {
 	parallel check: {
+		// Run Jenkins CI build in Docker container
 		stage('Check') {
 			timeout(time: 15, unit: 'MINUTES') {
 				node('linux') {
 					checkout scm
 					try {
 						withEnv(["JAVA_HOME=${tool 'jdk8'}"]) {
+							sh 'rm -Rf `find . -name "BACKUPDEFAULT*"`'
+							sh 'rm -Rf `find . -name "ConfigDiskDir*"`'
+							sh 'rm -Rf `find . -name "locator*" | grep -v "src" | grep -v "locator-application"`'
+							sh 'rm -Rf `find . -name "newDB"`'
+							sh 'rm -Rf `find . -name "server" | grep -v "src"`'
+							sh 'rm -Rf `find . -name "*.log"`'
 							sh './gradlew clean check --no-daemon --refresh-dependencies --stacktrace'
 						}
 					}
