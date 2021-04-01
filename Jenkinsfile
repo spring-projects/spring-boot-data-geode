@@ -31,6 +31,8 @@ pipeline {
 						docker.image('adoptopenjdk/openjdk8:latest').inside('-v $HOME:/tmp/jenkins-home') {
 
 							try {
+								sh 'rm -Rf ./.m2'
+								sh 'rm -Rf ./.gradle'
 								sh 'rm -Rf `find . -name "BACKUPDEFAULT*"`'
 								sh 'rm -Rf `find . -name "ConfigDiskDir*"`'
 								sh 'rm -Rf `find . -name "locator*" | grep -v "src" | grep -v "locator-application"`'
@@ -42,7 +44,7 @@ pipeline {
 
 							// Run the SBDG project Gradle build using JDK 8
 							try {
-								sh './gradlew --no-daemon --refresh-dependencies --stacktrace clean check'
+								sh 'GRADLE_OPTS="-Duser.name=jenkins -Duser.home=/tmp/jenkins-home" ./gradlew --no-daemon --refresh-dependencies --stacktrace clean check'
 							}
 							catch (e) {
 								currentBuild.result = "FAILED: build"
@@ -66,7 +68,7 @@ pipeline {
 									withCredentials([usernamePassword(credentialsId: 'oss-token', passwordVariable: 'OSSRH_PASSWORD', usernameVariable: 'OSSRH_USERNAME')]) {
 										withCredentials([usernamePassword(credentialsId: '02bd1690-b54f-4c9f-819d-a77cb7a9822c', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
 											try {
-												sh './gradlew deployArtifacts finalizeDeployArtifacts --no-daemon --refresh-dependencies --stacktrace -Psigning.secretKeyRingFile=$SIGNING_KEYRING_FILE -Psigning.keyId=$SPRING_SIGNING_KEYID -Psigning.password=$SIGNING_PASSWORD -PossrhUsername=$OSSRH_USERNAME -PossrhPassword=$OSSRH_PASSWORD -PartifactoryUsername=$ARTIFACTORY_USERNAME -PartifactoryPassword=$ARTIFACTORY_PASSWORD'
+												sh 'GRADLE_OPTS="-Duser.name=jenkins -Duser.home=/tmp/jenkins-home" ./gradlew deployArtifacts finalizeDeployArtifacts --no-daemon --refresh-dependencies --stacktrace -Psigning.secretKeyRingFile=$SIGNING_KEYRING_FILE -Psigning.keyId=$SPRING_SIGNING_KEYID -Psigning.password=$SIGNING_PASSWORD -PossrhUsername=$OSSRH_USERNAME -PossrhPassword=$OSSRH_PASSWORD -PartifactoryUsername=$ARTIFACTORY_USERNAME -PartifactoryPassword=$ARTIFACTORY_PASSWORD'
 											}
 											catch (e) {
 												currentBuild.result = "FAILED: deploy artifacts"
@@ -83,7 +85,7 @@ pipeline {
 						script {
 							withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
 								try {
-									sh './gradlew --no-daemon --refresh-dependencies --stacktrace -PdeployDocsSshKeyPath=$DEPLOY_SSH_KEY -PdeployDocsSshUsername=$SPRING_DOCS_USERNAME deployDocs'
+									sh 'GRADLE_OPTS="-Duser.name=jenkins -Duser.home=/tmp/jenkins-home" ./gradlew --no-daemon --refresh-dependencies --stacktrace -PdeployDocsSshKeyPath=$DEPLOY_SSH_KEY -PdeployDocsSshUsername=$SPRING_DOCS_USERNAME deployDocs'
 								}
 								catch (e) {
 									currentBuild.result = "FAILED: deploy docs"
