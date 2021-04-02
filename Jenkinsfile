@@ -42,7 +42,7 @@ pipeline {
 							}
 							catch (ignore) { }
 
-							// Run the SBDG project Gradle build using JDK 8
+							// Run the SBDG project Gradle build using JDK 8 inside Docker
 							try {
 								sh 'GRADLE_OPTS="-Duser.name=jenkins -Duser.home=/tmp/jenkins-home" ./gradlew --no-daemon --refresh-dependencies --stacktrace clean check'
 							}
