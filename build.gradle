@@ -32,6 +32,10 @@ allprojects {
 	}
 }
 
+nohttp {
+	source.excludes = [ "**/.gradle/**", "**/.m2/**" ]
+}
+
 description = 'Spring Boot for Apache Geode'
 
 //ext['spring.version'] = "$springVersion"
