@@ -22,6 +22,9 @@ pipeline {
 	stages {
 
 		stage('Build') {
+			environment {
+				DOCKER_HUB = credentials('hub.docker.com-springbuildmaster')
+			}
 			options {
 				timeout(time: 15, unit: "MINUTES")
 			}
@@ -32,6 +35,7 @@ pipeline {
 
 							// Cleanup any prior build system resources
 							try {
+								sh "echo 'Cleaning up build artifacts & old GemFire/Geode files...'"
 								sh "ci/cleanupGemFiles.sh"
 								sh "ci/cleanupArtifacts.sh"
 							}
