@@ -33,9 +33,12 @@ pipeline {
 					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
 						docker.image('adoptopenjdk/openjdk8:latest').inside('-u root -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker -v $HOME:/tmp/jenkins-home') {
 
+							sh "echo 'Setting up build environment...'"
+							sh "ci/setup.sh"
+
 							// Cleanup any prior build system resources
 							try {
-								sh "echo 'Cleaning up build artifacts & old GemFire/Geode files...'"
+								sh "echo 'Cleaning up build artifacts & GemFire/Geode files...'"
 								sh "ci/cleanupGemFiles.sh"
 								sh "ci/cleanupArtifacts.sh"
 							}
@@ -43,7 +46,7 @@ pipeline {
 
 							// Run the SBDG project Gradle build using JDK 8 inside Docker
 							try {
-								sh "docker login --username ${DOCKER_HUB_USR} --password ${DOCKER_HUB_PSW}"
+								sh "echo 'Building SBDG...'"
 								sh "ci/check.sh"
 							}
 							catch (e) {
