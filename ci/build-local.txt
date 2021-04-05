@@ -1,0 +1,26 @@
+# Notes on how to build and run the (Jenkins) CI build pipeline locally using Docker.
+
+0. Change directory to SBDG project working directory (for example):
+
+$ cd ~/pivdev/spring-boot-data-geode
+
+1. Run...
+
+$ docker run -it -v $HOME:/root -v $HOME/Library/Containers/com.docker.docker/Data/docker.sock:/var/run/docker.sock --mount type=bind,source="$(pwd)",target=/spring-boot-data-geode-github adoptopenjdk/openjdk8:latest /bin/sh
+$ export GRADLE_OPTS="-Duser.name=root -Duser.home=/root"
+$ cd /spring-boot-data-geode-github
+(optional)
+$ export USER=root
+LINUX
+$ adduser root daemon
+MAC
+$ sudo dseditgroups -o edit -a root -t daemon
+
+2. Change directory to...
+
+$ cd spring-boot-data-geode-github
+
+3. Run the build...
+
+$ ./gradlew --no-daemon clean build install
+$ ./gradlew clean build install
