@@ -64,17 +64,19 @@ pipeline {
 				stage ('Deploy Artifacts') {
 					steps {
 						script {
-							withCredentials([file(credentialsId: 'spring-signing-secring.gpg', variable: 'SIGNING_KEYRING_FILE')]) {
-								withCredentials([string(credentialsId: 'spring-gpg-passphrase', variable: 'SIGNING_PASSWORD')]) {
-									withCredentials([usernamePassword(credentialsId: 'oss-token', passwordVariable: 'OSSRH_PASSWORD', usernameVariable: 'OSSRH_USERNAME')]) {
-										withCredentials([usernamePassword(credentialsId: '02bd1690-b54f-4c9f-819d-a77cb7a9822c', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-											withEnv(["JAVA_HOME=${tool 'jdk8'}"]) {
-												try {
-													sh "ci/deployArtifacts.sh"
-												}
-												catch (e) {
-													currentBuild.result = "FAILED: deploy artifacts"
-													throw e
+							docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
+								docker.image('adoptopenjdk/openjdk8:latest').inside('-v $HOME:/tmp/jenkins-home') {
+									withCredentials([file(credentialsId: 'spring-signing-secring.gpg', variable: 'SIGNING_KEYRING_FILE')]) {
+										withCredentials([string(credentialsId: 'spring-gpg-passphrase', variable: 'SIGNING_PASSWORD')]) {
+											withCredentials([usernamePassword(credentialsId: 'oss-token', passwordVariable: 'OSSRH_PASSWORD', usernameVariable: 'OSSRH_USERNAME')]) {
+												withCredentials([usernamePassword(credentialsId: '02bd1690-b54f-4c9f-819d-a77cb7a9822c', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+													try {
+														sh "ci/deployArtifacts.sh"
+													}
+													catch (e) {
+														currentBuild.result = "FAILED: deploy artifacts"
+														throw e
+													}
 												}
 											}
 										}
@@ -87,14 +89,16 @@ pipeline {
 				stage ('Deploy Docs') {
 					steps {
 						script {
-							withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
-								withEnv(["JAVA_HOME=${tool 'jdk8'}"]) {
-									try {
-										sh "ci/deployDocs.sh"
-									}
-									catch (e) {
-										currentBuild.result = "FAILED: deploy docs"
-										throw e
+							docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
+								docker.image('adoptopenjdk/openjdk8:latest').inside('-v $HOME:/tmp/jenkins-home') {
+									withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
+										try {
+											sh "ci/deployDocs.sh"
+										}
+										catch (e) {
+											currentBuild.result = "FAILED: deploy docs"
+											throw e
+										}
 									}
 								}
 							}
