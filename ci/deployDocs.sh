@@ -2,8 +2,12 @@
 
 set -eou pipefail
 
-echo "Logged in as user [$USER] with home directory [$HOME] in the current working directory [$PWD]"
+# User ID 1001 is "jenkins"
+# Group ID 1001 is "jenkins"
+# Syntax: `chown -R userId:groupId .`
+chown -R 1001:1001 .
 
-./gradlew deployDocs --no-daemon --stacktrace \
- -PdeployDocsSshKeyPath=$DEPLOY_SSH_KEY \
- -PdeployDocsSshUsername=$SPRING_DOCS_USERNAME
+GRADLE_OPTS="-Duser.name=jenkins -Djava.io.tmpdir=/tmp" \
+  ./gradlew deployDocs --no-daemon --stacktrace \
+    -PdeployDocsSshKeyPath=$DEPLOY_SSH_KEY \
+    -PdeployDocsSshUsername=$SPRING_DOCS_USERNAME
