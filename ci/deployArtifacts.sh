@@ -7,7 +7,7 @@ set -eou pipefail
 # Syntax: `chown -R userId:groupId .`
 chown -R 1001:1001 .
 
-GRADLE_OPTS="-Duser.name=jenkins -Djava.io.tmpdir=/tmp" \
+GRADLE_OPTS="-Duser.name=jenkins -Djava.io.tmpdir=/tmp -Dgradle.user.home=/tmp/geode/artifacts-gradle-cache" \
   ./gradlew deployArtifacts finalizeDeployArtifacts --no-build-cache- --no-configuration-cache --no-daemon --stacktrace \
     -PartifactoryUsername=$ARTIFACTORY_USERNAME \
     -PartifactoryPassword=$ARTIFACTORY_PASSWORD \

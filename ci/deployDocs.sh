@@ -7,7 +7,7 @@ set -eou pipefail
 # Syntax: `chown -R userId:groupId .`
 chown -R 1001:1001 .
 
-GRADLE_OPTS="-Duser.name=jenkins -Djava.io.tmpdir=/tmp" \
+GRADLE_OPTS="-Duser.name=jenkins -Djava.io.tmpdir=/tmp -Dgradle.user.home=/tmp/geode/docs-gradle-cache" \
   ./gradlew deployDocs --no-daemon --stacktrace \
     -PdeployDocsSshKeyPath=$DEPLOY_SSH_KEY \
     -PdeployDocsSshUsername=$SPRING_DOCS_USERNAME
