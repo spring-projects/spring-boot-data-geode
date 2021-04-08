@@ -2,5 +2,5 @@
 
 set -eou pipefail
 
-GRADLE_OPTS="-Duser.name=jenkins -Duser.home=/tmp/jenkins-home -Djava.io.tmpdir=/tmp" \
+GRADLE_OPTS="-Djava.io.tmpdir=/tmp -Dgradle.user.home=/tmp/geode-build-cache" \
  ./gradlew clean check --no-daemon --refresh-dependencies --stacktrace

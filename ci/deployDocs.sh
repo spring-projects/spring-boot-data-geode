@@ -2,5 +2,8 @@
 
 set -eou pipefail
 
-GRADLE_OPTS="-Duser.name=jenkins -Duser.home=/tmp/jenkins-home" \
-  ./gradlew deployDocs --no-daemon --stacktrace -PdeployDocsSshKeyPath=$DEPLOY_SSH_KEY -PdeployDocsSshUsername=$SPRING_DOCS_USERNAME
+echo "Logged in as user [$USER] with home directory [$HOME] in the current working directory [$PWD]"
+
+./gradlew deployDocs --no-daemon --stacktrace \
+ -PdeployDocsSshKeyPath=$DEPLOY_SSH_KEY \
+ -PdeployDocsSshUsername=$SPRING_DOCS_USERNAME

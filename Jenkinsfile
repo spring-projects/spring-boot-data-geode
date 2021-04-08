@@ -31,14 +31,14 @@ pipeline {
 			steps {
 				script {
 					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
-						docker.image('adoptopenjdk/openjdk8:latest').inside('-u root -v /usr/bin/docker:/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -v $HOME:/tmp/jenkins-home') {
+						docker.image('adoptopenjdk/openjdk8:latest').inside('-u root -v /usr/bin/docker:/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock') {
 
 							sh "echo 'Setup build environment...'"
 							sh "ci/setup.sh"
 
 							// Cleanup any prior build system resources
 							try {
-								sh "echo 'Clean up build artifacts & GemFire/Geode files...'"
+								sh "echo 'Clean up GemFire/Geode files & build artifacts...'"
 								sh "ci/cleanupGemFiles.sh"
 								sh "ci/cleanupArtifacts.sh"
 							}
@@ -68,7 +68,7 @@ pipeline {
 					steps {
 						script {
 							docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
-								docker.image('adoptopenjdk/openjdk8:latest').inside('-v $HOME:/tmp/jenkins-home') {
+								docker.image('adoptopenjdk/openjdk8:latest') {
 									withCredentials([file(credentialsId: 'spring-signing-secring.gpg', variable: 'SIGNING_KEYRING_FILE')]) {
 										withCredentials([string(credentialsId: 'spring-gpg-passphrase', variable: 'SIGNING_PASSWORD')]) {
 											withCredentials([usernamePassword(credentialsId: 'oss-token', passwordVariable: 'OSSRH_PASSWORD', usernameVariable: 'OSSRH_USERNAME')]) {
@@ -93,7 +93,7 @@ pipeline {
 					steps {
 						script {
 							docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
-								docker.image('adoptopenjdk/openjdk8:latest').inside('-v $HOME:/tmp/jenkins-home') {
+								docker.image('adoptopenjdk/openjdk8:latest') {
 									withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
 										try {
 											sh "ci/deployDocs.sh"
