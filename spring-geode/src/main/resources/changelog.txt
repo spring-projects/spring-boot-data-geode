@@ -4,6 +4,25 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.4.4 (2021-04-09)
+-------------------------------------
+Aligns SBDG with Spring Boot 2.4.4 along with the latest versions of Spring Framework 5.x, Spring Data 2020.0.x,
+Spring Session 2020.0.x and Spring Test for Apache Geode.
+
+* Cleans up instability and possible conflicts in the SBDG test suite, particularly when run CI build environments
+like Jenkins or Travis CI.
+* Uses the new Jenkins CI Declarative Pipeline syntax for builds.
+* Upgrades to Apache Geode 1.13.2.
+* Upgrades to Mockito 3.9.0.
+* Upgrades to Spring Framework 5.3.5.
+* Upgrades to Spring Boot 2.4.4.
+* Upgrades to Spring Cloud Bindings 1.7.1.
+* Upgrades to Spring Data Ockham-SR6
+* Upgrades to Spring Data BOM 2020.0.6.
+* Upgrades to Spring Data for Apache Geode 2.4.6.
+* Upgrades to Spring Test for Apache Geode 0.0.24.
+
+
 Changes in version 1.5.0-M2 (2021-02-22)
 ----------------------------------------
 Aligns SBDG with Spring Boot 2.5.0-M2 along with the latest versions of Spring Framework, Spring Data, Spring Session
