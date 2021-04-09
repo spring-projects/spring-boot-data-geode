@@ -2,7 +2,7 @@
 
 set -eou pipefail
 
-echo "Running on host [$HOSTNAME]"
+echo "Deploying docs on host [$HOSTNAME]"
 
 # User ID 1001 is "jenkins"
 # Group ID 1001 is "jenkins"
