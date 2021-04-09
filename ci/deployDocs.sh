@@ -2,6 +2,8 @@
 
 set -eou pipefail
 
+echo "Running on host [$HOSTNAME]"
+
 # User ID 1001 is "jenkins"
 # Group ID 1001 is "jenkins"
 # Syntax: `chown -R userId:groupId .`
