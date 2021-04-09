@@ -64,6 +64,25 @@ pipeline {
 
 		stage ('Deploy') {
 			parallel {
+				stage ('Deploy Docs') {
+					steps {
+						script {
+							docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
+								docker.image('adoptopenjdk/openjdk8:latest').inside("--name ${env.HOSTNAME}Two -u root -v /tmp:/tmp") {
+									withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
+										try {
+											sh "ci/deployDocs.sh"
+										}
+										catch (e) {
+											currentBuild.result = "FAILED: deploy docs"
+											throw e
+										}
+									}
+								}
+							}
+						}
+					}
+				}
 				stage ('Deploy Artifacts') {
 					steps {
 						script {
@@ -82,25 +101,6 @@ pipeline {
 													}
 												}
 											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				stage ('Deploy Docs') {
-					steps {
-						script {
-							docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
-								docker.image('adoptopenjdk/openjdk8:latest').inside("--name ${env.HOSTNAME}Two -u root -v /tmp:/tmp") {
-									withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
-										try {
-											sh "ci/deployDocs.sh"
-										}
-										catch (e) {
-											currentBuild.result = "FAILED: deploy docs"
-											throw e
 										}
 									}
 								}
