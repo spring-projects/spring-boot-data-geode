@@ -1,8 +1,6 @@
 pipeline {
 
-	agent {
-		label "geode"
-	}
+	agent any
 
 /*
 	environment {
