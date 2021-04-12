@@ -13,7 +13,11 @@
 
 	<logger name="org.apache" level="${logback.log.level:-ERROR}"/>
 
+	<logger name="org.apache.geode" level="${logback.log.level:-INFO}"/>
+
 	<logger name="org.springframework" level="${logback.log.level:-ERROR}"/>
+
+	<logger name="org.springframework.geode" level="${logback.log.level:-INFO}"/>
 
 	<root level="${logback.log.level:-ERROR}">
 		<appender-ref ref="console"/>
