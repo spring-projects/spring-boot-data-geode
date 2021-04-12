@@ -15,8 +15,11 @@ try {
 				node('linux') {
 					checkout scm
 					try {
-						withEnv(["JAVA_HOME=${tool 'jdk8'}"]) {
-							sh './gradlew clean check --no-daemon --refresh-dependencies --stacktrace'
+						withCredentials([usernamePassword(credentialsId: 'hub.docker.com-springbuildmaster', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
+							withEnv(["JAVA_HOME=${tool 'jdk8'}"]) {
+								sh 'docker login --username $DOCKER_HUB_USR --password $DOCKER_HUB_PSW'
+								sh './gradlew clean check --no-daemon --refresh-dependencies --stacktrace'
+							}
 						}
 					}
 					catch (e) {
