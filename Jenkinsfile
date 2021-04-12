@@ -1,105 +1,130 @@
-properties([
-	buildDiscarder(logRotator(numToKeepStr: '10')),
-	pipelineTriggers([
+pipeline {
+
+	agent {
+		label "nogeode"
+	}
+
+	options {
+		buildDiscarder(logRotator(numToKeepStr: '15'))
+		disableConcurrentBuilds()
+	}
+
+	triggers {
 		cron('@daily')
-	]),
-])
+	}
 
-def SUCCESS = hudson.model.Result.SUCCESS.toString()
-currentBuild.result = SUCCESS
+	stages {
 
-try {
-	parallel check: {
-		stage('Check') {
-			timeout(time: 10, unit: 'MINUTES') {
-				node('linux') {
-					checkout scm
-					try {
-						withCredentials([usernamePassword(credentialsId: 'hub.docker.com-springbuildmaster', usernameVariable: 'DOCKER_HUB_USR', passwordVariable: 'DOCKER_HUB_PSW')]) {
-							withEnv(["JAVA_HOME=${tool 'jdk8'}"]) {
-								sh 'docker login --username $DOCKER_HUB_USR --password $DOCKER_HUB_PSW'
-								sh './gradlew clean check --no-daemon --refresh-dependencies --stacktrace'
+		stage('Build') {
+			environment {
+				DOCKER_HUB = credentials('hub.docker.com-springbuildmaster')
+			}
+			options {
+				timeout(time: 15, unit: "MINUTES")
+			}
+			steps {
+				script {
+					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
+						docker.image('adoptopenjdk/openjdk8:latest').inside('-u root -v /usr/bin/docker:/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp') {
+
+							sh "echo 'Setup build environment...'"
+							sh "ci/setup.sh"
+
+							// Cleanup any prior build system resources
+							try {
+								sh "echo 'Clean up GemFire/Geode files & build artifacts...'"
+								sh "ci/cleanupGemFiles.sh"
+								sh "ci/cleanupArtifacts.sh"
+							}
+							catch (ignore) { }
+
+							// Run the SBDG project Gradle build using JDK 8 inside Docker
+							try {
+								sh "echo 'Building SBDG...'"
+								sh "ci/check.sh"
+							}
+							catch (e) {
+								currentBuild.result = "FAILED: build"
+								throw e
+							}
+							finally {
+								junit '**/build/test-results/*/*.xml'
 							}
 						}
-					}
-					catch (e) {
-						currentBuild.result = 'FAILED: check'
-						throw e
-					}
-					finally {
-						junit '**/build/test-results/*/*.xml'
 					}
 				}
 			}
 		}
-	}
 
-	if (currentBuild.result == 'SUCCESS') {
-		parallel artifacts: {
-			stage('Deploy Artifacts') {
-				node('linux') {
-					checkout scm
-					try {
-						withCredentials([file(credentialsId: 'spring-signing-secring.gpg', variable: 'SIGNING_KEYRING_FILE')]) {
-							withCredentials([string(credentialsId: 'spring-gpg-passphrase', variable: 'SIGNING_PASSWORD')]) {
-								withCredentials([usernamePassword(credentialsId: 'oss-token', passwordVariable: 'OSSRH_PASSWORD', usernameVariable: 'OSSRH_USERNAME')]) {
-									withCredentials([usernamePassword(credentialsId: '02bd1690-b54f-4c9f-819d-a77cb7a9822c', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-										withEnv(["JAVA_HOME=${tool 'jdk8'}"]) {
-											sh './gradlew deployArtifacts finalizeDeployArtifacts --no-daemon --refresh-dependencies --stacktrace -Psigning.secretKeyRingFile=$SIGNING_KEYRING_FILE -Psigning.keyId=$SPRING_SIGNING_KEYID -Psigning.password=$SIGNING_PASSWORD -PossrhUsername=$OSSRH_USERNAME -PossrhPassword=$OSSRH_PASSWORD -PartifactoryUsername=$ARTIFACTORY_USERNAME -PartifactoryPassword=$ARTIFACTORY_PASSWORD'
+		stage ('Deploy Docs') {
+			steps {
+				script {
+					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
+						docker.image('adoptopenjdk/openjdk8:latest').inside("--name ${env.HOSTNAME}Two -u root -v /tmp:/tmp") {
+							withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
+								try {
+									sh "ci/deployDocs.sh"
+								}
+								catch (e) {
+									currentBuild.result = "FAILED: deploy docs"
+									throw e
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		stage ('Deploy Artifacts') {
+			steps {
+				script {
+					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
+						docker.image('adoptopenjdk/openjdk8:latest').inside("--name ${env.HOSTNAME}One -u root -v /tmp:/tmp") {
+							withCredentials([file(credentialsId: 'spring-signing-secring.gpg', variable: 'SIGNING_KEYRING_FILE')]) {
+								withCredentials([string(credentialsId: 'spring-gpg-passphrase', variable: 'SIGNING_PASSWORD')]) {
+									withCredentials([usernamePassword(credentialsId: 'oss-token', passwordVariable: 'OSSRH_PASSWORD', usernameVariable: 'OSSRH_USERNAME')]) {
+										withCredentials([usernamePassword(credentialsId: '02bd1690-b54f-4c9f-819d-a77cb7a9822c', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+											try {
+												sh "ci/deployArtifacts.sh"
+											}
+											catch (e) {
+												currentBuild.result = "FAILED: deploy artifacts"
+												throw e
+											}
 										}
 									}
 								}
 							}
 						}
 					}
-					catch (e) {
-						currentBuild.result = 'FAILED: artifacts'
-						throw e
-					}
-				}
-			}
-		},
-		docs: {
-			stage('Deploy Docs') {
-				node('linux') {
-					checkout scm
-					try {
-						withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
-							withEnv(["JAVA_HOME=${tool 'jdk8'}"]) {
-								sh './gradlew deployDocs --no-daemon --refresh-dependencies --stacktrace -PdeployDocsSshKeyPath=$DEPLOY_SSH_KEY -PdeployDocsSshUsername=$SPRING_DOCS_USERNAME'
-							}
-						}
-					}
-					catch (e) {
-						currentBuild.result = 'FAILED: docs'
-						throw e
-					}
 				}
 			}
 		}
 	}
-}
-finally {
 
-	def buildStatus = currentBuild.result
-	def buildNotSuccess = !SUCCESS.equals(buildStatus)
-	def lastBuildNotSuccess = !SUCCESS.equals(currentBuild.previousBuild?.result)
+	post {
+		changed {
+			script {
 
-	if (buildNotSuccess || lastBuildNotSuccess) {
-		stage('Notify') {
-			node {
+				def BUILD_SUCCESS = hudson.model.Result.SUCCESS.toString()
+				def buildStatus = currentBuild.result
+				def buildNotSuccess = !BUILD_SUCCESS.equals(buildStatus)
+				def previousBuildStatus = currentBuild.previousBuild?.result
+				def previousBuildNotSuccess = !BUILD_SUCCESS.equals(previousBuildStatus)
 
-				final def RECIPIENTS = [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']]
+				if (buildNotSuccess || previousBuildNotSuccess) {
 
-				def subject = "${buildStatus}: Build ${env.JOB_NAME} ${env.BUILD_NUMBER} status is now ${buildStatus}"
-				def details = "The build status changed to ${buildStatus}. For details see ${env.BUILD_URL}"
+					def RECIPIENTS = [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']]
+					def subject = "${buildStatus}: Build ${env.JOB_NAME} ${env.BUILD_NUMBER} status is now ${buildStatus}"
+					def details = "The build status changed to ${buildStatus}. For details see ${env.BUILD_URL}"
 
-				emailext(
-						subject: subject,
-						body: details,
-						recipientProviders: RECIPIENTS,
-						to: "$GEODE_TEAM_EMAILS"
-				)
+					emailext(subject: subject, body: details, recipientProviders: RECIPIENTS, to: "$GEODE_TEAM_EMAILS")
+
+					slackSend(color: (currentBuild.currentResult == 'SUCCESS') ? 'good' : 'danger',
+						channel: '#spring-data-dev',
+						message: "${currentBuild.fullDisplayName} - `${currentBuild.currentResult}`\n${env.BUILD_URL}")
+				}
 			}
 		}
 	}
