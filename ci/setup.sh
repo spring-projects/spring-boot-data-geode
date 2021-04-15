@@ -5,6 +5,7 @@
 # Syntax: `chown -R userId:groupId .`
 
 echo "Logged in as user [$USER] with home directory [$HOME] in the current working directory [$PWD]"
+echo "Running with JRE [$JAVA_HOME]"
 chown -R 1001:1001 .
 mkdir -p /tmp/geode/boot/artifacts-gradle-cache
 mkdir -p /tmp/geode/boot/build-gradle-cache
