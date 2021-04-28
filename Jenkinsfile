@@ -1,8 +1,6 @@
 pipeline {
 
-	agent {
-		label "nogeode"
-	}
+	agent any
 
 	environment {
 		JAVA_HOME = "${tool 'jdk8'}"
