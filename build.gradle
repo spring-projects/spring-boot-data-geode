@@ -1,13 +1,13 @@
 buildscript {
+	repositories {
+		gradlePluginPortal()
+		maven { url 'https://repo.spring.io/plugins-snapshot' }
+	}
 	dependencies {
 		// Cannot upgrade to Spring Build Conventions Gradle Plugin after 0.0.35.RELEASE since the Gradle build
 		// can no longer resolve VMware Tanzu (Pivotal) GemFire bits.
 		classpath 'io.spring.gradle:spring-build-conventions:0.0.35.RELEASE'
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-	}
-	repositories {
-		gradlePluginPortal()
-		maven { url 'https://repo.spring.io/plugins-snapshot' }
 	}
 }
 
