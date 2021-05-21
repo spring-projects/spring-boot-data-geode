@@ -111,8 +111,8 @@ which has been {spring-data-geode-docs-html}/#apis:continuous-query[extended] in
 including first-class {spring-data-geode-docs-html}/#bootstrap-annotation-config-pdx[configuration]
 and {spring-data-geode-docs-html}/#mapping.pdx-serializer[support] in SDGfootnote:SDG[].
 <<geode-data-serialization,Learn more>>.
-* _Data Initialization_ to quickly load (import) to hydrate the cache during application startup or write (export) data
-on application shutdown to move data between environments (e.g. TEST to DEV). <<geode-data-using,Learn more>>.
+* _Data Initialization_ to quickly load (import) data to hydrate the cache during application startup or write (export)
+data on application shutdown to move data between environments (e.g. TEST to DEV). <<geode-data-using,Learn more>>.
 * _Actuator_ - to gain insight into the runtime behavior and operation of your cache, whether a client or a peer.
 <<actuator,Learn more>>.
 * _Logging_ - quickly and conveniently enable or adjust {apache-geode-name} log levels in your Spring Boot application
