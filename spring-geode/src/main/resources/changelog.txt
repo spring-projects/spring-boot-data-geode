@@ -4,6 +4,23 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.5.0 (2021-05-20)
+-------------------------------------
+Aligns SBDG with Spring Boot 2.5.0 along with the latest versions of Spring Framework, Spring Data,
+Spring Session and Spring Test for Apache Geode.
+
+* Upgrade documentation references to VMware Tanzu GemFire for VMs (formerly Pivotal Cloud Cache) to product version
+1.13.1.
+* Upgrades to Awaitility 4.1.0.
+* Upgrades to Spring Framework 5.3.7.
+* Upgrades to Spring Boot 2.5.0
+* Upgrades to Spring Data Pascal SR1 (2021.0.1)
+* Upgrades to Spring Data for Apache Geode 2.5.1
+* Upgrades to Spring Session BOM 2021.0.0.
+* Upgrades to Spring Session for Apache Geode 2.5.0.
+* Upgrades to Spring Test for Apache Geode 0.0.25.
+
+
 Changes in version 1.4.6 (2021-05-20)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.4.6 along with the latest versions of Spring Framework, Spring Data,
