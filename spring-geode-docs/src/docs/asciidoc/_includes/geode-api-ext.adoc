@@ -5,52 +5,21 @@
 
 
 The Spring Boot for {geode-name} (SBDG) project includes the `org.springframework.geode:apache-geode-extensions` module
-to make using {geode-name} {apache-geode-javadoc}[APIs] tolerable and useful. While this module is relatively new, it
-contains several API extensions already.
+to make the use of {geode-name} {apache-geode-javadoc}[APIs] in a Spring and non-Spring application context more
+effective. While this module is relatively new, it contains several, necessary API extensions already.
 
-{geode-name}'s {apache-geode-javadoc}[API] is quite convoluted with many design problems:
+The {geode-name} {apache-geode-javadoc}[API] is quite complex and difficult to use properly, especially without prior
+knowledge or experience to do so. Users very often get things wrong and is the main reason why Spring's APIs
+for {geode-name} are invaluable; they lead users to do the right thing, first and foremost, to begin with!
 
-1. Non-intuitive, complex interfaces that contradict industry standard terms.
-(e.g. https://javadoc.io/static/javax.cache/cache-api/1.1.1/javax/cache/Cache.html[`Cache`]
-vs. {apache-geode-javadoc}/org/apache/geode/cache/Region.html[`Region`]).
-2. APIs with an excessive footprint and no sensible https://en.wikipedia.org/wiki/Abstract_data_type[ADTs] resulting in
-too many overloaded methods with loaded method signatures (e.g. {apache-geode-javadoc}/org/apache/geode/cache/Region.html[`Region`]).
-3. Lingering deprecations causing excess baggage.
-4. Use of public fields exposing internal state, violating encapsulation, making it difficult to uphold invariants.
-5. Useful functionality hidden behind so called "internal" APIs that should be public.
-6. Utility/Helper classes containing functionality that should be part of the types on which the Utility class operates
-(e.g. {apache-geode-javadoc}/org/apache/geode/cache/partition/PartitionRegionHelper.html[`PartitionRegionHelper`]).
-7. Incorrect use of _Checked_ `Exceptions`
-(e.g. {apache-geode-javadoc}/org/apache/geode/cache/IncompatibleVersionException.html[`IncompatibleVersionException`]).
-8. Inconsistent behavior across different methods of configuration: API vs. `cache.xml` vs. _Cluster Configuration_
-using _Gfsh_.
-9. APIs closed for modification, yet offer no option for extension thereby violating the
-https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[_Open/Closed Principle_].
-10. In general, poor _Separation of Concerns_ (e.g. `Region`), violating many of the
-https://en.wikipedia.org/wiki/SOLID[SOLID] principles.
-11. Components (e.g. `Pool`) that are difficult to test properly: {geode-name} often incorrectly refers to implementation
-classes rather than interfaces leading to `ClassCastExceptions` and violation of the _Program to Interfaces_ principle.
-12. Excessive use of `static` initializer blocks making {geode-name} difficult to test.
-13. Untimely shutdown and release of resources that run interference when writing _Integration Tests_.
+However, this module and its extensions do not simply exist to only help users use {geode-name}'s APIs more effectively.
+In fact, with Spring's abstractions, it should not be necessary to use {geode-name} APIs at all, e.g. like when using
+the Spring Cache Abstraction for caching or the the Spring Data Repository abstraction for DAO developement. This module
+exists and is necessary primarily because it enables Spring for {geode-name} in many capacities do what it needs to do
+along with working around the complexities and limitations of {geode-name} APIs in a Spring and application context.
 
-This list goes on making {geode-name}'s APIs difficult and confusing to use at times, especially without prior knowledge
-or experience. Users very often get this wrong and it is the main reason why Spring's APIs for {geode-name} are so
-invaluable; they can help you do the right thing!
-
-Let's consider a few examples.
-
-The one and only cache implementation (`GemFireCacheImpl`) implements both the `ClientCache` and `Cache` interfaces.
-A `ClientCache` instance is created by client applications to access and persist data in a {geode-name} cluster. On the
-contrary, a _peer_ `Cache` instance is created by server-side applications serving as peer members of the {geode-name}
-cluster and distributed system to manage data. Both incarnations result in an instance of `GemFireCacheImpl`, yet a
-cache cannot be both a client and a peer. But, you would never know this by introspecting the cache instance.
-
-The {apache-geode-javadoc}/org/apache/geode/Delta.html[`Delta`] interface, {apache-geode-javadoc}/org/apache/geode/Delta.html#hasDelta--[`hasDelta()`]
-method, is another point of confusion. If there is no delta, why send the object in its entirety? Presumably there are
-no changes. Of course, there is a reason but it is not immediately apparent why given the lack of documentation.
-
-Spring in general, and SBDG in particular, shield users from design problems as well as changes to {geode-name}'s APIs
-that could adversely affect your applications when integrating with {geode-name}. Spring's APIs provide a layer of
+In general, Spring shields users from design problems as well as changes in 3rd party library APIs, which could
+adversely affect your Spring applications when integrating with these libraries. Spring's APIs provide a layer of
 indirection along with enhanced capabilities (e.g. Exception translation).
 
 TIP: Spring Data for {geode-name} (SDG) also {spring-data-geode-docs-html}/#apis[offers] some relief when using
