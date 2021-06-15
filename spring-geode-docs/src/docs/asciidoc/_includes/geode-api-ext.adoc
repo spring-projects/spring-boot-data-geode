@@ -6,18 +6,18 @@
 
 
 The Spring Boot for {geode-name} (SBDG) project includes the `org.springframework.geode:apache-geode-extensions` module
-to make the use of {geode-name} {apache-geode-javadoc}[APIs] in a Spring and non-Spring application context more
+to make use of the {geode-name} {apache-geode-javadoc}[APIs] in a Spring and non-Spring application context more
 effective. While this module is relatively new, it contains several, necessary API extensions already.
 
-The {geode-name} {apache-geode-javadoc}[API] is quite complex and difficult to use properly, especially without prior
+{geode-name} {apache-geode-javadoc}[APIs] are quite complex and difficult to use properly, especially without prior
 knowledge or experience to do so. Users very often get things wrong and is the main reason why Spring's APIs
-for {geode-name} are invaluable; they lead users to do the right thing, first and foremost, to begin with!
+for {geode-name} are invaluable; they lead users to do the right thing from the start, first and foremost.
 
-However, this module and its extensions do not simply exist to only help users use {geode-name}'s APIs more effectively.
-In fact, with Spring's abstractions, it should not be necessary to use {geode-name} APIs at all, e.g. like when using
-the Spring Cache Abstraction for caching or the the Spring Data Repository abstraction for DAO developement. This module
-exists and is necessary primarily because it enables Spring for {geode-name} in many capacities do what it needs to do
-along with working around the complexities and limitations of {geode-name} APIs in a Spring and application context.
+However, this module does not simply exist only to help users use {geode-name}'s APIs more effectively. In fact, with
+Spring's abstractions, it should not be necessary to use {geode-name} APIs at all, e.g. like when using the Spring Cache
+Abstraction for caching or the Spring Data Repository abstraction for DAO development. This module is necessary
+to enable Spring for {geode-name} to overcome and adapt to the limitations the API in a Spring and application context
+in order to do what Spring for {geode-name} needs to do that makes the experience familiar to Spring users.
 
 In general, Spring shields users from design problems as well as changes in 3rd party library APIs, which could
 adversely affect your Spring applications when integrating with these libraries. Spring's APIs provide a layer of
