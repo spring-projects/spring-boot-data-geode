@@ -6,21 +6,21 @@
 
 The Spring Boot for {geode-name} (SBDG) project includes the `org.springframework.geode:apache-geode-extensions` module
 to make use of the {geode-name} {apache-geode-javadoc}[APIs] in a Spring and non-Spring application context more
-effective. While this module is relatively new, it contains several, necessary API extensions already.
+effective. While this module is relatively new, it already contains several necessary API extensions.
 
-{geode-name} {apache-geode-javadoc}[APIs] are quite complex and difficult to use properly, especially without prior
-knowledge or experience to do so. Users very often get things wrong and is the main reason why Spring's APIs
-for {geode-name} are invaluable; they lead users to do the right thing from the start, first and foremost.
+{geode-name} {apache-geode-javadoc}[APIs] can be complex and difficult to use properly, especially without prior
+knowledge or experience. Users often get things wrong, which is why Spring's APIs
+for {geode-name} are invaluable. They lead users to do the right thing from the start, first and foremost.
 
-However, this module does not simply exist only to help users use {geode-name}'s APIs more effectively. In fact, with
-Spring's abstractions, it should not be necessary to use {geode-name} APIs at all, e.g. like when using the Spring Cache
+However, this module does not exist only to help users use {geode-name}'s APIs more effectively. In fact, with
+Spring's abstractions, it should not be necessary to use {geode-name} APIs at all -- for example, when using the Spring Cache
 Abstraction for caching or the Spring Data Repository abstraction for DAO development. This module is necessary
-to enable Spring for {geode-name} to overcome and adapt to the limitations the API in a Spring and application context
-in order to do what Spring for {geode-name} needs to do that makes the experience familiar to Spring users.
+to enable Spring for {geode-name} to overcome and adapt to the limitations of the API in a Spring application context.
+That lets Spring for {geode-name} offer an experience familiar to Spring users.
 
-In general, Spring shields users from design problems as well as changes in 3rd party library APIs, which could
+In general, Spring shields users from design problems as well as changes in third party library APIs that could
 adversely affect your Spring applications when integrating with these libraries. Spring's APIs provide a layer of
-indirection along with enhanced capabilities (e.g. Exception translation).
+indirection along with enhanced capabilities (such as exception translation).
 
 TIP: Spring Data for {geode-name} (SDG) also {spring-data-geode-docs-html}/#apis[offers] some relief when using
 {geode-name}'s APIs.
