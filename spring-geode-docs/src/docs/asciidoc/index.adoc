@@ -66,72 +66,71 @@ John Blum
 
 
 [[abstract]]
-Welcome to _Spring Boot for {apache-geode-name} & {pivotal-gemfire-name}_.
-
 Spring Boot for {apache-geode-name} provides the convenience of Spring Boot's _convention over configuration_ approach
-using _auto-configuration_ with the Spring Framework's powerful abstractions and highly consistent programming model to
-truly simplify the development of {apache-geode-name} or {pivotal-gemfire-name} applications in a Spring context.
+by using _auto-configuration_ with Spring Framework's powerful abstractions and highly consistent programming model to
+simplify the development of {apache-geode-name} or {pivotal-gemfire-name} applications in a Spring context.
 
-Secondarily, Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} aims to provide developers with a consistent
-experience whether building and running Spring Boot, {apache-geode-name} & {pivotal-gemfire-name} applications locally
+Secondarily, Spring Boot for {apache-geode-name} and {pivotal-gemfire-name} provides developers with a consistent
+experience whether building and running Spring Boot, {apache-geode-name}, and {pivotal-gemfire-name} applications locally
 or in a managed environment, such as with https://pivotal.io/platform[Pivotal CloudFoundry] (PCF).
 
-This project is a continuation and a logical extension to Spring Data for {apache-geode-name} & {pivotal-gemfire-name}'s
-{spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model] and the goals set forth
+This project is a continuation and a logical extension to Spring Data for {apache-geode-name} and {pivotal-gemfire-name}'s
+{spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model], and the goals set forth
 in that model: _To enable application developers to *get up and running* as *quickly* and as *easily* as possible_.
-In fact, Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} builds on this very {spring-data-geode-docs-html}/#bootstrap-annotation-config[foundation]
-cemented in Spring Data for {apache-geode-name} & {pivotal-gemfire-name} (SDG footnote:SDG[Spring Data for {apache-geode-name}
-and Spring Data for {pivotal-gemfire-name} are commonly known as SDG.]) since the Spring Data Kay Release Train.
+In fact, Spring Boot for {apache-geode-name} and {pivotal-gemfire-name} builds on this very {spring-data-geode-docs-html}/#bootstrap-annotation-config[foundation]
+cemented in Spring Data for {apache-geode-name} and {pivotal-gemfire-name} since the Spring Data Kay Release Train.
+
+Spring Data for {apache-geode-name} and Spring Data for {pivotal-gemfire-name} are commonly known as SDG.
 
 [[introduction]]
 == Introduction
 
-Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} automatically applies _auto-configuration_ to several key
-application concerns (_Use Cases_) including, but not limited to:
+Spring Boot for {apache-geode-name} and {pivotal-gemfire-name} automatically applies _auto-configuration_ to several key
+application concerns (_use cases_) including, but not limited to:
 
-* _Look-Aside, [Async] Inline, Near_ and _Multi-Site Caching_, using {apache-geode-name} as a caching provider in
+* _Look-Aside, [Async] Inline, Near_ and _Multi-Site Caching_, by using {apache-geode-name} as a caching provider in
 {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction].
-<<geode-caching-provider,Learn more>>.
+For more information, see <<geode-caching-provider>>.
 * {wikipedia-docs}/System_of_record[_System of Record_ (SOR)], persisting application state reliably in {apache-geode-name}
-using {spring-data-commons-docs-html}/#repositories[Spring Data Repositories].
-<<geode-repositories,Learn more>>.
+by using {spring-data-commons-docs-html}/#repositories[Spring Data Repositories].
+For more information, see <<geode-repositories>>.
 * _Transactions_, managing application state consistently with {spring-framework-docs}/data-access.html#transaction[Spring Transaction Management]
-and SDGfootnote:SDG[] with support for both {spring-data-geode-docs-html}/#apis:transaction-management[Local Cache]
+with support for both {spring-data-geode-docs-html}/#apis:transaction-management[Local Cache]
 and {spring-data-geode-docs-html}/#apis:global-transaction-management[Global JTA] Transactions.
-* _Distributed Computations_, ran with {apache-geode-name}'s {apache-geode-docs}/developing/function_exec/chapter_overview.html[Function Execution] framework,
-and conveniently implemented and executed with SDGfootnote:SDG[] {spring-data-geode-docs-html}/#function-annotations[POJO-based, annotation support for Functions].
-<<geode-functions,Learn more>>.
-* _Continuous Queries_, expressing interests in a stream of events, allowing applications to react to and process changes to data in near real-time
+* _Distributed Computations_, run with {apache-geode-name}'s {apache-geode-docs}/developing/function_exec/chapter_overview.html[Function Execution] framework
+and conveniently implemented and executed with {spring-data-geode-docs-html}/#function-annotations[POJO-based, annotation support for Functions].
+For more information, see <<geode-functions>>.
+* _Continuous Queries_, expressing interests in a stream of events and letting applications react to and process changes to data in near real-time
 with {apache-geode-name}'s {apache-geode-docs}/developing/continuous_querying/chapter_overview.html[Continuous Query (CQ)].
-Handlers are defined as simple Message-Driven POJOs (MDP) using Spring's {spring-framework-docs}/integration.html#jms-mdp[Message Listener Container],
-which has been {spring-data-geode-docs-html}/#apis:continuous-query[extended] in SDGfootnote:SDG[] with its
+Handlers are defined as simple Message-Driven POJOs (MDP) with Spring's {spring-framework-docs}/integration.html#jms-mdp[Message Listener Container],
+which has been {spring-data-geode-docs-html}/#apis:continuous-query[extended] with its
 {spring-data-geode-docs-html}/#bootstrap-annotation-config-continuous-queries[configurable] CQ support.
-<<geode-continuous-query,Learn more>>.
+For more information, see <<geode-continuous-query>>.
 * _Data Serialization_ with {apache-geode-name} {apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX],
 including first-class {spring-data-geode-docs-html}/#bootstrap-annotation-config-pdx[configuration]
-and {spring-data-geode-docs-html}/#mapping.pdx-serializer[support] in SDGfootnote:SDG[].
-<<geode-data-serialization,Learn more>>.
+and {spring-data-geode-docs-html}/#mapping.pdx-serializer[support].
+For more information, see <<geode-data-serialization>>.
 * _Data Initialization_ to quickly load (import) data to hydrate the cache during application startup or write (export)
-data on application shutdown to move data between environments (e.g. TEST to DEV). <<geode-data-using,Learn more>>.
-* _Actuator_ - to gain insight into the runtime behavior and operation of your cache, whether a client or a peer.
-<<actuator,Learn more>>.
-* _Logging_ - quickly and conveniently enable or adjust {apache-geode-name} log levels in your Spring Boot application
-to gain insight into the runtime operations of the app as they occur.
-<<geode-logging,Learn more>>.
+data on application shutdown to move data between environments (for example, TEST to DEV). For more information, see <<geode-data-using>>.
+* _Actuator_, to gain insight into the runtime behavior and operation of your cache, whether a client or a peer.
+For more information, see <<actuator>>.
+* _Logging_, to quickly and conveniently enable or adjust {apache-geode-name} log levels in your Spring Boot application
+to gain insight into the runtime operations of the application as they occur.
+For more information, see <<geode-logging>>.
 * _Security_, including {apache-geode-docs}/managing/security/authentication_overview.html[Authentication]
-& {apache-geode-docs}/managing/security/authorization_overview.html[Authorization] as well as Transport Layer Security (TLS)
-using {apache-geode-name} {apache-geode-docs}/managing/security/ssl_overview.html[Secure Socket Layer (SSL)]. Once more,
-SDGfootnote:SDG[] includes first-class support for configuring {spring-data-geode-docs-html}/#bootstrap-annotation-config-security[Auth]
+& {apache-geode-docs}/managing/security/authorization_overview.html[Authorization], and Transport Layer Security (TLS)
+with {apache-geode-name} {apache-geode-docs}/managing/security/ssl_overview.html[Secure Socket Layer (SSL)]. Once more,
+Spring Data for {apache-geode-name} and {pivotal-gemfire-name} includes first-class support for configuring {spring-data-geode-docs-html}/#bootstrap-annotation-config-security[Auth]
 and {spring-data-geode-docs-html}/#bootstrap-annotation-config-ssl[SSL].
-<<geode-security,Learn more>>.
+For more information, see <<geode-security>>.
 * _HTTP Session state management_, by including Spring Session for {apache-geode-name} on your application's classpath.
-<<geode-session,Learn more>>.
-* _Testing_ - whether writing Unit or Integration Tests for Apache Geode in a Spring context, SBDG covers all
+For more information, see <<geode-session>>.
+* _Testing_. Whether you write Unit or Integration Tests for Apache Geode in a Spring context, SBDG covers all
 your testing needs with the help of {spring-test-data-gemfire-website}[STDG].
 
 While Spring Data for {apache-geode-name} & {pivotal-gemfire-name} offers a simple, consistent, convenient
 and declarative approach to configure all these powerful {apache-geode-name} features, Spring Boot for {apache-geode-name}
-& {pivotal-gemfire-name} makes it even easier to do as we will explore throughout this reference documentation.
+and {pivotal-gemfire-name} makes it even easier to do, as we explore throughout this reference documentation.
 
 [[introduction-goals]]
 === Goals
@@ -139,56 +138,56 @@ and declarative approach to configure all these powerful {apache-geode-name} fea
 While the SBDG project has many goals and objectives, the primary goals of this project centers around
 three key principles:
 
-1. From **_Open Source_** ({apache-geode-name}) to **_Commercial_** ({pivotal-gemfire-name})
+1. From **_Open Source_** ({apache-geode-name}) to **_Commercial_** ({pivotal-gemfire-name}).
 2. From **_Non-Managed_** (self-managed/hosted or on-premise installations) to **_Managed_**
-({pivotal-cloudcache-name}, {vmware-gemfire-name}) environments
-3. With **little to no code or configuration changes** necessary
+({pivotal-cloudcache-name}, {vmware-gemfire-name}) environments.
+3. With **little to no code or configuration changes** necessary.
 
 It is also possible to go in the reverse direction, from _Managed_ back to a _Non-Managed_ environment
-and even from _Commercial_ back to the _Open Source_ offering, again, with _little to no code or configuration_ changes;
-it simply just works!
+and even from _Commercial_ back to the _Open Source_ offering, again, with _little to no code or configuration_ changes.
 
-NOTE: SBDG's promise is to deliver on these principles as much as is technically possible and is technically allowed
+NOTE: SBDG's promise is to deliver on these principles as much as is technically possible and as is technically allowed
 by {apache-geode-name}.
 
 [[getting-started]]
 == Getting Started
 
-In order to be immediately productive and as effective as possible using Spring Boot for {apache-geode-name}
-& {pivotal-gemfire-name}, it is helpful to understand the foundation on which this project was built.
+To be immediately productive and as effective as possible when you use Spring Boot for {apache-geode-name}
+and {pivotal-gemfire-name}, it helps to understand the foundation on which this project is built.
 
-Of course, our story begins with the Spring Framework and the {spring-framework-docs}/core.html#spring-core[core technologies and concepts]
+We begin with the Spring Framework and the {spring-framework-docs}/core.html#spring-core[core technologies and concepts]
 built into the Spring container.
 
-Then, our journey continues with the extensions built into Spring Data for {apache-geode-name} & {pivotal-gemfire-name}
-(SDGfootnote:SDG[]) to truly simplify the development of {apache-geode-name} & {pivotal-gemfire-name} applications in a
+Then our journey continues with the extensions built into Spring Data for {apache-geode-name} and {pivotal-gemfire-name}
+to simplify the development of {apache-geode-name} and {pivotal-gemfire-name} applications in a
 Spring context, using Spring's powerful abstractions and highly consistent programming model. This part of the story
-was greatly enhanced in Spring Data Kay, with the SDGfootnote:SDG[] {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model].
-Though this new configuration approach using annotations provides sensible defaults out-of-the-box, its use is also very
+was greatly enhanced in Spring Data Kay, with the {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model].
+Though this new configuration approach uses annotations provides sensible defaults, its use is also very
 explicit and assumes nothing.  If any part of the configuration is ambiguous, SDG will fail fast. SDG gives you
-"_choice_", so you still must tell SDGfootnote:SDG[] what you want.
+"`_choice_`", so you still must tell Spring Boot for {apache-geode-name} and {pivotal-gemfire-name} what you want.
 
-Next, we venture into Spring Boot and all of its wonderfully expressive and highly opinionated "_convention over configuration_"
-approach for getting the most out of your Spring, {apache-geode-name}/{pivotal-gemfire-name} based applications in the
-easiest, quickest and most reliable way possible.  We accomplish this by combining Spring Data for {apache-geode-name}
-& {pivotal-gemfire-name}'s {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration]
+Next, we venture into Spring Boot and all of its wonderfully expressive and highly opinionated "`_convention over configuration_`"
+approach for getting the most out of your Spring {apache-geode-name} and {pivotal-gemfire-name} based applications in the
+easiest, quickest, and most reliable way possible. We accomplish this by combining Spring Data for {apache-geode-name}
+and {pivotal-gemfire-name}'s {spring-data-geode-docs-html}/#bootstrap-annotation-config[annotation-based configuration]
 with Spring Boot's {spring-boot-docs-html}/#using-boot-auto-configuration[auto-configuration] to get you up and running
 even faster and more reliably so that you are productive from the start.
 
-As such, it would be pertinent to begin your Spring Boot education {spring-boot-docs-html}/#getting-started[here].
+As a result, it would be pertinent to begin your Spring Boot education with the  {spring-boot-docs-html}/#getting-started[Spring Boot documentation].
 
-Finally, we arrive at Spring Boot for {apache-geode-name} & {pivotal-gemfire-name} (SBDG).
+Finally, we arrive at Spring Boot for {apache-geode-name} and {pivotal-gemfire-name} (SBDG).
 
-TIP: Refer to the corresponding Sample link:guides/getting-started.html[Guide] and {github-samples-url}/intro/getting-started[Code]
-to see Spring Boot for {apache-geode-name} in action!
+TIP: See the corresponding Sample link:guides/getting-started.html[Guide] and {github-samples-url}/intro/getting-started[Code]
+to see Spring Boot for {apache-geode-name} in action.
 
 [[maven-gradle]]
 == Using Spring Boot for {apache-geode-name}
 
-To use Spring Boot for {apache-geode-name}, simply declare the `spring-geode-starter` on your Spring Boot application
+To use Spring Boot for {apache-geode-name}, declare the `spring-geode-starter` on your Spring Boot application
 classpath:
 
 .Maven
+====
 [source,xml]
 [subs="verbatim,attributes"]
 ----
@@ -209,19 +208,20 @@ dependencies {
     compile 'org.springframework.geode:spring-geode-starter:{spring-boot-data-geode-version}'
 }
 ----
+====
 
 [[maven-bom]]
 === Maven BOM
 
-If you anticipate using more than 1 Spring Boot for {apache-geode-name} (SBDG) module in your Spring Boot application,
-then you can also use the new `org.springframework.geode:spring-geode-bom` Maven BOM in your application Maven POM.
+If you anticipate using more than one Spring Boot for {apache-geode-name} (SBDG) module in your Spring Boot application,
+you can also use the new `org.springframework.geode:spring-geode-bom` Maven BOM in your application Maven POM.
 
-Your application use case(s) may require more than 1 module if, for example, you need (HTTP) Session state management
-and replication (e.g. `spring-geode-starter-session`), or you need to enable Spring Boot Actuator endpoints for
-{apache-geode-name} (e.g. `spring-geode-starter-actuator`), or perhaps you need assistance writing complex Unit
-and (distributed) Integration Tests using Spring Test for Apache Geode (STDG) (e.g. `spring-geode-starter-test`).
+Your application use case may require more than one module if (for example, you need (HTTP) Session state management
+and replication with, for example, `spring-geode-starter-session`), if you need to enable Spring Boot Actuator endpoints for
+{apache-geode-name} (for example, `spring-geode-starter-actuator`), or if you need assistance writing complex unit
+and (distributed) integration tests with Spring Test for Apache Geode (STDG) (for example, `spring-geode-starter-test`).
 
-You can declare (include) and use any 1 of the SBDG modules:
+You can declare (include) and use any one of the SBDG modules:
 
 * `spring-geode-starter`
 * `spring-geode-starter-actuator`
@@ -229,13 +229,14 @@ You can declare (include) and use any 1 of the SBDG modules:
 * `spring-geode-starter-session`
 * `spring-geode-starter-test`
 
-When more than 1 SBDG module is in play, then it makes sense to use the `spring-geode-bom` to manage all
-the dependencies so that the versions and transitive dependencies necessarily align properly.
+When more than one SBDG module is in play, it makes sense to use the `spring-geode-bom` to manage all
+the dependencies such that the versions and transitive dependencies necessarily align properly.
 
-Your Spring Boot application Maven POM using the `spring-geode-bom` along with 2 or more module dependencies
+A Spring Boot application Maven POM that uses the `spring-geode-bom` along with two or more module dependencies
 might appear as follows:
 
 .Spring Boot application Maven POM
+====
 [source,xml]
 [subs="verbatim,attributes"]
 ----
@@ -285,38 +286,42 @@ might appear as follows:
 
 </project>
 ----
+====
 
-Notice that 1) the Spring Boot application Maven POM (`pom.xml`) contains a `<dependencyManagement>` section declaring
-the `org.springframework.geode:spring-geode-bom` and that 2) none of the `spring-geode-starter[-xyz]` dependencies
-explicitly specify a `<version>`, which is 3) managed by the `spring-geode.version` property making it easy to switch
-between versions of SBDG as needed, applied evenly to all the SBDG modules declared and used in your application Maven
+Notice that:
+
+* The Spring Boot application Maven POM (`pom.xml`) contains a `<dependencyManagement>` section that declares
+the `org.springframework.geode:spring-geode-bom`.
+* None of the `spring-geode-starter[-xyz]` dependencies
+explicitly specify a `<version>`. The version is managed by the `spring-geode.version` property, making it easy to switch
+between versions of SBDG as needed and use it in all the SBDG modules declared and used in your application Maven
 POM.
 
-If you change the version of SBDG, make sure to change the `org.springframework.boot:spring-boot-starter-parent` POM
-version to match.  SBDG is always 1 `major` version behind, but matches on `minor` version and `patch` version
-(and `version qualifier`, e.g. `SNAPSHOT`, `M#`, `RC#`, or `RELEASE`, if applicable).
+If you change the version of SBDG, be sure to change the `org.springframework.boot:spring-boot-starter-parent` POM
+version to match.  SBDG is always one `major` version behind but matches on `minor` version and `patch` version
+(and `version qualifier` -- `SNAPSHOT`, `M#`, `RC#`, or `RELEASE`, if applicable).
 
-For example, SBDG `1.4.0` is based on Spring Boot `2.4.0`.  SBDG `1.3.5.RELEASE` is based on
-Spring Boot `2.3.5.RELEASE` and so on. It is important that the versions align.
+For example, SBDG `1.4.0` is based on Spring Boot `2.4.0`. SBDG `1.3.5.RELEASE` is based on
+Spring Boot `2.3.5.RELEASE`, and so on. It is important that the versions align.
 
-Of course, all of these concerns are easy to do and handled for you by simply going to
-https://start.spring.io[start.spring.io] and adding the "_Spring for {apache-geode-name}_" dependency.
-
-Clink on this https://start.spring.io/#!platformVersion={spring-boot-version}&dependencies=geode[link]
-to get started!
+TIP: All of these concerns are handled for you by going to
+https://start.spring.io[start.spring.io] and adding the "_Spring for {apache-geode-name}_" dependency to a project.
+For convenience, you can click this https://start.spring.io/#!platformVersion={spring-boot-version}&dependencies=geode[link]
+to get started.
 
 [[gradle-dependency-management]]
 === Gradle Dependency Management
 
-The user experience when using Gradle is similar to that of Maven.
+Using Gradle is similar to using Maven.
 
-Again, if you will be declaring and using more than 1 SBDG module in your Spring Boot application, for example,
-the `spring-geode-starter` along with the `spring-geode-starter-actuator` dependency, then using the `spring-geode-bom`
-inside your application Gradle build file will help.
+Again, if you declare and use more than one SBDG module in your Spring Boot application (for example,
+the `spring-geode-starter` along with the `spring-geode-starter-actuator` dependency), using the `spring-geode-bom`
+inside your application Gradle build file helps.
 
-Your application Gradle build file configuration will roughly appear as follows:
+Your application Gradle build file configuration (roughly) appears as follows:
 
 .Spring Boot application Gradle build file
+====
 [source,groovy]
 [subs="verbatim,attributes"]
 ----
@@ -344,38 +349,40 @@ dependencyManagement {
   }
 }
 ----
+====
 
 A combination of the {spring-boot-docs-html}/using-spring-boot.html#using-boot-gradle[Spring Boot Gradle Plugin]
 and the https://github.com/spring-gradle-plugins/dependency-management-plugin[Spring Dependency Management Gradle Plugin]
-manage the application dependencies for you.
+manages the application dependencies for you.
 
-In a nutshell, the _Spring Dependency Management Gradle Plugin_ provides dependency management capabilities for Gradle
-much like Maven. The _Spring Boot Gradle Plugin_ defines a curated and tested set of versions for many 3rd party Java
-libraries. Together they make adding dependencies and managing (compatible) versions easier!
+In a nutshell, the _Spring Dependency Management Gradle Plugin_ provides dependency management capabilities for Gradle,
+much like Maven. The _Spring Boot Gradle Plugin_ defines a curated and tested set of versions for many third party Java
+libraries. Together, they make adding dependencies and managing (compatible) versions easier.
 
-Again, you don't need to explicitly declare the version when adding a dependency, including a new SBDG module dependency
-(e.g. `spring-geode-starter-session`) since this has already been determined for you. You can simply declare the
-dependency:
+Again, you need not explicitly declare the version when adding a dependency, including a new SBDG module dependency
+(for example, `spring-geode-starter-session`), since this has already been determined for you. You can declare the
+dependency as follows:
 
+====
 [source,groovy]
 ----
 implementation 'org.springframework.geode:spring-geode-starter-session'
 ----
+====
 
 The version of SBDG is controlled by the extension property (`springGeodeVersion`) in the application Gradle build file.
 
-To use a different version of SBDG, simply set the `springGeodeVersion` property to the desired version
-(e.g. `1.3.5.RELEASE`). Of course, make sure the version of Spring Boot matches!
+To use a different version of SBDG, set the `springGeodeVersion` property to the desired version
+(for example, `1.3.5.RELEASE`). Remember to be sure that the version of Spring Boot matches.
 
-SBDG is always 1 `major` version behind, but matches on `minor` version and `patch` version (and `version qualifier`,
-e.g. `SNAPSHOT`, `M#`, `RC#`, or `RELEASE`, if applicable). For example, SBDG `1.4.0` is based on Spring Boot `2.4.0`.
-SBDG `1.3.5.RELEASE` is based on Spring Boot `2.3.5.RELEASE` and so on. It is important that the versions align.
+SBDG is always one `major` version behind but matches on `minor` version and `patch` version (and `version qualifier`,
+such as `SNAPSHOT`, `M#`, `RC#`, or `RELEASE`, if applicable). For example, SBDG `1.4.0` is based on Spring Boot `2.4.0`,
+SBDG `1.3.5.RELEASE` is based on Spring Boot `2.3.5.RELEASE`, and so on. It is important that the versions align.
 
-Of course, all of these concerns are easy to do and handled for you by simply going to
-https://start.spring.io[start.spring.io] and adding the "_Spring for {apache-geode-name}_" dependency.
-
-Clink on this https://start.spring.io/#!type=gradle-project&platformVersion={spring-boot-version}&dependencies=geode[link]
-to get started!
+TIP: All of these concerns are handled for you by going to
+https://start.spring.io[start.spring.io] and adding the "_Spring for {apache-geode-name}_" dependency to a project.
+For convenience, you can click this https://start.spring.io/#!platformVersion={spring-boot-version}&dependencies=geode[link]
+to get started.
 
 ifeval::["{version-snapshot}" == "true"]
 [[maven-gradle-repository]]
@@ -383,9 +390,10 @@ ifeval::["{version-snapshot}" == "true"]
 
 Since you are using a `SNAPSHOT` version, you need to add the Spring Snapshot Maven Repository.
 
-If you are using _Maven_, include the following `repository` declaration in your `pom.xml`:
+If you use Maven, include the following `repository` declaration in your `pom.xml`:
 
 .Maven
+====
 [source,xml]
 ----
 <repositories>
@@ -395,16 +403,19 @@ If you are using _Maven_, include the following `repository` declaration in your
     </repository>
 </repositories>
 ----
+====
 
-If you are using _Gradle_, include the following `repository` declaration in your `build.gradle`:
+If you use Gradle, include the following `repository` declaration in your `build.gradle`:
 
 .Gradle
+====
 [source,gradle]
 ----
 repositories {
     maven { url: 'https://repo.spring.io/snapshot' }
 }
 ----
+====
 endif::[]
 
 ifeval::["{version-milestone}" == "true"]
@@ -413,9 +424,10 @@ ifeval::["{version-milestone}" == "true"]
 
 Since you are using a Milestone version, you need to add the Spring Milestone Maven Repository.
 
-If you are using _Maven_, include the following `repository` declaration in your `pom.xml`:
+If you use Maven, include the following `repository` declaration in your `pom.xml`:
 
 .Maven
+====
 [source,xml]
 ----
 <repositories>
@@ -425,37 +437,61 @@ If you are using _Maven_, include the following `repository` declaration in your
     </repository>
 </repositories>
 ----
+====
 
-If you are using _Gradle_, include the following `repository` declaration in your `build.gradle`:
+If you use Gradle, include the following `repository` declaration in your `build.gradle`:
 
 .Gradle
+====
 [source,gradle]
 ----
 repositories {
     maven { url: 'https://repo.spring.io/milestone' }
 }
 ----
+====
 endif::[]
 
 include::{include-dir}/clientcache-applications.adoc[]
+
 include::{include-dir}/configuration-auto.adoc[]
+
 include::{include-dir}/configuration-declarative.adoc[]
+
 include::{include-dir}/configuration-externalized.adoc[]
+
 include::{include-dir}/gemfire-properties.adoc[]
+
 include::{include-dir}/caching.adoc[]
+
 include::{include-dir}/templates.adoc[]
+
 include::{include-dir}/repositories.adoc[]
+
 include::{include-dir}/functions.adoc[]
+
 include::{include-dir}/continuous-query.adoc[]
+
 include::{include-dir}/data.adoc[]
+
 include::{include-dir}/data-serialization.adoc[]
+
 include::{include-dir}/logging.adoc[]
+
 include::{include-dir}/security.adoc[]
+
 include::{include-dir}/testing.adoc[]
+
 include::{include-dir}/geode-api-ext.adoc[]
+
 include::{include-dir}/actuator.adoc[]
+
 include::{include-dir}/session.adoc[]
+
 include::{include-dir}/cloudfoundry.adoc[]
+
 include::{include-dir}/docker.adoc[]
+
 include::{include-dir}/samples.adoc[]
+
 include::{include-dir}/appendix.adoc[]
