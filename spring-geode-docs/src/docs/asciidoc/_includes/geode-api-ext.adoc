@@ -9,8 +9,8 @@ to make use of the {geode-name} {apache-geode-javadoc}[APIs] in a Spring and non
 effective. While this module is relatively new, it already contains several necessary API extensions.
 
 {geode-name} {apache-geode-javadoc}[APIs] can be complex and difficult to use properly, especially without prior
-knowledge or experience. Users often get things wrong, which is why Spring's APIs
-for {geode-name} are invaluable. They lead users to do the right thing from the start, first and foremost.
+knowledge or experience. Users often get things wrong, which is why Spring's APIs for {geode-name} are invaluable.
+They lead users to do the right thing from the start, first and foremost.
 
 However, this module does not exist only to help users use {geode-name}'s APIs more effectively. In fact, with
 Spring's abstractions, it should not be necessary to use {geode-name} APIs at all -- for example, when using the Spring Cache
