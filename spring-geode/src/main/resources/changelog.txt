@@ -4,6 +4,20 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.5.1 (2021-06-15)
+-------------------------------------
+Aligns SBDG with Spring Boot 2.5.1.
+
+* Edits and revises the SBDG Reference Documentation Index.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/pull/105.
+* Edits and revises Chapter 19 - Apache Geode API Extensions.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/pull/106.
+* Upgrades to Gradle 6.9.
+* Upgrades to Spring Framework 5.3.8.
+* Upgrades to Spring Boot 2.5.1.
+* Upgrades to Spring Session for Apache Geode 2.5.1.
+
+
 Changes in version 1.4.7 (2021-06-15)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.4.7.
