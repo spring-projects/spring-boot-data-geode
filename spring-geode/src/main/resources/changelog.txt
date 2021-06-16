@@ -4,6 +4,19 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.3.12.RELEASE (2021-06-15)
+----------------------------------------------
+Aligns SBDG with Spring Boot 2.3.12.RELEASE.
+
+* Edits and revises Chapter 19 - Apache Geode API Extensions.
+Resolves https://github.com/spring-projects/spring-boot-data-geode/pull/106.
+* Upgrades to Byte Buddy 1.11.2.
+* Upgrades to Gradle 6.9.
+* Upgrades to Mockito 3.11.1.
+* Upgrades to Spring Boot 2.3.12.RELEASE.
+* Upgrades to Spring Session for Apache Geode 2.3.6.RELEASE.
+
+
 Changes in version 1.4.6 (2021-05-20)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.4.6 along with the latest versions of Spring Framework, Spring Data,
