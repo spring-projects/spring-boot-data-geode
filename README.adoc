@@ -73,6 +73,7 @@ The following SBDG versions are currently maintained and developed.
 | Version | Reference Documentation | Javadoc | Samples
 
 | `current` | {sbdg-docs}[Ref Docs] | {sbdg-javadoc}[Javadoc] | {sbdg-docs}#geode-samples[Samples]
+| `1.6.0-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.6.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.6.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.6.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
 | `1.5.2-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.5.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
 | `1.5.1`| https://docs.spring.io/spring-boot-data-geode-build/1.5.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x/reference/html5/#geode-samples[Samples]
 | `1.4.8-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.4.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
