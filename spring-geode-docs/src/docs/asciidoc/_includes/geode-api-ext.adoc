@@ -5,25 +5,16 @@
 :images-dir: ./images
 
 
-The Spring Boot for {geode-name} (SBDG) project includes the `org.springframework.geode:apache-geode-extensions` module
-to make use of the {geode-name} {apache-geode-javadoc}[APIs] in a Spring and non-Spring application context more
-effective. While this module is relatively new, it already contains several necessary API extensions.
+When using the Spring programming model and abstractions, it should not be necessary to use {geode-name}
+{apache-geode-javadoc}[APIs] at all -- for example, when using the Spring Cache Abstraction for caching
+or the Spring Data Repository abstraction for DAO development. There are many more examples.
 
-{geode-name} {apache-geode-javadoc}[APIs] can be complex and difficult to use properly, especially without prior
-knowledge or experience. Users often get things wrong, which is why Spring's APIs for {geode-name} are invaluable.
-They lead users to do the right thing from the start, first and foremost.
+For certain use cases, users may require low level access to fine-grained functionally. Spring Boot for {geode-name}'s
+`org.springframework.geode:apache-geode-extensions` module and library builds on {geode-name}'s APIs
+by including several extensions with enhanced functionality to offer an experience familiar to Spring users
+inside a Spring context.
 
-However, this module does not exist only to help users use {geode-name}'s APIs more effectively. In fact, with
-Spring's abstractions, it should not be necessary to use {geode-name} APIs at all -- for example, when using the Spring Cache
-Abstraction for caching or the Spring Data Repository abstraction for DAO development. This module is necessary
-to enable Spring for {geode-name} to overcome and adapt to the limitations of the API in a Spring application context.
-That lets Spring for {geode-name} offer an experience familiar to Spring users.
-
-In general, Spring shields users from design problems as well as changes in third party library APIs that could
-adversely affect your Spring applications when integrating with these libraries. Spring's APIs provide a layer of
-indirection along with enhanced capabilities (such as exception translation).
-
-TIP: Spring Data for {geode-name} (SDG) also {spring-data-geode-docs-html}/#apis[offers] some relief when using
+TIP: Spring Data for {geode-name} (SDG) also {spring-data-geode-docs-html}/#apis[includes] additional extensions to
 {geode-name}'s APIs.
 
 [[geode-api-extensions-cacheresolver]]
@@ -143,9 +134,9 @@ In the case where membership events are useful to the Spring Boot application, S
 * {spring-boot-data-geode-javadoc}/org/springframework/geode/distributed/event/MembershipListenerAdapter.html[`MembershipListenerAdapter`]
 * {spring-boot-data-geode-javadoc}/org/springframework/geode/distributed/event/MembershipEvent.html[`MembershipEvent`]
 
-The abstract `MembershipListenerAdapter` class implements {geode-name}'s clumsy
-`org.apache.geode.distributed.internal.MembershipListener` interface to simplify the event handler method signatures by
-using an appropriate `MembershipEvent` type to encapsulate the actors in the event.
+The abstract `MembershipListenerAdapter` class implements {geode-name}'s `org.apache.geode.distributed.internal.MembershipListener` interface
+to simplify the event handler method signatures by using an appropriate `MembershipEvent` type
+to encapsulate the actors in the event.
 
 The abstract `MembershipEvent` class is further subclassed to represent specific membership event types that occur
 within the {geode-name} system:
