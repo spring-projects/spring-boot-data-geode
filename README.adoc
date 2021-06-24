@@ -1,8 +1,8 @@
 :spring-docs: https://docs.spring.io/spring-framework/docs/current/reference/html/
 :sbdg-docs: https://docs.spring.io/spring-boot-data-geode-build/current/reference/html5/
 :sbdg-javadoc: https://docs.spring.io/spring-boot-data-geode-build/current/api/
-:sbdg-version: 1.4.5
-:spring-boot-version: 2.4.5
+:sbdg-version: 1.5.1
+:spring-boot-version: 2.5.1
 :geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :geode-name: Apache Geode
 :gemfire-name: VMware Tanzu GemFire
