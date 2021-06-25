@@ -1,8 +1,8 @@
 :spring-docs: https://docs.spring.io/spring-framework/docs/current/reference/html/
 :sbdg-docs: https://docs.spring.io/spring-boot-data-geode-build/current/reference/html5/
 :sbdg-javadoc: https://docs.spring.io/spring-boot-data-geode-build/current/api/
-:sbdg-version: 1.4.5
-:spring-boot-version: 2.4.5
+:sbdg-version: 1.5.2
+:spring-boot-version: 2.5.2
 :geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :geode-name: Apache Geode
 :gemfire-name: VMware Tanzu GemFire
@@ -74,8 +74,8 @@ The following SBDG versions are currently maintained and developed.
 
 | `current` | {sbdg-docs}[Ref Docs] | {sbdg-javadoc}[Javadoc] | {sbdg-docs}#geode-samples[Samples]
 | `1.6.0-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.6.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.6.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.6.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
-| `1.5.2-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.5.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
-| `1.5.1`| https://docs.spring.io/spring-boot-data-geode-build/1.5.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x/reference/html5/#geode-samples[Samples]
+| `1.5.3-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.5.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
+| `1.5.2`| https://docs.spring.io/spring-boot-data-geode-build/1.5.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.5.x/reference/html5/#geode-samples[Samples]
 | `1.4.9-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.4.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
 | `1.4.8` | https://docs.spring.io/spring-boot-data-geode-build/1.4.x/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.4.x/reference/html5/#geode-samples[Samples]
 | `1.3.13.BUILD-SNAPSHOT`| https://docs.spring.io/spring-boot-data-geode-build/1.3.x-SNAPSHOT/reference/html5/[Ref Docs] | https://docs.spring.io/spring-boot-data-geode-build/1.3.x-SNAPSHOT/api/[Javadoc] | https://docs.spring.io/spring-boot-data-geode-build/1.3.x-SNAPSHOT/reference/html5/#geode-samples[Samples]
