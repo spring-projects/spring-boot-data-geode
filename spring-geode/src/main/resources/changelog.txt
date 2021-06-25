@@ -14,7 +14,7 @@ Aligns SBDG with Spring Boot 2.4.8.
 * Upgrades to Spring Data 2020.0.10 (Ockham-SR10).
 * Upgrades to Spring Data for Apache Geode 2.4.10.
 * Upgrades to Spring Session BOM 2020.0.5.
-* Upgrades to Spring Session for Apache Geode 2.4.4.
+* Upgrades to Spring Session for Apache Geode 2.4.5.
 
 
 Changes in version 1.4.7 (2021-06-15)
