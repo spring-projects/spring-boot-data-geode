@@ -689,20 +689,30 @@ the embedded HTTP service in the _Manager_.
 
 The required dependencies are:
 
-.Additional Manager dependencies expressed in Gradle
+.Additional, required Manager dependencies expressed in Gradle
 [source,groovy]
 ----
 runtime "org.apache.geode:geode-http-service"
 runtime "org.apache.geode:geode-web"
-runtime "org.apache.geode:geode-pulse"
 runtime "org.springframework.boot:spring-boot-starter-jetty"
 ----
 
 The embedded HTTP service (implemented with the Eclipse Jetty Servlet Container), runs the Management (Admin) REST API,
-which is used by tooling, such as _Gfsh_, to connect to the cluster over HTTP.  In addition, it also runs the
-{apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool.
+which is used by tooling, such as _Gfsh_, to connect to the cluster over HTTP.  In addition, it also enables the
+{geode-name} {apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool (and Web application)
+to run.
 
-Even if you do not start the embedded HTTP service (Jetty Servlet Container), a _Manager_ still requires
-the `geode-http-service`, `geode-web` and `spring-boot-starter-jetty` dependencies.
-The `geode-pulse` dependency, on the contrary, is only required if you want the _Manager_ to automatically start
-the {apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool
+Even if you do not start the embedded HTTP service, a _Manager_ still requires the `geode-http-service`, `geode-web`
+and `spring-boot-starter-jetty` dependencies.
+
+Optionally, you may also include the `geode-pulse` dependency, as follows:
+
+.Additional, optional Manager depdendencies expressed in Gradle
+[source,groovy]
+----
+runtime "org.apache.geode:geode-pulse"
+----
+
+The `geode-pulse` dependency is only required if you want the _Manager_ to automatically start
+the {geode-name} {apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool.  _Pulse_ enables
+you to view the nodes of your {geode-name} cluster and monitor them in realtime.
