@@ -2,60 +2,61 @@
 == Logging
 :geode-name: Apache Geode
 
-
 {geode-name} `1.9.2` was modularized to separate its use of the Apache Log4j API to log output in Geode code from
 the underlying implementation of logging, which uses Apache Log4j as the logging provider by default.
 
-Prior to `1.9.2`, the Apache Log4j API (i.e. `log4j-api`) along with the Apache Log4j provider (i.e. `log4j-core`)
-were automatically pulled in by {geode-name} core (i.e. `org.apache.geode:geode-core`) thereby making it problematic
+Prior to `1.9.2`, the Apache Log4j API (`log4j-api`) and the Apache Log4j provider (`log4j-core`)
+were automatically pulled in by {geode-name} core (`org.apache.geode:geode-core`), thereby making it problematic
 to change logging providers when using {geode-name} in Spring Boot applications.
 
 However, now, in order to get any log output from {geode-name} whatsoever, {geode-name} requires a logging provider on
-your Spring Boot application classpath.  Consequently, this also means the old {geode-name} `Properties`,
-e.g. `log-level` no longer have any effect, regardless of whether the property (e.g. `log-level`) is specified in
-`gemfire.properties`, in Spring Boot `application.properties` or even as a JVM System Property, `-Dgemfire.log-level`.
+your Spring Boot application classpath. Consequently, this also means the old {geode-name} `Properties`
+(such as `log-level`) no longer have any effect, regardless of whether the property is specified in
+`gemfire.properties`, in Spring Boot `application.properties`, or even as a JVM System Property (`-Dgemfire.log-level`).
 
-TIP: Refer to {geode-name}'s {apache-geode-docs}/reference/topics/gemfire_properties.html[Documentation]
+TIP: See {geode-name}'s {apache-geode-docs}/reference/topics/gemfire_properties.html[documentation]
 for a complete list of valid `Properties`, including the `Properties` used to configure logging.
 
-Unfortunately, this also means the _Spring Data for {geode-name}_ (SDG)
+Unfortunately, this also means the Spring Data for {geode-name} (SDG)
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html[`@EnableLogging`]
-annotation no longer has any effect on {geode-name} logging either and is the reason it has been
+annotation no longer has any effect on {geode-name} logging either. Consequently, it has been
 https://jira.spring.io/browse/DATAGEODE-299[deprecated]. The reason `@EnableLogging` no longer has any effect on logging
-is because this annotation's attributes and associated SDG properties indirectly sets the corresponding {geode-name}
-properties, which again, are useless from {geode-name} `1.9.2` onward.
+is because this annotation's attributes and associated SDG properties indirectly set the corresponding {geode-name}
+properties, which, again, are useless from {geode-name} `1.9.2` onward.
 
-By way of example, and to make this concrete, **none** of the following approaches have any effect on
+By way of example, and to make this concrete, *none* of the following approaches have any effect on
 {geode-name} logging:
 
 .Command-line configuration
+====
 [source,txt]
 ----
 $ java -classpath ...:/path/to/MySpringBootApacheGeodeClientCacheApplication.jar -Dgemfire.log-level=DEBUG
     example.app.MySpringBootApacheGeodeClientCacheApplication
 ----
+====
 
 .Externalized configuration using {geode-name} `gemfire.properties`
+====
 [source,properties]
 ----
 # {geode-name} only/specific properties
 log-level=INFO
 ----
+====
 
 .Externalized configuration using Spring Boot `application.properties`
+====
 [source,properties]
 ----
 spring.data.gemfire.cache.log-level=DEBUG
-----
 
-Or:
-
-[source,properties]
-----
 spring.data.gemfire.logging.level=DEBUG
 ----
+====
 
 .Java configuration using SDG's `@EnableLogging` annotation
+====
 [source,java]
 ----
 @SpringBootApplication
@@ -64,66 +65,66 @@ class MySpringBootApacheGeodeClientApplication {
 	// ...
 }
 ----
+====
 
-That is to say, none of the approaches above have any effect without the **new** SBDG logging starter.
+None of the preceding approaches have any effect without the *new* SBDG logging starter.
 
 [[geode-logging-configuration]]
 === Configure {geode-name} Logging
 
 So, how do you configure logging for {geode-name}?
 
-Effectively, 3 things are required to get {geode-name} to log output:
+Effectively, three things are required to get {geode-name} to log output:
 
-1) First, you must declare a logging provider on your Spring Boot application classpath (e.g. _Logback_).
-
-2) (optional) Next, you must declare an adapter, or bridge JAR, between Log4j and your logging provider if your declared
+. You must declare a logging provider (such as Logback) on your Spring Boot application classpath.
+. (optional) You can declare an adapter (or bridge JAR) between Log4j and your logging provider if your declared
 logging provider is not Apache Log4j.
-
-For example, if you use the SLF4J API to log output from your Spring Boot application along with _Logback_ as your
-logging provider/implementation, then you must include the `org.apache.logging.log4j.log4j-to-slf4j` adapter/bridge JAR
++
+For example, if you use the SLF4J API to log output from your Spring Boot application and use Logback as your
+logging provider or implementation, you must include the `org.apache.logging.log4j.log4j-to-slf4j` adapter or bridge JAR
 dependency as well.
++
+Internally, {geode-name} uses the Apache Log4j API to log output from Geode components. Therefore, you must bridge Log4j
+to any other logging provider (such as Logback) that is not Log4j (`log4j-core`). If you use Log4j as your
+logging provider, you need not declare an adapter or bridge JAR on your Spring Boot application classpath.
+. Finally, you must supply logging provider configuration to configure loggers, appenders, log levels, and other details.
 
-Internally, {geode-name} uses the Apache Log4j API to log output from Geode components.  Therefore, you must bridge Log4j
-to any other logging provider (e.g. _Logback_) that is not Log4j (i.e. `log4j-core`).  If you are using Log4j as your
-logging provider then you do not need to declare an adapter/bridge JAR on your Spring Boot application classpath.
-
-3) Finally, you must supply logging provider configuration to configure Loggers, Appenders, log levels, etc.
-
-For example, when using _Logback_, you must provide a `logback.xml` configuration file on your Spring Boot application
-classpath, or in the filesystem.  Alternatively, you can use other means to configure your logging provider and get
+For example, when you use Logback, you must provide a `logback.xml` configuration file on your Spring Boot application
+classpath or in the filesystem. Alternatively, you can use other means to configure your logging provider and get
 {geode-name} to log output.
 
 NOTE: {geode-name}'s `geode-log4j` module covers the required configuration for steps 1-3 above and uses Apache Log4j
-(i.e. `org.apache.logging.log4j:log4j-core`) as the logging provider.  The `geode-log4j` module even provides a default,
-`log4j2.xml` configuration file to configure Loggers, Appenders and log levels for {geode-name}.
+(`org.apache.logging.log4j:log4j-core`) as the logging provider. The `geode-log4j` module even provides a default
+`log4j2.xml` configuration file to configure loggers, appenders, and log levels for {geode-name}.
 
-If you declare Spring Boot's own `org.springframework.boot:spring-boot-starter-logging` on your application classpath
-then this will cover Steps 1 and 2 above.
+If you declare Spring Boot's own `org.springframework.boot:spring-boot-starter-logging` on your application classpath,
+it covers steps 1 and 2 above.
 
-The `spring-boot-starter-logging` dependency declares _Logback_ as the logging provider and automatically adapts,
-or bridges `java.util.logging` (JUL) and Apache Log4j to SLF4J.  However, you still need to supply logging provider
-configuration, such as a `logback.xml` file for _Logback_, to configure logging not only for your Spring Boot
-application, but also for {geode-name} as well.
+The `spring-boot-starter-logging` dependency declares Logback as the logging provider and automatically adapts
+(or bridges) `java.util.logging` (JUL) and Apache Log4j to SLF4J. However, you still need to supply logging provider
+configuration (such as a `logback.xml` file for Logback) to configure logging not only for your Spring Boot
+application but for {geode-name} as well.
 
-SBDG has simplified the setup of {geode-name} logging.  Simply declare the
-`org.springframework.geode:spring-geode-starter-logging` dependency on your Spring Boot application classpath!
+SBDG has simplified the setup of {geode-name} logging. You need only declare the
+`org.springframework.geode:spring-geode-starter-logging` dependency on your Spring Boot application classpath.
 
-Unlike {geode-name}'s default Log4j XML configuration file (i.e. `log4j2.xml`), SBDG's provided `logback.xml`
-configuration file is properly parameterized enabling you to adjust log levels as well as add Appenders.
+Unlike {geode-name}'s default Log4j XML configuration file (`log4j2.xml`), SBDG's provided `logback.xml`
+configuration file is properly parameterized, letting you adjust log levels as well as add appenders.
 
-In addition, SBDG's provided _Logback_ configuration uses templates so you can compose your own logging configuration
-while still "including" snippets from SBDG's provided logging configuration metadata, such as Loggers and Appenders.
+In addition, SBDG's provided Logback configuration uses templates so that you can compose your own logging configuration
+while still "`including`" snippets from SBDG's provided logging configuration metadata, such as loggers and appenders.
 
 [[geode-logging-configuration-log-levels]]
 ==== Configuring Log Levels
 
-One of the most common logging tasks is to adjust the log-level of one or more Loggers, or the ROOT Logger.  However,
-a user may only want to adjust the log-level for specific components of his/her Spring Boot application, such as for
-{geode-name}, by setting the log-level for only the Logger that logs {geode-name} events.
+One of the most common logging tasks is to adjust the log level of one or more loggers or the root logger. However,
+you may want only to adjust the log level for specific components of your Spring Boot application, such as for
+{geode-name}, by setting the log level for only the logger that logs {geode-name} events.
 
-SBDG's _Logback_ configuration defines 3 Loggers to control the log output from {geode-name}:
+SBDG's Logback configuration defines three Loggers to control the log output from {geode-name}:
 
 .{geode-name} Loggers by name
+====
 [source,xml]
 ----
 <comfiguration>
@@ -132,114 +133,124 @@ SBDG's _Logback_ configuration defines 3 Loggers to control the log output from 
   <logger name="org.jgroups" level="${spring.boot.data.gemfire.jgroups.log.level:-ERROR}"/>
 </comfiguration>
 ----
+====
 
-The `com.gemstone.gemfire` Logger is a legacy Logger covering old GemFire bits still present in {geode-name}
-for backwards compatibility reasons. This Logger's use should be largely unnecessary.
+The `com.gemstone.gemfire` logger is a legacy Logger that covers old GemFire bits that are still present in {geode-name}
+for backwards compatibility. By default, it logs output at `INFO`. This logger's use should be largely unnecessary.
 
-The `org.apache.geode` Logger is the primary Logger used to control log output from all {geode-name} components
-during the runtime operation of {geode-name}.  Both this Logger and the legacy `com.gemstone.gemfire` Logger default
-log output to `INFO`.
+The `org.apache.geode` logger is the primary logger used to control log output from all {geode-name} components
+during the runtime operation of {geode-name}. By default, it logs output at `INFO`.
 
-The `org.jgroups` Logger is used to log output from {geode-name}'s message distribution and membership system.
+The `org.jgroups` logger is used to log output from {geode-name}'s message distribution and membership system.
 {geode-name} uses JGroups for membership and message distribution between peer members (nodes) in the cluster
-(distributed system).  By default, JGroups log messages are logged at `ERROR`.
+(distributed system). By default, JGroups logs output at `ERROR`.
 
-The log-level for the `com.gemstone.gemfire` and `org.apache.geode` Loggers are configured with the
-`spring.boot.data.gemfire.log.level` property.  The `org.jgroups` Logger is independently configured with the
+You can configure the log level for the `com.gemstone.gemfire` and `org.apache.geode` loggers by setting the
+`spring.boot.data.gemfire.log.level` property. You can independently configure the `org.jgroups` logger by setting the
 `spring.boot.data.gemfire.jgroups.log.level` property.
 
-The SBDG logging properties can be set on the command-line as JVM System Properties when running
+You can set the SBDG logging properties on the command line as JVM system properties when you run
 your Spring Boot application:
 
 .Setting the log-level from the command-line
+====
 [source,text]
 ----
 $ java -classpath ...:/path/to/MySpringBootApplication.jar -Dspring.boot.data.gemfire.log.level=DEBUG
     package.to.MySpringBootApplicationClass
 ----
+====
 
-NOTE: Setting JVM System Properties using `$ java -jar MySpringBootApplication.jar -Dspring.boot.data.gemfire.log.level=DEBUG`
+NOTE: Setting JVM system properties by using `$ java -jar MySpringBootApplication.jar -Dspring.boot.data.gemfire.log.level=DEBUG`
 is not supported by the Java Runtime Environment (JRE).
 
 Alternatively, you can configure and control {geode-name} logging in Spring Boot `application.properties`:
 
 .Setting the log-level in `application.properties`
+====
 [source,properties]
 ----
 spring.boot.data.gemfire.log.level=DEBUG
 ----
+====
 
-For backwards compatibility, SBDG additionally supports the old _Spring Data for {geode-name}_ (SDG) logging properties
-as well, using either:
+For backwards compatibility, SBDG additionally supports the old Spring Data for {geode-name} (SDG) logging properties
+as well, by using either of the following properties:
 
-`spring.data.gemfire.cache.log-level=DEBUG`
+====
+[source,properties]
+----
+spring.data.gemfire.cache.log-level=DEBUG
+spring.data.gemfire.logging.level=DEBUG
+----
+====
 
-Or:
-
-`spring.data.gemfire.logging.level=DEBUG`
-
-If you previously used either of these SDG based logging properties, they will continue to work as designed in
+If you previously used either of these SDG-based logging properties, they continue to work as designed in
 SBDG `1.3` or later.
 
 [[geode-logging-configuration-composition]]
 ==== Composing Logging Configuration
 
-As mentioned earlier, SBDG allows you to compose your own logging configuration from SBDG's default, provided _Logback_
+As mentioned earlier, SBDG lets you compose your own logging configuration from SBDG's default Logback
 configuration metadata.
 
-SBDG conveniently bundles the Loggers and Appenders from SBDG's logging starter into a template file that you can
-include into your own, custom _Logback_ XML configuration file.
+SBDG conveniently bundles the loggers and appenders from SBDG's logging starter into a template file that you can
+include into your own custom Logback XML configuration file.
 
-The _Logback_ template file appears as follows:
+The Logback template file appears as follows:
 
 .logback-include.xml
+====
 [source,xml]
 ----
 include::{starter-logging-resources-dir}/logback-include.xml[]
 ----
+====
 
-Then, this Logback configuration snippet can be included in an application-specific, _Logback_ XML configuration file
+Then you can include this Logback configuration snippet in an application-specific Logback XML configuration file,
 as follows:
 
 .logback.xml
+====
 [source,xml]
 ----
 include::{starter-logging-resources-dir}/logback.xml[]
 ----
-
+====
 
 [[geode-logging-slf4j-logback-api-support]]
-=== SLF4J & Logback API Support
+=== SLF4J and Logback API Support
 
-SBDG provides additional support when working with the SLF4J and _Logback_ APIs.  This support is available when you
+SBDG provides additional support when working with the SLF4J and Logback APIs. This support is available when you
 declare the `org.springframework.geode:spring-geode-starter-logging` dependency on your Spring Boot application
 classpath.
 
 One of the main supporting classes from the `spring-geode-starter-logger`
-is the `org.springframework.geode.logging.slf4j.logback.LogbackSupport` class.  This class provides methods to:
+is the `org.springframework.geode.logging.slf4j.logback.LogbackSupport` class. This class provides methods to:
 
-* Resolve a reference to the _Logback_ `LoggingContext`
-* Resolve the SLF4J ROOT `Logger` as a _Logback_ `Logger`
-* Lookup `Appenders` by name and required type
-* Add/Remove `Appenders` to `Loggers`
-* And even reset the state of the _Logback_ logging system, which can prove to be most useful during testing
+* Resolve a reference to the Logback `LoggingContext`.
+* Resolve the SLF4J ROOT `Logger` as a Logback `Logger`.
+* Look up `Appenders` by name and required type.
+* Add or remove `Appenders` to `Loggers`.
+* Reset the state of the Logback logging system, which can prove to be most useful during testing.
 
-`LogbackSupport` can even suppress the auto-configuration of _Logback_ performed by Spring Boot on startup,
+`LogbackSupport` can even suppress the auto-configuration of Logback performed by Spring Boot on startup, which is
 another useful utility during automated testing.
 
-In addition to the `LogbackSupport` class, SBDG also provides some custom _Logback_ `Appenders`.
+In addition to the `LogbackSupport` class, SBDG also provides some custom Logback `Appenders`.
 
 [[geode-logging-slf4j-logback-api-support-appender-composite]]
 ==== CompositeAppender
 
-The `org.springframework.geode.logging.slf4j.logback.CompositeAppender` class is an implementation of _Logback_
-`Appender` and the https://en.wikipedia.org/wiki/Composite_pattern[Composite Software Design Pattern].
+The `org.springframework.geode.logging.slf4j.logback.CompositeAppender` class is an implementation of Logback
+`Appender` and the https://en.wikipedia.org/wiki/Composite_pattern[composite software design pattern].
 
-`CompositeAppender` enables developers to compose multiple `Appenders` and use them as if they were a single `Appender`.
+`CompositeAppender` lets developers compose multiple appenders and use them as if they were a single `Appender`.
 
-For example, you could compose both the _Logback_ `ConsoleAppender` and `FileAppender` into one using:
+For example, you could compose both the Logback `ConsoleAppender` and `FileAppender` into one appender:
 
 .Composing multiple `Appenders`
+====
 [source,java]
 ----
 class LoggingConfiguration {
@@ -255,10 +266,12 @@ class LoggingConfiguration {
 
 // do something with the compositeAppender
 ----
+====
 
-You could then add the `CompositeAppender` to a "named" `Logger` by doing:
+You could then add the `CompositeAppender` to a "`named`" `Logger`:
 
 .Register `CompositeAppender` on "named" `Logger`
+====
 [source,java]
 ----
 class LoggerConfiguration {
@@ -271,26 +284,28 @@ class LoggerConfiguration {
   }
 }
 ----
+====
 
-In this case, the "named" `Logger` will log events (or log messages) to both the _Console_ and _File_ `Appenders`.
+In this case, the "`named`" `Logger` logs events (or log messages) to both the console and file appenders.
 
-It is simple to compose an array or `Iterable` of `Appenders` by using either the
+You can compose an array or `Iterable` of `Appenders` by using either the
 `CompositeAppender.compose(:Appender<T>[])` method or the `CompositeAppender.compose(:Iterable<Appender<T>>)` method.
 
 [[geode-logging-slf4j-logback-api-support-appender-delegate]]
 ==== DelegatingAppender
 
-The `org.springframework.geode.logging.slf4j.logback.DelegatingAppender` is a pass-through _Logback_ `Appender`
-implementation wrapping another _Logback_ `Appender`, or collection of `Appenders` doing actual work, like the
-`ConsoleAppender`, a `FileAppender` or a `SocketAppender`, etc.  By default, the `DelegatingAppender` delegates
-to the `NOPAppender` thereby doing no actual work.
+The `org.springframework.geode.logging.slf4j.logback.DelegatingAppender` is a pass-through Logback `Appender`
+implementation that wraps another Logback `Appender` or collection of `Appenders`, such as the
+`ConsoleAppender`, a `FileAppender`, a `SocketAppender`, or others.  By default, the `DelegatingAppender` delegates
+to the `NOPAppender`, thereby doing no actual work.
 
 By default, SBDG registers the `org.springframework.geode.logging.slfj4.logback.DelegatingAppender` with
 the ROOT `Logger`, which can be useful for testing purposes.
 
-With a reference to a `DelegatingAppender`, you can add any `Appender` as the delegate, even a `CompositeAppender`:
+With a reference to a `DelegatingAppender`, you can add any `Appender` (even a `CompositeAppender`) as the delegate:
 
 .Add `ConsoleAppender` as the "delegate" for the `DelegatingAppender`
+====
 [source,java]
 ----
 class LoggerConfiguration {
@@ -311,6 +326,7 @@ class LoggerConfiguration {
   }
 }
 ----
+====
 
 [[geode-logging-slf4j-logback-api-support-appender-string]]
 ==== StringAppender
@@ -318,13 +334,14 @@ class LoggerConfiguration {
 The `org.springframework.geode.logging.slf4j.logback.StringAppender` stores log message in-memory, appended to
 a `String`.
 
-The `StringAppender` is very useful for testing purposes.  For instance, you can use the `StringAppender` to assert that
+The `StringAppender` is useful for testing purposes. For instance, you can use the `StringAppender` to assert that
 a `Logger` used by certain application components logged messages at the appropriately configured log level while other
 log messages were not logged.
 
-For example:
+Consider the following example:
 
 .`StringAppender` in Action
+====
 [source,java]
 ----
 class ApplicationComponent {
@@ -379,9 +396,10 @@ class ApplicationComponentUnitTests {
     }
 }
 ----
+====
 
-There are many other uses for the `StringAppender` and it can be used safely in a multi-Threaded context by calling
+There are many other uses for the `StringAppender` and you can use it safely in a multi-threaded context by calling
 `StringAppender.Builder.useSynchronization()`.
 
 When combined with other SBDG provided `Appenders` in conjunction with the `LogbackSupport` class, you have a lot of
-power both in application code as well as your tests.
+power both in application code as well as in your tests.

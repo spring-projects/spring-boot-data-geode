@@ -3,27 +3,28 @@
 :geode-name: {apache-geode-name}
 
 
-Like Spring Boot itself (see {spring-boot-docs-html}/boot-features-external-config.html[here]), Spring Boot
+Like Spring Boot itself (see {spring-boot-docs-html}/boot-features-external-config.html[Spring Boot's documentation]), Spring Boot
 for {geode-name} (SBDG) supports externalized configuration.
 
 By externalized configuration, we mean configuration metadata stored in a Spring Boot
 {spring-boot-docs-html}/boot-features-external-config.html#boot-features-external-config-application-property-files[`application.properties` file],
-for instance.  Properties can even be delineated by concern, broken out into individual properties files, that are
-perhaps only enabled by a specific {spring-boot-docs-html}/boot-features-external-config.html#boot-features-external-config-profile-specific-properties[Profile].
+for instance. You can even separate concerns by addressing each concern in an individual properties file. Optionally, you could also
+enable any given property file for only a specific {spring-boot-docs-html}/boot-features-external-config.html#boot-features-external-config-profile-specific-properties[Profile].
 
-There are many other powerful things you can do, such as, but not limited to, using
+You can do many other powerful things, such as (but not limited to) using
 {spring-boot-docs-html}/boot-features-external-config.html#boot-features-external-config-placeholders-in-properties[placeholders]
 in properties, {spring-boot-docs-html}/boot-features-external-config.html#boot-features-encrypting-properties[encrypting]
-properties, and so on.  What we are particularly interested in, in this section, is
-{spring-boot-docs-html}/boot-features-external-config.html#boot-features-external-config-typesafe-configuration-properties[type-safety].
+properties, and so on. In this section, we focus particularly on
+{spring-boot-docs-html}/boot-features-external-config.html#boot-features-external-config-typesafe-configuration-properties[type safety].
 
-Like Spring Boot, Spring Boot for {geode-name} provides a hierarchy of classes used to capture configuration for several
+Like Spring Boot, Spring Boot for {geode-name} provides a hierarchy of classes that captures configuration for several
 {geode-name} features in an associated `@ConfigurationProperties` annotated class. Again, the configuration metadata is
-specified as well-known, documented properties in 1 or more Spring Boot `application.properties` files.
+specified as well-known, documented properties in one or more Spring Boot `application.properties` files.
 
-For instance, I may have configured my Spring Boot, `ClientCache` application as follows:
+For instance, a Spring Boot, `ClientCache` application might be configured as follows:
 
 .Spring Boot `application.properties` containing Spring Data properties for {geode-name}
+====
 [source,properties]
 ----
 # Spring Boot application.properties used to configure {geode-name}
@@ -43,21 +44,20 @@ spring.data.gemfire.logging.log-file=/path/to/geode.log
 
 # Configure the client's connection Pool to the servers in the cluster
 spring.data.gemfire.pool.locators=10.105.120.16[11235],boombox[10334]
-
 ----
+====
 
-There are many other properties a user may use to externalize the configuration of their Spring Boot,
-{geode-name} applications.  You may refer to the Spring Data for {geode-name} (SDG) configuration annotations
+You can use many other properties to externalize the configuration of your Spring Boot,
+{geode-name} applications. See the
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/package-frame.html[Javadoc]
-for specific configuration properties as needed.  Specifically, review the "_enabling_" annotation attributes.
+for specific configuration properties. Specifically, review the `enabling` annotation attributes.
 
-There may be cases where you require access to the configuration metadata (specified in properties)
+You may sometimes require access to the configuration metadata (specified in properties)
 in your Spring Boot applications themselves, perhaps to further inspect or act on a particular configuration setting.
-
-Of course, you can access any property using Spring's {spring-framework-javadoc}/org/springframework/core/env/Environment.html[`Environment`] abstraction,
-like so:
+You can access any property by using Spring's {spring-framework-javadoc}/org/springframework/core/env/Environment.html[`Environment`] abstraction:
 
 .Using the Spring `Environment`
+====
 [source,java]
 ----
 @Configuration
@@ -67,14 +67,16 @@ class GeodeConfiguration {
   }
 }
 ----
+====
 
-While using the `Environment` is a nice approach, you might need access to additional properties or want to access
-the property values in a type-safe manner. Therefore, it is now possible, thanks to SBDG's auto-configured
-configuration processor, to access the configuration metadata using provided `@ConfigurationProperties` classes.
+While using `Environment` is a nice approach, you might need access to additional properties or want to access
+the property values in a type-safe manner. Therefore, you can now, thanks to SBDG's auto-configured
+configuration processor, access the configuration metadata by using `@ConfigurationProperties` classes.
 
-Following on to our example above, I can now do the following:
+To add to the preceding example, you can now do the following:
 
 .Using `GemFireProperties`
+====
 [source,java]
 ----
 
@@ -92,39 +94,41 @@ class MyApplicationComponent {
   }
 }
 ----
+====
 
 Given a handle to {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/configuration/GemFireProperties.html[`GemFireProperties`],
-you can access any of the configuration properties used to configure {geode-name} in a Spring context. You simply only
-need to autowire an instance of `GemFireProperties` into your application component.
+you can access any of the configuration properties that are used to configure {geode-name} in a Spring context. You need only
+autowire an instance of `GemFireProperties` into your application component.
 
-A complete reference to the SBDG provided `@ConfigurationProperties` classes and supporting classes is available
-{spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/configuration/package-frame.html[here].
+See the complete reference for the {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/configuration/package-frame.html[SBDG `@ConfigurationProperties` classes and supporting classes].
 
 [[geode-configuration-externalized-session]]
 === Externalized Configuration of Spring Session
 
-The same capability applies to accessing the externalized configuration of Spring Session when using {geode-name} as
+You can access the externalized configuration of Spring Session when you use {geode-name} as
 your (HTTP) Session state caching provider.
 
-In this case, you simply only need to acquire a reference to an instance of the
+In this case, you need only acquire a reference to an instance of the
 {spring-boot-data-geode-javadoc}/org/springframework/geode/boot/autoconfigure/configuration/SpringSessionProperties.html[`SpringSessionProperties`]
 class.
 
-As before, you would specify Spring Session for {geode-name} (SSDG) properties as follows:
+As shown earlier in this chapter, you can specify Spring Session for {geode-name} (SSDG) properties as follows:
 
 .Spring Boot `application.properties` for Spring Session using {geode-name} as the (HTTP) Session state caching provider
+====
 [source,properties]
 ----
 # Spring Boot application.properties used to configure {geode-name} as a Session state caching provider in Spring Session
 
 spring.session.data.gemfire.session.expiration.max-inactive-interval-seconds=300
 spring.session.data.gemfire.session.region.name=UserSessions
-
 ----
+====
 
-Then, in your application:
+Then, in your application, you can do something similar to the following example:
 
 .Using `SpringSessionProperties`
+====
 [source,java]
 ----
 @Component
@@ -141,3 +145,4 @@ class MyApplicationComponent {
   }
 }
 ----
+====

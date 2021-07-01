@@ -5,72 +5,74 @@
 :pcc-name: Pivotal Cloud Cache
 :pcf-name: Pivotal CloudFoundry
 
-
-NOTE: As of the VMware, Inc acquisition of Pivotal Software, Inc, {pcf-name} (PCF) is now known as VMware Tanzu
+NOTE: As of the VMware, Inc., acquisition of Pivotal Software, Inc., {pcf-name} (PCF) is now known as VMware Tanzu
 Application Service (TAS) for VMs. Also, {pcc-name} (PCC) has been rebranded as VMware Tanzu GemFire for VMS.
 This documentation will eventually be updated to reflect the rebranding.
 
-In most cases, when you deploy (i.e. "_push_") your Spring Boot applications to {pcf-name} (PCF) you will bind your app
-to 1 or more instances of the {pcc-name} (PCC) service.
+In most cases, when you deploy (that is, "`push`") your Spring Boot applications to {pcf-name} (PCF), you bind your app
+to one or more instances of the {pcc-name} (PCC) service.
 
 In a nutshell, {pivotal-cloudcache-website}[{pcc-name}] (PCC) is a managed version of
-{pivotal-gemfire-website}[Pivotal GemFire] running in {pivotal-cloudfoundry-website}[{pcf-name}] (PCF).
-When running in or across cloud environments (e.g. AWS, Azure, GCP or PWS), PCC with PCF offers several advantages
+{pivotal-gemfire-website}[Pivotal GemFire] that runs in {pivotal-cloudfoundry-website}[{pcf-name}] (PCF).
+When running in or across cloud environments (such as AWS, Azure, GCP, or PWS), PCC with PCF offers several advantages
 over trying to run and manage your own standalone {geode-name} clusters. It handles many of the infrastructure-related,
-operational concerns so you do not have to.
+operational concerns so that you need not do so.
 
 [[cloudfoundry-cloudcache-security-auth-runtime-user-configuration]]
 === Running Spring Boot applications as a specific user
 
-By default, Spring Boot applications run as a "_cluster_operator_" Role-based user in {pcf-name} when the app is bound
+By default, Spring Boot applications run as a `cluster_operator` role-based user in {pcf-name} when the app is bound
 to a {pcc-name} service instance.
 
-A "_cluster_operator_" has full system privileges (i.e. Authorization) to do whatever that user wishes to involving
-the PCC service instance.  A "_cluster_operator_" has read/write access to all the data, can modify the schema
-(e.g. create/destroy Regions, add/remove Indexes, change eviction or expiration policies, etc), start and stop servers
+A `cluster_operator` has full system privileges (that is, authorization) to do whatever that user wishes to involving
+the PCC service instance. A `cluster_operator` has read and write access to all the data, can modify the schema
+(for example, create and destroy regions, add and remove indexes, change eviction or expiration policies, and so on), start and stop servers
 in the PCC cluster, or even modify permissions.
 
-.About _cluster-operator_ as the default user
+.About cluster_operator as the default user
 ****
-1 of the reasons why Spring Boot apps default to running as a "_cluster_operator_" is to allow configuration metadata to
-be sent from the client to the server.  Enabling configuration metadata to be sent from the client to the server is a
+One of the reasons why Spring Boot apps default to running as a `cluster_operator` is to allow configuration metadata to
+be sent from the client to the server. Enabling configuration metadata to be sent from the client to the server is a
 useful development-time feature and is as simple as annotating your main `@SpringBootApplication` class with
 the `@EnableClusterConfiguration` annotation:
 
 .Using `@EnableClusterConfiguration`
+====
 [source,java]
 ----
 @SpringBootApplication
 @EnableClusterConfiguration(useHttp = true)
 class SpringBootApacheGeodeClientCacheApplication {  }
 ----
+====
 
-With `@EnableClusterConfiguration`, Region and OQL Index configuration metadata defined on the client can be sent to
-servers in the PCC cluster. {geode-name} requires matching Regions by name on both the client and servers in order for
+With `@EnableClusterConfiguration`, region and OQL index configuration, metadata that is defined on the client can be sent to
+servers in the PCC cluster. {geode-name} requires matching regions by name on both the client and the servers in order for
 clients to send and receive data to and from the cluster.
 
-For example, when you declare the Region where an application entity will be persisted using the `@Region` mapping
-annotation and additionally declare the `@EnableEntityDefinedRegions` annotation on the main `@SpringBootApplication`
-class in conjunction with the `@EnableClusterConfiguration` annotation, then not only will SBDG create the required
-client Region, but it will also send the configuration metadata for this Region to the servers in the cluster to create
-the matching, required server Region, where the data for your application entity will be managed.
+For example, when you declare the region where an application entity is persisted by using the `@Region` mapping
+annotation and declare the `@EnableEntityDefinedRegions` annotation on the main `@SpringBootApplication`
+class in conjunction with the `@EnableClusterConfiguration` annotation, not only does SBDG create the required
+client region, but it also sends the configuration metadata for this region to the servers in the cluster to create
+the matching, required server region, where the data for your application entity is managed.
 ****
 
 However...
 
 > With great power comes great responsibility. - Uncle Ben
 
-Not all Spring Boot applications using PCC will need to change the schema, or even modify data.  Rather, certain apps
-may only need read access.  Therefore, it is ideal to be able to configure your Spring Boot applications to run with
-a different user at runtime other than the auto-configured "_cluster_operator_", by default.
+Not all Spring Boot applications that PCC need to change the schema or even modify data. Rather, certain apps
+may need only read access. Therefore, it is ideal to be able to configure your Spring Boot applications to run with
+a different user at runtime other than the auto-configured `cluster_operator`, by default.
 
-A prerequisite for running a Spring Boot application using PCC with a specific user is to create a user with restricted
-permissions using {pcf-name} _AppsManager_ while provisioning the PCC service instance to which the Spring Boot app
-will be bound.
+A prerequisite for running a Spring Boot application by using PCC with a specific user is to create a user with restricted
+permissions by using {pcf-name} AppsManager while provisioning the PCC service instance to which the Spring Boot app
+is bound.
 
 Configuration metadata for the PCC service instance might appear as follows:
 
 .{pcc-name} configuration metadata
+====
 [source,json]
 ----
 {
@@ -110,48 +112,52 @@ Configuration metadata for the PCC service instance might appear as follows:
   }]
 }
 ----
+====
 
-In the PCC service instance configuration metadata above, we see a "_guest_" user with the "_read-only-user_" Role.
-If the "_read-only-user_" Role is properly configured with "read-only" permissions as the name implies, then we could
-configure our Spring Boot application to run as "_guest_" with read-only access using:
+In the PCC service instance configuration metadata shown in the preceding example, we see a `guest` user with the `read-only-user` role.
+If the `read-only-user` role is properly configured with read-only permissions as the name implies, we could
+configure our Spring Boot application to run as `guest` with read-only access:
 
 .Configuring a Spring Boot app to run as a specific user
+====
 [source,properties]
 ----
 # Spring Boot application.properties for PCF when using PCC
 
 spring.data.gemfire.security.username=guest
 ----
+====
 
-TIP: The `spring.data.gemfire.security.username` property corresponds directly to the SDG `@EnableSecurity` annotation,
+TIP: The `spring.data.gemfire.security.username` property corresponds directly to the SDG `@EnableSecurity` annotation's
 `securityUsername` attribute.
 See the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityUsername--[Javadoc]
 for more details.
 
 The `spring.data.gemfire.security.username` property is the same property used by Spring Data for {geode-name} (SDG) to
-configure the runtime user of your Spring Data application when connecting to an externally managed {geode-name} cluster.
+configure the runtime user of your Spring Data application when you connect to an externally managed {geode-name} cluster.
 
-In this case, SBDG simply uses the configured username to lookup the authentication credentials of the user to set
-the username and password used by the Spring Boot, `ClientCache` app when connecting to PCC while running in PCF.
+In this case, SBDG uses the configured username to look up the authentication credentials of the user to set
+the username and password used by the Spring Boot `ClientCache` app when connecting to PCC while running in PCF.
 
-If the username is not valid, then an `IllegalStateException` is thrown.
+If the username is not valid, an `IllegalStateException` is thrown.
 
-By using {spring-boot-docs-html}/#boot-features-profiles[Spring Profiles], it would be a simple matter to configure
+By using {spring-boot-docs-html}/#boot-features-profiles[Spring profiles], it would be a simple matter to configure
 the Spring Boot application to run with a different user depending on environment.
 
 See the {pcc-name} documentation on {pivotal-cloudcache-docs}/security.html[Security] for configuring users with
-assigned roles & permissions.
+assigned roles and permissions.
 
 [[cloudfoundry-cloudcache-security-auth-autoconfiguration-override]]
 ==== Overriding Authentication Auto-configuration
 
-It should be generally understood that _auto-configuration_ for client authentication is only available for managed
-environments, like {pcf-name}.  When running in externally managed environments, you must explicitly set a username
-and password to authenticate, as described <<geode-security-auth-clients-non-managed,here>>.
+It should be generally understood that auto-configuration for client authentication is available only for managed
+environments, such as {pcf-name}. When running in externally managed environments, you must explicitly set a username
+and password to authenticate, as described in <<geode-security-auth-clients-non-managed>>.
 
-To completely override the _auto-configuration_ of client authentication, simply set both a username and password:
+To completely override the auto-configuration of client authentication, you can set both a username and a password:
 
 .Overriding Security Authentication Auto-configuration with explicit username and password
+====
 [source,txt]
 ----
 # Spring Boot application.properties
@@ -159,9 +165,10 @@ To completely override the _auto-configuration_ of client authentication, simply
 spring.data.gemfire.security.username=MyUser
 spring.data.gemfire.security.password=MyPassword
 ----
+====
 
-In this case, SBDG's _auto-configuration_ for authentication is effectively disabled and security credentials
-will not be extracted from the environment.
+In this case, SBDG's auto-configuration for authentication is effectively disabled and security credentials
+are not extracted from the environment.
 
 [[cloudfoundry-cloudcache-serviceinstance-targeting]]
 === Targeting Specific {pcc-name} Service Instances
@@ -169,43 +176,46 @@ will not be extracted from the environment.
 It is possible to provision multiple instances of the {pcc-name} service in your {pcf-name} environment. You can then
 bind multiple PCC service instances to your Spring Boot app.
 
-However, Spring Boot for {geode-name} (SBDG) will only auto-configure 1 PCC service instance for your Spring Boot
-application. This does not mean it is not possible to use multiple PCC service instances with your Spring Boot app,
-just that SBDG only "_auto-configures_" 1 service instance for you.
+However, Spring Boot for {geode-name} (SBDG) only auto-configures one PCC service instance for your Spring Boot
+application. This does not mean that it is not possible to use multiple PCC service instances with your Spring Boot app,
+just that SBDG only auto-configures one service instance for you.
 
-You must select which PCC service instance your Spring Boot app will auto-configure for you automatically when you have
+You must select which PCC service instance your Spring Boot app automatically auto-configures for you when you have
 multiple instances and want to target a specific PCC service instance to use.
 
 To do so, declare the following SBDG property in Spring Boot `application.properties`:
 
 .Spring Boot application.properties targeting a specific PCC service instance by name
+====
 [source,properties]
 ----
 # Spring Boot application.properties
 
 spring.boot.data.gemfire.cloud.cloudfoundry.service.cloudcache.name=pccServiceInstanceTwo
 ----
+====
 
 The `spring.boot.data.gemfire.cloud.cloudfoundry.service.cloudcache.name` property tells SBDG which PCC service instance
 to auto-configure.
 
-If the named PCC service instance identified by the property does not exist, then SBDG will throw
+If the PCC service instance identified by the property does not exist, SBDG throws
 an `IllegalStateException` stating the PCC service instance by name could not be found.
 
 If you did not set the property and your Spring Boot app is bound to multiple PCC service instances,
-then SBDG will auto-configure the first PCC service instance it finds by name, alphabetically.
+SBDG auto-configures the first PCC service instance it finds by name, alphabetically.
 
-If you did not set the property and no PCC service instance is found, then SBDG will log a warning.
+If you did not set the property and no PCC service instance is found, SBDG logs a warning.
 
 [[cloudfoundry-cloudcache-multiinstance-using]]
 === Using Multiple {pcc-name} Service Instances
 
-If you want to use multiple PCC service instances with your Spring Boot application, then you need to configure
+If you want to use multiple PCC service instances with your Spring Boot application, you need to configure
 multiple connection `Pools` connected to each PCC service instance used by your Spring Boot application.
 
 The configuration would be similar to the following:
 
 .Multiple {pcc-name} Service Instance Configuration
+====
 [source,java]
 ----
 @Configuration
@@ -219,11 +229,13 @@ class PccConfiguration {
   // ...
 }
 ----
+====
 
 You would then externalize the configuration for the individually declared `Pools` in Spring Boot
 `application.properties`:
 
 .Configuring Pool Locator connection endpoints
+====
 [source,properties]
 ----
 # Spring Boot `application.properties`
@@ -232,18 +244,20 @@ spring.data.gemfire.pool.pccone.locators=pccOneHost1[port1], pccOneHost2[port2],
 
 spring.data.gemfire.pool.pcctwo.locators=pccTwoHost1[port1], pccTwoHost2[port2], ..., pccTwoHostN[portN]
 ----
+====
 
 NOTE: Though less common, you can also configure the `Pool` of connections to target specific servers in the cluster
-using the `spring.data.gemfire.pool.<named-pool>.severs` property.
+by setting the `spring.data.gemfire.pool.<named-pool>.severs` property.
 
-TIP: Keep in mind that properties in Spring Boot `application.properties` can refer to other properties like so:
-`property=$\{otherProperty}`.  This allows you to further externalize properties using Java System properties
-or Environment Variables.
+TIP: Keep in mind that properties in Spring Boot `application.properties` can refer to other properties:
+`property=$\{otherProperty}`. This lets you further externalize properties by using Java system properties
+or environment variables.
 
-Of course, a client Region is then assigned the Pool of connections that are used to send data to/from
+A client region is then assigned the pool of connections that are used to send data to and from
 the specific PCC service instance (cluster):
 
-.Assigning a Pool to a client Region
+.Assigning a pool to a client region
+====
 [source,java]
 ----
 @Configuration
@@ -263,63 +277,67 @@ class GeodeConfiguration {
   }
 }
 ----
+====
 
-You can configure as many Pools and client Regions as needed by your application.  Again, the `Pool` determines
-which {pcc-name} service instance and cluster the data for the client Region will reside.
+You can configure as many pools and client regions as  your application needs. Again, the `Pool` determines
+the {pcc-name} service instance and cluster in which the data for the client region resides.
 
-NOTE: By default, SBDG configures all `Pools` declared in a Spring Boot, `ClientCache` application to connect to
-and use a single PCC service instance.  This may be a targeted PCC service instance when using the
+NOTE: By default, SBDG configures all `Pools` declared in a Spring Boot `ClientCache` application to connect to
+and use a single PCC service instance. This may be a targeted PCC service instance when you use the
 `spring.boot.data.gemfire.cloud.cloudfoundry.service.cloudcache.name` property
-as discussed <<cloudfoundry-cloudcache-multiinstance-using,above>>.
+as discussed <<cloudfoundry-cloudcache-multiinstance-using,earlier>>.
 
 [[cloudfoundry-geode]]
-=== Hybrid {pcf-name} & {geode-name} Spring Boot Applications
+=== Hybrid {pcf-name} and {geode-name} Spring Boot Applications
 
-Sometimes, it is desirable to deploy (i.e. "_push_") and run your Spring Boot applications in {pcf-name}, but still
+Sometimes, it is desirable to deploy (that is, "`push`") and run your Spring Boot applications in {pcf-name} but still
 connect your Spring Boot applications to an externally managed, standalone {geode-name} cluster.
 
-Spring Boot for {geode-name} (SBDG) makes this a non-event and honors its "_little to no code or configuration changes
-necessary_" goal, regardless of your runtime choice, "_it should just work!_"
+Spring Boot for {geode-name} (SBDG) makes this a non-event and honors its "`little to no code or configuration changes
+necessary`" goal. Regardless of your runtime choice, it should "`just work!`"
 
-To help guide you through this process, we will cover the following topics:
+To help guide you through this process, we cover the following topics:
 
-1. Install and Run PCFDev.
-2. Start an {geode-name} cluster.
-3. Create a User-Provided Service (CUPS).
-4. Push and Bind a Spring Boot application.
-5. Run the Spring Boot application.
+. Install and Run PCFDev.
+. Start an {geode-name} cluster.
+. Create a User-Provided Service (CUPS).
+. Push and Bind a Spring Boot application.
+. Run the Spring Boot application.
 
 [[cloudfoundry-geode-pcfdev]]
 ==== Running PCFDev
 
-For this exercise, we will be using https://pivotal.io/pcf-dev[PCF Dev].
+For this exercise, we use https://pivotal.io/pcf-dev[PCF Dev].
 
-PCF Dev, much like PCF, is an elastic application runtime for deploying, running and managing your Spring Boot
-applications. However, it does so in the confines of your local development environment, i.e. your workstation.
+PCF Dev, much like PCF, is an elastic application runtime for deploying, running, and managing your Spring Boot
+applications. However, it does so in the confines of your local development environment -- that is, your workstation.
 
-Additionally, PCF Dev provides several services out-of-the-box, such as MySQL, Redis and RabbitMQ.  These services
-can be bound and used by your Spring Boot application to accomplish its tasks.
+Additionally, PCF Dev provides several services, such as MySQL, Redis, and RabbitMQ.
+You Spring Boot application can bind and use these services to accomplish its tasks.
 
-However, PCF Dev lacks the {pcc-name} service that is available in PCF. This is actually ideal for this little exercise
+However, PCF Dev lacks the {pcc-name} service that is available in PCF. This is actually ideal for this exercise,
 since we are trying to build and run Spring Boot applications in a PCF environment but connect to an externally managed,
 standalone {geode-name} cluster.
 
-As a prerequisite, you will need to follow the steps outlined in the
+As a prerequisite, you need to follow the steps outlined in the
 https://pivotal.io/platform/pcf-tutorials/getting-started-with-pivotal-cloud-foundry-dev/introduction[tutorial]
-to get PCF Dev setup and running on your workstation.
+to get PCF Dev set up and running on your workstation.
 
-To run PCF Dev, you will execute the following `cf` CLI command, replacing the path to the TGZ file
+To run PCF Dev, execute the following `cf` CLI command, replacing the path to the TGZ file
 with the file you acquired from the https://network.pivotal.io/products/pcfdev[download]:
 
 .Start PCF Dev
+====
 [source,txt]
 ----
 $ cf dev start -f ~/Downloads/Pivotal/CloudFoundry/Dev/pcfdev-v1.2.0-darwin.tgz
 ----
+====
 
-You should see output similar to:
+You should see output similar to the following:
 
 .Running PCF Dev
+====
 [source,txt]
 ----
 Downloading Network Helper...
@@ -360,34 +378,38 @@ Deploying Apps-Manager...
  	To deploy a particular service, please run:
  	    cf dev deploy-service <service-name> [Available services: mysql,redis,rabbitmq,scs]
 ----
+====
 
 To use the `cf` CLI tool, you must login to the PCF Dev environment:
 
 .Login to PCF Dev using `cf` CLI
+====
 [source,txt]
 ----
 $ cf login -a https://api.dev.cfdev.sh --skip-ssl-validation
 ----
+====
 
 You can also access the https://apps.dev.cfdev.sh/[PCF Dev Apps Manager] tool from your Web browser at the following URL:
 
 https://apps.dev.cfdev.sh/
 
-Apps Manager provides a nice UI to manage your org, space, services and apps.  It lets you push and update apps,
-create services, bind apps to the services and start and stop your deployed applications, among many other things.
+Apps Manager provides a nice UI to manage your org, space, services, and apps. It lets you push and update apps,
+create services, bind apps to the services, and start and stop your deployed applications, among many other things.
 
 [[cloudfoundry-geode-cluster]]
 ==== Running an {geode-name} Cluster
 
-Now that PCF Dev is setup and running, we need to start an external, standalone {geode-name} cluster that our Spring Boot
-application will connect to and use to manage its data.
+Now that PCF Dev is set up and running, you need to start an external, standalone {geode-name} cluster to which our Spring Boot
+application connects and use it to manage its data.
 
-You will need to install a {apache-geode-website}/releases/[distribution] of {geode-name} on your workstation.
-Then you must set the `$GEODE` environment variable.  It is also convenient to add `$GEODE/bin` to your system `$PATH`.
+You need to install a {apache-geode-website}/releases/[distribution] of {geode-name} on your workstation.
+Then you must set the `$GEODE` environment variable. It is also convenient to add `$GEODE/bin` to your system `$PATH`.
 
 Afterward, you can launch the Geode Shell (_Gfsh_) tool:
 
 .Running Gfsh
+====
 [source,txt]
 ----
 $ echo $GEODE
@@ -403,28 +425,32 @@ $ gfsh
 Monitor and Manage Apache Geode
 gfsh>
 ----
+====
 
-We have conveniently provided the _Gfsh_ shell script used to start the {geode-name} cluster:
+We have provided the Gfsh shell script that you can use to start the {geode-name} cluster:
 
 .Gfsh shell script to start the {geode-name} cluster
+====
 [source,txt]
 ----
 include::{docs-resources-dir}/geode/bin/start-cluster.gfsh[]
 ----
+====
 
-The `start-cluster.gfsh` shell script starts one Geode Locator and one Geode Server.
+The `start-cluster.gfsh` shell script starts one Geode locator and one Geode server.
 
-A Locator is used by clients to discover and connect to servers in the cluster to manage its data. A Locator
-is also used by new servers joining a cluster as a peer member, which allows the cluster to be elastically scaled-out
-(or scaled-down, as needed). A Geode Server stores the data for the application.
+A locator is used by clients to discover and connect to servers in the cluster to manage its data. A locator
+is also used by new servers that join a cluster as peer members, which lets the cluster be elastically scaled out
+(or scaled down, as needed). A Geode server stores the data for the application.
 
-You can start as many Locators or Servers as necessary to meet the availability and load demands of your application.
-Obviously, the more Locators and Servers your cluster has, the more resilient it is to failure.  However, you should
-size your cluster accordingly, based on your application's needs since there is overhead relative to the cluster size.
+You can start as many locators or servers as necessary to meet the availability and load demands of your application.
+The more locators and servers your cluster has, the more resilient it is to failure. However, you should
+size your cluster accordingly, based on your application's needs, since there is overhead relative to the cluster size.
 
-You will see output similar to the following when starting the Locator and Server:
+You see output similar to the following when starting the locator and server:
 
 .Starting the {geode-name} cluster
+====
 [source,txt]
 ----
 gfsh>start locator --name=LocatorOne --log-level=config --classpath=/Users/jblum/pivdev/spring-boot-data-geode/apache-geode-extensions/build/libs/apache-geode-extensions-1.1.0.BUILD-SNAPSHOT.jar --J=-Dgemfire.security-manager=org.springframework.geode.security.TestSecurityManager --J=-Dgemfire.http-service-port=8080
@@ -462,10 +488,12 @@ Log File: /Users/jblum/pivdev/lab/ServerOne/ServerOne.log
 JVM Arguments: -Dgemfire.default.locators=10.99.199.24[10334] -Dgemfire.security-username=admin -Dgemfire.start-dev-rest-api=false -Dgemfire.security-password=******** -Dgemfire.use-cluster-configuration=true -Dgemfire.log-level=config -XX:OnOutOfMemoryError=kill -KILL %p -Dgemfire.launcher.registerSignalHandlers=true -Djava.awt.headless=true -Dsun.rmi.dgc.server.gcInterval=9223372036854775806
 Class-Path: /Users/jblum/pivdev/apache-geode-1.6.0/lib/geode-core-1.6.0.jar:/Users/jblum/pivdev/spring-boot-data-geode/apache-geode-extensions/build/libs/apache-geode-extensions-1.1.0.BUILD-SNAPSHOT.jar:/Users/jblum/pivdev/apache-geode-1.6.0/lib/geode-dependencies.jar
 ----
+====
 
 Once the cluster has been started successfully, you can list the members:
 
 .List members of the cluster
+====
 [source,txt]
 ----
 gfsh>list members
@@ -474,46 +502,52 @@ gfsh>list members
 LocatorOne | 10.99.199.24(LocatorOne:14358:locator)<ec><v0>:1024 [Coordinator]
 ServerOne  | 10.99.199.24(ServerOne:14401)<v1>:1025
 ----
+====
 
-Currently, we have not defined any Regions in which to store our application's data:
+Currently, we have not defined any regions in which to store our application's data:
 
 .No Application Regions
+====
 [source,txt]
 ----
 gfsh>list regions
 No Regions Found
 ----
+====
 
-This is deliberate since we are going to let the application drive its schema structure, both on the client (app)
-as well as on the server-side (cluster).  More on this below.
+This is deliberate, since we are going to let the application drive its schema structure, both on the client (app)
+as well as on the server side (cluster). We cover this in more detail later in this chapter.
 
 [[cloudfoundry-geode-cups]]
 ==== Creating a User-Provided Service
 
-Now that we have PCF Dev and a small {geode-name} cluster up and running, it is time to create a User-Provided Service
+Now that we have PCF Dev and a small {geode-name} cluster up and running, it is time to create a user-provided service
 to the external, standalone {geode-name} cluster that we started in <<cloudfoundry-geode-cluster,step 2>>.
 
-As mentioned, PCF Dev offers the MySQL, Redis and RabbitMQ services out-of-the-box. However, to use {geode-name} in
-the same capacity as you would {pcc-name} when running in a production-grade, PCF environment, you need to create a
-User-Provided Service for the standalone {geode-name} cluster.
+As mentioned, PCF Dev offers the MySQL, Redis and RabbitMQ services (among others). However, to use {geode-name} in
+the same capacity as you would {pcc-name} when running in a production-grade PCF environment, you need to create a
+user-provided service for the standalone {geode-name} cluster.
 
-To do so, execute the following `cf` CLI command:
+To do so, run the following `cf` CLI command:
 
 .cf cups command
+====
 [source,txt]
 ----
 $ cf cups <service-name> -t "gemfire, cloudcache, database, pivotal" -p '<service-credentials-in-json>'
 ----
+====
 
-NOTE: It is important that you specify the tags ("gemfire, cloudcache, database, pivotal") exactly as shown
-in the `cf` CLI command above.
+NOTE: It is important that you specify the tags (`gemfire`, `cloudcache`, `database`, `pivotal`) exactly as shown
+in the preceding `cf` CLI command.
 
-The argument passed to the `-p` command-line option is a JSON document (object) containing the "credentials"
-for our User-Provided Service.
+The argument passed to the `-p` command-line option is a JSON document (object) containing the credentials
+for our user-provided service.
 
 The JSON object is as follows:
 
 .User-Provided Service Crendentials JSON
+====
 [source,json]
 ----
 {
@@ -522,27 +556,31 @@ The JSON object is as follows:
 	"users": [{ "password": "<password>", "roles": [ "cluster_operator" ], "username": "<username>" }]
 }
 ----
+====
 
 The complete `cf` CLI command would be similar to the following:
 
 .Example `cf cups` command
+====
 [source,txt]
 ----
 cf cups apacheGeodeService -t "gemfire, cloudcache, database, pivotal" \
   -p '{ "locators": [ "10.99.199.24[10334]" ], "urls": { "gfsh": "https://10.99.199.24/gemfire/v1" }, "users": [{ "password": "admin", "roles": [ "cluster_operator" ], "username": "admin" }] }'
 ----
+====
 
-We replaced the `<hostname>` placeholder tag with the IP address of our external {geode-name} Locator.  The IP address
-can be found in the _Gfsh_ `start locator` output above.
+We replaced the `<hostname>` placeholder tag with the IP address of our external {geode-name} locator. You can find the IP address
+in the _Gfsh_ `start locator` output shown in the preceding example.
 
 Additionally, the `<port>` placeholder tag has been replaced with the default Locator port, `10334`,
 
 Finally, we set the `username` and `password` accordingly.
 
-TIP: Spring Boot for {geode-name} (SBDG) provides template files in the {docs-dir}/src/main/resources directory.
+TIP: Spring Boot for {geode-name} (SBDG) provides template files in the `{docs-dir}/src/main/resources` directory.
 
 Once the service has been created, you can query the details from the `cf` CLI:
 
+====
 [source,txt]
 ----
 $ cf services
@@ -563,52 +601,59 @@ bound apps:
 name            binding name   status             message
 boot-pcc-demo                  create succeeded
 ----
+====
 
 You can also view the "apacheGeodeService" from Apps Manager, starting from the `Service` tab in your org and space:
 
 image::{images-dir}/pcfdev-appsmanager-org-space-services.png[]
 
-By clicking on the "apacheGeodeService" service entry in the table you can get all the service details,
-such the bound apps:
+By clicking on the "apacheGeodeService" service entry in the table, you can get all the service details,
+such as the bound apps:
 
 image::{images-dir}/pcfdev-appsmanager-org-space-service-boundapps.png[]
 
-Configuration:
+You can also view and set the onfiguration:
 
 image::{images-dir}/pcfdev-appsmanager-org-space-service-configuration.png[]
 
-And so on.
+This brief section did not cover all the capabilities of the Apps Manager.
+We suggest you explore its UI to see all that is possible.
 
-TIP: You can learn more about CUPS in the PCF documentation,
-{pivotal-cloudfoundry-docs}/devguide/services/user-provided.html[here].
+TIP: You can learn more about CUPS in the
+{pivotal-cloudfoundry-docs}/devguide/services/user-provided.html[PCF documentation].
 
 [[cloudfoundry-geode-app]]
-==== Push & Bind a Spring Boot application
+==== Push and Bind a Spring Boot application
 
-Now it is time to push a Spring Boot application to PCF Dev and bind the app to the "apacheGeodeService".
+Now it is time to push a Spring Boot application to PCF Dev and bind the app to the `apacheGeodeService`.
 
-Any Spring Boot `ClientCache` application using SBDG will do.  For this example, we will use
-the https://github.com/jxblum/PCCDemo/tree/sbdg-doc-ref[PCCDemo] application, available in _GitHub_.
+Any Spring Boot `ClientCache` application that uses SBDG works for this purpose. For this example, we use
+the https://github.com/jxblum/PCCDemo/tree/sbdg-doc-ref[PCCDemo] application, which is available in GitHub.
 
 After cloning the project to your workstation, you must perform a build to produce the artifact to push to PCF Dev:
 
 .Build the PCCDemo app
+====
 [source,txt]
 ----
 $ mvn clean package
 ----
+====
 
-Then, you can push the app to PCF Dev with the following `cf` CLI command:
+Then you can push the app to PCF Dev with the following `cf` CLI command:
 
 .Push app to PCF Dev
+====
 [source,txt]
 ----
 $ cf push boot-pcc-demo -u none --no-start -p target/client-0.0.1-SNAPSHOT.jar
 ----
+====
 
 Once the app has been successfully deployed to PCF Dev, you can get app details:
 
 .Details for deployed app
+====
 [source,txt]
 ----
 $ cf apps
@@ -641,19 +686,23 @@ memory usage:   256M
 
 There are no running instances of this process.
 ----
+====
 
-You can either bind the PPCDemo app to the "apacheGeodeService" using the `cf` CLI command:
+You can bind the PPCDemo app to the `apacheGeodeService` using the `cf` CLI command:
 
 .Bind app to apacheGeodeService using CLI
+====
 [source,txt]
 ----
 cf bind-service boot-pcc-demo apacheGeodeService
 ----
+====
 
-Or, alternatively, you can create a YAML file (`manifest.yml` in `src/main/resources`) containing the
+Alternatively, you can create a YAML file (`manifest.yml` in `src/main/resources`) that contains the
 deployment descriptor:
 
 .Example YAML deployment descriptor file
+====
 [source,yml]
 ----
 \---
@@ -667,8 +716,9 @@ applications:
     buildpacks:
       - https://github.com/cloudfoundry/java-buildpack.git
 ----
+====
 
-You can also use Apps Manager to view app details and un/bind additional services.  Start by navigating to
+You can also use Apps Manager to view app details and bind and unbind additional services. Start by navigating to
 the `App` tab under your org and space:
 
 image::{images-dir}/pcfdev-appsmanager-org-space-apps.png[]
@@ -677,34 +727,36 @@ From there, you can click on the desired app and navigate to the `Overview`:
 
 image::{images-dir}/pcfdev-appsmanager-org-space-app-overview.png[]
 
-You can also review the app `Settings`.  Specifically, we are looking at the configuration of the app once bound to
-the "apacheGeodeService" as seen in the `VCAP_SERVICES` _Environment Variable_:
+You can also review the app `Settings`. Specifically, we are looking at the configuration of the app once it is bound to
+the `apacheGeodeService`, as seen in the `VCAP_SERVICES` environment variable:
 
 image::{images-dir}/pcfdev-appsmanager-org-space-app-settings-envvars.png[]
 
-This JSON document structure is not unlike the configuration used to bind your Spring Boot,  `ClientCache` application
-to the {pcc-name} service when deploying the same app to {pcf-name}. This is actually very key if you want to minimize
-the amount of boilerplate code and configuration changes when migrating between different CloudFoundry environments,
+This JSON document structure is not unlike the configuration used to bind your Spring Boot `ClientCache` application
+to the {pcc-name} service when deploying the same app to {pcf-name}. This is actually key if you want to minimize
+the amount of boilerplate code and configuration changes when you migrate between different CloudFoundry environments,
 even https://www.cloudfoundry.org/[Open Source CloudFoundry].
 
-Again, SBDG's entire goal is to simply the effort for you, as a developer, to build, run and manage your application,
-in whatever context your application lands, even if it changes later.  If you follow the steps in this documentation,
-that goal will be realized.
+Again, SBDG's entire goal is to simply the effort for you to build, run, and manage your application,
+in whatever context your application lands, even if it changes later. If you follow the steps in this documentation,
+you can realize that goal.
 
 [[cloudfoundry-geode-app-run]]
 ==== Running the Spring Boot application
 
 All that is left to do now is run the app.
 
-You can start the PCCDemo app from the `cf` CLI using the following command:
+You can start the PCCDemo app from the `cf` CLI by using the following command:
 
 .Start the Spring Boot app
+====
 [source,txt]
 ----
 $ cf start boot-pcc-demo
 ----
+====
 
-Alternatively, you can also start the app from Apps Manager.  This is convenient since then you can tail and monitor
+Alternatively, you can also start the app from Apps Manager. This is convenient, since you can then tail and monitor
 the application log file.
 
 image::{images-dir}/pcfdev-appsmanager-org-space-app-logs.png[]
@@ -715,14 +767,15 @@ in the upper right corner of the `APP` screen.
 image::{images-dir}/PCCDemo-app-screenshot.png[]
 
 You can navigate to any of the application Web Service, Controller endpoints.  For example, if you know the ISBN
-of a Book, you can access it from the Web browser:
+of a book, you can access it from the Web browser:
 
 image::{images-dir}/PCCDemo-app-book-by-isbn-screenshot.png[]
 
-You can also access the same data from the _Gfsh_ command-line tool.  However, the first thing to observe
-is that our application informed the cluster that it needed a Region called "Books":
+You can also access the same data from the Gfsh command-line tool. However, the first thing to observe
+is that our application informed the cluster that it needed a region called `Books`:
 
 .Books Region
+====
 [source,txt]
 ----
 gfsh>list regions
@@ -744,10 +797,12 @@ Non-Default Attributes Shared By Hosting Members
 Region | size        | 1
        | data-policy | PARTITION
 ----
+====
 
-The PCCDemo app creates fake data on startup, which we can query in _Gfsh_ like so:
+The PCCDemo app creates fake data on startup, which we can query in Gfsh:
 
 .Query Books
+====
 [source,txt]
 ----
 gfsh>query --query="SELECT book.isbn, book.title FROM /Books book"
@@ -759,18 +814,17 @@ Rows   : 1
 ------------- | ---------------------
 1235432BMF342 | The Torment of Others
 ----
+====
 
 [[cloudfoundry-geode-summary]]
 === Summary
 
-There you have it!
-
-The ability to deploy Spring Boot, {geode-name} `ClientCache` applications to {pcf-name}, yet connect your app to an
+The ability to deploy Spring Boot, {geode-name} `ClientCache` applications to {pcf-name} yet connect your app to an
 externally managed, standalone {geode-name} cluster is powerful.
 
-Indeed, this is will be a useful arrangement and stepping stone for many users as they begin their journey towards
-Cloud-Native platforms like {pcf-name} and using services like {pcc-name}.
+Indeed, this is a useful arrangement and stepping stone for many users as they begin their journey towards
+Cloud-Native platforms such as {pcf-name} and using services such as {pcc-name}.
 
-Later, when the time comes and your need is real, you can simply migrate your Spring Boot applications to a fully
-managed and production-grade {pcf-name} environment and SBDG will figure out what to do, leaving you to focus entirely
+Later, when you need to work with real (rather than sample) applications, you can migrate your Spring Boot applications to a fully
+managed and production-grade {pcf-name} environment, and SBDG figures out what to do, leaving you to focus entirely
 on your application.

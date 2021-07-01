@@ -5,37 +5,38 @@
 :vmw-tas-name: VMware Tanzu Application Service
 
 
-This chapter covers auto-configuration of Spring Session using {geode-name} to manage (HTTP) Session state in a reliable
-(consistent), highly-available (replicated) and clustered manner.
+This chapter covers auto-configuration of Spring Session with {geode-name} to manage (HTTP) session state in a reliable
+(consistent), highly available (replicated), and clustered manner.
 
 {spring-session-website}[Spring Session] provides an API and several implementations for managing a user's session
-information.  It has the ability to replace the `javax.servlet.http.HttpSession` in an application container neutral
-way along with providing Session IDs in HTTP headers to work with RESTful APIs.
+information. It has the ability to replace the `javax.servlet.http.HttpSession` in an application container-neutral
+way and provide session IDs in HTTP headers to work with RESTful APIs.
 
 Furthermore, Spring Session provides the ability to keep the HttpSession alive even when working with WebSockets
 and reactive Spring WebFlux WebSessions.
 
-A full discussion of Spring Session is beyond the scope of this document, and the reader is encouraged to learn more
+A full discussion of Spring Session is beyond the scope of this document. You can learn more
 by reading the {spring-session-docs}[docs] and reviewing the {spring-session-docs}/#samples[samples].
 
-Of course, Spring Boot for {geode-name} provides auto-configuration support to configure {geode-name}
+Spring Boot for {geode-name} provides auto-configuration support to configure {geode-name}
 as the user's session information management provider and store when {spring-session-data-gemfire-website}[Spring Session for {geode-name}]
 is on your Spring Boot application's classpath.
 
 TIP: You can learn more about Spring Session for {geode-name} in the {spring-session-data-gemfire-docs}[docs].
 
-TIP: Refer to the corresponding Sample link:guides/caching-http-session.html.html[Guide] and {github-samples-url}/caching/http-session[Code]
-to see Spring Session for {geode-name} in action!
+TIP: See the corresponding sample link:guides/caching-http-session.html.html[guide] and {github-samples-url}/caching/http-session[code]
+to see Spring Session for {geode-name} in action.
 
 [[geode-session-configuration]]
 === Configuration
 
-There is nothing special that you need to do in order to use {geode-name} as a Spring Session provider,
-managing the (HTTP) Session state of your Spring Boot application.
+You need do nothing special to use {geode-name} as a Spring Session provider,
+managing the (HTTP) session state of your Spring Boot application.
 
-Simply include the appropriate Spring Session dependency on your Spring Boot application's classpath, for example:
+To do so, include the appropriate Spring Session dependency on your Spring Boot application's classpath:
 
 .Maven dependency declaration
+====
 [source,xml]
 [subs="verbatim,attributes"]
 ----
@@ -45,11 +46,13 @@ Simply include the appropriate Spring Session dependency on your Spring Boot app
     <version>{spring-session-data-gemfire-version}</version>
   </dependency>
 ----
+====
 
 Alternatively, you may declare the provided `spring-geode-starter-session` dependency in your Spring Boot application
-Maven POM or Gradle build file:
+Maven POM (shown here) or Gradle build file:
 
 .Maven dependency declaration
+====
 [source,xml]
 [subs="verbatim,attributes"]
 ----
@@ -59,10 +62,12 @@ Maven POM or Gradle build file:
     <version>{version}</version>
   </dependency>
 ----
+====
 
-After declaring the required Spring Session dependency, then begin your Spring Boot application as you normally would:
+After declaring the required Spring Session dependency, you can begin your Spring Boot application as you normally would:
 
 .Spring Boot Application
+====
 [source,java]
 ----
 @SpringBootApplication
@@ -75,13 +80,13 @@ public class MySpringBootApplication {
   // ...
 }
 ----
+====
 
-That is it!
-
-Of course, you are free to create application-specific, Spring Web MVC `Controllers` to interact with the `HttpSession`
+You can then create application-specific Spring Web MVC `Controllers` to interact with the `HttpSession`
 as needed by your application:
 
 .Application Controller using HttpSession
+====
 [source,java]
 ----
 @Controller
@@ -93,8 +98,9 @@ class MyApplicationController {
   }
 }
 ----
+====
 
-The `HttpSession` is replaced by a Spring managed `Session` that will be stored in {geode-name}.
+The `HttpSession` is replaced by a Spring managed `Session` that is stored in {geode-name}.
 
 [[geode-session-configuration-custom]]
 === Custom Configuration
@@ -102,30 +108,30 @@ The `HttpSession` is replaced by a Spring managed `Session` that will be stored 
 By default, Spring Boot for {geode-name} (SBDG) applies reasonable and sensible defaults when configuring
 {geode-name} as the provider in Spring Session.
 
-So, for instance, by default, SBDG set the session expiration timeout to 30 minutes.  It also uses a
+For instance, by default, SBDG sets the session expiration timeout to 30 minutes. It also uses a
 `ClientRegionShortcut.PROXY` as the client Region data management policy for the {geode-name}
-Region managing the (HTTP) Session state when the Spring Boot application is using a `ClientCache`, which it does
-by <<geode-clientcache-applications, default>>.
+region that manages the (HTTP) Session state when the Spring Boot application is using a `ClientCache`, which it does
+by <<geode-clientcache-applications,default>>.
 
-However, what if the defaults are not sufficient for your application requirements?
+However, what if the defaults are not sufficient for your application requirements? In that case, see the next section.
 
 [[geode-session-configuration-custom-properties]]
 ==== Custom Configuration using Properties
 
 Spring Session for {geode-name} publishes
 {spring-session-data-gemfire-docs}/#httpsession-gemfire-configuration-properties[well-known configuration properties]
-for each of the various Spring Session configuration options when using {geode-name} as the (HTTP) Session state
+for each of the various Spring Session configuration options when you use {geode-name} as the (HTTP) session state
 management provider.
 
-You may specify any of these properties in a Spring Boot `application.properties` file to adjust Spring Session's
+You can specify any of these properties in a Spring Boot `application.properties` file to adjust Spring Session's
 configuration when using {geode-name}.
 
 In addition to the properties provided in and by Spring Session for {geode-name}, Spring Boot for {geode-name}
-also recognizes and respects the `spring.session.timeout` property as well as the `server.servlet.session.timeout`
-property as discussed {spring-boot-docs-html}/boot-features-session.html[here].
+also recognizes and respects the `spring.session.timeout` property and the `server.servlet.session.timeout`
+property, as discussed {spring-boot-docs-html}/boot-features-session.html[the Spring Boot documentation].
 
 TIP: `spring.session.data.gemfire.session.expiration.max-inactive-interval-seconds` takes precedence over
-`spring.session.timeout`, which takes precedence over `server.servlet.session.timeout`, when any combination
+`spring.session.timeout`, which takes precedence over `server.servlet.session.timeout` when any combination
 of these properties have been simultaneously configured in the Spring `Environment` of your application.
 
 [[geode-session-configuration-custom-configurer]]
@@ -133,11 +139,11 @@ of these properties have been simultaneously configured in the Spring `Environme
 
 Spring Session for {geode-name} also provides the
 {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/support/SpringSessionGemFireConfigurer.html[`SpringSessionGemFireConfigurer`]
-callback interface, which can be declared in your Spring `ApplicationContext` to programmatically control
-the configuration of Spring Session when using {geode-name}.
+callback interface, which you can declare in your Spring `ApplicationContext` to programmatically control
+the configuration of Spring Session when you use {geode-name}.
 
 The `SpringSessionGemFireConfigurer`, when declared in the Spring `ApplicationContext`, takes precedence over any of the
-Spring Session (for {geode-name}) configuration properties, and will effectively override them when both
+Spring Session (for {geode-name}) configuration properties and effectively overrides them when both
 are present.
 
 More information on using the `SpringSessionGemFireConfigurer` can be found in the
@@ -146,15 +152,16 @@ More information on using the `SpringSessionGemFireConfigurer` can be found in t
 [[geode-session-disable]]
 === Disabling Session State Caching
 
-There may be cases where you do not want your Spring Boot application to manage (HTTP) Session state using {geode-name}.
+There may be cases where you do not want your Spring Boot application to manage (HTTP) Session state by using {geode-name}.
 In certain cases, you may be using another Spring Session provider, such as Redis, to cache and manage your Spring Boot
-application's (HTTP) Session state, while, even in other cases, you do not want to use Spring Session to manage your
-(HTTP) Session state at all.  Rather, you prefer to use your Web Server's (e.g. Tomcat) `HttpSession` state management.
+application's (HTTP) Session state. In other cases, you do not want to use Spring Session to manage your
+(HTTP) Session state at all. Rather, you prefer to use your Web Server's (such as Tomcat's) `HttpSession` state management.
 
-Either way, you can specifically call out your Spring Session provider using the `spring.session.store-type` property
-in `application.properties`, as follows:
+Either way, you can specifically call out your Spring Session provider by using the `spring.session.store-type` property
+in `application.properties`:
 
 .Use Redis as the Spring Session Provider
+====
 [source,txt]
 ----
 #application.properties
@@ -162,11 +169,13 @@ in `application.properties`, as follows:
 spring.session.store-type=redis
 ...
 ----
+====
 
-If you prefer not to use Spring Session to manage your Spring Boot application's (HTTP) Session state at all, then
+If you prefer not to use Spring Session to manage your Spring Boot application's (HTTP) Session state at all, you can
 do the following:
 
 .Use Web Server Session State Management
+====
 [source,txt]
 ----
 #application.properties
@@ -174,33 +183,46 @@ do the following:
 spring.session.store-type=none
 ...
 ----
+====
 
-Again, see Spring Boot {spring-boot-docs-html}/boot-features-session.html[docs] for more details.
+Again, see the Spring Boot {spring-boot-docs-html}/boot-features-session.html[documetation] for more detail.
 
-TIP: It is possible to include multiple providers on the classpath of your Spring Boot application.  For instance,
-you might be using Redis to cache your application's (HTTP) Session state while using {geode-name} as your
-application's persistent store (_System of Record_).
+TIP: You can include multiple providers on the classpath of your Spring Boot application. For instance,
+you might use Redis to cache your application's (HTTP) Session state while using {geode-name} as your
+application's persistent store (system of record).
 
 NOTE: Spring Boot does not properly recognize `spring.session.store-type=[gemfire|geode]` even though
-Spring Boot for {geode-name} is setup to handle either of these property values
-(i.e. either "`gemfire`" or "`geode`").
+Spring Boot for {geode-name} is set up to handle either of these property values
+(that is, either `gemfire` or `geode`).
 
 [[geode-session-pcc]]
 === Using Spring Session with {pcc-name} (PCC)
 
-Whether you are using Spring Session in a Spring Boot `ClientCache` application connecting to an externally managed
-cluster of {geode-name} servers, or connecting to a cluster of servers in a {pcc-name} service instance managed by
+Whether you use Spring Session in a Spring Boot `ClientCache` application to connect to an externally managed
+cluster of {geode-name} servers or to connect to a cluster of servers in a {pcc-name} service instance managed by
 a {vmw-tas-name} (TAS) environment, the setup is the same.
 
-Spring Session for {geode-name} expects there to exist a cache Region in the cluster that will store and manage (HTTP)
+Spring Session for {geode-name} expects there to be a cache region in the cluster that can store and manage (HTTP)
 Session state when your Spring Boot application is a `ClientCache` application in a client/server topology.
 
-By default, the cache Region used to store and manage (HTTP) Session state is called "_ClusteredSpringSessions_".
+By default, the cache region used to store and manage (HTTP) Session state is called `ClusteredSpringSessions`.
 
-You can set the name of the cache Region used to store and manage (HTTP) Session state either by explicitly declaring
-the `@EnableGemFireHttpSession` annotation on your main `@SpringBootApplication` class, like so:
+We recommend that you configure the cache region name by using the well-known and documented property
+in Spring Boot `application.properties`:
+
+.Using properties
+====
+[source,properties]
+----
+spring.session.data.gemfire.session.region.name=MySessions
+----
+====
+
+Alternatively, you can set the name of the cache region used to store and manage (HTTP) Session state by explicitly declaring
+the `@EnableGemFireHttpSession` annotation on your main `@SpringBootApplication` class:
 
 .Using `@EnableGemfireHttpSession
+====
 [source,java]
 ----
 @SpringBootApplication
@@ -209,54 +231,45 @@ class MySpringBootSpringSessionApplication {
 	// ...
 }
 ----
+====
 
-Or alternatively, we recommend users to configure the cache Region name using the well-known and documented property
-in Spring Boot `application.properties`:
-
-.Using properties
-[source,properties]
-----
-spring.session.data.gemfire.session.region.name=MySessions
-----
-
-Once you decide on the cache Region name used to store and manage (HTTP) Sessions, you must create the Region in the
+Once you decide on the cache region name used to store and manage (HTTP) Sessions, you must create the region in the
 cluster somehow.
 
-On the client, this is simple since SBDG's auto-configuration will automatically create the client `PROXY` Region
-used to send/receive (HTTP) Session state between the client and server for you, when either Spring Session is on
-the application classpath (e.g. `spring-geode-starter-session`), or you explicitly declare
+On the client, doing so is simple, since SBDG's auto-configuration automatically creates the client `PROXY` region
+that is used to send and receive (HTTP) session state between the client and server for you when either Spring Session is on
+the application classpath (for example, `spring-geode-starter-session`) or you explicitly declare
 the `@EnableGemFireHttpSession` annotation on your main `@SpringBootApplication` class.
 
-However, on the server-side, you currently have a couple of options.
+However, on the server side, you currently have a couple of options.
 
-First, you can create the cache Region manually using _Gfsh_, like so:
+First, you can manually create the cache region by using Gfsh:
 
 .Create the Sessions Region using Gfsh
+====
 [source,txt]
 ----
 gfsh> create region --name=MySessions --type=PARTITION --entry-idle-time-expiration=1800
         --entry-idle-time-expiration-action=INVALIDATE
 ----
+====
 
-You must create the cache Region with the appropriate name and an expiration policy.
+You must create the cache region with the appropriate name and an expiration policy.
 
-In this case, we created an Idle Expiration Policy with a timeout of `1800 seconds` (`30 minutes`), after which,
-the entry (i.e. Session object) will be "_invalidated_".
+In this case, we created an idle expiration policy with a timeout of `1800` seconds (30 minutes), after which
+the entry (session object) `invalidated`.
 
-NOTE: Session expiration is managed by the Expiration Policy set on the cache Region used to store Session state.
-The Servlet Container's (HTTP) Session expiration configuration is not used since Spring Session is replacing
-the Servlet Container's Session management capabilities with its own and Spring Session delegates this behavior
-to the individual providers, like {geode-name}.
+NOTE: Session expiration is managed by the Expiration Policy set on the cache region that is used to store session state.
+The servlet container's (HTTP) session expiration configuration is not used, since Spring Session replaces
+the servlet container's session management capabilities with its own, and Spring Session delegates this behavior
+to the individual providers, such as {geode-name}.
 
 Alternatively, you could send the definition for the cache Region from your Spring Boot `ClientCache` application
-to the cluster using the SBDG {spring-boot-data-geode-javadoc}/org/springframework/geode/config/annotation/EnableClusterAware.html[`@EnableClusterAware`] annotation,
-which is meta-annotated with SDG's `@EnableClusterConfiguration` annotation.
-
-TIP: See the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html[Javadoc]
-on the `@EnableClusterConfiguration` annotation as well as the {spring-data-geode-docs-html}/#bootstrap-annotation-config-cluster[documentation]
-for more details.
+to the cluster by using the SBDG {spring-boot-data-geode-javadoc}/org/springframework/geode/config/annotation/EnableClusterAware.html[`@EnableClusterAware`] annotation,
+which is meta-annotated with SDG's `@EnableClusterConfiguration` annotation:
 
 .Using `@EnableClusterAware`
+====
 [source,java]
 ----
 @SpringBootApplication
@@ -265,19 +278,24 @@ class MySpringBootSpringSessionApplication {
 	// ...
 }
 ----
+====
 
-However, it is not currently possible to send Expiration Policy configuration metadata to the cluster yet.  Therefore,
-you must manually alter the cache Region to set the Expiration Policy, like so:
+TIP: See the {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html[Javadoc]
+on the `@EnableClusterConfiguration` annotation and the {spring-data-geode-docs-html}/#bootstrap-annotation-config-cluster[documentation]
+for more detail.
+
+However, you cannot currently send expiration policy configuration metadata to the cluster. Therefore,
+you must manually alter the cache region to set the expiration policy:
 
 .Using Gfsh to Alter Region
+====
 [source,txt]
 ----
 gfsh> alter region --name=MySessions --entry-idle-time-expiration=1800
         --entry-idle-time-expiration-action=INVALIDATE
 ----
+====
 
-That is it!
-
-Now your Spring Boot `ClientCache` application using Spring Session in a client/server topology is configured to store
-and manage user (HTTP) Session state in the cluster.  This works for either standalone, externally managed {geode-name}
-clusters, or when using PCC running in a {vmw-tas-name} environment.
+Now your Spring Boot `ClientCache` application that uses Spring Session in a client/server topology is configured to store
+and manage user (HTTP) session state in the cluster. This works for either standalone, externally managed {geode-name}
+clusters or when you use PCC running in a {vmw-tas-name} environment.
