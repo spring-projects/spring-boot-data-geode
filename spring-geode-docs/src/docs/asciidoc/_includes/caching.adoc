@@ -3,50 +3,50 @@
 :gemfire-name: {pivotal-gemfire-name}
 :geode-name: {apache-geode-name}
 
-
-One of the easiest, quickest and least invasive ways to get started using {geode-name} in your Spring Boot applications
-is to use {geode-name} as a {spring-framework-docs}/integration.html#cache-store-configuration[_caching provider_]
-in {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction].  SDG
+One of the easiest, quickest and least invasive ways to start using {geode-name} in your Spring Boot applications
+is to use {geode-name} as a {spring-framework-docs}/integration.html#cache-store-configuration[caching provider]
+in {spring-framework-docs}/integration.html#cache[Spring's cache abstraction]. SDG
 {spring-framework-docs}/integration.html#cache-store-configuration-gemfire[enables]
-{geode-name} to function as a _caching provider_ in Spring's Cache Abstraction.
+{geode-name} to function as a caching provider in Spring's cache abstraction.
 
 TIP: See the _Spring Data for {geode-name} Reference Guide_ for more details on the
 {spring-data-geode-docs-html}/#apis:spring-cache-abstraction[support] and {spring-data-geode-docs-html}/#bootstrap-annotation-config-caching[configuration]
-of {geode-name} as a _caching provider_ in Spring's Cache Abstraction.
+of {geode-name} as a caching provider in Spring's cache abstraction.
 
 TIP: Make sure you thoroughly understand the {spring-framework-docs}/integration.html#cache-strategies[concepts]
-behind Spring's Cache Abstraction before you continue.
+behind Spring's cache abstraction before you continue.
 
-TIP: You can also refer to the relevant section on {spring-boot-docs-html}/#boot-features-caching[Caching]
-in _Spring Boot's Reference Documentation_. _Spring Boot_ even provides _auto-configuration_ support for a few,
-simple {spring-boot-docs-html}/#_supported_cache_providers[caching providers] out-of-the-box.
+TIP: See also the relevant section on {spring-boot-docs-html}/#boot-features-caching[caching]
+in Spring Boot's reference documentation. Spring Boot even provides auto-configuration support for a few
+simple {spring-boot-docs-html}/#_supported_cache_providers[caching providers].
 
-Indeed, _caching_ can be a very effective _software design pattern_ to avoid the cost of invoking
+Indeed, caching can be an effective software design pattern to avoid the cost of invoking
 a potentially expensive operation when, given the same input, the operation yields the same output every time.
 
-Some classic examples of caching include, but are not limited to: looking up a customer by name or account number,
-looking up a book by ISBN, geocoding a physical address, caching the calculation of a person's credit score
+Some classic examples of caching include, but are not limited to, looking up a customer by name or account number,
+looking up a book by ISBN, geocoding a physical address, and caching the calculation of a person's credit score
 when the person applies for a financial loan.
 
 If you need the proven power of an enterprise-class caching solution, with strong consistency, high availability,
-low latency and multi-site (WAN) capabilities, then you should consider https://geode.apache.org/[{geode-name}],
-or alternatively, VMWare, Inc. offers a commercial solution built on {geode-name} called, {gemfire-name}.
+low latency, and multi-site (WAN) capabilities, then you should consider https://geode.apache.org/[{geode-name}].
+Alternatively, VMWare, Inc. offers a commercial solution, built on {geode-name}, called {gemfire-name}.
 
 Spring's {spring-framework-docs}/integration.html#cache-annotations[declarative, annotation-based caching] makes it
-extremely simple to get started with caching, which is as easy as annotating your application components with
+simple to get started with caching, which is as easy as annotating your application components with
 the appropriate Spring cache annotations.
 
 TIP: Spring's declarative, annotation-based caching also {spring-framework-docs}/integration.html#cache-jsr-107[supports]
 JCache (JSR-107) annotations.
 
-For example, suppose you want to cache the results of determining a person's eligibility when applying for a financial
-loan.  A person's financial status is unlikely to change in the time that the computer runs the algorithms to compute
+For example, suppose you want to cache the results of determining a person's eligibility when applying for a
+loan. A person's financial status is unlikely to change in the time that the computer runs the algorithms to compute
 a person's eligibility after all the financial information for the person has been collected and submitted for review
 and processing.
 
 Our application might consist of a financial loan service to process a person's eligibility over a given period of time:
 
 .Spring application service component applicable to caching
+====
 [source,java]
 ----
 @Service
@@ -58,34 +58,36 @@ class FinancialLoanApplicationService {
     }
 }
 ----
+====
 
 Notice the `@Cacheable` annotation declared on the `processEligibility(:Person, :Timespan)` method of our service class.
 
 When the `FinancialLoanApplicationService.processEligibility(..)` method is called, Spring's caching infrastructure
-first consults the "_EligibilityDecisions_" cache to determine if a decision has already been computed for the given
-person within the given span of time.  If the person's eligibility in the given time frame has already been determined,
-then the existing decision is returned from the cache.  Otherwise, the `processEligibility(..)` method will be invoked
-and the result of the method will be cached when the method returns, before returning the decision to the caller.
+first consults the `EligibilityDecisions` cache to determine if a decision has already been computed for the given
+person within the given span of time. If the person's eligibility in the given time frame has already been determined,
+the existing decision is returned from the cache. Otherwise, the `processEligibility(..)` method is invoked
+and the result of the method is cached when the method returns, before returning the decision to the caller.
 
-Spring Boot for {geode-name} _auto-configures_ {geode-name} as the _caching provider_ when {geode-name} is declared on
-the application classpath, and when no other _caching provider_ (e.g. Redis) has been configured.
+Spring Boot for {geode-name} auto-configures {geode-name} as the caching provider when {geode-name} is declared on
+the application classpath and when no other caching provider (such as Redis) has been configured.
 
-If Spring Boot for {geode-name} detects that another _cache provider_ has already been configured, then {geode-name}
-will not function as the _caching provider_ for the application.  This allows users to configure another store, e.g.
-Redis, as the _caching provider_ and perhaps use {geode-name} as your application's persistent store.
+If Spring Boot for {geode-name} detects that another cache provider has already been configured, {geode-name}
+does not function as the caching provider for the application. This lets you configure another store, such as
+Redis, as the caching provider and perhaps use {geode-name} as your application's persistent store.
 
 The only other requirement to enable caching in a Spring Boot application is for the declared caches (as specified
 in Spring's or JSR-107's caching annotations) to have been created and already exist, especially before the operation
 on which caching has been applied is invoked. This means the backend data store must provide the data structure
-serving as the "_cache_".  For {geode-name} this means a cache `Region`.
+that serves as the cache. For {geode-name}, this means a cache `Region`.
 
-To configure the necessary Regions backing the caches declared in Spring's cache annotations, this is as simple as
-using Spring Data for {geode-name}'s
+To configure the necessary regions that back the caches declared in Spring's cache annotations,
+use Spring Data for {geode-name}'s
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCachingDefinedRegions.html[`@EnableCachingDefinedRegions`]
 annotation.
 
-The complete Spring Boot application looks like this:
+The following listing shows a complete Spring Boot application:
 
+====
 [source,java]
 ----
 package example.app;
@@ -99,65 +101,65 @@ class FinancialLoanApplication {
     }
 }
 ----
+====
 
-TIP: The `FinancialLoanApplicationService` is picked up by Spring's classpath component scan since this class
+TIP: The `FinancialLoanApplicationService` is picked up by Spring's classpath component scan, since this class
 is annotated with Spring's `@Service` stereotype annotation.
 
-TIP: You can set the `DataPolicy` of the Region created through the `@EnableCachingDefinedRegions` annotation by
+TIP: You can set the `DataPolicy` of the region created through the `@EnableCachingDefinedRegions` annotation by
 setting the `clientRegionShortcut` to a valid enumerated value.
 
 NOTE: Spring Boot for {geode-name} does not recognize nor apply the `spring.cache.cache-names` property. Instead, you
 should use SDG's `@EnableCachingDefinedRegions` on an appropriate Spring Boot application `@Configuration` class.
 
 [[geode-caching-provider-look-aside-near-inline-multi-site]]
-=== Look-Aside Caching, Near Caching, Inline Caching and Multi-Site Caching
+=== Look-Aside Caching, Near Caching, Inline Caching, and Multi-Site Caching
 
 Four different types of caching patterns can be applied with Spring when using {geode-name} for your application caching
-needs.
+needs:
 
-The 4 primary caching patterns include:
+* Look-aside caching
+* Near caching
+* Inline caching
+* Multi-site caching
 
-* _Look-Aside Caching_
-* _Near Caching_
-* _Inline Caching_
-* _Multi-Site Caching_
+Typically, when most users think of caching, they think of look-aside caching. This is the default caching
+pattern applied by Spring's cache abstraction.
 
-Typically, when most users think of caching, they are thinking of _Look-Aside Caching_. This is the default caching
-pattern applied by _Spring's Cache Abstraction_.
-
-In a nutshell, _Near Caching_ keeps the data closer to where the data is used thereby improving on performance due to
-lower latencies when data is needed (i.e. no extra network hops). This also improves application throughput, i.e. the
+In a nutshell, near caching keeps the data closer to where the data is used, thereby improving on performance due to
+lower latencies when data is needed (no extra network hops). This also improves application throughput -- that is, the
 amount of work completed in a given period of time.
 
-Within _Inline Caching_, developers have a choice between synchronous (_Read/Write-Through_) and asynchronous
-(_Write-Behind_) configurations depending on the application use case and requirements. Synchronous, Read/Write-Through
-_Inline Caching_ is necessary if consistency is a concern.  Asynchronous, Write-Behind _Inline Caching_ is applicable
+Within inline caching_, developers have a choice between synchronous (read/write-through) and asynchronous
+(write-behind_) configurations depending on the application use case and requirements. Synchronous, read/write-through
+inline caching is necessary if consistency is a concern. Asynchronous, write-behind inline caching is applicable
 if throughput and low-latency are a priority.
 
-Within _Multi-Site Caching_, there are _Active-Passive_ and _Active-Active_ arrangements.  More details on _Multi-Site
-Caching_ will be presented in a later release.
+Within multi-site caching, there are active-passive and active-active arrangements. More details on multi-site
+caching will be presented in a later release.
 
 [[geode-caching-provider-look-aside-caching]]
 ==== Look-Aside Caching
 
-TIP: Refer to the corresponding Sample link:guides/caching-look-aside.html[Guide] and {github-samples-url}/caching/look-aside[Code]
-to see _Look-Aside Caching_ using {apache-geode-name} in action!
+TIP: See the corresponding sample link:guides/caching-look-aside.html[Guide] and {github-samples-url}/caching/look-aside[code]
+to see look-aside caching with {apache-geode-name} in action.
 
-The caching pattern demonstrated in the example above is a form of
-https://content.pivotal.io/blog/an-introduction-to-look-aside-vs-inline-caching-patterns[_Look-Aside Caching_].
+The caching pattern demonstrated in the preceding example is a form of
+https://content.pivotal.io/blog/an-introduction-to-look-aside-vs-inline-caching-patterns[look-aside caching].
 
 Essentially, the data of interest is searched for in the cache first, before calling a potentially expensive
-operation, e.g. like an operation that makes an IO or network bound request resulting in either a blocking,
-or a latency sensitive computation.
+operation, such as an operation that makes an IO- or network-bound request that results in either a blocking
+or a latency-sensitive computation.
 
-If the data can be found in the cache (stored in-memory to reduce latency) then the data is returned without ever
-invoking the expensive operation.  If the data cannot be found in the cache, then the operation must be invoked.
+If the data can be found in the cache (stored in-memory to reduce latency), the data is returned without ever
+invoking the expensive operation. If the data cannot be found in the cache, the operation must be invoked.
 However, before returning, the result of the operation is cached for subsequent requests when the the same input
-is requested again, by another caller resulting in much improved response times.
+is requested again by another caller, resulting in much improved response times.
 
-Again, typical _Look-Aside Caching_ pattern applied in your application code looks similar to the following:
+The typical look-aside caching pattern applied in your application code looks similar to the following:
 
 .Look-Aside Caching Pattern Applied
+====
 [source,java]
 ----
 @Service
@@ -178,39 +180,41 @@ class CustomerService {
   }
 }
 ----
+====
 
-In this design, the `CustomerRepository` is perhaps a JDBC or JPA/Hibernate backed implementation accessing
-the external data source (i.e. RDBMS) directly.  The `@Cacheable` annotation wraps, or "decorates",
+In this design, the `CustomerRepository` is perhaps a JDBC- or JPA/Hibernate-backed implementation that accesses
+the external data source (the RDBMS) directly. The `@Cacheable` annotation wraps, or "`decorates`",
 the `findByAccount(:Account):Customer` operation to provide caching facilities.
 
-NOTE: This operation may be expensive because it might validate the Customer's Account before looking up the Customer,
-pull multiple bits of information to retrieve the Customer record, and so on, hence the need for caching.
+NOTE: This operation may be expensive, because it might validate the customer's account before looking up the customer,
+pull multiple bits of information to retrieve the customer record, and so on -- hence the need for caching.
 
 [[geode-caching-provider-near-caching]]
 ==== Near Caching
 
-TIP: Refer to the corresponding Sample link:guides/caching-near.html[Guide] and {github-samples-url}/caching/near[Code]
-to see _Near Caching_ using {apache-geode-name} in action!
+TIP: See the corresponding sample link:guides/caching-near.html[guide] and {github-samples-url}/caching/near[code]
+to see near caching with {apache-geode-name} in action.
 
-_Near Caching_ is another pattern of caching where the cache is collocated with the application.  This is useful when
-the caching technology is configured using a client/server arrangement.
+Near caching is another pattern of caching where the cache is collocated with the application. This is useful when
+the caching technology is configured in a client/server arrangement.
 
 We already mentioned that Spring Boot for {geode-name} <<clientcache-applications.adoc#geode-clientcache-applications, provides>>
-an _auto-configured_, `ClientCache` instance, out-of-the-box, by default.  A `ClientCache` instance is most effective
-when the data access operations, including cache access, is distributed to the servers in a cluster accessible by the
-client, and in most cases, multiple clients.  This allows other cache client applications to access the same data.
-However, this also means the application will incur a network hop penalty to evaluate the presence of the data
+an auto-configured `ClientCache` instance by default. A `ClientCache` instance is most effective
+when the data access operations, including cache access, are distributed to the servers in a cluster that is accessible to the
+client and, in most cases, multiple clients. This lets other cache client applications access the same data.
+However, this also means the application incurs a network hop penalty to evaluate the presence of the data
 in the cache.
 
-To help avoid the cost of this network hop in a client/server topology, a local cache can be established, which
-maintains a subset of the data in the corresponding server-side cache (i.e. Region).  Therefore, the client cache
-only contains the data of interests to the application.  This "local" cache (i.e. client-side Region) is consulted
+To help avoid the cost of this network hop in a client/server topology, a local cache can be established to
+maintain a subset of the data in the corresponding server-side cache (that is, a region). Therefore, the client cache
+contains only the data of interest to the application. This "`local`" cache (that is, a client-side region) is consulted
 before forwarding the lookup request to the server.
 
-To enable _Near Caching_ when using either {geode-name}, simply change the Region's (i.e. the `Cache` in Spring's
-Cache Abstraction) data management policy from `PROXY` (the default) to `CACHING_PROXY`, like so:
+To enable near caching when using either {geode-name}, change the region's (that is the `Cache` in Spring's
+cache abstraction) data management policy from `PROXY` (the default) to `CACHING_PROXY`:
 
 .Enabling Near Caching using {geode-name}
+====
 [source,java]
 ----
 @SpringBootApplication
@@ -222,62 +226,64 @@ class FinancialLoanApplication {
     }
 }
 ----
+====
 
-TIP: The default, client Region data management policy is
+TIP: The default client region data management policy is
 {apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html#PROXY[`ClientRegionShortcut.PROXY`].
-As such, all data access operations are immediately forwarded to the server.
+As a result, all data access operations are immediately forwarded to the server.
 
-TIP: Also see the {geode-name} documentation concerning
-{apache-geode-docs}/developing/events/how_client_server_distribution_works.html[Client/Server Event Distribution]
-and specifically, "_Client Interest Registration on the Server_" when client CACHING_PROXY Regions to manage state
-in addition to the corresponding server-side Region.  This is necessary to receive updates on entries in the Region
-that might have been changed by other clients accessing the same data.
+TIP: See also the {geode-name} documentation concerning
+{apache-geode-docs}/developing/events/how_client_server_distribution_works.html[client/server event distribution]
+and, specifically, "`Client Interest Registration on the Server,`" which applies when you use client `CACHING_PROXY` regions to manage state
+in addition to the corresponding server-side region. This is necessary to receive updates on entries in the region
+that might have been changed by other clients that have access to the same data.
 
 [[geode-caching-provider-inline-caching]]
 ==== Inline Caching
 
-The next pattern of caching we will discuss in this chapter is _Inline Caching_.
+The next pattern of caching covered in this chapter is inline caching.
 
-There are two different configurations of _Inline Caching_ that developers can apply to their Spring Boot applications
-when using the _Inline Caching_ pattern: Synchronous (_Read/Write-Through_) and Asynchronous (_Write-Behind_).
+You can apply two different configurations of inline caching to your Spring Boot applications
+when you use the inline caching pattern: synchronous (read/write-through) and asynchronous (write-behind).
 
-NOTE: Asynchronous (currently) only offers write capabilities, from the cache to the backend, external data source.
-There is no option to asynchronously and automatically load the cache when the value becomes available in the backend,
+NOTE: Asynchronous (currently) offers only write capabilities, from the cache to the external data source.
+There is no option to asynchronously and automatically load the cache when the value becomes available in the
 external data source.
 
 [[geode-caching-provider-inline-caching-synchronous]]
 ===== Synchronous Inline Caching
 
-TIP: Refer to the corresponding Sample link:guides/caching-inline.html[Guide] and {github-samples-url}/caching/inline[Code]
-to see _Inline Caching_ using {geode-name} in action!
+TIP: See the corresponding sample link:guides/caching-inline.html[guide] and {github-samples-url}/caching/inline[code]
+to see inline caching with {geode-name} in action.
 
-When employing _Inline Caching_ and a cache miss occurs, the application service method may still not be invoked since
-a cache can be configured to invoke a loader to load the missing entry from an backend, external data source.
+When employing inline caching and a cache miss occurs, the application service method may still not be invoked, since
+a cache can be configured to invoke a loader to load the missing entry from an external data source.
 
-With {geode-name} the cache, or using {geode-name} terminology, the Region, can be configured with a
-{apache-geode-javadoc}/org/apache/geode/cache/CacheLoader.html[CacheLoader]. A `CacheLoader` is implemented to retrieve
-missing values from an external data source, which could be an RDBMS or any other type of data store (e.g. another NoSQL
-data store like Apache Cassandra, MongoDB or Neo4j), when a cache miss occurs.
+With {geode-name}, you can configure the cache (or, to use {geode-name} terminology, the region) with a
+{apache-geode-javadoc}/org/apache/geode/cache/CacheLoader.html[`CacheLoader`]. A `CacheLoader` is implemented to retrieve
+missing values from an external data source when a cache miss occurs. The external data source could be an RDBMS or any other type of data store (for example, another NoSQL
+data store, such as Apache Cassandra, MongoDB, or Neo4j).
 
 TIP: See the {geode-name} User Guide on
-{apache-geode-docs}/developing/outside_data_sources/how_data_loaders_work.html[Data Loaders] for more details.
+{apache-geode-docs}/developing/outside_data_sources/how_data_loaders_work.html[data loaders] for more details.
 
-Likewise, an {geode-name} Region can also be configured with a
-{apache-geode-javadoc}/org/apache/geode/cache/CacheWriter.html[CacheWriter].  A `CacheWriter` is responsible for writing
-an entry put into the Region to the backend data store, such as an RDBMS. This is referred to as a "_write-through_"
-operation because it is synchronous. If the backend data store fails to be updated then the entry will not be stored in
-the Region. This helps to ensure consistency between the backend data store and the {geode-name} Region.
+Likewise, you can also configure an {geode-name} region with a
+{apache-geode-javadoc}/org/apache/geode/cache/CacheWriter.html[`CacheWriter`].  A `CacheWriter` is responsible for writing
+an entry that has been put into the region to the backend data store, such as an RDBMS. This is referred to as a "`write-through`"
+operation, because it is synchronous. If the backend data store fails to be updated, the entry is not stored in
+the region. This helps to ensure consistency between the backend data store and the {geode-name} region.
 
-TIP: It is also possible to implement _Inline-Caching_ using _asynchronous_, _write-behind_ operations by registering
-an {apache-geode-javadoc}/org/apache/geode/cache/asyncqueue/AsyncEventListener.html[AsyncEventListener] on an
-{apache-geode-javadoc}/org/apache/geode/cache/asyncqueue/AsyncEventQueue.html[AEQ] attached to a server-side Region.
-You should consult the {geode-name} User Guide for more
-{apache-geode-docs}/developing/events/implementing_write_behind_event_handler.html[details]. We cover _asynchronous_,
-_write-behind_ _Inline Caching_ in the next section.
+TIP: You can also implement inline caching by using asynchronous write-behind operations by registering
+an {apache-geode-javadoc}/org/apache/geode/cache/asyncqueue/AsyncEventListener.html[`AsyncEventListener`] on an
+{apache-geode-javadoc}/org/apache/geode/cache/asyncqueue/AsyncEventQueue.html[`AsyncEventQueue`] attached to a server-side region.
+See the {geode-name} User Guide for more
+{apache-geode-docs}/developing/events/implementing_write_behind_event_handler.html[detail]. We cover asynchronous
+write-behind inline caching in the next section.
 
-The typical pattern of _Inline Caching_ when applied to application code looks similar to the following:
+The typical pattern of inline caching when applied to application code looks similar to the following:
 
 .Inline Caching Pattern Applied
+====
 [source,java]
 ----
 @Service
@@ -297,20 +303,22 @@ class CustomerService {
   }
 }
 ----
+====
 
-The main difference is, there are no Spring or JSR-107 caching annotations applied to the application's service methods
-and the `CustomerRepository` is accessing {geode-name} directly and NOT the RDBMS.
+The main difference is that no Spring or JSR-107 caching annotations are applied to the application's service methods
+and the `CustomerRepository` accesses {geode-name} directly and NOT the RDBMS.
 
 [[geode-caching-provider-inline-caching-synchronous-cacheloader-cachewriter]]
-====== Implementing CacheLoaders & CacheWriters for Inline Caching
+====== Implementing CacheLoaders and CacheWriters for Inline Caching
 
 You can use Spring to configure a `CacheLoader` or `CacheWriter` as a bean in the Spring `ApplicationContext`
-and then wire the loader and/or writer to a Region. Given the `CacheLoader` or `CacheWriter` is a Spring bean
-like any other bean in the Spring `ApplicationContext`, you can inject any `DataSource` you like into the Loader/Writer.
+and then wire the loader or writer to a region. Given that the `CacheLoader` or `CacheWriter` is a Spring bean
+like any other bean in the Spring `ApplicationContext`, you can inject any `DataSource` you like into the loader or writer.
 
-While you can configure client Regions with `CacheLoaders` and `CacheWriters`, it is typically more common to
-configure the corresponding server-side Region; for example:
+While you can configure client regions with `CacheLoaders` and `CacheWriters`, it is more common to
+configure the corresponding server-side region:
 
+====
 [source,java]
 ----
 @SpringBootApplication
@@ -358,11 +366,13 @@ class FinancialLoanApplicationServer {
     }
 }
 ----
+====
 
-Then, you would implement the {apache-geode-javadoc}/org/apache/geode/cache/CacheLoader.html[`CacheLoader`]
-and {apache-geode-javadoc}/org/apache/geode/cache/CacheWriter.html[`CacheWriter`] interfaces as appropriate:
+Then you could implement the {apache-geode-javadoc}/org/apache/geode/cache/CacheLoader.html[`CacheLoader`]
+and {apache-geode-javadoc}/org/apache/geode/cache/CacheWriter.html[`CacheWriter`] interfaces, as appropriate:
 
 .DecisionManagementSystemLoader
+====
 [source,java]
 ----
 class DecisionManagementSystemLoader implements CacheLoader<?, EligibilityDecision> {
@@ -381,14 +391,16 @@ class DecisionManagementSystemLoader implements CacheLoader<?, EligibilityDecisi
    }
 }
 ----
+====
 
 TIP: SBDG provides the `org.springframework.geode.cache.support.CacheLoaderSupport` `@FunctionalInterface` to
 conveniently implement application `CacheLoaders`.
 
-If the configured `CacheLoader` still cannot resolve the value, then the cache lookup operation results in a miss
-and the application service method will then be invoked to compute the value.
+If the configured `CacheLoader` still cannot resolve the value, the cache lookup operation results in a miss
+and the application service method is then invoked to compute the value:
 
 .DecisionManagementSystemWriter
+====
 [source,java]
 ----
 class DecisionManagementSystemWriter implements CacheWriter<?, EligibilityDecision> {
@@ -414,49 +426,49 @@ class DecisionManagementSystemWriter implements CacheWriter<?, EligibilityDecisi
   // ...
 }
 ----
+====
 
 TIP: SBDG provides the `org.springframework.geode.cache.support.CacheWriterSupport` interface to
 conveniently implement application `CacheWriters`.
 
-NOTE: Of course, your `CacheWriter` implementation can use any data access technology to interface with
-your backend data store (e.g. JDBC, Spring's `JdbcTemplate`, JPA/Hibernate, etc).  It is not limited to only using
-a `javax.sql.DataSource`.  In fact, we will present another, more useful and convenient approach to implementing
-_Inline Caching_ in the next section.
+NOTE: Your `CacheWriter` implementation can use any data access technology to interface with
+your backend data store (for example JDBC, Spring's `JdbcTemplate`, JPA with Hibernate, and others). It is not limited to using only
+a `javax.sql.DataSource`. In fact, we present another, more useful and convenient approach to implementing
+inline caching in the next section.
 
 [[geode-caching-provider-inline-caching-synchronous-using-spring-data-repositories]]
-====== Inline Caching using Spring Data Repositories
+====== Inline Caching with Spring Data Repositories
 
-Spring Boot for {geode-name} (SBDG) offers dedicated support to configure _Inline Caching_ using Spring Data
+Spring Boot for {geode-name} (SBDG) offers dedicated support to configure inline caching with Spring Data
 Repositories.
 
-This is very powerful because it allows you to:
+This is powerful, because it lets you:
 
-1. Access any backend data store supported by Spring Data (e.g. Redis for Key/Value or other data structures,
-MongoDB for Documents, Neo4j for Graphs, Elasticsearch for Search, and so on).
+* Access any backend data store supported by Spring Data (such as Redis for key-value or other data structures,
+MongoDB for documents, Neo4j for graphs, Elasticsearch for search, and so on).
 
-2. Use complex mapping strategies (e.g. ORM provided by JPA/Hibernate).
+* Use complex mapping strategies (such as ORM provided by JPA with Hibernate).
 
-It is our belief that users should be storing data where it is most easily accessible. If you are accessing
-and processing Documents, then MongoDB, Couchbase or another document store is probably going to be the most logical
-choice to manage your application's Documents.
+We believe that users should store data where it is most easily accessible. If you access
+and process documents, then MongoDB, Couchbase, or another document store is probably going to be the most logical
+choice to manage your application's documents.
 
-However, this does not mean you have to give up {geode-name} in your application/system architecture. You can leverage
+However, this does not mean that you have to give up {geode-name} in your application/system architecture. You can use
 each data store for what it is good at. While MongoDB is excellent at handling documents, {geode-name} is a highly
-valuable choice for consistency, high availability, low-latency/high-throughput, multi-site, scale-out application
+valuable choice for consistency, high availability, low-latency, high-throughput, multi-site, scale-out application
 use cases.
 
-As such, using {geode-name}'s `CacheLoader/CacheWriter` functionality provides a nice integration point between itself
+As such, using {geode-name}'s `CacheLoader` and `CacheWriter` provides a nice integration point between itself
 and other data stores to best serve your application's use case and requirements.
 
-EXAMPLE
-
-Let's say you are using JPA/Hibernate to access (store and read) data managed in an Oracle Database. Then, you can
+Suppose you use JPA and Hibernate to access (store and read) data managed in an Oracle Database. Then, you can
 configure {geode-name} to read/write-through to the backend Oracle Database when performing cache (Region) operations
 by delegating to a Spring Data JPA Repository.
 
 The configuration might look something like:
 
-.Inline Caching configuration using SBDG
+.Inline caching configuration using SBDG
+====
 [source,java]
 ----
 @SpringBootApplication
@@ -473,67 +485,69 @@ class SpringBootOracleDatabaseApacheGeodeApplication {
   }
 }
 ----
+====
 
-Out-of-the-box, SBDG provides the `InlineCachingRegionConfigurer<ENTITY, ID>` interface.
+SBDG provides the `InlineCachingRegionConfigurer<ENTITY, ID>` interface.
 
-Given a `Predicate` to express the criteria used to match the target Region by name and a Spring Data `CrudRepository`,
-the `InlineCachingRegionConfigurer` will configure and adapt the Spring Data `CrudRepository` as a `CacheLoader` and
-`CacheWriter` registered on the Region (e.g. "Customers") to enable _Inline Caching_ functionality.
+Given a `Predicate` to express the criteria used to match the target region by name and a Spring Data `CrudRepository`,
+the `InlineCachingRegionConfigurer` configure and adapts the Spring Data `CrudRepository` as a `CacheLoader` and
+`CacheWriter` registered on the region (for example, `Customers`) to enable inline caching functionality.
 
-You simply only need to declare `InlineCachingRegionConfigurer` as a bean in the Spring `ApplicationContext` and make
-the association between the Region (by name) and the appropriate Spring Data `CrudRepository`.
+You need only declare `InlineCachingRegionConfigurer` as a bean in the Spring `ApplicationContext` and make
+the association between the region (by name) and the appropriate Spring Data `CrudRepository`.
 
-In this example, we used JPA and Spring Data JPA to store/retrieve the data in the cache (Region) to/from a backend
-database.  But, you can inject any Spring Data Repository for any data store (e.g. Redis, MongoDB, etc) that supports
-the Spring Data Repository abstraction.
+In this example, we used JPA and Spring Data JPA to store and retrieve the data in the cache (region) to and from a backend
+database. However, you can inject any Spring Data repository for any data store (Redis, MongoDB, and others) that supports
+the Spring Data repository abstraction.
 
-TIP: If you only want to support one way data access operations when using _Inline Caching_, then you can use either
+TIP: If you want only to support one-way data access operations when you use inline caching, you can use either
 the `RepositoryCacheLoaderRegionConfigurer` for reads or the `RepositoryCacheWriterRegionConfigurer` for writes,
 instead of the `InlineCachingRegionConfigurer`, which supports both reads and writes.
 
-TIP: To see a similar implementation of _Inline Caching_ using a Database (In-Memory, HSQLDB Database) in action, have a
-look at this https://github.com/spring-projects/spring-boot-data-geode/blob/master/spring-geode/src/test/java/org/springframework/geode/cache/inline/database/InlineCachingWithDatabaseIntegrationTests.java[test class]
+TIP: To see a similar implementation of inline caching with a database (an in-memory HSQLDB database) in action,
+see the https://github.com/spring-projects/spring-boot-data-geode/blob/master/spring-geode/src/test/java/org/springframework/geode/cache/inline/database/InlineCachingWithDatabaseIntegrationTests.java[`InlineCachingWithDatabaseIntegrationTests`] test class
 from the SBDG test suite. A dedicated sample will be provided in a future release.
 
 [[geode-caching-provider-inline-caching-asynchronous]]
 ===== Asynchronous Inline Caching
 
-TIP: Refer to the corresponding Sample link:guides/caching-inline-async.html[Guide]
-and {github-samples-url}/caching/inline-async[Code] to see _Asynchronous Inline Caching_ using {geode-name} in action!
+TIP: See the corresponding sample link:guides/caching-inline-async.html[guide]
+and {github-samples-url}/caching/inline-async[code] to see asynchronous inline caching with {geode-name} in action.
 
-If consistency between the cache and your external, backend data source is not a concern, and you only need to write
-from the cache to the backend data store periodically, then you can employ asynchronous (_Write-Behind_) _Inline Caching_.
+If consistency between the cache and your external data source is not a concern and you need only write
+from the cache to the backend data store periodically, you can employ asynchronous (write-behind) inline caching.
 
-As the term "_Write-Behind_" implies, a write to the backend data store is asynchronous and not strictly tied to the
-cache operation. As a result, the backend data store will be in an "_eventually consistent_" state since the cache is
+As the term, "`write-behind,`" implies, a write to the backend data store is asynchronous and not strictly tied to the
+cache operation. As a result, the backend data store is in an "`eventually consistent`" state, since the cache is
 primarily used by the application at runtime to access and manage data. In this case, the backend data store is used
-to persist the state of the cache, and that of the application, at periodic intervals.
+to persist the state of the cache (and that of the application) at periodic intervals.
 
-Of course, if multiple applications are updating the backend data store concurrently, you could combine a `CacheLoader`
-to synchronously "_Read-Through_" to the backend data store and keep the cache up-to-date as well as asynchronously
-_Write-Behind_ from the cache to the backend data store when the cache is updated to eventually inform other interested
-applications of data changes. In this capacity, the backend data store is still the primary _System of Record_ (SOR).
+If multiple applications are updating the backend data store concurrently, you could combine a `CacheLoader`
+to synchronously read through to the backend data store and keep the cache up-to-date as well as asynchronously
+write behind from the cache to the backend data store when the cache is updated to eventually inform other interested
+applications of data changes. In this capacity, the backend data store is still the primary System of Record (SoR).
 
-If data processing is not time sensitive, you can gain a performance advantage from periodic, quantity and/or time-based
+If data processing is not time sensitive, you can gain a performance advantage from quantity-based or time-based
 batch updates.
 
 [[geode-caching-provider-inline-caching-asynchronous-asynceventlistener]]
 ====== Implementing an AsyncEventListener for Inline Caching
 
-If you were to configure asynchronous (_Write-Behind_) _Inline Caching_ by hand, then you would need to do all of
+If you were to configure asynchronous (write-behind) inline caching by hand, you would need to do all of
 the following yourself:
 
-1. Implement an `AsyncEventListener` to write to an external, backend data source on cache events
-2. Configure, create and register the listener with an `AsyncEventQueue` (AEQ)
-3. Create a Region serving as the source of cache events and attach the AEQ
+1. Implement an `AsyncEventListener` to write to an external data source on cache events.
+2. Configure, create, and register the listener with an `AsyncEventQueue` (AEQ).
+3. Create a region to serve as the source of cache events and attach the AEQ to the region.
 
-The advantage of this approach is you have access to and control over low-level configuration details. The disadvantage,
-of course, is with more moving parts, it is easier to mess things up.
+The advantage of this approach is that you have access to and control over low-level configuration details. The disadvantage
+is that with more moving parts, it is easier to make errors.
 
-Following on from our synchronous (_Read/Write-Through_) _Inline Caching_ examples from the prior sections above,
+Following on from our synchronous (read/write-through_) inline caching examples from the prior sections,
 our `AsyncEventListener` implementation might appear as follows:
 
 .Example `AsyncEventListener` for Async _Inline Caching_
+====
 [source,java]
 ----
 @Component
@@ -554,15 +568,17 @@ class ExampleAsyncEventListener implements AsyncEventListener {
 	}
 }
 ----
+====
 
-NOTE: Instead of injecting a `DataSource` into your `AsyncEventListener` directly, you could use JDBC,
-Spring's `JdbcTemplate`, JPA/Hibernate or another data access API/Framework. Further below, we will show how SBDG
-simplifies the `AsyncEventListener` implementation by using Spring Data _Repositories_.
+NOTE: Instead of directly injecting a `DataSource` into your `AsyncEventListener`, you could use JDBC,
+Spring's `JdbcTemplate`, JPA and Hibernate, or another data access API or framework. Later in this chapter, we show how SBDG
+simplifies the `AsyncEventListener` implementation by using Spring Data repositories.
 
-Then, we need to register this listener with a `AsyncEventQueue` (AEQ) (#2) and attach it to the target Region
-that will be the source of the cache events we want to persist asynchronously (#3):
+Then we need to register this listener with a `AsyncEventQueue` (AEQ) (step 2 from the algorithm shown earlier) and attach it to the target region
+that will be the source of the cache events we want to persist asynchronously (step 3):
 
 .Configure and Create an `AsyncEventQueue`
+====
 [source,java]
 ----
 @Configuration
@@ -606,25 +622,27 @@ class GeodeConfiguration {
     }
 }
 ----
+====
 
-While this approach affords you the developer a lot of control over the (low-level) configuration, in addition to
+While this approach affords you a lot of control over the low-level configuration, in addition to
 your `AsyncEventListener` implementation, this is a lot of boilerplate code.
 
-TIP: See the {spring-data-geode-javadoc}/org/springframework/data/gemfire/wan/AsyncEventQueueFactoryBean.html[Javadoc]
-on SDG's `AsyncEventQueueFactoryBean` for more details on the configuration of the AEQ.
+TIP: See the Javadoc on SDG's {spring-data-geode-javadoc}/org/springframework/data/gemfire/wan/AsyncEventQueueFactoryBean.html[`AsyncEventQueueFactoryBean`]
+for more detail on the configuration of the AEQ.
 
 TIP: See {geode-name}'s {apache-geode-docs}/developing/events/implementing_write_behind_event_handler.html[User Guide]
 for more details on AEQs and listeners.
 
-Fortunately, with SBDG, there is a better way!
+Fortunately, with SBDG, there is a better way.
 
 [[geode-caching-provider-inline-caching-asynchronous-using-spring-data-repositories]]
-====== Asynchronous Inline Caching using Spring Data Repositories
+====== Asynchronous Inline Caching with Spring Data Repositories
 
-The implementation and configuration of the `AsyncEventListener` as well as the AEQ shown above can be simplified
+The implementation and configuration of the `AsyncEventListener` as well as the AEQ shown in the <<geode-caching-provider-inline-caching-asynchronous-asynceventlistener,preceding section>> can be simplified
 as follows:
 
 .Using SBDG to configure Asynchronous (Write-Behind) Inline Caching
+====
 [source,java]
 ----
 @SpringBootApplication
@@ -645,61 +663,63 @@ class ExampleSpringBootApacheGeodeAsyncInlineCachingApplication {
     }
 }
 ----
+====
 
 The `AsyncInlineCachingRegionConfigurer.create(..)` method is overloaded to accept a `Predicate` in place of the `String`
-in order to express more powerful matching logic, programmatically, identifying the target Region (by name) on which to
-configure asynchronous _Inline Caching_ functionality.
+to programmatically express more powerful matching logic and identify the target region (by name) on which to
+configure asynchronous inline caching functionality.
 
-The `AsyncInlineCachingRegionConfigurer` uses the https://en.wikipedia.org/wiki/Builder_pattern[_Builder Software Design Pattern_]
+The `AsyncInlineCachingRegionConfigurer` uses the https://en.wikipedia.org/wiki/Builder_pattern[Builder software design pattern]
 and `withQueue*(..)` builder methods to configure the underlying `AsyncEventQueue` (AEQ) when the queue's configuration
 deviates from the defaults, as specified by {geode-name}.
 
-Under-the-hood, the `AsyncInlineCachingRegionConfigurer` constructs a new instance of the `RepositoryAsyncEventListener`
+Under the hood, the `AsyncInlineCachingRegionConfigurer` constructs a new instance of the `RepositoryAsyncEventListener`
 class initialized with the given Spring Data `CrudRepository`. The `RegionConfigurer` then registers the listener with
 the AEQ and attaches it to the target `Region`.
 
-With the power of Spring Boot _auto-configuration_ and SBDG, the configuration is much more concise and intuitive.
+With the power of Spring Boot auto-configuration and SBDG, the configuration is much more concise and intuitive.
 
 [[geode-caching-provider-inline-caching-asynchronous-listener]]
 ====== About `RepositoryAsyncEventListener`
 
-The SBDG `RepositoryAsyncEventListener` class is the magic sauce behind the integration of the cache with an external,
-backend data source.
+The SBDG `RepositoryAsyncEventListener` class is the magic sauce behind the integration of the cache with an external
+data source.
 
-The listener is a specialized https://en.wikipedia.org/wiki/Adapter_pattern[Adpater] that processes `AsyncEvents` by
+The listener is a specialized https://en.wikipedia.org/wiki/Adapter_pattern[adapter] that processes `AsyncEvents` by
 invoking an appropriate `CrudRepository` method based on the cache operation. The listener requires an instance of
-`CrudRepository`. As such, the listener supports any external, backend data source supported by Spring Data's
-_Repository_ abstraction.
+`CrudRepository`. The listener supports any external data source supported by Spring Data's
+repository abstraction.
 
-Of course, backend data store, data access operations (e.g. INSERT, UPDATE, DELETE, etc) triggered by cache events
+Backend data-store, data-access operations (such as INSERT, UPDATE, DELETE, and so on) triggered by cache events
 are performed asynchronously from the cache operation. This means the state of the cache and backend data store
-will be "_eventually consistent_".
+will be "`eventually consistent`".
 
-ERROR HANDLING
-
-Given the complex nature of "_eventually consistent_" systems and asynchronous concurrent processing, the
-`RepositoryAsyncEventListener` allows users to register a custom `AsyncEventErrorHandler` to handle the errors
-that occur during processing of `AsyncEvents`, perhaps due to a faulty backend data store data access operation
-(e.g. `OptimisticLockingFailureException`), in an application relevant way.
+Given the complex nature of "`eventually consistent`" systems and asynchronous concurrent processing, the
+`RepositoryAsyncEventListener` lets you register a custom `AsyncEventErrorHandler` to handle the errors
+that occur during processing of `AsyncEvents`, perhaps due to a faulty backend data-store data-access operation
+(such as `OptimisticLockingFailureException`), in an application-relevant way.
 
 The `AsyncEventErrorHandler` interface is a `java.util.function.Function` implementation and `@FunctionalInterface`
 defined as:
 
 .AsyncEventErrorHandler interface definition
+====
 [source,java]
 ----
 @FunctionalInterface
 interface AsyncEventErrorHandler implements Function<AsyncEventError, Boolean> { }
 ----
+====
 
 The `AsyncEventError` class encapsulates `AsyncEvent` along with the `Throwable` that was thrown while processing
 the event.
 
-Since the `AsyncEventErrorHandler` interface implements `Function`, then you would override the `apply(:AsyncEventError)`
+Since the `AsyncEventErrorHandler` interface implements `Function`, you should override the `apply(:AsyncEventError)`
 method to handle the error with application-specific actions. The handler returns a `Boolean` to indicate whether it was
-able to handle the error or not.
+able to handle the error or not:
 
 .Custom `AsyncEventErrorHandler` implementation
+====
 [source,java]
 ----
 class CustomAsyncEventErrorHandler implements AsyncEventErrorHandler {
@@ -720,11 +740,13 @@ class CustomAsyncEventErrorHandler implements AsyncEventErrorHandler {
     }
 }
 ----
+====
 
-It is easy to configure the `RepositoryAsyncEventListener` with your custom `AsyncEventErrorHandler` using the
-`AsyncInlineCachingRegionConfigurer`, like so:
+You can configure the `RepositoryAsyncEventListener` with your custom `AsyncEventErrorHandler` by using the
+`AsyncInlineCachingRegionConfigurer`:
 
 .Configuring a custom `AsyncEventErrorHandler`
+====
 [source,java]
 ----
 @Configuration
@@ -746,18 +768,17 @@ class GeodeConfiguration {
     }
 }
 ----
+====
 
-Also, since `AsyncEventErrorHandler` implements `Function`, you can https://en.wikipedia.org/wiki/Composite_pattern["_compose_"]
-multiple error handlers using {jdk-javadoc}/java/util/function/Function.html#andThen-java.util.function.Function-[`Function.andThen(:Function)`].
+Also, since `AsyncEventErrorHandler` implements `Function`, you can https://en.wikipedia.org/wiki/Composite_pattern["`compose`"]
+multiple error handlers by using {jdk-javadoc}/java/util/function/Function.html#andThen-java.util.function.Function-[`Function.andThen(:Function)`].
 
-SUPPORTED CACHE OPERATIONS
+By default, the `RepositoryAsyncEventListener` handles `CREATE`, `UPDATE`, and `REMOVE` cache event, entry operations.
 
-By default, the `RepositoryAsyncEventListener` handles `CREATE`, `UPDATE` and `REMOVE` cache event, entry operations.
-
-`CREATE` and `UPDATE` translates to `CrudRepository.save(entity)` where the `entity` is derived from
+`CREATE` and `UPDATE` translate to `CrudRepository.save(entity)`, where the `entity` is derived from
 `AsyncEvent.getDeserializedValue()`.
 
-`REMOVE` translates to `CrudRepository.delete(entity)` where the `entity` is derived from
+`REMOVE` translates to `CrudRepository.delete(entity)`, where the `entity` is derived from
 `AsyncEvent.getDeserializedValue()`.
 
 The cache {apache-geode-javadoc}/org/apache/geode/cache/Operation.html[`Operation`] to `CrudRepository` method is
@@ -765,11 +786,12 @@ supported by the `AsyncEventOperationRepositoryFunction` interface, which implem
 and is a `@FunctionalInterface`.
 
 This interface becomes useful if and when you want to implement `CrudRepository` method invocations for other
-`AsyncEvent` `Operations` not handled by SBDG's `RepositoryAsyncEventListener` out-of-the-box.
+`AsyncEvent` `Operations` not handled by SBDG's `RepositoryAsyncEventListener`.
 
-The `AsyncEventOperationRepositoryFunction` interface is defined as:
+The `AsyncEventOperationRepositoryFunction` interface is defined as follows:
 
 .AsyncEventOperationRepositoryFunction interface definition
+====
 [source,java]
 ----
 @FunctionalInterface
@@ -780,11 +802,12 @@ interface AsyncEventOperationRepositoryFunction<T, ID> implements Function<Async
 	}
 }
 ----
+====
 
 `T` is the class type of the entity and `ID` is the class type of the entity's identifier (ID), possibly declared with
 Spring Data's {spring-data-commons-javadoc}/org/springframework/data/annotation/Id.html[`org.springframework.data.annotation.Id`] annotation.
 
-For convenience, SBDG provides the `AbstractAsyncEventOperationRepositoryFunction` class for extension, where you would
+For convenience, SBDG provides the `AbstractAsyncEventOperationRepositoryFunction` class for extension, where you can
 provide implementations for the `cacheProcess(:AsyncEvent)` and `doRepositoryOp(entity)` methods.
 
 NOTE: The `AsyncEventOperationRepositoryFunction.apply(:AsyncEvent)` method is already implemented in terms of
@@ -796,6 +819,7 @@ cache events as well, deleting the entity from the backend data store by invokin
 method:
 
 .Handling `AsyncEvent`, `Operation.INVALIDATE`
+====
 [source,java]
 ----
 @Component
@@ -819,12 +843,14 @@ class InvalidateAsyncEventRepositoryFunction
 	}
 }
 ----
+====
 
 You can then register your user-defined, `AsyncEventOperationRepositoryFunction`
-(i.e. `InvalidateAsyncEventRepositoryFunction`) with the `RepositoryAsyncEventListener` by using the
-`AsyncInlineCachingRegionConfigurer`, like so:
+(that is, `InvalidateAsyncEventRepositoryFunction`) with the `RepositoryAsyncEventListener` by using the
+`AsyncInlineCachingRegionConfigurer`:
 
 .Configuring a user-defined `AsyncEventOperationRepositoryFunction`
+====
 [source,java]
 ----
 import org.springframework.geode.cache.RepositoryAsyncEventListener;@Configuration
@@ -852,52 +878,53 @@ class GeodeConfiguration {
     }
 }
 ----
+====
 
-This same technique can be applied to `CREATE`, `UPDATE` and `REMOVE` cache  operations as well, effectively overriding
-the default behavior for this cache operations handled by SBDG out-of-the-box.
+This same technique can be applied to `CREATE`, `UPDATE`, and `REMOVE` cache operations as well, effectively overriding
+the default behavior for these cache operations handled by SBDG.
 
 [[geode-caching-provider-inline-caching-asynchronous-region-configurer]]
 ====== About `AsyncInlineCachingRegionConfigurer`
 
-As we saw in the previous section, it is possible to intercept and post-process key components constructed
+As we saw in the previous section, you can intercept and post-process the key components that are constructed
 and configured by the `AsyncInlineCachingRegionConfigurer` class during initialization.
 
-Out-of-the-box, SBDG's allows you to intercept and post-process the `AsyncEventListener` (e.g. `RepositoryAsyncEventListener`),
-`AsyncEventQueueFactory` and even the `AsyncEventQueue`, created by the `AsyncInlineCachingRegionConfigurer`
+SBDG's lets you intercept and post-process the `AsyncEventListener` (such as `RepositoryAsyncEventListener`), the
+`AsyncEventQueueFactory` and even the `AsyncEventQueue` created by the `AsyncInlineCachingRegionConfigurer`
 (a SDG {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/RegionConfigurer.html[`RegionConfigurer`])
-during Spring `ApplicationContext`, bean initialization.
+during Spring `ApplicationContext` bean initialization.
 
-The `AsyncInlineCachingRegionConfigurer` class provides the builder methods listed below to intercept and post-process
+The `AsyncInlineCachingRegionConfigurer` class provides the following builder methods to intercept and post-process
 any of the following {geode-name} objects:
 
 * `applyToListener(:Function<AsyncEventListener, AsyncEventListener>)`
 * `applyToQueue(:Function<AsyncEventQueue, AsyncEventQueue>)`
 * `applyToQueueFactory(:Function<AsyncEventQueueFactory, AsyncEventQueueFactory>)`
 
-All of these "_apply_" methods accept a `java.util.function.Function` that "_applies_" the logic of the `Function` to
-the {geode-name} object (e.g. `AsyncEventListener`), returning the object as a result.
+All of these `apply*` methods accept a `java.util.function.Function` that "`applies`" the logic of the `Function` to
+the {geode-name} object (such as `AsyncEventListener`), returning the object as a result.
 
 TIP: The {geode-name} object returned by the `Function` may be the same object, a proxy, or a completely new object.
 Essentially, the returned object can be anything you want. This is the fundamental premise behind
-_Aspect-Oriented Programming_ (AOP) and the https://en.wikipedia.org/wiki/Decorator_pattern[Decorator Software Design Pattern].
+Aspect-Oriented Programming (AOP) and the https://en.wikipedia.org/wiki/Decorator_pattern[decorator software design pattern].
 
-These "_apply_" methods and the supplied `Function` allow you to decorate, enhance, post-process, whatever you want to,
-to the {geode-name} objects created by the listener.
+These `apply*` methods and the supplied `Function` let you decorate, enhance, post-process, or otherwise modify
+the {geode-name} objects created by the listener.
 
-Of course, the `AsyncInlineCachingRegionConfigurer` strictly adheres to the https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[Open/Close Principle]
-as well, and is therefore flexibly extensible.
+The `AsyncInlineCachingRegionConfigurer` strictly adheres to the https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[open/close principle]
+as well and is, therefore, flexibly extensible.
 
 [[geode-caching-provider-multi-site-caching]]
 ==== Multi-Site Caching
 
-The final pattern of caching presented in this chapter is _Multi-Site Caching_.
+The final pattern of caching presented in this chapter is multi-site caching.
 
-As described above, there are 2 configuration arrangements depending on your application usage patterns, requirements
-and user demographic: _Active-Active_ & _Active-Passive_.
+As described earlier, there are two configuration arrangements, depending on your application usage patterns, requirements,
+and user demographic: active-active and active-passive.
 
-_Multi-Site Caching_ along with _Active-Active_ and _Active-Passive_ configuration arrangements will be described
-in more detail in the Sample link:guides/caching-multi-site.html[Guide]. Also, be sure to review the Sample
-{github-samples-url}/caching/multi-site[Code].
+Multi-site caching, along with active-active and active-passive configuration arrangements, are described
+in more detail in the sample link:guides/caching-multi-site.html[guide]. Also, be sure to review the Sample
+{github-samples-url}/caching/multi-site[code].
 
 [[geode-caching-provider-advanced-configuration]]
 === Advanced Caching Configuration
@@ -905,34 +932,35 @@ in more detail in the Sample link:guides/caching-multi-site.html[Guide]. Also, b
 {geode-name} supports additional caching capabilities to manage the entries stored in the cache.
 
 As you can imagine, given that cache entries are stored in-memory, it becomes important to monitor and manage the
-available memory wisely.  After all, by default, {geode-name} stores data in the JVM Heap.
+available memory wisely. After all, by default, {geode-name} stores data in the JVM Heap.
 
-Several techniques can be employed to more effectively manage memory, such as using
-{apache-geode-docs}/developing/eviction/chapter_overview.html[Eviction], possibly
+You can employ several techniques to more effectively manage memory, such as using
+{apache-geode-docs}/developing/eviction/chapter_overview.html[eviction], possibly
 {apache-geode-docs}/developing/storing_data_on_disk/chapter_overview.html[overflowing data to disk],
-configuring both entry _Idle-Timeout_ (TTI) as well as _Time-To-Live_ (TTL)
-{apache-geode-docs}/developing/expiration/chapter_overview.html[Expiration policies],
-configuring {apache-geode-docs}/managing/region_compression.html[Compression],
-and using {apache-geode-docs}/managing/heap_use/off_heap_management.html[Off-Heap], or main memory.
+configuring both entry idle-iimeout_ (TTI) and time-to-live_ (TTL)
+{apache-geode-docs}/developing/expiration/chapter_overview.html[expiration policies],
+configuring {apache-geode-docs}/managing/region_compression.html[compression],
+and using {apache-geode-docs}/managing/heap_use/off_heap_management.html[off-heap] or main memory.
 
-There are several other strategies that can be used as well, as described in
+You can use several other strategies as well, as described in
 {apache-geode-docs}/managing/heap_use/heap_management.html[Managing Heap and Off-heap Memory].
 
 While this is well beyond the scope of this document, know that Spring Data for {geode-name} makes all of these
-{spring-data-geode-docs-html}/#bootstrap-annotation-config-regions[configuration options] available and simple to use.
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-regions[configuration options] available.
 
 [[geode-caching-provider-disable]]
 === Disable Caching
 
 There may be cases where you do not want your Spring Boot application to cache application state with
-{spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction] using {geode-name}. In certain cases, you
-may be using another Spring supported caching provider, such as Redis, to cache and manage your application state,
-while, even in other cases, you may not want to use Spring's Cache Abstraction at all.
+{spring-framework-docs}/integration.html#cache[Spring's cache abstraction] using {geode-name}. In certain cases, you
+may use another Spring supported caching provider, such as Redis, to cache and manage your application state.
+In other cases, you may not want to use Spring's cache abstraction at all.
 
-Either way, you can specifically call out your Spring Cache Abstraction provider using the `spring.cache.type` property
-in `application.properties`, as follows:
+Either way, you can specifically call out your Spring cache abstraction provider by using the `spring.cache.type` property
+in `application.properties`:
 
 .Use Redis as the Spring Cache Abstraction Provider
+====
 [source,txt]
 ----
 #application.properties
@@ -940,11 +968,13 @@ in `application.properties`, as follows:
 spring.cache.type=redis
 ...
 ----
+====
 
 If you prefer not to use Spring's Cache Abstraction to manage your Spring Boot application's state at all, then
 do the following:
 
 .Disable Spring's Cache Abstraction
+====
 [source,txt]
 ----
 #application.properties
@@ -952,13 +982,14 @@ do the following:
 spring.cache.type=none
 ...
 ----
+====
 
-See Spring Boot {spring-boot-docs-html}/boot-features-caching.html#boot-features-caching-provider-none[docs]
-for more details.
+See the Spring Boot {spring-boot-docs-html}/boot-features-caching.html#boot-features-caching-provider-none[documentation]
+for more detail.
 
-TIP: It is possible to include multiple providers on the classpath of your Spring Boot application.  For instance,
-you might be using Redis to cache your application's state while using {geode-name} as your application's persistent
-data store (_System of Record_).
+TIP: You can include multiple providers on the classpath of your Spring Boot application. For instance,
+you might use Redis to cache your application's state while using {geode-name} as your application's persistent
+data store (the system of record).
 
-NOTE: Spring Boot does not properly recognize `spring.cache.type=[gemfire|geode]` even though Spring Boot
-for {geode-name} is setup to handle either of these property values (i.e. either "`gemfire`" or "`geode`").
+NOTE: Spring Boot does not properly recognize `spring.cache.type=[gemfire|geode]`, even though Spring Boot
+for {geode-name} is set up to handle either of these property values (either `gemfire` or `geode`).

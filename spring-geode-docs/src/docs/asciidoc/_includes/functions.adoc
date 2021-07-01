@@ -2,58 +2,58 @@
 == Function Implementations & Executions
 :geode-name: {apache-geode-name}
 
-
-This chapter is about using {geode-name} in a Spring context for distributed compute use cases.
+This chapter is about using {geode-name} in a Spring context for distributed computing use cases.
 
 === Background
 
 Distributed processing, particularly in conjunction with data access and mutation operations, is a very effective
-and efficient use of clustered computing resources.  This is along the same lines as {wikipedia-docs}/MapReduce[MapReduce].
+and efficient use of clustered computing resources. This is along the same lines as {wikipedia-docs}/MapReduce[MapReduce].
 
-A naively conceived query returning potentially hundreds of thousands, or even millions of rows of data in a result set
-back to the application that queried and requested the data can be very costly, especially under load.  Therefore, it is
+A naively conceived query returning potentially hundreds of thousands (or even millions) of rows of data in a result set
+to the application that queried and requested the data can be very costly, especially under load. Therefore, it is
 typically more efficient to move the processing and computations on the predicated data set to where the data resides,
-perform the required computations, summarize the results and then send the reduced data set back to the client.
+perform the required computations, summarize the results, and then send the reduced data set back to the client.
 
 Additionally, when the computations are handled in parallel, across the cluster of computing resources, the operation
-can be performed much faster.  This typically involves intelligently organizing the data using various partitioning
+can be performed much more quickly. This typically involves intelligently organizing the data using various partitioning
 (a.k.a. sharding) strategies to uniformly balance the data set across the cluster.
 
-Well, {geode-name} addresses this very important application concern in its
-{apache-geode-docs}/developing/function_exec/chapter_overview.html[Function Execution] framework.
+{geode-name} addresses this very important application concern in its
+{apache-geode-docs}/developing/function_exec/chapter_overview.html[function execution] framework.
 
-Spring Data for {geode-name} {spring-data-geode-docs-html}/#function-annotations[builds] on this Function Execution
-framework by enabling developers to {spring-data-geode-docs-html}/#function-implementation[implement]
-and {spring-data-geode-docs-html}/#function-execution[execute] {geode-name} Functions using a very simple POJO-based,
+Spring Data for {geode-name} {spring-data-geode-docs-html}/#function-annotations[builds] on this function execution
+framework by letting developers {spring-data-geode-docs-html}/#function-implementation[implement]
+and {spring-data-geode-docs-html}/#function-execution[execute] {geode-name} functions with a simple POJO-based
 annotation configuration model.
 
-TIP: See {spring-data-geode-docs-html}/#_implementation_vs_execution[here] for the difference between
-Function implementation & executions.
+TIP: See {spring-data-geode-docs-html}/#_implementation_vs_execution[the section about implementation versus execution] for the difference between
+function implementation and execution.
 
-Taking this 1 step further, Spring Boot for {geode-name} _auto-configures_ and enables both Function implementation
-and execution out-of-the-box.  Therefore, you can immediately begin writing Functions and invoking them without having
-to worry about all the necessary plumbing to begin with.  You can rest assured that it will just work as expected.
+Taking this a step further, Spring Boot for {geode-name} auto-configures and enables both function implementation
+and execution out-of-the-box. Therefore, you can immediately begin writing functions and invoking them without having
+to worry about all the necessary plumbing to begin with. You can rest assured that it works as expected.
 
 === Applying Functions
 
-Earlier, when we talked about <<geode-caching-provider, caching>>, we described a `FinancialLoanApplicationService` class
-that could process eligibility when a `Person` applied for a financial loan.
+Earlier, when we talked about <<geode-caching-provider,caching>>, we described a `FinancialLoanApplicationService` class
+that could process eligibility when someone (represented by a `Person` object) applied for a financial loan.
 
-This can be a very resource intensive & expensive operation since it might involve collecting credit and employment
-history, gathering information on existing, outstanding/unpaid loans, and so on and so forth.  We applied caching
-in order to not have to recompute, or redetermine eligibility every time a loan office may want to review the decision
+This can be a very resource intensive and expensive operation, since it might involve collecting credit and employment
+history, gathering information on outstanding loans, and so on. We applied caching
+in order to not have to recompute or redetermine eligibility every time a loan office may want to review the decision
 with the customer.
 
 But what about the process of computing eligibility in the first place?
 
 Currently the application's `FinancialLoanApplicationService` class seems to be designed to fetch the data and perform
-the eligibility determination in place.  However, it might be far better to distribute the processing and even
+the eligibility determination in place. However, it might be far better to distribute the processing and even
 determine eligibility for a larger group of people all at once, especially when multiple, related people are involved
 in a single decision, as is typically the case.
 
-We implement an `EligibilityDeterminationFunction` class using SDG very simply as:
+We can implement an `EligibilityDeterminationFunction` class by using SDG:
 
 .Function implementation
+====
 [source,java]
 ----
 @Component
@@ -65,16 +65,18 @@ class EligibilityDeterminationFunction {
     }
 }
 ----
+====
 
-Using the SDG {spring-data-geode-javadoc}/org/springframework/data/gemfire/function/annotation/GemfireFunction.html[`@GemfireFunction`]
-annotation, it is easy to implement our Function as a POJO method.  SDG handles registering this POJO method
-as a proper Function with {geode-name} appropriately.
+By using the SDG {spring-data-geode-javadoc}/org/springframework/data/gemfire/function/annotation/GemfireFunction.html[`@GemfireFunction`]
+annotation, we can implement our function as a POJO method. SDG appropriately handles registering this POJO method
+as a proper function with {geode-name}.
 
-If we now want to call this Function from our Spring Boot, `ClientCache` application, then we simply define
-a Function Execution interface with a method name matching the Function name, and targeting the execution
-on the "_EligibilityDecisions_" Region:
+If we now want to call this function from our Spring Boot `ClientCache` application, we can define
+a function execution interface with a method name that matches the function name and that targets the execution
+on the `EligibilityDecisions` Region:
 
 .Function execution
+====
 [source,java]
 ----
 @OnRegion("EligibilityDecisions")
@@ -84,11 +86,13 @@ interface EligibilityDeterminationExecution {
 
 }
 ----
+====
 
-We can then inject the `EligibilityDeterminationExecution` into our `FinancialLoanApplicationService` like any other
-object/Spring bean:
+We can then inject the `EligibilityDeterminationExecution` into our `FinancialLoanApplicationService`, as we would any other
+object or Spring bean:
 
 .Function use
+====
 [source,java]
 ----
 @Service
@@ -106,8 +110,9 @@ class FinancialLoanApplicationService {
     }
 }
 ----
+====
 
-Just like caching, no addition configuration is required to enable and find your application Function implementations
-and executions. Simply build and run.  Spring Boot for {geode-name} handles the rest.
+As with caching, no additional configuration is required to enable and find your application function implementations
+and executions. You can simply build and run. Spring Boot for {geode-name} handles the rest.
 
-TIP: It is common to implement and register your application Functions on the server and execute them from the client.
+TIP: It is common to implement and register your application functions on the server and execute them from the client.
