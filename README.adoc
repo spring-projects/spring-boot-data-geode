@@ -68,7 +68,7 @@ This, along with many other benefits, are provided by this project.
 
 The following SBDG versions are currently maintained and developed.
 
-.Current/Supported Versions
+.Supported Versions
 |===
 | Version | Reference Documentation | Javadoc | Samples
 
@@ -87,7 +87,7 @@ The following SBDG versions are currently maintained and developed.
 
 The following SBDG versions have reached their End-of-Life (EOL).
 
-.EOL Versions
+.Unsupported (EOL) Versions
 |===
 | Version | Reference Documentation | Javadoc | Samples
 
