@@ -3,62 +3,65 @@
 :geode-name: {apache-geode-name}
 
 
-Anytime data is overflowed or persisted to disk, transferred between clients and servers, peers in a cluster or between
-different clusters in a multi-site topology, then all data stored in {geode-name} must be serializable.
+Anytime data is overflowed or persisted to disk, transferred between clients and servers, transferred between peers
+in a cluster or between different clusters in a multi-site WAN topology, all data stored in {geode-name} must be
+serializable.
 
-To serialize objects in Java, object types must implement the `java.io.Serializable` interface.  However, if you have
-a large number of application domain object types that currently do not implement `java.io.Serializable`, then
-refactoring hundreds or even thousands of class types to implement `Serializable` would be a tedious task just to
-store and manage those objects in {geode-name}.
+To serialize objects in Java, object types must implement the `java.io.Serializable` interface. However, if you have a
+large number of application domain object types that currently do not implement `java.io.Serializable`, refactoring
+hundreds or even thousands of class types to implement `java.io.Serializable` would be a tedious task just to store
+and manage those objects in {geode-name}.
 
-Additionally, it is not just your application domain object types you necessarily need to worry about either.  If you
-used 3rd party libraries in your application domain model, any types referred to by your application domain object types
-stored in {geode-name} must be serializable too. This type explosion may bleed into class types for which you may have
+Additionally, it is not only your application domain object types you necessarily need to consider. If you used
+third-party libraries in your application domain model, any types referred to by your application domain object types
+stored in {geode-name} must also be serializable. This type explosion may bleed into class types for which you may have
 no control over.
 
-Furthermore, Java serialization is not the most efficient format given that meta-data about your types is stored with
-the data itself.  Therefore, even though Java serialized bytes are more descriptive, it adds a great deal of overhead.
+Furthermore, Java serialization is not the most efficient format, given that metadata about your types is stored with
+the data itself. Therefore, even though Java serialized bytes are more descriptive, it adds a great deal of overhead.
 
-Then, along came serialization using {geode-name}'s {apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX]
-format.  PDX stands for _Portable Data Exchange_, and achieves 4 goals:
+Then, along came serialization using {geode-name}'s
+{apache-geode-docs}/developing/data_serialization/gemfire_pdx_serialization.html[PDX] format.
+PDX stands for Portable Data Exchange and achieves four goals:
 
-1. Separates type meta-data from the data itself making the bytes more efficient during transfer. {geode-name} maintains
-a type registry storing type meta-data about the objects serialized using PDX.
+* Separates type metadata from the data itself, streamlining the bytes during transfer. {geode-name} maintains a type
+registry that stores type metadata about the objects serialized with PDX.
 
-2. Supports versioning as your application domain types evolve.  It is not uncommon to have old and new applications
-deployed to production, running simultaneously, sharing data, and possibly using different versions of the same domain
-types. PDX allows fields to be added or removed while still preserving interoperability between old and new application
-clients without loss of data.
+* Supports versioning as your application domain types evolve. It is common to have old and new versions of the same
+application deployed to production, running simultaneously, sharing data, and possibly using different versions of the
+same domain types. PDX lets fields be added or removed while still preserving interoperability between old and new
+application clients without loss of data.
 
-3.  Enables objects stored as PDX bytes to be queried without being de-serialized.  Constant de/serialization of data
-is a resource intensive task adding to the latency of each data request when redundancy is enabled.  Since data must be
-replicated across peers in the cluster to preserve High Availability (HA), and serialized to be transferred, keeping
-data serialized is more efficient when data is updated frequently since it will likely need to be transferred again
-in order to maintain consistency in the face of redundancy and availability.
+* Enables objects stored as PDX to be queried without being de-serialized. Constant serialization and deserialization of
+data is a resource-intensive task that adds to the latency of each data request when redundancy is enabled. Since data
+is replicated across peers in the cluster to preserve High Availability (HA) and must be serialized to be transferred,
+keeping data serialized is more efficient when data is updated frequently, since it is likely the data will need to be
+transferred again in order to maintain consistency in the face of redundancy and availability.
 
-4. Enables interoperability between native language clients (e.g. C/C++/C#) and Java language clients, with each
+* Enables interoperability between native language clients (such as C, C++ and C#) and Java language clients, with each
 being able to access the same data set regardless from where the data originated.
 
-However, PDX is not without its limitations either.
+However, PDX does have limitations.
 
-For instance, unlike Java serialization, PDX does not handle cyclic dependencies.  Therefore, you must be careful
-how you structure and design your application domain object types.
+For instance, unlike Java serialization, PDX does not handle cyclic dependencies. Therefore, you must be careful how you
+structure and design your application domain object types.
 
 Also, PDX cannot handle field type changes.
 
 Furthermore, while {geode-name}'s general {apache-geode-docs}/developing/data_serialization/gemfire_data_serialization.html[Data Serialization]
-handles {apache-geode-docs}/developing/delta_propagation/chapter_overview.html[deltas], this is not achievable without
-de-serializing the object bytes since it involves a method invocation, which defeats 1 of the key benefits of PDX,
-preserving format to avoid the cost of de/serialization.
+handles {apache-geode-docs}/developing/delta_propagation/chapter_overview.html[Deltas], this is not achievable without
+de-serializing the object, since it involves a method invocation, which defeats one of the key benefits of PDX:
+preserving format to avoid the cost of serialization and deserialization.
 
-However, we think the benefits of using PDX greatly outweigh the limitations and therefore have enabled PDX by default
-when using Spring Boot for {geode-name}.
+However, we think the benefits of using PDX outweigh the limitations and, therefore, have enabled PDX by default.
 
-There is nothing special you need to do.  Simply code your types and rest assured that objects of those types will be
-properly serialized when overflowed/persisted to disk, transferred between clients and servers, or peers in a cluster
-and even when data is transferred over the WAN when using {geode-name}'s multi-site topology.
+You need do nothing special. You can code your domain types and rest assured that objects of those domain types are
+properly serialized when overflowed and persisted to disk, transferred between clients and servers, transferred between
+peers in a cluster, and even when data is transferred over the network when you use {geode-name}'s multi-site WAN
+topology.
 
 .EligibilityDecision is automatically serialiable without implementing Java Serializable.
+====
 [source,java]
 ----
 @Region("EligibilityDecisions")
@@ -66,52 +69,57 @@ class EligibilityDecision {
     // ...
 }
 ----
+====
 
-TIP: {geode-name} does {apache-geode-docs}/developing/data_serialization/java_serialization.html[support] the standard
+NOTE: {geode-name} does {apache-geode-docs}/developing/data_serialization/java_serialization.html[support] the standard
 Java Serialization format.
 
 === SDG `MappingPdxSerializer` vs. {geode-name}'s `ReflectionBasedAutoSerializer`
 
 Under-the-hood, Spring Boot for {geode-name} {spring-data-geode-docs-html}/#bootstrap-annotation-config-pdx[enables]
-and uses Spring Data for {geode-name}'s {spring-data-geode-javadoc}/org/springframework/data/gemfire/mapping/MappingPdxSerializer.html[MappingPdxSerializer]
-to serialize your application domain objects using PDX.
+and uses Spring Data for {geode-name}'s
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/mapping/MappingPdxSerializer.html[`MappingPdxSerializer`]
+to serialize your application domain objects with PDX.
 
-TIP: Refer to the SDG {spring-data-geode-docs-html}/#mapping.pdx-serializer[Reference Guide] for more details
+TIP: See the SDG {spring-data-geode-docs-html}/#mapping.pdx-serializer[Reference Guide] for more details
 on the `MappingPdxSerializer` class.
 
-The `MappingPdxSerializer` offers several advantages above and beyond {geode-name}'s own
-{apache-geode-javadoc}/org/apache/geode/pdx/ReflectionBasedAutoSerializer.html[ReflectionBasedAutoSerializer] class.
+The `MappingPdxSerializer` class offers several advantages above and beyond {geode-name}'s own
+{apache-geode-javadoc}/org/apache/geode/pdx/ReflectionBasedAutoSerializer.html[`ReflectionBasedAutoSerializer`] class.
 
-TIP: Refer to {geode-name}'s {apache-geode-docs}/developing/data_serialization/auto_serialization.html[User Guide]
+TIP: See {geode-name}'s {apache-geode-docs}/developing/data_serialization/auto_serialization.html[User Guide]
 for more details about the `ReflectionBasedAutoSerializer`.
 
-The SDG `MappingPdxSerializer` offers the following capabilities:
+The SDG `MappingPdxSerializer` class offers the following benefits and capabilities:
 
-1. PDX serialization is based on Spring Data's powerful mapping infrastructure and meta-data, as such...
+* PDX serialization is based on Spring Data's powerful mapping infrastructure and metadata.
 
-2. Includes support for both `includes` and `excludes` with {spring-data-geode-docs-html}/#mapping.pdx-serializer.type-filtering[type filtering].
-Additionally, type filters can be implemented using Java's `java.util.function.Predicate` interface as opposed to
-{geode-name}'s limited regex capabilities provided by the `ReflectionBasedAutoSerializer` class.  By default,
+* Includes support for both `includes` and `excludes` with first-class
+{spring-data-geode-docs-html}/#mapping.pdx-serializer.type-filtering[type filtering].
+Additionally, you can implement type filters by using Java's `java.util.function.Predicate` interface as opposed to
+the limited regex capabilities provided by {geode-name}'s `ReflectionBasedAutoSerializer` class. By default,
 `MappingPdxSerializer` excludes all types in the following packages: `java`, `org.apache.geode`, `org.springframework`
-& `com.gemstone.gemfire`.
+and `com.gemstone.gemfire`.
 
-3. Handles {spring-data-geode-docs-html}/#mapping.pdx-serializer.transient-properties[transient object fields & properties]
-when either Java's `transient` keyword or Spring Data's `@Transient` annotation is used.
+* Handles {spring-data-geode-docs-html}/#mapping.pdx-serializer.transient-properties[transient object fields
+and properties] when either Java's `transient` keyword or Spring Data's `@Transient` annotation is used.
 
-4. Handles {spring-data-geode-docs-html}/#mapping.pdx-serializer.read-only-properties[read-only object properties].
+* Handles {spring-data-geode-docs-html}/#mapping.pdx-serializer.read-only-properties[read-only object properties].
 
-5. Automatically determines the identifier of your entities when you annotate the appropriate entity field or property
-with Spring Data's {spring-data-commons-javadoc}/org/springframework/data/annotation/Id.html[@Id] annotation.
+* Automatically determines the identifier of your entities when you annotate the appropriate entity field or property
+with Spring Data's {spring-data-commons-javadoc}/org/springframework/data/annotation/Id.html[`@Id`] annotation.
 
-6. Allows `o.a.g.pdx.PdxSerializers` to be registered in order to {spring-data-geode-docs-html}/#mapping.pdx-serializer.custom-serialization[customize the serialization]
-of nested entity field/property types.
+* Lets additional `o.a.g.pdx.PdxSerializers` be registered to
+{spring-data-geode-docs-html}/#mapping.pdx-serializer.custom-serialization[customize the serialization]
+of nested entity/object field and property types.
 
-Number two above deserves special attention since the `MappingPdxSerializer` "excludes" all Java, Spring and {geode-name}
-types, by default. But, what happens when you need to serialize 1 of those types?
+The support for `includes` and `excludes` deserves special attention, since the `MappingPdxSerializer` excludes all Java,
+Spring, and {geode-name} types, by default. However, what happens when you need to serialize one of those types?
 
-For example, suppose you need to be able to serialize objects of type `java.security.Principal`.  Well, then you can
-override the excludes by registering an "include" type filter, like so:
+For example, suppose you need to serialize objects of type `java.security.Principal`. Then you can override the excludes
+by registering an `include` type filter:
 
+====
 [source,java]
 ----
 package example.app;
@@ -139,6 +147,7 @@ class SpringBootApacheGeodeClientCacheApplication {
     }
 }
 ----
+====
 
-TIP: Normally, you do not need to explicitly declare SDG's `@EnablePdx` annotation to enable and configure PDX.
-However, if you want to override auto-configuration, as we have demonstrated above, then this is what you must do.
+TIP: Normally, you need not explicitly declare SDG's `@EnablePdx` annotation to enable and configure PDX. However,
+if you want to override auto-configuration, as we have demonstrated above, you must do this.

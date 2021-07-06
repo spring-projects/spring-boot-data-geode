@@ -2,62 +2,63 @@
 == Spring Boot Actuator
 
 
-Spring Boot for {apache-geode-name} and {pivotal-gemfire-name} (SBDG) adds {spring-boot-docs-html}/production-ready.html[Spring Boot Actuator]
-support and dedicated `HealthIndicators` for {apache-geode-name} and {pivotal-gemfire-name}.  Equally, the provided
-`HealthIndicators` will even work with Pivotal Cloud Cache, which is backed by {pivotal-gemfire-name}, when pushing your
-Spring Boot applications to Pivotal CloudFoundry (PCC).
+Spring Boot for {apache-geode-name} (SBDG) adds {spring-boot-docs-html}/production-ready.html[Spring Boot Actuator]
+support and dedicated `HealthIndicators` for {apache-geode-name}. Equally, the provided `HealthIndicators` even work
+with Tanzu Cache (which is backed by {pivotal-gemfire-name}) when you push your Spring Boot applications
+using {apache-geode-name} to {VMware Tanzu Application Service (TAS)} platform.
 
-Spring Boot `HealthIndicators` provide details about the runtime operation and behavior of your {apache-geode-name}
-based Spring Boot applications.  For instance, by querying the right `HealthIndicator` endpoint, you would be able to
-get the current hit/miss count for your `Region.get(key)` data access operations.
+Spring Boot `HealthIndicators` provide details about the runtime operation and behavior of your {apache-geode-name}-based
+Spring Boot applications. For instance, by querying the right `HealthIndicator` endpoint, you can get the current
+hit/miss count for your `Region.get(key)` data access operations.
 
-In addition to vital health information, SBDG provides basic, pre-runtime configuration meta-data about the
-{apache-geode-name} components that are monitored by Spring Boot Actuator.  This makes it easier to see how
-the application was configured all in one place, rather than in properties files, Spring config, XML, etc.
+In addition to vital health information, SBDG provides basic, pre-runtime configuration metadata about the
+{apache-geode-name} components that are monitored by Spring Boot Actuator. This makes it easier to see how
+the application was configured all in one place, rather than in properties files, Spring configuration, XML,
+and so on.
 
-The provided Spring Boot `HealthIndicators` fall under one of three categories:
+The provided Spring Boot `HealthIndicators` fall into three categories:
 
 * Base `HealthIndicators` that apply to all {apache-geode-name}, Spring Boot applications, regardless of cache type,
-such as Regions, Indexes and DiskStores.
-* Peer `Cache` based `HealthIndicators` that are only applicable to peer `Cache` applications, such as
-`AsyncEventQueues`, `CacheServers`, `GatewayReceivers` and `GatewaySenders`.
-* And finally, `ClientCache` based `HealthIndicators` that are only applicable to `ClientCache` applications, such as
-`ContinuousQueries` and connection `Pools`.
+such as `Regions`, `Indexes`, and `DiskStores`.
+* Peer `Cache`-based `HealthIndicators` that apply only to peer `Cache` applications, such as `AsyncEventQueues`,
+`CacheServers`, `GatewayReceivers`, and `GatewaySenders`.
+* `ClientCache`-based `HealthIndicators` that apply only to `ClientCache` applications, such as `ContinuousQuery`
+and connection `Pools`.
 
 The following sections give a brief overview of all the available Spring Boot `HealthIndicators` provided for
-{apache-geode-name} out-of-the-box.
+{apache-geode-name}.
 
-TIP: Refer to the corresponding Sample link:guides/boot-actuator.html[Guide] and {github-samples-url}/boot/actuator[Code]
-to see the Spring Boot Actuator for {apache-geode-name} in action!
+TIP: See the corresponding sample link:guides/boot-actuator.html[guide] and {github-samples-url}/boot/actuator[code]
+to see Spring Boot Actuator for {apache-geode-name} in action.
 
 [[actuator-base-healthindicators]]
-=== Base `HealthIndicators`
+=== Base HealthIndicators
 
-The following section covers Spring Boot `HealthIndicators` that apply to both peer `Cache` and `ClientCache`,
-Spring Boot applications.  That is, these `HealthIndicators` are not specific to the cache type.
+This section covers Spring Boot `HealthIndicators` that apply to both {apache-geode-name} peer `Cache` and `ClientCache`,
+Spring Boot applications. That is, these `HealthIndicators` are not specific to the cache type.
 
-In {apache-geode-name}, the cache instance is either a peer `Cache` instance, which makes your Spring Boot application
-part of a {apache-geode-name} cluster, or more commonly, a `ClientCache` instance that talks to an existing cluster.
+In {apache-geode-name}, the cache instance is either a peer `Cache` instance (which makes your Spring Boot application
+part of a {apache-geode-name} cluster) or, more commonly, a `ClientCache` instance (which talks to an existing cluster).
 Your Spring Boot application can only be one cache type or the other and can only have a single instance of
 that cache type.
 
 [[actuator-base-healthindicators-cache]]
 ==== GeodeCacheHealthIndicator
 
-The `GeodeCacheHealthIndicator` provides essential details about the (single) cache instance (Client or Peer) along with
-the underlying `DistributedSystem`, the `DistributedMember` and configuration details of the `ResourceManager`.
+`GeodeCacheHealthIndicator` provides essential details about the (single) cache instance (client or peer)
+and the underlying `DistributedSystem`, the `DistributedMember` and configuration details of the `ResourceManager`.
 
 When your Spring Boot application creates an instance of a peer {apache-geode-javadoc}/org/apache/geode/cache/Cache.html[`Cache`],
 the {apache-geode-javadoc}/org/apache/geode/distributed/DistributedMember.html[`DistributedMember`] object represents
-your application as a peer member/node of the {apache-geode-javadoc}/org/apache/geode/distributed/DistributedSystem.html[`DistributedSystem`]
-formed from a collection of connected peers (i.e. the cluster), to which your application also has
-{apache-geode-javadoc}/org/apache/geode/cache/GemFireCache.html#getDistributedSystem--[access],
-indirectly via the cache instance.
+your application as a peer member or node of the {apache-geode-javadoc}/org/apache/geode/distributed/DistributedSystem.html[`DistributedSystem`].
+The distributed system (that is, the cluster) is formed from a collection of connected peers, to which your application
+also has {apache-geode-javadoc}/org/apache/geode/cache/GemFireCache.html#getDistributedSystem--[access] -- indirectly,
+through the cache instance.
 
 This is no different for a `ClientCache` even though the client is technically not part of the peer/server cluster.
-But, it still creates instances of the `DistributedSystem` and `DistributedMember` objects, respectively.
+However, it still creates instances of the `DistributedSystem` and `DistributedMember` objects, respectively.
 
-The following configuration meta-data and health details about each object is covered:
+Each object has the following configuration metadata and health details:
 
 .Cache Details
 [width="90%",cols="^3,<10",options="header"]
@@ -66,7 +67,7 @@ The following configuration meta-data and health details about each object is co
 
 | geode.cache.name               | Name of the member in the distributed system.
 | geode.cache.closed             | Determines whether the cache has been closed.
-| geode.cache.cancel-in-progress | Cancellation of operations in progress.
+| geode.cache.cancel-in-progress | Indicates whether cancellation of operations is in progress.
 
 |=====================================================================================================================
 
@@ -75,7 +76,7 @@ The following configuration meta-data and health details about each object is co
 |=====================================================================================================================
 | Name                                 | Description
 
-| geode.distributed-member.id          | DistributedMember identifier (used in logs internally).
+| geode.distributed-member.id          | `DistributedMember` identifier (used in logs internally).
 | geode.distributed-member.name        | Name of the member in the distributed system.
 | geode.distributed-members.groups     | Configured groups to which the member belongs.
 | geode.distributed-members.host       | Name of the machine on which the member is running.
@@ -88,9 +89,9 @@ The following configuration meta-data and health details about each object is co
 |=====================================================================================================================
 | Name                                                  | Description
 
-| geode.distributed-system.member-count                 | Total number of members in the cluster (1 for clients).
 | geode.distributed-system.connected                    | Indicates whether the member is currently connected to
 the cluster.
+| geode.distributed-system.member-count                 | Total number of members in the cluster (1 for clients).
 | geode.distributed-system.reconnecting                 | Indicates whether the member is in a reconnecting state,
 which happens when a network partition occurs and the member gets disconnected from the cluster.
 | geode.distributed-system.properties-location          | Location of the
@@ -110,70 +111,69 @@ becoming inoperable.
 | geode.resource-manager.critical-off-heap-percentage | Percentage of off-heap at which the cache is in danger of
 becoming inoperable.
 | geode.resource-manager.eviction-heap-percentage     | Percentage of heap at which eviction begins on Regions
-configured with a Heap LRU Eviction policy.
+configured with a heap LRU eviction policy.
 | geode.resource-manager.eviction-off-heap-percentage | Percentage of off-heap at which eviction begins on Regions
-configured with a Heap LRU Eviction policy.
+configured with a heap LRU eviction policy.
 
 |=====================================================================================================================
-
 
 [[actuator-base-healthindicators-regions]]
 ==== GeodeRegionsHealthIndicator
 
-The `GeodeRegionsHealthIndicator` provides details about all the configured and known `Regions` in the cache.
-If the cache is a client, then details will include all LOCAL, PROXY and CACHING_PROXY `Regions`. If the cache
-is a peer, then the details will include all LOCAL, PARTITION and REPLICATE `Regions`.
+`GeodeRegionsHealthIndicator` provides details about all the configured and known `Regions` in the cache.
+If the cache is a client, details include all `LOCAL`, `PROXY`, and `CACHING_PROXY` `Regions`. If the cache is a peer
+then details include all `LOCAL`, `PARTITION`, and `REPLICATE` `Region` instances.
 
-While the configuration meta-data details are not exhaustive, essential details along with basic performance metrics
-are covered:
+The following table describes the essential details and basic performance metrics:
 
 .Region Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                        | Description
 
-| geode.cache.regions.<name>.cloning-enabled  | Whether Region values are cloned on read (e.g. `cloning-enabled`
+| geode.cache.regions.<name>.cloning-enabled  | Whether Region values are cloned on read (for example, `cloning-enabled`
 is `true` when cache transactions are used to prevent in-place modifications).
-| geode.cache.regions.<name>.data-policy      | Policy used to manage the data in the Region
-(e.g. PARTITION, REPLICATE, etc).
-| geode.cache.regions.<name>.initial-capacity | Initial number of entries that can be held by a Region before
-it needs to be resized.
-| geode.cache.regions.<name>.load-factor      | Load factor used to determine when to resize the Region
-when it nears capacity.
+| geode.cache.regions.<name>.data-policy      | Policy used to manage data in the Region (`PARTITION`, `REPLICATE`,
+and others).
+| geode.cache.regions.<name>.initial-capacity | Initial number of entries that can be held by a Region before it needs
+to be resized.
+| geode.cache.regions.<name>.load-factor      | Load factor used to determine when to resize the Region when it nears
+capacity.
 | geode.cache.regions.<name>.key-constraint   | Type constraint for Region keys.
-| geode.cache.regions.<name>.off-heap         | Determines whether this Region will store values in off-heap memory
-(NOTE: Keys are always kept on Heap).
-| geode.cache.regions.<name>.pool-name        | If this Region is a client Region, then this property determines
-the configured connection `Pool` (NOTE: Regions can have and use dedicated `Pools` for their data access operations.)
+| geode.cache.regions.<name>.off-heap         | Determines whether this Region stores values in off-heap memory
+(NOTE: Keys are always kept on the JVM heap).
+| geode.cache.regions.<name>.pool-name        | If this Region is a client Region, this property determines
+the configured connection `Pool`. (NOTE: Regions can have and use dedicated `Pools` for their data access operations.)
 | geode.cache.regions.<name>.pool-name        | Determines the `Scope` of the Region, which plays a factor in
-the Regions consistency-level, as it pertains to acknowledgements for writes.
+the Region's consistency-level, as it pertains to acknowledgements for writes.
 | geode.cache.regions.<name>.value-constraint | Type constraint for Region values.
 
 |=====================================================================================================================
 
-Additionally, when the Region is a peer `Cache` `PARTITION` Region, then the following details are also covered:
+The following details also apply when the Region is a peer `Cache` `PARTITION` Region:
 
 .Partition Region Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                                         | Description
 
-| geode.cache.regions.<name>.partition.collocated-with         | Indicates this Region is collocated with another
-PARTITION Region, which is necessary when performing equi-joins queries (NOTE: distributed joins are not supported).
-| geode.cache.regions.<name>.partition.local-max-memory        | Total amount of Heap memory allowed to be used by
+| geode.cache.regions.<name>.partition.collocated-with         | Indicates whether this Region is collocated with
+another `PARTITION` Region, which is necessary when performing equi-joins queries (NOTE: distributed joins
+are not supported).
+| geode.cache.regions.<name>.partition.local-max-memory        | Total amount of heap memory allowed to be used by
 this Region on this node.
-| geode.cache.regions.<name>.partition.redundant-copies        | Number of replicas for this PARTITION Region,
-which is useful in High Availability (HA) use cases.
-| geode.cache.regions.<name>.partition.total-max-memory        | Total amount of Heap memory allowed to be used by
+| geode.cache.regions.<name>.partition.redundant-copies        | Number of replicas for this `PARTITION` Region,
+which is useful in high availability (HA) use cases.
+| geode.cache.regions.<name>.partition.total-max-memory        | Total amount of heap memory allowed to be used by
 this Region across all nodes in the cluster hosting this Region.
-| geode.cache.regions.<name>.partition.total-number-of-buckets | Total number of buckets (shards) that this Region
-is divided up into (NOTE: defaults to 113).
+| geode.cache.regions.<name>.partition.total-number-of-buckets | Total number of buckets (shards) into which this Region
+is divided (defaults to 113).
 
 |=====================================================================================================================
 
-Finally, when statistics are enabled (e.g. using `@EnableStatistics`,
-(see {spring-data-geode-docs-html}/#bootstrap-annotation-config-statistics[here]
-for more details), the following details are available:
+Finally, when statistics are enabled (for example, when you use `@EnableStatistics` --
+(see {spring-data-geode-docs-html}/#bootstrap-annotation-config-statistics[doc] for more details),
+the following metadata is available:
 
 .Region Statistic Details
 [width="90%",cols="^3,<10",options="header"]
@@ -182,21 +182,20 @@ for more details), the following details are available:
 
 | geode.cache.regions.<name>.statistics.hit-count          | Number of hits for a Region entry.
 | geode.cache.regions.<name>.statistics.hit-ratio          | Ratio of hits to the number of `Region.get(key)` calls.
-| geode.cache.regions.<name>.statistics.last-accessed-time | For an entry, determines the last time it was accessed
+| geode.cache.regions.<name>.statistics.last-accessed-time | For an entry, indicates the last time it was accessed
 with `Region.get(key)`.
-| geode.cache.regions.<name>.statistics.last-modified-time | For an entry, determines the time a Region's entry value
-was last modified.
+| geode.cache.regions.<name>.statistics.last-modified-time | For an entry, indicates the time when a Region's entry
+value was last modified.
 | geode.cache.regions.<name>.statistics.miss-count         | Returns the number of times that a `Region.get`
 was performed and no value was found locally.
 
 |=====================================================================================================================
 
-
 [[actuator-base-healthindicators-indexes]]
 ==== GeodeIndexesHealthIndicator
 
-The `GeodeIndexesHealthIndicator` provides details about the configured Region `Indexes` used in OQL query
-data access operations.
+`GeodeIndexesHealthIndicator` provides details about the configured Region `Indexes` used by OQL query data access
+operations.
 
 The following details are covered:
 
@@ -206,30 +205,29 @@ The following details are covered:
 | Name                                     | Description
 
 | geode.index.<name>.from-clause           | Region from which data is selected.
-| geode.index.<name>.indexed-expression    | The Region value fields/properties used in the Index expression.
-| geode.index.<name>.projection-attributes | For all other Indexes, returns "*", but for Map Indexes, returns either "*"
-or the specific Map keys that were indexed.
+| geode.index.<name>.indexed-expression    | Region value fields and properties used in the Index expression.
+| geode.index.<name>.projection-attributes | For `Map` `Indexes`, returns either `*` or the specific Map keys
+that were indexed. For all other `Indexes`, returns `*`.
 | geode.index.<name>.region                | Region to which the Index is applied.
 
 |=====================================================================================================================
 
-Additionally, when statistics are enabled (e.g. using `@EnableStatistics`;
-(see {spring-data-geode-docs-html}/#bootstrap-annotation-config-statistics[here]
-for more details), the following details are available:
+Additionally, when statistics are enabled (for example, when you use `@EnableStatistics` --
+see {spring-data-geode-docs-html}/#bootstrap-annotation-config-statistics["`Configuring Statistics`"] for more details),
+the following metadata is available:
 
 .Index Statistic Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                                     | Description
 
-| geode.index.<name>.statistics.number-of-bucket-indexes   | Number of bucket Indexes created in a Partitioned Region.
+| geode.index.<name>.statistics.number-of-bucket-indexes   | Number of bucket Indexes created in a PARTITION Region.
 | geode.index.<name>.statistics.number-of-keys             | Number of keys in this Index.
-| geode.index.<name>.statistics.number-of-map-indexed-keys | Number of keys in this Index at the highest-level.
+| geode.index.<name>.statistics.number-of-map-indexed-keys | Number of keys in this Index at the highest level.
 | geode.index.<name>.statistics.number-of-values           | Number of values in this Index.
 | geode.index.<name>.statistics.number-of-updates          | Number of times this Index has been updated.
 | geode.index.<name>.statistics.read-lock-count            | Number of read locks taken on this Index.
-| geode.index.<name>.statistics.total-update-time          | Total amount of time (ns) spent updating
-this Index.
+| geode.index.<name>.statistics.total-update-time          | Total amount of time (ns) spent updating this Index.
 | geode.index.<name>.statistics.total-uses                 | Total number of times this Index has been accessed by
 an OQL query.
 
@@ -238,9 +236,9 @@ an OQL query.
 [[actuator-base-healthindicators-diskstores]]
 ==== GeodeDiskStoresHealthIndicator
 
-The `GeodeDiskStoresHealthIndicator` provides details about the configured `DiskStores` in the system/application.
-Remember, `DiskStores` are used to overflow and persist data to disk, including type meta-data tracked by PDX
-when the values in the Region(s) have been serialized with PDX and the Region(s) are persistent.
+The `GeodeDiskStoresHealthIndicator` provides details about the configured `DiskStores` in the system or application.
+Remember, `DiskStores` are used to overflow and persist data to disk, including type metadata tracked by PDX when the
+values in the Regions have been serialized with PDX and the Regions are persistent.
 
 Most of the tracked health information pertains to configuration:
 
@@ -251,21 +249,22 @@ Most of the tracked health information pertains to configuration:
 
 | geode.disk-store.<name>.allow-force-compaction         | Indicates whether manual compaction of the DiskStore
 is allowed.
-| geode.disk-store.<name>.auto-compact                   | Indicates if compaction occurs automatically.
-| geode.disk-store.<name>.compaction-threshold           | Percentage at which the oplog will become compactable.
+| geode.disk-store.<name>.auto-compact                   | Indicates whether compaction occurs automatically.
+| geode.disk-store.<name>.compaction-threshold           | Percentage at which the oplog becomes compactible.
 | geode.disk-store.<name>.disk-directories               | Location of the oplog disk files.
 | geode.disk-store.<name>.disk-directory-sizes           | Configured and allowed sizes (MB) for the disk directory
-storing the disk files.
+that stores the disk files.
 | geode.disk-store.<name>.disk-usage-critical-percentage | Critical threshold of disk usage proportional to
 the total disk volume.
 | geode.disk-store.<name>.disk-usage-warning-percentage  | Warning threshold of disk usage proportional to
 the total disk volume.
 | geode.disk-store.<name>.max-oplog-size                 | Maximum size (MB) allowed for a single oplog file.
-| geode.disk-store.<name>.queue-size                     | Size of the queue used to batch writes flushed to disk.
+| geode.disk-store.<name>.queue-size                     | Size of the queue used to batch writes that are flushed
+to disk.
 | geode.disk-store.<name>.time-interval                  | Time to wait (ms) before writes are flushed to disk
 from the queue if the size limit has not be reached.
-| geode.disk-store.<name>.uuid                           | Universally Unique Identifier for the DiskStore across
-Distributed System.
+| geode.disk-store.<name>.uuid                           | Universally unique identifier for the DiskStore across a
+distributed system.
 | geode.disk-store.<name>.write-buffer-size              | Size the of write buffer the DiskStore uses to write data
 to disk.
 
@@ -274,30 +273,30 @@ to disk.
 [[actuator-clientcache-healthindicators]]
 === `ClientCache` `HealthIndicators`
 
-The `ClientCache` based `HealthIndicators` provide additional details specifically for Spring Boot, cache client
-applications.  These `HealthIndicators` are only available when the Spring Boot application creates a `ClientCache`
-instance (i.e. is a cache client), which is the default.
+The `ClientCache`-based `HealthIndicators` provide additional details specifically for Spring Boot, cache client
+applications. These `HealthIndicators` are available only when the Spring Boot application creates a `ClientCache`
+instance (that is, the application is a cache client), which is the default.
 
 [[actuator-clientcache-healthindicators-cq]]
 ==== GeodeContinuousQueriesHealthIndicator
 
-The `GeodeContinuousQueriesHealthIndicator` provides details about registered client Continuous Queries (CQ).
-CQs enable client applications to receive automatic notification about events that satisfy some criteria. That criteria
-can be easily expressed using the predicate of an OQL query (e.g. "`SELECT * FROM /Customers c WHERE c.age > 21`").
-Anytime data of interests is inserted or updated, and matches the criteria specified in the OQL query predicate,
-an event is sent to the registered client.
+`GeodeContinuousQueriesHealthIndicator` provides details about registered client Continuous Queries (CQs). CQs let
+client applications receive automatic notification about events that satisfy some criteria. That criteria can be easily
+expressed by using the predicate of an OQL query (for example, `SELECT * FROM /Customers c WHERE c.age > 21`).
+When data is inserted or updated and the data matches the criteria specified in the OQL query predicate
+("data of interests"), an event is sent to the registered client.
 
 The following details are covered for CQs by name:
 
-.Continuous Query(CQ) Details
+.Continuous Query (CQ) Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                            | Description
 
 | geode.continuous-query.<name>.oql-query-string  | OQL query constituting the CQ.
 | geode.continuous-query.<name>.closed            | Indicates whether the CQ has been closed.
-| geode.continuous-query.<name>.closing           | Indicates whether the CQ is the process of closing.
-| geode.continuous-query.<name>.durable           | Indicates whether the CQ events will be remembered
+| geode.continuous-query.<name>.closing           | Indicates whether the CQ is in the process of closing.
+| geode.continuous-query.<name>.durable           | Indicates whether the CQ events are remembered
 between client sessions.
 | geode.continuous-query.<name>.running           | Indicates whether the CQ is currently running.
 | geode.continuous-query.<name>.stopped           | Indicates whether the CQ has been stopped.
@@ -306,34 +305,31 @@ between client sessions.
 
 In addition, the following CQ query and statistical data is covered:
 
-.Continuous Query(CQ), Query Details
+.Continuous Query (CQ), Query Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                                       | Description
 
 | geode.continuous-query.<name>.query.number-of-executions   | Total number of times the query has been executed.
 | geode.continuous-query.<name>.query.total-execution-time   | Total amount of time (ns) spent executing the query.
-| geode.continuous-query.<name>.statistics.number-of-deletes |
 
 |=====================================================================================================================
-
 
 .Continuous Query(CQ), Statistic Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                                       | Description
 
-| geode.continuous-query.<name>.statistics.number-of-deletes | Number of Delete events qualified by this CQ.
+| geode.continuous-query.<name>.statistics.number-of-deletes | Number of delete events qualified by this CQ.
 | geode.continuous-query.<name>.statistics.number-of-events  | Total number of events qualified by this CQ.
-| geode.continuous-query.<name>.statistics.number-of-inserts | Number of Insert events qualified by this CQ.
-| geode.continuous-query.<name>.statistics.number-of-updates | Number of Update events qualified by this CQ.
+| geode.continuous-query.<name>.statistics.number-of-inserts | Number of insert events qualified by this CQ.
+| geode.continuous-query.<name>.statistics.number-of-updates | Number of update events qualified by this CQ.
 
 |=====================================================================================================================
 
-In a more general sense, the {apache-geode-name} Continuous Query system is tracked with the following,
-additional details on the client:
+The {apache-geode-name} Continuous Query system is also tracked with the following additional details on the client:
 
-.Continuous Query(CQ), Statistic Details
+.Continuous Query (CQ), Additional Statistic Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                                       | Description
@@ -351,8 +347,8 @@ additional details on the client:
 [[actuator-clientcache-healthindicators-pools]]
 ==== GeodePoolsHealthIndicator
 
-The `GeodePoolsHealthIndicator` provide details about all the configured client connection `Pools`.
-This `HealthIndicator` primarily provides configuration meta-data for all the configured `Pools`.
+`GeodePoolsHealthIndicator` provides details about all the configured client connection `Pools`. This `HealthIndicator`
+primarily provides configuration metadata for all the configured `Pools`.
 
 The following details are covered:
 
@@ -365,53 +361,53 @@ The following details are covered:
 | geode.pool.<name>.destroyed                             | Indicates whether the Pool has been destroyed.
 | geode.pool.<name>.free-connection-timeout               | Configured amount of time to wait for a free connection
 from the Pool.
-| geode.pool.<name>.idle-timeout                          | The amount of time to wait before closing unused,
-idle connections not exceeding the configured number of minimum required connections.
-| geode.pool.<name>.load-conditioning-interval            | Controls how frequently the Pool will check to see
-if a connection to a given server should be moved to a different server to improve the load balance.
+| geode.pool.<name>.idle-timeout                          | The amount of time to wait before closing unused, idle
+connections, not exceeding the configured number of minimum required connections.
+| geode.pool.<name>.load-conditioning-interval            | How frequently the Pool checks to see whether a connection
+to a given server should be moved to a different server to improve the load balance.
 | geode.pool.<name>.locators                              | List of configured Locators.
 | geode.pool.<name>.max-connections                       | Maximum number of connections obtainable from the Pool.
 | geode.pool.<name>.min-connections                       | Minimum number of connections contained by the Pool.
-| geode.pool.<name>.multi-user-authentication             | Determines whether the Pool can be used by
-multiple authenticated users.
+| geode.pool.<name>.multi-user-authentication             | Determines whether the Pool can be used by multiple
+authenticated users.
 | geode.pool.<name>.online-locators                       | Returns a list of living Locators.
-| geode.pool.<name>.pending-event-count                   | Approximate number of pending subscription events
-maintained at server for this durable client Pool at the time it (re)connected to the server.
+| geode.pool.<name>.pending-event-count                   | Approximate number of pending subscription events maintained
+at the server for this durable client Pool at the time it (re)connected to the server.
 | geode.pool.<name>.ping-interval                         | How often to ping the servers to verify they are still alive.
-| geode.pool.<name>.pr-single-hop-enabled                 | Whether the client will acquire a direct connection to
-the server containing the data of interests.
+| geode.pool.<name>.pr-single-hop-enabled                 | Whether the client acquires a direct connection to
+the server.
 | geode.pool.<name>.read-timeout                          | Number of milliseconds to wait for a response from a server
 before timing out the operation and trying another server (if any are available).
-| geode.pool.<name>.retry-attempts                        | Number of times to retry a request after timeout/exception.
-| geode.pool.<name>.server-group                          | Configures the group in which all servers this Pool
-connects to must belong.
+| geode.pool.<name>.retry-attempts                        | Number of times to retry a request after a timeout
+or an exception.
+| geode.pool.<name>.server-group                          | All servers must belong to the same group, and this value
+sets the name of that group.
 | geode.pool.<name>.servers                               | List of configured servers.
 | geode.pool.<name>.socket-buffer-size                    | Socket buffer size for each connection made in this Pool.
 | geode.pool.<name>.statistic-interval                    | How often to send client statistics to the server.
 | geode.pool.<name>.subscription-ack-interval             | Interval in milliseconds to wait before sending
 acknowledgements to the cache server for events received from the server subscriptions.
 | geode.pool.<name>.subscription-enabled                  | Enabled server-to-client subscriptions.
-| geode.pool.<name>.subscription-message-tracking-timeout | Time-to-Live period (ms), for subscription events
+| geode.pool.<name>.subscription-message-tracking-timeout | Time-to-Live (TTL) period (ms) for subscription events
 the client has received from the server.
-| geode.pool.<name>.subscription-redundancy               | Redundancy level for this Pools server-to-client
-subscriptions, which is used to ensure clients will not miss potentially important events.
+| geode.pool.<name>.subscription-redundancy               | Redundancy level for this Pool's server-to-client
+subscriptions, which is used to ensure clients do not miss potentially important events.
 | geode.pool.<name>.thread-local-connections              | Thread local connection policy for this Pool.
 
 |=====================================================================================================================
 
-
 [[actuator-peercache-healthindicators]]
-=== Peer `Cache` `HealthIndicators`
+=== Peer Cache HealthIndicators
 
-The peer `Cache` based `HealthIndicators` provide additional details specifically for Spring Boot, peer cache member
-applications.  These `HealthIndicators` are only available when the Spring Boot application creates a peer `Cache`
+The peer `Cache`-based `HealthIndicators` provide additional details specifically for Spring Boot peer cache member
+applications. These `HealthIndicators` are available only when the Spring Boot application creates a peer `Cache`
 instance.
 
 NOTE: The default cache instance created by Spring Boot for {apache-geode-name} is a `ClientCache` instance.
 
-TIP: To control what type of cache instance is created, such as a "peer", then you can explicitly declare either the
-`@PeerCacheApplication`, or alternatively, the `@CacheServerApplication`, annotation on your `@SpringBootApplication`
-annotated class.
+TIP: To control what type of cache instance is created, such as a "`peer`", you can explicitly declare either the
+`@PeerCacheApplication` or, alternatively, the `@CacheServerApplication` annotation on your
+`@SpringBootApplication`-annotated class.
 
 [[actuator-peercache-healthindicators-cacheservers]]
 ==== GeodeCacheServersHealthIndicator
@@ -419,69 +415,68 @@ annotated class.
 The `GeodeCacheServersHealthIndicator` provides details about the configured {apache-geode-name} `CacheServers`.
 `CacheServer` instances are required to enable clients to connect to the servers in the cluster.
 
-This `HealthIndicator` captures basic configuration meta-data and runtime behavior/characteristics of
-the configured `CacheServers`:
+This `HealthIndicator` captures basic configuration metadata and the runtime behavior and characteristics of
+the configured `CacheServer` instances:
 
 .CacheServer Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                               | Description
 
-| geode.cache.server.count                           | Total number of configured CacheServer instances
+| geode.cache.server.count                           | Total number of configured `CacheServer` instances
 on this peer member.
-| geode.cache.server.<index>.bind-address            | IP address of the NIC to which the CacheServer `ServerSocket`
+| geode.cache.server.<index>.bind-address            | IP address of the NIC to which the `CacheServer` `ServerSocket`
 is bound (useful when the system contains multiple NICs).
-| geode.cache.server.<index>.hostname-for-clients    | Name of the host used by clients to connect to the CacheServer
+| geode.cache.server.<index>.hostname-for-clients    | Name of the host used by clients to connect to the `CacheServer`
 (useful with DNS).
-| geode.cache.server.<index>.load-poll-interval      | How often (ms) to query the load probe on the CacheServer.
-| geode.cache.server.<index>.max-connections         | Maximum number of connections allowed to this CacheServer.
-| geode.cache.server.<index>.max-message-count       | Maximum number of messages that can be enqueued in
-a client queue.
-| geode.cache.server.<index>.max-threads             | Maximum number of Threads allowed in this CacheServer
+| geode.cache.server.<index>.load-poll-interval      | How often (ms) to query the load probe on the `CacheServer`.
+| geode.cache.server.<index>.max-connections         | Maximum number of connections allowed to this `CacheServer`.
+| geode.cache.server.<index>.max-message-count       | Maximum number of messages that can be put in a client queue.
+| geode.cache.server.<index>.max-threads             | Maximum number of threads allowed in this `CacheServer`
 to service client requests.
 | geode.cache.server.<index>.max-time-between-pings  | Maximum time between client pings.
-| geode.cache.server.<index>.message-time-to-live    | Time (seconds) in which the client queue will expire.
+| geode.cache.server.<index>.message-time-to-live    | Time (seconds) in which the client queue expires.
 | geode.cache.server.<index>.port                    | Network port to which the CacheServer `ServerSocket` is bound
-and listening for the client connections.
-| geode.cache.server.<index>.running                 | Determines whether this CacheServer is currently running
+and on which it listens for client connections.
+| geode.cache.server.<index>.running                 | Determines whether this `CacheServer` is currently running
 and accepting client connections.
-| geode.cache.server.<index>.socket-buffer-size      | Configured buffer size of the Socket connection
-used by this CacheServer.
-| geode.cache.server.<index>.tcp-no-delay            | Configures the TCP/IP TCP_NO_DELAY setting on outgoing Sockets.
+| geode.cache.server.<index>.socket-buffer-size      | Configured buffer size of the socket connection used by
+this CacheServer.
+| geode.cache.server.<index>.tcp-no-delay            | Configures the TCP/IP `TCP_NO_DELAY` setting on outgoing sockets.
 
 |=====================================================================================================================
 
-In addition to the configuration settings shown above, the `CacheServer's` `ServerLoadProbe` tracks additional details
-about the runtime characteristics of the `CacheServer`, as follows:
+In addition to the configuration settings shown in the preceding table, the `ServerLoadProbe` of the `CacheServer`
+tracks additional details about the runtime characteristics of the `CacheServer`:
 
 .CacheServer Metrics and Load Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                                             | Description
 
-| geode.cache.server.<index>.load.connection-load                  | Load on the server due to client to server
+| geode.cache.server.<index>.load.connection-load                  | Load on the server due to client-to-server
 connections.
-| geode.cache.server.<index>.load.load-per-connection              | Estimate of the how much load each new connection
-will add to this server.
+| geode.cache.server.<index>.load.load-per-connection              | Estimate of how much load each new connection
+adds to this server.
 | geode.cache.server.<index>.load.subscription-connection-load     | Load on the server due to subscription connections.
-| geode.cache.server.<index>.load.load-per-subscription-connection | Estimate of the how much load each new subscriber
-will add to this server.
+| geode.cache.server.<index>.load.load-per-subscription-connection | Estimate of how much load each new subscriber adds
+to this server.
 | geode.cache.server.<index>.metrics.client-count                  | Number of connected clients.
 | geode.cache.server.<index>.metrics.max-connection-count          | Maximum number of connections made to this
-CacheServer.
-| geode.cache.server.<index>.metrics.open-connection-count         | Number of open connections to this CacheServer.
+`CacheServer`.
+| geode.cache.server.<index>.metrics.open-connection-count         | Number of open connections to this `CacheServer`.
 | geode.cache.server.<index>.metrics.subscription-connection-count | Number of subscription connections to this
-CacheServer.
+`CacheServer`.
 
 |=====================================================================================================================
 
 [[actuator-peercache-healthindicators-aeq]]
 ==== GeodeAsyncEventQueuesHealthIndicator
 
-The `GeodeAsyncEventQueuesHealthIndicator` provides details about the configured `AsyncEventQueues`.  AEQs can be
-attached to Regions to configure asynchronous, write-behind behavior.
+`GeodeAsyncEventQueuesHealthIndicator` provides details about the configured `AsyncEventQueues`. AEQs can be attached to
+Regions to configure asynchronous write-behind behavior.
 
-This `HealthIndicator` captures  configuration meta-data and runtime characteristics for all AEQs, as follows:
+This `HealthIndicator` captures configuration metadata and runtime characteristics for all AEQs:
 
 .AsyncEventQueue Details
 [width="90%",cols="^3,<10",options="header"]
@@ -491,16 +486,16 @@ This `HealthIndicator` captures  configuration meta-data and runtime characteris
 | geode.async-event-queue.count                           | Total number of configured AEQs.
 | geode.async-event-queue.<id>.batch-conflation-enabled   | Indicates whether batch events are conflated when sent.
 | geode.async-event-queue.<id>.batch-size                 | Size of the batch that gets delivered over this AEQ.
-| geode.async-event-queue.<id>.batch-time-interval        | Max time interval that can elapse before a batch is sent.
-| geode.async-event-queue.<id>.disk-store-name            | Name of the disk store used to overflow & persist events.
-| geode.async-event-queue.<id>.disk-synchronous           | Indicates whether disk writes are sync or async.
-| geode.async-event-queue.<id>.dispatcher-threads         | Number of Threads used to dispatch events.
+| geode.async-event-queue.<id>.batch-time-interval        | Maximum time interval that can elapse before a batch is sent.
+| geode.async-event-queue.<id>.disk-store-name            | Name of the disk store used to overflow and persist events.
+| geode.async-event-queue.<id>.disk-synchronous           | Indicates whether disk writes are synchronous or asynchronous.
+| geode.async-event-queue.<id>.dispatcher-threads         | Number of threads used to dispatch events.
 | geode.async-event-queue.<id>.forward-expiration-destroy | Indicates whether expiration destroy operations
-are forwarded to AsyncEventListener.
+are forwarded to `AsyncEventListener`.
 | geode.async-event-queue.<id>.max-queue-memory           | Maximum memory used before data needs to be overflowed
 to disk.
 | geode.async-event-queue.<id>.order-policy               | Order policy followed while dispatching the events to
-AsyncEventListeners.
+`AsyncEventListeners`.
 | geode.async-event-queue.<id>.parallel                   | Indicates whether this queue is parallel (higher throughput)
 or serial.
 | geode.async-event-queue.<id>.persistent                 | Indicates whether this queue stores events to disk.
@@ -509,82 +504,82 @@ or serial.
 
 |=====================================================================================================================
 
-
 [[actuator-peercache-healthindicators-gateway-receivers]]
 ==== GeodeGatewayReceiversHealthIndicator
 
-The `GeodeGatewayReceiversHealthIndicator` provide details about the configured (WAN) `GatewayReceivers`, which are
-capable of receiving events from remote clusters when using {apache-geode-name}'s
+`GeodeGatewayReceiversHealthIndicator` provides details about the configured (WAN) `GatewayReceivers`,
+which are capable of receiving events from remote clusters when using {apache-geode-name}'s
 {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site, WAN topology].
 
-This `HealthIndicator` captures configuration meta-data along with the running state for each `GatewayReceiver`:
+This `HealthIndicator` captures configuration metadata along with the running state for each `GatewayReceiver`:
 
 .GatewayReceiver Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                                    | Description
 
-| geode.gateway-receiver.count                            | Total number of configured GatewayReceivers.
-| geode.gateway-receiver.<index>.bind-address             | IP address of the NIC to which the GatewayReceiver
+| geode.gateway-receiver.count                            | Total number of configured `GatewayReceiver` instances.
+| geode.gateway-receiver.<index>.bind-address             | IP address of the NIC to which the `GatewayReceiver`
 `ServerSocket` is bound (useful when the system contains multiple NICs).
-| geode.gateway-receiver.<index>.end-port                 | End value of the port range from which the GatewayReceiver's
-port will be chosen.
-| geode.gateway-receiver.<index>.host                     | IP address or hostname that Locators will tell clients
-(i.e. GatewaySenders) that this GatewayReceiver is listening on.
+| geode.gateway-receiver.<index>.end-port                 | End value of the port range from which the port of
+the `GatewayReceiver` is chosen.
+| geode.gateway-receiver.<index>.host                     | IP address or hostname that Locators tell clients (that is,
+`GatewaySender` instances) on which this `GatewayReceiver` listens.
 | geode.gateway-receiver.<index>.max-time-between-pings   | Maximum amount of time between client pings.
-| geode.gateway-receiver.<index>.port                     | Port on which this GatewayReceiver listens for clients
-(i.e. GatewaySenders).
-| geode.gateway-receiver.<index>.running                  | Indicates whether this GatewayReceiver is running
-and accepting client connections (from GatewaySenders).
-| geode.gateway-receiver.<index>.socket-buffer-size       | Configured buffer size for the Socket connections used by
-this GatewayReceiver.
-| geode.gateway-receiver.<index>.start-port               | Start value of the port range from which the
-GatewayReceiver's  port will be chosen.
+| geode.gateway-receiver.<index>.port                     | Port on which this `GatewayReceiver` listens for clients
+(that is, `GatewaySender` instances).
+| geode.gateway-receiver.<index>.running                  | Indicates whether this `GatewayReceiver` is running
+and accepting client connections (from `GatewaySender` instances).
+| geode.gateway-receiver.<index>.socket-buffer-size       | Configured buffer size for the socket connections used by
+this `GatewayReceiver`.
+| geode.gateway-receiver.<index>.start-port               | Start value of the port range from which the port of
+the `GatewayReceiver` is chosen.
 
 |=====================================================================================================================
 
 [[actuator-peercache-healthindicators-gateway-senders]]
 ==== GeodeGatewaySendersHealthIndicator
 
-The `GeodeGatewaySendersHealthIndicator` provides details about the configured `GatewaySenders`.  `GatewaySenders` are
-attached to Regions in order to send Region events to remote clusters in {apache-geode-name}'s
+The `GeodeGatewaySendersHealthIndicator` provides details about the configured `GatewaySenders`. `GatewaySender`
+instances are attached to Regions in order to send Region events to remote clusters in {apache-geode-name}'s
  {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site, WAN topology].
 
-This `HealthIndicator` captures essential configuration meta-data and runtime characteristics for each `GatewaySender`:
+This `HealthIndicator` captures essential configuration metadata and runtime characteristics for each `GatewaySender`:
 
 .GatewaySender Details
 [width="90%",cols="^3,<10",options="header"]
 |=====================================================================================================================
 | Name                                                    | Description
 
-| geode.gateway-sender.count                                      | Total number of configured GatewaySenders.
+| geode.gateway-sender.count                                      | Total number of configured `GatewaySender` instances.
 | geode.gateway-sender.<id>.alert-threshold                       | Alert threshold (ms) for entries in this
-GatewaySender's queue.
+`GatewaySender` instances queue.
 | geode.gateway-sender.<id>.batch-conflation-enabled              | Indicates whether batch events are conflated
 when sent.
 | geode.gateway-sender.<id>.batch-size                            | Size of the batches sent.
-| geode.gateway-sender.<id>.batch-time-interval                   | Max time interval that can elapse before a batch
+| geode.gateway-sender.<id>.batch-time-interval                   | Maximum time interval that can elapse before a batch
 is sent.
-| geode.gateway-sender.<id>.disk-store-name                       | Name of the DiskStore used to overflow and persist
-queue events.
-| geode.gateway-sender.<id>.disk-synchronous                      | Indicates whether disk writes are sync or async.
-| geode.gateway-sender.<id>.dispatcher-threads                    | Number of Threads used to dispatch events.
-| geode.gateway-sender.<id>.max-queue-memory                      | Maximum amount of memory (MB) usable for this
-GatewaySender's queue.
+| geode.gateway-sender.<id>.disk-store-name                       | Name of the `DiskStore` used to overflow and persist
+queued events.
+| geode.gateway-sender.<id>.disk-synchronous                      | Indicates whether disk writes are synchronous
+or asynchronous.
+| geode.gateway-sender.<id>.dispatcher-threads                    | Number of threads used to dispatch events.
 | geode.gateway-sender.<id>.max-parallelism-for-replicated-region |
+| geode.gateway-sender.<id>.max-queue-memory                      | Maximum amount of memory (MB) usable for this
+`GatewaySender` instance's queue.
 | geode.gateway-sender.<id>.order-policy                          | Order policy followed while dispatching the events
-to GatewayReceivers.
-| geode.gateway-sender.<id>.parallel                              | Indicates whether this GatewaySender is parallel
+to `GatewayReceiver` instances.
+| geode.gateway-sender.<id>.parallel                              | Indicates whether this `GatewaySender` is parallel
 (higher throughput) or serial.
-| geode.gateway-sender.<id>.paused                                | Indicates whether this GatewaySender is paused.
-| geode.gateway-sender.<id>.persistent                            | Indicates whether this GatewaySender persists queue
-events to disk.
+| geode.gateway-sender.<id>.paused                                | Indicates whether this `GatewaySender` is paused.
+| geode.gateway-sender.<id>.persistent                            | Indicates whether this `GatewaySender` persists
+queue events to disk.
 | geode.gateway-sender.<id>.remote-distributed-system-id          | Identifier for the remote distributed system.
-| geode.gateway-sender.<id>.running                               | Indicates whether this GatewaySender
+| geode.gateway-sender.<id>.running                               | Indicates whether this `GatewaySender`
 is currently running.
-| geode.gateway-sender.<id>.socket-buffer-size                    | Configured buffer size for the Socket connections
-between this GatewaySender and its receiving GatewayReceiver.
-| geode.gateway-sender.<id>.socket-read-timeout                   | Amount of time (ms) that a Socket read between
-this sending GatewaySender and its receiving GatewayReceiver will block.
+| geode.gateway-sender.<id>.socket-buffer-size                    | Configured buffer size for the socket connections
+between this `GatewaySender` and the receiving `GatewayReceiver`.
+| geode.gateway-sender.<id>.socket-read-timeout                   | Amount of time (ms) that a socket read between this
+sending `GatewaySender` and the receiving `GatewayReceiver` blocks.
 
 |=====================================================================================================================

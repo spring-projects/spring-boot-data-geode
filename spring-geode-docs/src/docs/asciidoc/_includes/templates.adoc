@@ -5,190 +5,210 @@
 
 There are several ways to access data stored in {geode-name}.
 
-For instance, developers may choose to use the {apache-geode-javadoc}/org/apache/geode/cache/Region.html[Region API]
-directly. If developers are driven by the application's domain context, they might choose to leverage the power of
+For instance, you can use the {apache-geode-javadoc}/org/apache/geode/cache/Region.html[Region API] directly. If you
+are driven by the application's domain context, you can use the power of
 {spring-data-commons-docs-html}/#repositories[Spring Data Repositories] instead.
 
-While using the _Region_ API directly offers flexibility, it couples your application to {geode-name}, which is usually
-undesirable and unnecessary.  While using Spring Data _Repositories_ provides a very powerful and convenient abstraction,
-you give up flexibility provided by a lower level API.
+While the Region API offers flexibility, it couples your application to {geode-name}, which is usually undesirable
+and unnecessary. While using Spring Data Repositories provides a very powerful and convenient abstraction, you give up
+the flexibility provided by a lower-level Region API.
 
-A good comprise is to use the _Template_ pattern.  Indeed, this pattern is consistently and widely used throughout
-the entire Spring portfolio.
+A good compromise is to use the https://en.wikipedia.org/wiki/Template_method_pattern[Template software design pattern].
+This pattern is consistently and widely used throughout the entire Spring portfolio.
 
-For example, there is the {spring-framework-javadoc}/org/springframework/jdbc/core/JdbcTemplate.html[JdbcTemplate]
-and {spring-framework-javadoc}/org/springframework/jms/core/JmsTemplate.html[JmsTemplate], which are provided by
-the core Spring Framework.
+For example, the Spring Framework provides {spring-framework-javadoc}/org/springframework/jdbc/core/JdbcTemplate.html[`JdbcTemplate`]
+and {spring-framework-javadoc}/org/springframework/jms/core/JmsTemplate.html[`JmsTemplate`].
 
 Other Spring Data modules, such as Spring Data Redis, offer the
-https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html[RedisTemplate],
-and Spring Data for {geode-name} (SDG) offers the
-{spring-data-gemfire-javadoc}/org/springframework/data/gemfire/GemfireTemplate.html[GemfireTemplate].
+https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html[`RedisTemplate`],
+and Spring Data for {geode-name} (SDG) itself offers the
+{spring-data-gemfire-javadoc}/org/springframework/data/gemfire/GemfireTemplate.html[`GemfireTemplate`].
 
 The `GemfireTemplate` provides a highly consistent and familiar API to perform data access operations on {geode-name}
 cache `Regions`.
 
 `GemfireTemplate` offers:
 
-1. Simple, consistent and convenient data access API to perform CRUD and basic query operations on cache Regions.
-2. Use of Spring Framework's consistent, data access {spring-framework-docs}/data-access.html#dao-exceptions[Exception Hierarchy].
-3. Automatic enlistment in the presence of local, cache transactions.
-4. Protection from {apache-geode-javadoc}/org/apache/geode/cache/Region.html[Region API] breaking changes.
+* A simple and convenient data access API to perform basic CRUD and simple query operations on cache Regions.
+* Use of Spring Framework's consistent data access {spring-framework-docs}/data-access.html#dao-exceptions[Exception hierarchy].
+* Automatic enlistment in the presence of local cache transactions.
+* Consistency and protection from {apache-geode-javadoc}/org/apache/geode/cache/Region.html[Region API] breaking changes.
 
-Given these conveniences, Spring Boot for {geode-name} (SBDG) will auto-configure `GemfireTemplate` beans for each
-Region present in the {geode-name} cache.
+Given these advantages, Spring Boot for {geode-name} (SBDG) auto-configures `GemfireTemplate` beans for each Region
+present in the {geode-name} cache.
 
-Additionally, SBDG is careful not to create a `GemfireTemplate` if the user has already declared a `GemfireTemplate`
-bean in the Spring `ApplicationContext` for a given Region.
+Additionally, SBDG is careful not to create a `GemfireTemplate` if you have already declared a `GemfireTemplate` bean
+in the Spring `ApplicationContext` for a given Region.
 
 [[geode-data-access-region-templates-explicit-declaration]]
 === Explicitly Declared Regions
 
-Given an explicitly declared Region bean definition:
+Consider an explicitly declared Region bean definition:
 
+. Explicitly Declared Region Bean Definition
+====
 [source,java]
 ----
 @Configuration
-class GemFireConfiguration {
+class GeodeConfiguration {
 
-  @Bean("Example")
-  ClientRegionFactoryBean<?, ?> exampleRegion (GemFireCache gemfireCache) {
-    // ...
-  }
+    @Bean("Example")
+    ClientRegionFactoryBean<?, ?> exampleRegion(GemFireCache gemfireCache) {
+        // ...
+    }
 }
 ----
+====
 
-SBDG will automatically create a `GemfireTemplate` bean for the "Example" Region using a bean name "exampleTemplate".
-SBDG will name the `GemfireTemplate` bean after the Region by converting the first letter in the Region's name
-to lowercase and appending the word "Template" to the bean name.
+SBDG automatically creates a `GemfireTemplate` bean for the `Example` Region by using the bean name `exampleTemplate`.
+SBDG names the `GemfireTemplate` bean after the Region by converting the first letter in the Region's name to lower case
+and appending `Template` to the bean name.
 
-In a managed Data Access Object (DAO), I can inject the Template, like so:
+In a managed Data Access Object (DAO), you can inject the Template:
 
+====
 [source,java]
 ----
 @Repository
 class ExampleDataAccessObject {
 
-  @Autowired
-  @Qualifier("exampleTemplate")
-  private GemfireTemplate exampleTemplate;
+    @Autowired
+    @Qualifier("exampleTemplate")
+    private GemfireTemplate exampleTemplate;
 
 }
 ----
+====
 
-It's advisable, especially if you have more than 1 Region, to use the `@Qualifier` annotation to qualify which
-`GemfireTemplate` bean you are specifically referring as demonstrated above.
+You should use the `@Qualifier` annotation to qualify which `GemfireTemplate` bean you are specifically referring,
+especially if you have more than one Region bean definition.
 
 [[geode-data-access-region-templates-entity-defined]]
 === Entity-defined Regions
 
-SBDG auto-configures `GemfireTemplate` beans for Entity-defined Regions.
+SBDG auto-configures `GemfireTemplate` beans for entity-defined Regions.
 
-Given the following entity class:
+Consider the following entity class:
 
+.Customer class
+====
 [source,java]
 ----
 @Region("Customers")
 class Customer {
-  // ...
+    // ...
 }
 ----
+====
 
-And configuration:
+Further consider the following configuration:
 
+.Apache Geode Configuration
+====
 [source,java]
 ----
 @Configuration
 @EnableEntityDefinedRegions(basePackageClasses = Customer.class)
 class GeodeConfiguration {
-  // ...
+    // ...
 }
 ----
+====
 
-SBDG auto-configures a `GemfireTemplate` bean for the "Customers" Region named "customersTemplate", which you can then
+SBDG auto-configures a `GemfireTemplate` bean for the `Customers` Region named `customersTemplate`, which you can then
 inject into an application component:
 
+.CustomerService application component
+====
 [source,java]
 ----
 @Service
 class CustomerService {
 
-  @Bean
-  @Qualifier("customersTemplate")
-  private GemfireTemplate customersTemplate;
+    @Bean
+    @Qualifier("customersTemplate")
+    private GemfireTemplate customersTemplate;
 
 }
 ----
+====
 
 Again, be careful to qualify the `GemfireTemplate` bean injection if you have multiple Regions, whether declared
-explicitly or implicitly, such as when using the `@EnableEntityDefineRegions` annotation.
+explicitly or implicitly, such as when you use the `@EnableEntityDefineRegions` annotation.
 
 [[geode-data-access-region-templates-caching-defined]]
 === Caching-defined Regions
 
-SBDG auto-configures `GemfireTemplate` beans for Caching-defined Regions.
+SBDG auto-configures `GemfireTemplate` beans for caching-defined Regions.
 
-When you are using Spring Framework's {spring-framework-docs}/integration.html#cache[Cache Abstraction] backed by
-{geode-name}, 1 of the requirements is to configure Regions for each of the caches specified in the
-{spring-framework-docs}integration.html#cache-annotations[Caching Annotations] of your application service components.
+When you use Spring Framework's {spring-framework-docs}/integration.html#cache[Cache Abstraction] backed by {geode-name},
+one requirement is to configure Regions for each of the caches specified in the
+{spring-framework-docs}integration.html#cache-annotations[caching annotations] of your application service components.
 
-Fortunately, SBDG makes enabling and configuring caching easy and <<geode-caching-provider,automatic>> out-of-the-box.
+Fortunately, SBDG makes enabling and configuring caching easy and <<geode-caching-provider,automatic>>.
 
-Given a cacheable application service component:
+Consider the following cacheable application service component:
 
+.Cacheable `CustomerService` class
+====
 [source,java]
 ----
 @Service
 class CacheableCustomerService {
 
-  @Bean
-  @Qualifier("customersByNameTemplate")
-  private GemfireTemplate customersByNameTemplate;
+    @Bean
+    @Qualifier("customersByNameTemplate")
+    private GemfireTemplate customersByNameTemplate;
 
-  @Cacheable("CustomersByName")
-  public Customer findBy(String name) {
-    return toCustomer(customersByNameTemplate.query("name = " + name));
-  }
+    @Cacheable("CustomersByName")
+    public Customer findBy(String name) {
+        return toCustomer(customersByNameTemplate.query("name = " + name));
+    }
 }
 ----
+====
 
-And configuration:
+Further consider the following configuration:
 
+.Apache Geode Configuration
+====
 [source,java]
 ----
 @Configuration
 @EnableCachingDefinedRegions
-class GemFireConfiguration {
+class GeodeConfiguration {
 
-  @Bean
-  public CustomerService customerService() {
-    return new CustomerService();
-  }
+    @Bean
+    public CustomerService customerService() {
+        return new CustomerService();
+    }
 }
 ----
+====
 
-
-SBDG auto-configures a `GemfireTemplate` bean named "customersByNameTemplate" used to perform data access operations
-on the "CustomersByName" (`@Cacheable`) Region, which you can inject into any managed application component,
-as shown above.
+SBDG auto-configures a `GemfireTemplate` bean named `customersByNameTemplate` to perform data access operations on
+the `CustomersByName` (`@Cacheable`) Region. You can then inject the bean into any managed application component,
+as shown in the preceding application service component example.
 
 Again, be careful to qualify the `GemfireTemplate` bean injection if you have multiple Regions, whether declared
-explicitly or implicitly, such as when using the `@EnableCachingDefineRegions` annotation.
+explicitly or implicitly, such as when you use the `@EnableCachingDefineRegions` annotation.
 
-WARNING: There are certain cases where autowiring (i.e. injecting) `GemfireTemplate` beans auto-configured by SBDG
-for Caching-defined Regions into your application components will not always work!  This has to do with the Spring
-Container bean creation process.  In those case you may need to lazily lookup the `GemfireTemplate` as needed, using
-`applicationContext.getBean("customersByNameTemplate", GemfireTemplate.class)`.  This is certainly not ideal but works
-when autowiring does not.
+WARNING: Autowiring (that is, injecting) `GemfireTemplate` beans auto-configured by SBDG for caching-defined Regions
+into your application components does not always work. This has to do with the Spring container bean creation process.
+In those cases, you may need to lazily lookup the `GemfireTemplate` by using
+`applicationContext.getBean("customersByNameTemplate", GemfireTemplate.class)`. This is not ideal, but it works when
+autowiring does not.
 
 [[geode-data-access-region-templates-native-defined]]
 === Native-defined Regions
 
-SBDG will even auto-configure `GemfireTemplate` beans for Regions defined using {geode-name} native configuration
-metadata, such as `cache.xml`.
+SBDG even auto-configures `GemfireTemplate` beans for Regions that have been defined with {geode-name} native
+configuration metadata, such as `cache.xml`.
 
-Given the following {geode-name} native `cache.xml`:
+Consider the following {geode-name} native `cache.xml`:
 
+.Client `cache.xml`
+====
 [source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -201,91 +221,110 @@ Given the following {geode-name} native `cache.xml`:
 
 </client-cache>
 ----
+====
 
-And Spring configuration:
+Further consider the following Spring configuration:
 
+.Apache Geode Configuration
+====
 [source,java]
 ----
 @Configuration
 @EnableGemFireProperties(cacheXmlFile = "cache.xml")
-class GemFireConfiguration {
-  // ...
+class GeodeConfiguration {
+    // ...
 }
 ----
+====
 
-SBDG will auto-configure a `GemfireTemplate` bean named "exampleTemplate" after the "Example" Region defined in
-`cache.xml`. This Template can be injected like any other Spring managed bean:
+SBDG auto-configures a `GemfireTemplate` bean named `exampleTemplate` after the `Example` Region defined in `cache.xml`.
+You can inject this template as you would any other Spring-managed bean:
 
+.Injecting the `GemfireTemplate`
+====
 [source,java]
 ----
 @Service
 class ExampleService {
 
-  @Autowired
-  @Qualifier("exampleTemplate")
-  private GemfireTemplate exampleTemplate;
+    @Autowired
+    @Qualifier("exampleTemplate")
+    private GemfireTemplate exampleTemplate;
 
 }
 ----
+====
 
-The same rules as above apply when multiple Regions are present.
+The rules described earlier apply when multiple Regions are present.
 
 [[geode-data-access-region-templates-rules]]
 === Template Creation Rules
 
-Fortunately, SBDG is careful not to create a `GemfireTemplate` bean for a Region if a Template by the same name
-already exists. For example, if you defined and declared the following configuration:
+Fortunately, SBDG is careful not to create a `GemfireTemplate` bean for a Region if a template by the same name already
+exists.
 
-[source,java]
-----
-@Configuration
-@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
-class GemFireConfiguration {
+For example, consider the following configuration:
 
-  @Bean
-  public GemfireTemplate customersTemplate(GemFireCache cache) {
-    return new GemfireTemplate(cache.getRegion("/Customers"));
-  }
-}
-----
-
-Using our same Customers class, as above:
-
-[source,java]
-----
-@Region("Customers")
-class Customer {
-  // ...
-}
-----
-
-Because you explicitly defined the "customersTemplate" bean, SBDG will not create a Template for the "Customers" Region
-automatically. This applies regardless of how the Region was created, whether using `@EnableEntityDefinedRegions`,
-`@EnableCachingDefinedRegions`, declaring Regions explicitly or defining Regions natively.
-
-Even if you name the Template differently from the Region for which the Template was configured, SBDG will conserve
-resources and not create the Template.
-
-For example, suppose you named the `GemfireTemplate` bean, "vipCustomersTemplate", even though the Region name
-is "Customers", based on the `@Region` annotated `Customer` class, which specified Region "Customers".
-
-With the following configuration, SBDG is still careful not to create the Template:
-
+.Apache Geode Configuration
+====
 [source,java]
 ----
 @Configuration
 @EnableEntityDefinedRegions(basePackageClasses = Customer.class)
 class GeodeConfiguration {
 
-  @Bean
-  public GemfireTemplate vipCustomersTemplate(GemFireCache cache) {
-    return new GemfireTemplate(cache.getRegion("/Customers"));
-  }
+    @Bean
+    public GemfireTemplate customersTemplate(GemFireCache cache) {
+        return new GemfireTemplate(cache.getRegion("/Customers"));
+    }
 }
 ----
+====
 
-SBDG identifies that your "vipCustomersTemplate" is the Template used with the "Customers" Region and SBDG will not
-create the "customersTemplate" bean, which would result in 2 `GemfireTemplate` beans for the same Region.
+Further consider the following example:
 
-NOTE: The name of your Spring bean defined in JavaConfig is the name of the method if the Spring bean is not explicitly
-named using the `name` (or `value`) attribute of the `@Bean` annotation.
+.Customer class
+====
+[source,java]
+----
+@Region("Customers")
+class Customer {
+    // ...
+}
+----
+====
+
+Because you explicitly defined and declared the `customersTemplate` bean, SBDG does not automatically create a template
+for the `Customers` Region. This applies regardless of how the Region was created, whether by using
+`@EnableEntityDefinedRegions`, `@EnableCachingDefinedRegions`, explicitly declaring Regions,
+or natively defining Regions.
+
+Even if you name the template differently from the Region for which the template was configured, SBDG conserves
+resources and does not create the template.
+
+For example, suppose you named the `GemfireTemplate` bean `vipCustomersTemplate`, even though the Region name
+is `Customers`, based on the `@Region` annotated `Customer` class, which specified the `Customers` Region.
+
+With the following configuration, SBDG is still careful not to create the template:
+
+.Apache Geode Configuration
+====
+[source,java]
+----
+@Configuration
+@EnableEntityDefinedRegions(basePackageClasses = Customer.class)
+class GeodeConfiguration {
+
+    @Bean
+    public GemfireTemplate vipCustomersTemplate(GemFireCache cache) {
+        return new GemfireTemplate(cache.getRegion("/Customers"));
+    }
+}
+----
+====
+
+SBDG identifies that your `vipCustomersTemplate` is the template used with the `Customers` Region, and SBDG does not
+create the `customersTemplate` bean, which would result in two `GemfireTemplate` beans for the same Region.
+
+NOTE: The name of your Spring bean defined in Java configuration is the name of the method if the Spring bean is not
+explicitly named by using the `name` attribute or the `value` attribute of the `@Bean` annotation.

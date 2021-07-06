@@ -3,61 +3,59 @@
 :geode-name: {apache-geode-name}
 
 
-This section contains working examples demonstrating how to use Spring Boot for {geode-name} (SBDG) effectively.
+This section contains working examples that show how to use Spring Boot for {geode-name} (SBDG) effectively.
 
-Some examples focus on specific Use Cases (e.g. [(HTTP) Session state] caching) while other examples demonstrate how
-SBDG works under-the-hood to give users a better understanding of what is actually happening and how to debug problems
-with their {geode-name}, Spring Boot applications.
+Some examples focus on specific use cases (such as (HTTP) session state caching), while other examples show how SBDG
+works under the hood, to give you a better understanding of what is actually happening and how to debug problems with
+your Spring Boot {geode-name} applications.
 
 .Example Spring Boot applications using {geode-name}
 |===
 | Guide | Description | Source
 
 | link:guides/getting-started.html[Getting Started with Spring Boot for {geode-name}]
-| Explains how to get started quickly, easily and reliably building {geode-name} and Pivotal Cloud Cache powered
-applications with Spring Boot.
+| Explains how to get started quickly, easily, and reliably building {geode-name} powered applications with Spring Boot.
 | {github-samples-url}/intro/getting-started[Getting Started]
 
 | link:guides/boot-configuration.html[Spring Boot Auto-Configuration for {geode-name}]
-| Explains what auto-configuration is provided by SBDG out-of-the-box and what the auto-configuration is doing.
-| {github-samples-url}/boot/configuration[Boot Auto-Configuration]
+| Explains what auto-configuration is provided by SBDG and what the auto-configuration does.
+| {github-samples-url}/boot/configuration[Spring Boot Auto-Configuration]
 
 | link:guides/boot-actuator.html[Spring Boot Actuator for {geode-name}]
 | Explains how to use Spring Boot Actuator for {geode-name} and how it works.
-| {github-samples-url}/boot/actuator[Boot Actuator]
+| {github-samples-url}/boot/actuator[Spring Boot Actuator]
 
 | link:guides/boot-security.html[Spring Boot Security for {geode-name}]
-| Explains how to configure Auth and TLS with SSL when using {geode-name} and Pivotal Cloud Cache
-in Spring Boot applications.
-| {github-samples-url}/boot/security[Boot Security]
+| Explains how to configure auth and TLS with SSL when you use {geode-name} in your Spring Boot applications.
+| {github-samples-url}/boot/security[Spring Boot Security]
 
 | link:guides/caching-look-aside.html[Look-Aside Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring Cache Abstraction with {geode-name} as the caching provider for Look-Aside Caching.
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider
+for look-aside caching.
 | {github-samples-url}/caching/look-aside[Look-Aside Caching]
 
 | link:guides/caching-inline.html[Inline Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring Cache Abstraction with {geode-name} as the caching provider for Inline Caching.
-This sample builds on the *_Look-Aside Caching_* sample above.
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider for inline caching.
+This sample builds on the look-aside caching sample.
 | {github-samples-url}/caching/inline[Inline Caching]
 
 | link:guides/caching-inline-async.html[Asynchronous Inline Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring Cache Abstraction with {geode-name} as the caching provider for Asynchronous
-Inline Caching. This sample builds on the *_Look-Aside Caching_* and *Inline Caching* samples above.
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider for asynchronous
+inline caching. This sample builds on the look-aside and inline caching samples.
 | {github-samples-url}/caching/inline-async[Asynchronous Inline Caching]
 
 | link:guides/caching-near.html[Near Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring Cache Abstraction with {geode-name} as the caching provider for Near Caching.
-This sample builds on the *_Look-Aside Caching_* sample above
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider for near caching.
+This sample builds on the look-aside caching sample.
 | {github-samples-url}/caching/near[Near Caching]
 
 | link:guides/caching-multi-site.html[Multi-Site Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring Cache Abstraction with {geode-name} as the caching provider for Multi-Site Caching.
-This sample builds on the *_Look-Aside Caching_* sample above and is the 4th and final leg in our study
-of _caching patterns_.
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider for multi-site
+caching. This sample builds on the look-aside caching sample.
 | {github-samples-url}/caching/multi-site[Multi-Site Caching]
 
 | link:guides/caching-http-session.html[HTTP Session Caching with Spring Session and {geode-name}]
-| Explains how to enable and use Spring Session with {geode-name} to manage HTTP Session state.
+| Explains how to enable and use Spring Session with {geode-name} to manage HTTP session state.
 | {github-samples-url}/caching/http-session[HTTP Session Caching]
 
 |===

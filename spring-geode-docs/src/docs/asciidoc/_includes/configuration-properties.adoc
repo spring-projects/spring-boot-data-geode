@@ -3,154 +3,152 @@
 :geode-name: {apache-geode-name}
 
 
-The following 2 reference sections cover documented and well-known properties recognized and processed by
-_Spring Data for {geode-name}_ (SDG) as well as _Spring Session for {geode-name}_ (SSDG).
+The following reference sections cover documented and well-known properties recognized and processed by Spring Data
+for {geode-name} (SDG) and Spring Session for {geode-name} (SSDG).
 
-These properties may be used in Spring Boot `application.properties` files, or as JVM System properties, to configure
-different aspects of or enable individual features of {geode-name} in a Spring application. When combined with the power
-of Spring Boot, magical things begin to happen.
+These properties may be used in Spring Boot `application.properties` or as JVM System properties, to configure different
+aspects of or enable individual features of {geode-name} in a Spring application. When combined with the power of
+Spring Boot, they give you the ability to quickly create an application that uses {geode_name}.
 
 [[geode-configuration-metadata-springdata]]
 === Spring Data Based Properties
 
-The following properties all have a `spring.data.gemfire.*` prefix.  For example, to set the cache `copy-on-read`
+The following properties all have a `spring.data.gemfire.*` prefix. For example, to set the cache `copy-on-read`
 property, use `spring.data.gemfire.cache.copy-on-read` in Spring Boot `application.properties`.
-
 
 .`spring.data.gemfire.*` properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| name  | Name of the {geode-name}. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
-| locators | Comma-delimited list of Locator endpoints formatted as: locator1[port1],...,locatorN[portN]. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#locators--[PeerCacheApplication.locators]
-| use-bean-factory-locator | Enable the SDG BeanFactoryLocator when mixing Spring config with {geode-name} native config (e.g. cache.xml) and you wish to configure {geode-name} objects declared in `cache.xml` with Spring.  | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#useBeanFactoryLocator--[ClientCacheApplication.useBeanFactoryLocator]
+| `name`  | Name of the {geode-name}. | `SpringBasedCacheClientApplication` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[`ClientCacheApplication.name`]
+| `locators` | Comma-delimited list of Locator endpoints formatted as: `locator1[port1],...,locatorN[portN]`. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#locators--[`PeerCacheApplication.locators`]
+| `use-bean-factory-locator` | Enable the SDG `BeanFactoryLocator` when mixing Spring config with {geode-name} native config (such as `cache.xml`) and you wish to configure {geode-name} objects declared in `cache.xml` with Spring.  | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#useBeanFactoryLocator--[`ClientCacheApplication.useBeanFactoryLocator`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` _GemFireCache_ properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| cache.copy-on-read  | Configure whether a copy of an object returned from Region.get(key) is made. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#copyOnRead--[ClientCacheApplication.copyOnRead]
-| cache.critical-heap-percentage | Percentage of heap at or above which the cache is considered in danger of becoming inoperable. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#criticalHeapPercentage--[ClientCacheApplication.criticalHeapPercentage]
-| cache.critical-off-heap-percentage | Percentage of off-heap at or above which the cache is considered in danger of becoming inoperable. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#criticalOffHeapPercentage--[ClientCacheApplication.criticalOffHeapPercentage]
-| cache.enable-auto-region-lookup | Configure whether to lookup Regions configured in {geode-name} native config and declare them as Spring beans. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAutoRegionLookup.html#enabled--[EnableAutoRegionLookup.enable]
-| cache.eviction-heap-percentage | Percentage of heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionHeapPercentage--[ClientCacheApplication.evictionHeapPercentage]
-| cache.eviction-off-heap-percentage | Percentage of off-heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionOffHeapPercentage--[ClientCacheApplication.evictionOffHeapPercentage]
-| cache.log-level | Configure the log-level of an {geode-name} cache. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#logLevel--[ClientCacheApplication.logLevel]
-| cache.name | Alias for 'spring.data.gemfire.name'. | SpringBasedCacheClientApplication | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[ClientCacheApplication.name]
-| cache.compression.bean-name | Name of a Spring bean implementing org.apache.geode.compression.Compressor. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#compressorBeanName--[EnableCompression.compressorBeanName]
-| cache.compression.region-names | Comma-delimited list of Region names for which compression will be configured. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#regionNames--[EnableCompression.regionNames]
-| cache.off-heap.memory-size | Determines the size of off-heap memory used by {geode-name} in megabytes (m) or gigabytes (g); for example 120g. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableOffHeap.html#memorySize--[EnableOffHeap.memorySize]
-| cache.off-heap.region-names | Comma-delimited list of Region names for which off-heap will be configured. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableOffHeap.html#regionNames--[EnableOffHeap.regionNames]
+| `cache.copy-on-read`  | Configure whether a copy of an object returned from `Region.get(key)` is made. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#copyOnRead--[`ClientCacheApplication.copyOnRead`]
+| `cache.critical-heap-percentage` | Percentage of heap at or above which the cache is considered in danger of becoming inoperable. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#criticalHeapPercentage--[`ClientCacheApplication.criticalHeapPercentage`]
+| `cache.critical-off-heap-percentage` | Percentage of off-heap at or above which the cache is considered in danger of becoming inoperable. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#criticalOffHeapPercentage--[`ClientCacheApplication.criticalOffHeapPercentage`]
+| `cache.enable-auto-region-lookup` | Whether to lookup Regions configured in {geode-name} native configuration and declare them as Spring beans. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAutoRegionLookup.html#enabled--[`EnableAutoRegionLookup.enable`]
+| `cache.eviction-heap-percentage` | Percentage of heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionHeapPercentage--[`ClientCacheApplication.evictionHeapPercentage`]
+| `cache.eviction-off-heap-percentage` | Percentage of off-heap at or above which the eviction should begin on Regions configured for HeapLRU eviction. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#evictionOffHeapPercentage--[`ClientCacheApplication.evictionOffHeapPercentage`]
+| `cache.log-level` | Configure the log-level of an {geode-name} cache. | `config` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#logLevel--[`ClientCacheApplication.logLevel`]
+| `cache.name` | Alias for `spring.data.gemfire.name`. | `SpringBasedCacheClientApplication` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#name--[`ClientCacheApplication.name`]
+| `cache.compression.bean-name` | Name of a Spring bean that implements `org.apache.geode.compression.Compressor`. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#compressorBeanName--[`EnableCompression.compressorBeanName`]
+| `cache.compression.region-names` | Comma-delimited list of Region names for which compression is configured. | `[]` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableCompression.html#RegionNames--[EnableCompression.RegionNames]
+| cache.off-heap.memory-size | Determines the size of off-heap memory used by {geode-name} in megabytes (m) or gigabytes (g) -- for example, `120g` | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableOffHeap.html#memorySize--[`EnableOffHeap.memorySize`]
+| `cache.off-heap.region-names` | Comma-delimited list of Region names for which off-heap is configured. | `[]` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableOffHeap.html#RegionNames--[`EnableOffHeap.RegionNames`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` _ClientCache_ properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| cache.client.durable-client-id | Used only for clients in a client/server installation. If set, this indicates that the client is durable and identifies the client. The ID is used by servers to reestablish any messaging that was interrupted by client downtime. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#durableClientId--[ClientCacheApplication.durableClientId]
-| cache.client.durable-client-timeout | Used only for clients in a client/server installation. Number of seconds this client can remain disconnected from its server and have the server continue to accumulate durable events for it. | 300 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#durableClientTimeout--[ClientCacheApplication.durableClientTimeout]
-| cache.client.keep-alive | Configure whether the server should keep the durable client's queues alive for the timeout period. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#keepAlive--[ClientCacheApplication.keepAlive]
+| `cache.client.durable-client-id` | Used only for clients in a client/server installation. If set, this indicates that the client is durable and identifies the client. The ID is used by servers to reestablish any messaging that was interrupted by client downtime. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#durableClientId--[`ClientCacheApplication.durableClientId`]
+| `cache.client.durable-client-timeout` | Used only for clients in a client/server installation. Number of seconds this client can remain disconnected from its server and have the server continue to accumulate durable events for it. | `300` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#durableClientTimeout--[`ClientCacheApplication.durableClientTimeout`]
+| `cache.client.keep-alive` | Whether the server should keep the durable client's queues alive for the timeout period. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#keepAlive--[`ClientCacheApplication.keepAlive`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` peer _Cache_ properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| cache.peer.enable-auto-reconnect | Configure whether member (Locators & Servers) will attempt to reconnect and reinitialize the cache after it has been forced out of the cluster by a network partition event or has otherwise been shunned by other members. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#enableAutoReconnect--[PeerCacheApplication.enableAutoReconnect]
-| cache.peer.lock-lease | Configures the length, in seconds, of distributed lock leases obtained by this cache. | 120 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#lockLease--[PeerCacheApplication.lockLease]
-| cache.peer.lock-timeout | Configures the number of seconds a cache operation will wait to obtain a distributed lock lease. | 60 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#lockTimeout--[PeerCacheApplication.lockTimeout]
-| cache.peer.message-sync-interval | Configures the frequency (in seconds) at which a message will be sent by the primary cache-server to all the secondary cache-server nodes to remove the events which have already been dispatched from the queue. | 1 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#messageSyncInterval--[PeerCacheApplication.messageSyncInterval]
-| cache.peer.search-timeout | Configures the number of seconds a cache get operation can spend searching for a value. | 300 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#searchTimeout--[PeerCacheApplication.searchTimeout]
-| cache.peer.use-cluster-configuration | Configures whether this cache member node would pull it's configuration meta-data from the cluster-based Cluster Configuration Service. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#useClusterConfiguration--[PeerCacheApplication.useClusterConfiguration]
+| `cache.peer.enable-auto-reconnect` | Whether a member (a Locator or Server) try to reconnect and reinitialize the cache after it has been forced out of the cluster by a network partition event or has otherwise been shunned by other members. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#enableAutoReconnect--[`PeerCacheApplication.enableAutoReconnect`]
+| `cache.peer.lock-lease` | The length, in seconds, of distributed lock leases obtained by this cache. | `120` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#lockLease--[`PeerCacheApplication.lockLease`]
+| `cache.peer.lock-timeout` | The number of seconds a cache operation waits to obtain a distributed lock lease. | `60` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#lockTimeout--[`PeerCacheApplication.lockTimeout`]
+| `cache.peer.message-sync-interval` | The frequency (in seconds) at which a message is sent by the primary cache-server to all the secondary cache-server nodes to remove the events that have already been dispatched from the queue. | `1` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#messageSyncInterval--[`PeerCacheApplication.messageSyncInterval`]
+| `cache.peer.search-timeout` | The number of seconds a cache get operation can spend searching for a value. | `300` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#searchTimeout--[`PeerCacheApplication.searchTimeout`]
+| `cache.peer.use-cluster-configuration` | Whether this cache member node pulls its configuration metadata from the cluster-based cluster configuration service. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html#useClusterConfiguration--[`PeerCacheApplication.useClusterConfiguration`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` _CacheServer_ properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| cache.server.auto-startup | Configures whether the CacheServer should be started automatically at runtime. | true | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#autoStartup--[CacheServerApplication.autoStartup]
-| cache.server.bind-address | Configures the IP address or hostname that this cache server will listen on. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#bindAddress--[CacheServerApplication.bindAddress]
-| cache.server.hostname-for-clients | Configures the IP address or hostname that server locators will tell clients that this cache server is listening on. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#hostnameForClients--[CacheServerApplication.hostNameForClients]
-| cache.server.load-poll-interval | Configures the frequency in milliseconds to poll the load probe on this cache server. | 5000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#loadPollInterval--[CacheServerApplication.loadPollInterval]
-| cache.server.max-connections | Configures the maximum client connections allowed. | 800 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxConnections--[CacheServerApplication.maxConnections]
-| cache.server.max-message-count | Configures the maximum number of messages that can be enqueued in a client queue. | 230000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxMessageCount--[CacheServerApplication.maxMessageCount]
-| cache.server.max-threads | Configures the maximum number of threads allowed in this cache server to service client requests. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxThreads--[CacheServerApplication.maxThreads]
-| cache.server.max-time-between-pings | Configures the maximum amount of time between client pings. | 60000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxTimeBetweenPings--[CacheServerApplication.maxTimeBetweenPings]
-| cache.server.message-time-to-live | Configures the time (in seconds) after which a message in the client queue will expire. | 180 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#messageTimeToLive--[CacheServerApplication.messageTimeToLive]
-| cache.server.port | Configures the port on which this cache server listens for clients. | 40404 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#port--[CacheServerApplication.port]
-| cache.server.socket-buffer-size | Configures buffer size of the socket connection to this CacheServer. | 32768 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#socketBufferSize--[CacheServerApplication.socketBufferSize]
-| cache.server.subscription-capacity | Configures the capacity of the client queue. | 1 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#subscriptionCapacity--[CacheServerApplication.subscriptionCapacity]
-| cache.server.subscription-disk-store-name | Configures the name of the DiskStore for client subscription queue overflow. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#subscriptionDiskStoreName--[CacheServerApplication.subscriptionDiskStoreName]
-| cache.server.subscription-eviction-policy | Configures the eviction policy that is executed when capacity of the client subscription queue is reached. | none | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#subscriptionEvictionPolicy--[CacheServerApplication.subscriptionEvictionPolicy]
-| cache.server.tcp-no-delay | Configures the outgoing Socket connection tcp-no-delay setting. | true | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#tcpNoDelay--[CacheServerApplication.tcpNoDelay]
+| `cache.server.auto-startup` | Whether the `CacheServer` should be started automatically at runtime. | `true` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#autoStartup--[`CacheServerApplication.autoStartup`]
+| `cache.server.bind-address` | The IP address or hostname on which this cache server listens. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#bindAddress--[`CacheServerApplication.bindAddress`]
+| `cache.server.hostname-for-clients` | The IP address or hostname that server locators tell to clients to indicate the IP address on which the cache server listens. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#hostnameForClients--[`CacheServerApplication.hostNameForClients`]
+| `cache.server.load-poll-interval` | The frequency in milliseconds at which to poll the load probe on this cache server. | `5000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#loadPollInterval--[`CacheServerApplication.loadPollInterval`]
+| `cache.server.max-connections` | The maximum client connections. | `800` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxConnections--[`CacheServerApplication.maxConnections`]
+| `cache.server.max-message-count` | The maximum number of messages that can be in a client queue. | `230000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxMessageCount--[`CacheServerApplication.maxMessageCount`]
+| `cache.server.max-threads` | The maximum number of threads allowed in this cache server to service client requests. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxThreads--[`CacheServerApplication.maxThreads`]
+| `cache.server.max-time-between-pings` | The maximum amount of time between client pings. | `60000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#maxTimeBetweenPings--[`CacheServerApplication.maxTimeBetweenPings`]
+| `cache.server.message-time-to-live` | The time (in seconds) after which a message in the client queue expires. | `180` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#messageTimeToLive--[`CacheServerApplication.messageTimeToLive`]
+| `cache.server.port` | The port on which this cache server listens for clients. | `40404` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#port--[`CacheServerApplication.port`]
+| `cache.server.socket-buffer-size` | The buffer size of the socket connection to this `CacheServer`. | `32768` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#socketBufferSize--[`CacheServerApplication.socketBufferSize`]
+| `cache.server.subscription-capacity` | The capacity of the client queue. | `1` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#subscriptionCapacity--[`CacheServerApplication.subscriptionCapacity`]
+| `cache.server.subscription-disk-store-name` | The name of the disk store for client subscription queue overflow. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#subscriptionDiskStoreName--[`CacheServerApplication.subscriptionDiskStoreName`]
+| `cache.server.subscription-eviction-policy` | The eviction policy that is executed when the capacity of the client subscription queue is reached. | `none` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#subscriptionEvictionPolicy--[`CacheServerApplication.subscriptionEvictionPolicy`]
+| `cache.server.tcp-no-delay` | The outgoing socket connection tcp-no-delay setting. | `true` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#tcpNoDelay--[`CacheServerApplication.tcpNoDelay`]
 
 |=====================================================================================================================
 
-_CacheServer_ properties can be further targeted at specific _CacheServer_ instances, using an option bean name
-of the `CacheServer` bean defined in the Spring application context.  For example:
+`CacheServer` properties can be further targeted at specific `CacheServer` instances by using an optional bean name
+of the `CacheServer` bean defined in the Spring `ApplicationContext`. Consider the following example:
 
+====
 [source,properties]
 ----
 spring.data.gemfire.cache.server.[<cacheServerBeanName>].bind-address=...
 ----
-
+====
 
 .`spring.data.gemfire.*` Cluster properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| cluster.region.type | Configuration setting used to specify the data management policy used when creating Regions on the servers in the cluster. | {apache-geode-javadoc}/org/apache/geode/cache/RegionShortcut.html#PARTITION[RegionShortcut.PARTITION] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#serverRegionShortcut--[EnableClusterConfiguration.serverRegionShortcut]
+| `cluster.Region.type` | Specifies the data management policy used when creating Regions on the servers in the cluster. | {apache-geode-javadoc}/org/apache/geode/cache/RegionShortcut.html#PARTITION[`RegionShortcut.PARTITION`] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#serverRegionShortcut--[`EnableClusterConfiguration.serverRegionShortcut`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` _DiskStore_ properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| disk.store.allow-force-compaction | Configures whether to allow DiskStore.forceCompaction() to be called on Regions using a DiskStore. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#allowForceCompaction--[EnableDiskStore.allowForceCompaction]
-| disk.store.auto-compact | Configures whether to cause the disk files to be automatically compacted. | true | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#autoCompact--[EnableDiskStore.autoCompact]
-| disk.store.compaction-threshold | Configures the threshold at which an oplog will become compactable. | 50 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#compactionThreshold--[EnableDiskStore.compactionThreshold]
-| disk.store.directory.location | Configures the system directory where the `DiskStore` (oplog) files will be stored. | [] | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskDirectories--[EnableDiskStore.diskDirectories.location]
-| disk.store.directory.size | Configures the amount of disk space allowed to store DiskStore (oplog) files. | 21474883647 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskDirectories--[EnableDiskStore.diskDirectories.size]
-| disk.store.disk-usage-critical-percentage | Configures the critical threshold for disk usage as a percentage of the total disk volume. | 99.0 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskUsageCriticalPercentage--[EnableDiskStore.diskUsageCriticalPercentage]
-| disk.store.disk-usage-warning-percentage | Configures the warning threshold for disk usage as a percentage of the total disk volume. | 90.0 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskUsageWarningPercentage--[EnableDiskStore.diskUsageWarningPercentage]
-| disk.store.max-oplog-size | Configures the maximum size in megabytes a single oplog (operation log) is allowed to be. | 1024 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#maxOplogSize--[EnableDiskStore.maxOplogSize]
-| disk.store.queue-size | Configures the maximum number of operations that can be asynchronously queued. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#queueSize--[EnableDiskStore.queueSize]
-| disk.store.time-interval | Configures the number of milliseconds that can elapse before data written asynchronously is flushed to disk. | 1000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#timeInterval--[EnableDiskStore.timeInterval]
-| disk.store.write-buffer-size | Configures the write buffer size in bytes. | 32768 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#writeBufferSize--[EnableDiskStore.writeBufferSize]
+| `disk.store.allow-force-compaction` | Whether to allow `DiskStore.forceCompaction()` to be called on Regions that use a disk store. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#allowForceCompaction--[`EnableDiskStore.allowForceCompaction`]
+| `disk.store.auto-compact` | Whether to cause the disk files to be automatically compacted. | `true` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#autoCompact--[`EnableDiskStore.autoCompact`]
+| `disk.store.compaction-threshold` | The threshold at which an oplog becomes compactible. | `50` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#compactionThreshold--[`EnableDiskStore.compactionThreshold`]
+| `disk.store.directory.location` | The system directory where the `DiskStore` (oplog) files are stored. | `[]` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskDirectories--[`EnableDiskStore.diskDirectories.location`]
+| `disk.store.directory.size` | The amount of disk space allowed to store disk store (oplog) files. | `21474883647` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskDirectories--[`EnableDiskStore.diskDirectories.size`]
+| `disk.store.disk-usage-critical-percentage` | The critical threshold for disk usage as a percentage of the total disk volume. | `99.0` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskUsageCriticalPercentage--[`EnableDiskStore.diskUsageCriticalPercentage`]
+| `disk.store.disk-usage-warning-percentage` | The warning threshold for disk usage as a percentage of the total disk volume. | `90.0` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#diskUsageWarningPercentage--[`EnableDiskStore.diskUsageWarningPercentage`]
+| `disk.store.max-oplog-size` | The maximum size (in megabytes) a single oplog (operation log) can be. | `1024` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#maxOplogSize--[`EnableDiskStore.maxOplogSize`]
+| `disk.store.queue-size` | The maximum number of operations that can be asynchronously queued. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#queueSize--[`EnableDiskStore.queueSize`]
+| `disk.store.time-interval` | The number of milliseconds that can elapse before data written asynchronously is flushed to disk. | `1000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#timeInterval--[`EnableDiskStore.timeInterval`]
+| `disk.store.write-buffer-size` | Configures the write buffer size in bytes. | `32768` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableDiskStore.html#writeBufferSize--[`EnableDiskStore.writeBufferSize`]
 
 |=====================================================================================================================
 
-_DiskStore_ properties can be further targeted at specific _DiskStores_ using the
-{apache-geode-javadoc}/org/apache/geode/cache/DiskStore.html#getName--[`DiskStore.name`].
+`DiskStore` properties can be further targeted at specific `DiskStore` instances by setting the
+{apache-geode-javadoc}/org/apache/geode/cache/DiskStore.html#getName--[`DiskStore.name`] property.
 
-For instance, you may specify directory location of the files for a specific, named `DiskStore` using:
+For example, you can specify directory location of the files for a specific, named `DiskStore` by using:
 
+====
 [source,properties]
 ----
 spring.data.gemfire.disk.store.Example.directory.location=/path/to/geode/disk-stores/Example/
 ----
+====
 
-The directory location and size of the _DiskStore_ files can be further divided into multiple locations and size
-using array syntax, as in:
+The directory location and size of the `DiskStore` files can be further divided into multiple locations and size
+using array syntax:
 
+====
 [source,properties]
 ----
 spring.data.gemfire.disk.store.Example.directory[0].location=/path/to/geode/disk-stores/Example/one
@@ -158,183 +156,174 @@ spring.data.gemfire.disk.store.Example.directory[0].size=4096000
 spring.data.gemfire.disk.store.Example.directory[1].location=/path/to/geode/disk-stores/Example/two
 spring.data.gemfire.disk.store.Example.directory[1].size=8192000
 ----
+====
 
-Both the name and array index are optional and you can use any combination of name and array index.  Without a name,
-the properties apply to all _DiskStores_.  Without array indexes, all [named] _DiskStore_ files will be stored in the
-specified location and limited to the defined size.
-
+Both the name and array index are optional, and you can use any combination of name and array index. Without a name,
+the properties apply to all `DiskStore` instances. Without array indexes, all named `DiskStore` files are stored in
+the specified location and limited to the defined size.
 
 .`spring.data.gemfire.*` Entity properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| entities.base-packages | Comma-delimited list of package names indicating the start points for the entity scan. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableEntityDefinedRegions.html#basePackages--[EnableEntityDefinedRegions.basePackages]
+| `entities.base-packages` | Comma-delimited list of package names indicating the start points for the entity scan. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableEntityDefinedRegions.html#basePackages--[`EnableEntityDefinedRegions.basePackages`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` Locator properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| locator.host | Configures the IP address or hostname of the system NIC to which the embedded Locator will be bound to listen for connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLocator.html#host--[EnableLocator.host]
-| locator.port | Configures the network port to which the embedded Locator will listen for connections. | 10334 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLocator.html#port--[EnableLocator.port]
+| `locator.host` | The IP address or hostname of the system NIC to which the embedded Locator is bound to listen for connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLocator.html#host--[`EnableLocator.host`]
+| locator.port | The network port to which the embedded Locator will listen for connections. | `10334` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLocator.html#port--[`EnableLocator.port`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` Logging properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| logging.level | Configures the log-level of an {geode-name} cache; Alias for 'spring.data.gemfire.cache.log-level'. | config | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logLevel--[EnableLogging.logLevel]
-| logging.log-disk-space-limit | Configures the amount of disk space allowed to store log files. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logDiskSpaceLimit--[EnableLogging.logDiskSpaceLimit]
-| logging.log-file | Configures the pathname of the log file used to log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFile--[EnableLogging.logFile]
-| logging.log-file-size | Configures the maximum size of a log file before the log file is rolled. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFileSizeLimit--[EnableLogging.logFileSize]
+| `logging.level` | The log level of an {geode-name} cache. Alias for 'spring.data.gemfire.cache.log-level'. | `config` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logLevel--[`EnableLogging.logLevel`]
+| `logging.log-disk-space-limit` | The amount of disk space allowed to store log files. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logDiskSpaceLimit--[`EnableLogging.logDiskSpaceLimit`]
+| `logging.log-file` | The pathname of the log file used to log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFile--[`EnableLogging.logFile`]
+| `logging.log-file-size` | The maximum size of a log file before the log file is rolled. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableLogging.html#logFileSizeLimit--[`EnableLogging.logFileSize`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` Management properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| management.use-http | Configures whether to use the HTTP protocol to communicate with a {geode-name} Manager. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#useHttp--[EnableClusterConfiguration.useHttp]
-| management.http.host | Configures the IP address or hostname of the {geode-name} Manager running the HTTP service. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#host--[EnableClusterConfiguration.host]
-| management.http.port | Configures the port used by the {geode-name} Manager's HTTP service to listen for connections. | 7070 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#port--[EnableClusterConfiguration.port]
+| `management.use-http` | Whether to use the HTTP protocol to communicate with an {geode-name} Manager. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#useHttp--[`EnableClusterConfiguration.useHttp`]
+| `management.http.host` | The IP address or hostname of the {geode-name} Manager that runs the HTTP service. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#host--[`EnableClusterConfiguration.host`]
+| `management.http.port` | The port used by the {geode-name} Manager's HTTP service to listen for connections. | `7070` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html#port--[`EnableClusterConfiguration.port`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` Manager properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| manager.access-file | Configures the Access Control List (ACL) file used by the Manager to restrict access to the JMX MBeans by the clients. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#accessFile--[EnableManager.accessFile]
-| manager.bind-address | Configures the IP address or hostname of the system NIC used by the Manager to bind and listen for JMX client connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#bindAddress--[EnableManager.bindAddress]
-| manager.hostname-for-clients | Configures the hostname given to JMX clients to ask the Locator for the location of the Manager. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#hostnameForClients--[EnableManager.hostNameForClients]
-| manager.password-file | By default, the JMX Manager will allow clients without credentials to connect. If this property is set to the name of a file then only clients that connect with credentials that match an entry in this file will be allowed. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#passwordFile--[EnableManager.passwordFile]
-| manager.port | Configures the port used by th Manager to listen for JMX client connections. | 1099 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#port--[EnableManager.port]
-| manager.start | Configures whether to start the Manager service at runtime. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#start--[EnableManager.start]
-| manager.update-rate | Configures the rate, in milliseconds, at which this member will push updates to any JMX Managers. | 2000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#updateRate--[EnableManager.updateRate]
+| `manager.access-file` | The access control list (ACL) file used by the Manager to restrict access to the JMX MBeans by the clients. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#accessFile--[`EnableManager.accessFile`]
+| manager.bind-address | The IP address or hostname of the system NIC used by the Manager to bind and listen for JMX client connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#bindAddress--[`EnableManager.bindAddress`]
+| `manager.hostname-for-clients` | The hostname given to JMX clients to ask the Locator for the location of the Manager. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#hostnameForClients--[`EnableManager.hostNameForClients`]
+| `manager.password-file` | By default, the JMX Manager lets clients without credentials connect. If this property is set to the name of a file, only clients that connect with credentials that match an entry in this file are allowed. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#passwordFile--[`EnableManager.passwordFile`]
+| `manager.port` | The port used by the Manager to listen for JMX client connections. | `1099` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#port--[`EnableManager.port`]
+| `manager.start` | Whether to start the Manager service at runtime. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#start--[`EnableManager.start`]
+| `manager.update-rate` | The rate, in milliseconds, at which this member pushes updates to any JMX Managers. | `2000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html#updateRate--[`EnableManager.updateRate`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` PDX properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| pdx.disk-store-name | Configures the name of the DiskStore used to store PDX type meta-data to disk when PDX is persistent. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#diskStoreName--[EnablePdx.diskStoreName]
-| pdx.ignore-unread-fields | Configures whether PDX ignores fields that were unread during deserialization. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#ignoreUnreadFields--[EnablePdx.ignoreUnreadFields]
-| pdx.persistent | Configures whether PDX persists type meta-data to disk. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#persistent--[EnablePdx.persistent]
-| pdx.read-serialized | Configures whether a Region entry is returned as a PdxInstance or deserialized back into object form on read. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#readSerialized--[EnablePdx.readSerialized]
-| pdx.serialize-bean-name | Configures the name of a custom Spring bean implementing org.apache.geode.pdx.PdxSerializer. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#serializerBeanName--[EnablePdx.serializerBeanName]
+| `pdx.disk-store-name` | The name of the `DiskStore` used to store PDX type metadata to disk when PDX is persistent. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#diskStoreName--[`EnablePdx.diskStoreName`]
+| `pdx.ignore-unread-fields` | Whether PDX ignores fields that were unread during deserialization. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#ignoreUnreadFields--[`EnablePdx.ignoreUnreadFields`]
+| `pdx.persistent` | Whether PDX persists type metadata to disk. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#persistent--[`EnablePdx.persistent`]
+| `pdx.read-serialized` | Whether a Region entry is returned as a `PdxInstance` or deserialized back into object form on read. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#readSerialized--[`EnablePdx.readSerialized`]
+| `pdx.serialize-bean-name` | The name of a custom Spring bean that implements `org.apache.geode.pdx.PdxSerializer`. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePdx.html#serializerBeanName--[`EnablePdx.serializerBeanName`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` Pool properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| pool.free-connection-timeout | Configures the timeout used to acquire a free connection from a Pool. | 10000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#freeConnectionTimeout--[EnablePool.freeConnectionTimeout]
-| pool.idle-timeout | Configures the amount of time a connection can be idle before expiring (and closing) the connection. | 5000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#idleTimeout--[EnablePool.idleTimeout]
-| pool.load-conditioning-interval | Configures the interval for how frequently the pool will check to see if a connection to a given server should be moved to a different server to improve the load balance. | 300000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#loadConditioningInterval--[EnablePool.loadConditioningInterval]
-| pool.locators | Comma-delimited list of Locator endpoints in the format: locator1[port1],...,locatorN[portN] | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#locators--[EnablePool.locators]
-| pool.max-connections | Configures the maximum number of client to server connections that a Pool will create. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#maxConnections--[EnablePool.maxConnections]
-| pool.min-connections | Configures the minimum number of client to server connections that a Pool will maintain. | 1 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#minConnections--[EnablePool.minConnections]
-| pool.multi-user-authentication | Configures whether the created Pool can be used by multiple authenticated users. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#multiUserAuthentication--[EnablePool.multiUserAuthentication]
-| pool.ping-interval | Configures how often to ping servers to verify that they are still alive. | 10000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#pingInterval--[EnablePool.pingInterval]
-| pool.pr-single-hop-enabled | Configures whether to perform single-hop data access operations between the client and servers. When true the client is aware of the location of partitions on servers hosting Regions with DataPolicy.PARTITION. | true | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#prSingleHopEnabled--[EnablePool.prSingleHopEnabled]
-| pool.read-timeout | Configures the number of milliseconds to wait for a response from a server before timing out the operation and trying another server (if any are available). | 10000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#readTimeout--[EnablePool.readTimeout]
-| pool.ready-for-events | Configures whether to signal the server that the client is prepared and ready to receive events. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#readyForEvents--[ClientCacheApplication.readyForEvents]
-| pool.retry-attempts | Configures the number of times to retry a request after timeout/exception. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#retryAttempts--[EnablePool.retryAttempts]
-| pool.server-group | Configures the group that all servers a Pool connects to must belong to. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#serverGroup--[EnablePool.serverGroup]
-| pool.servers | Comma-delimited list of CacheServer endpoints in the format: server1[port1],...,serverN[portN] | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#servers--[EnablePool.servers]
-| pool.socket-buffer-size | Configures the socket buffer size for each connection made in all Pools. | 32768 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#socketBufferSize--[EnablePool.socketBufferSize]
-| pool.statistic-interval | Configures how often to send client statistics to the server. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#statisticInterval--[EnablePool.statisticInterval]
-| pool.subscription-ack-interval | Configures the interval in milliseconds to wait before sending acknowledgements to the CacheServer for events received from the server subscriptions. | 100 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#subscriptionAckInterval--[EnablePool.subscriptionAckInterval]
-| pool.subscription-enabled | Configures whether the created Pool will have server-to-client subscriptions enabled. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#subscriptionEnabled--[EnablePool.subscriptionEnabled]
-| pool.subscription-message-tracking-timeout | Configures the messageTrackingTimeout attribute which is the time-to-live period, in milliseconds, for subscription events the client has received from the server. | 900000 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#subscriptionMessageTrackingTimeout--[EnablePool.subscriptionMessageTrackingTimeout]
-| pool.subscription-redundancy | Configures the redundancy level for all Pools server-to-client subscriptions. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#subscriptionRedundancy--[EnablePool.subsriptionRedundancy]
-| pool.thread-local-connections | Configures the thread local connections policy for all Pools. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#threadLocalConnections--[EnablePool.threadLocalConnections]
+| `pool.free-connection-timeout` | The timeout used to acquire a free connection from a Pool. | `10000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#freeConnectionTimeout--[`EnablePool.freeConnectionTimeout`]
+| `pool.idle-timeout` | The amount of time a connection can be idle before expiring (and closing) the connection. | `5000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#idleTimeout--[`EnablePool.idleTimeout`]
+| `pool.load-conditioning-interval` | The interval for how frequently the Pool checks to see if a connection to a given server should be moved to a different server to improve the load balance. | `300000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#loadConditioningInterval--[`EnablePool.loadConditioningInterval`]
+| `pool.locators` | Comma-delimited list of locator endpoints in the format of `locator1[port1],...,locatorN[portN]` | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#locators--[`EnablePool.locators`]
+| `pool.max-connections` | The maximum number of client to server connections that a Pool will create. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#maxConnections--[EnablePool.maxConnections]
+| `pool.min-connections` | The minimum number of client to server connections that a Pool maintains. | `1` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#minConnections--[`EnablePool.minConnections`]
+| `pool.multi-user-authentication` | Whether the created Pool can be used by multiple authenticated users. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#multiUserAuthentication--[`EnablePool.multiUserAuthentication`]
+| `pool.ping-interval` | How often to ping servers to verify that they are still alive. | `10000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#pingInterval--[`EnablePool.pingInterval`]
+| `pool.pr-single-hop-enabled` | Whether to perform single-hop data access operations between the client and servers. When `true`, the client is aware of the location of partitions on servers that host Regions with `DataPolicy.PARTITION`. | `true` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#prSingleHopEnabled--[`EnablePool.prSingleHopEnabled`]
+| `pool.read-timeout` | The number of milliseconds to wait for a response from a server before timing out the operation and trying another server (if any are available). | `10000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#readTimeout--[`EnablePool.readTimeout`]
+| `pool.ready-for-events` | Whether to signal the server that the client is prepared and ready to receive events. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#readyForEvents--[`ClientCacheApplication.readyForEvents`]
+| `pool.retry-attempts` | The number of times to retry a request after timeout/exception. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#retryAttempts--[`EnablePool.retryAttempts`]
+| `pool.server-group` | The group that all servers to which a Pool connects must belong. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#serverGroup--[`EnablePool.serverGroup`]
+| `pool.servers` | Comma-delimited list of `CacheServer` endpoints in the format of `server1[port1],...,serverN[portN]` | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#servers--[`EnablePool.servers`]
+| `pool.socket-buffer-size` | The socket buffer size for each connection made in all Pools. | `32768` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#socketBufferSize--[`EnablePool.socketBufferSize`]
+| `pool.statistic-interval` | How often to send client statistics to the server. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#statisticInterval--[`EnablePool.statisticInterval`]
+| pool.subscription-ack-interval | The interval in milliseconds to wait before sending acknowledgements to the `CacheServer` for events received from the server subscriptions. | `100` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#subscriptionAckInterval--[`EnablePool.subscriptionAckInterval`]
+| `pool.subscription-enabled` | Whether the created Pool has server-to-client subscriptions enabled. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#subscriptionEnabled--[`EnablePool.subscriptionEnabled`]
+| `pool.subscription-message-tracking-timeout` | The `messageTrackingTimeout` attribute, which is the time-to-live period, in milliseconds, for subscription events the client has received from the server. | `900000` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#subscriptionMessageTrackingTimeout--[`EnablePool.subscriptionMessageTrackingTimeout`]
+| `pool.subscription-redundancy` | The redundancy level for all Pools server-to-client subscriptions. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#subscriptionRedundancy--[`EnablePool.subsriptionRedundancy`]
+| `pool.thread-local-connections` | The thread local connections policy for all Pools. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnablePool.html#threadLocalConnections--[`EnablePool.threadLocalConnections`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` Security properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| security.username | Configures the name of the user used to authenticate with the servers. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityUsername--[EnableSecurity.securityUsername]
-| security.password | Configures the user password used to authenticate with the servers. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPassword--[EnableSecurity.securityPassword]
-| security.properties-file | Configures the system pathname to a properties file containing security credentials. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityPropertiesFile--[EnableAuth.propertiesFile]
-| security.client.accessor | X | X | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessor--[EnableAuth.clientAccessor]
-| security.client.accessor-post-processor | The callback that should be invoked in the post-operation phase, which is when the operation has completed on the server but before the result is sent to the client. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessorPostProcessor--[EnableAuth.clientAccessorPostProcessor]
-| security.client.authentication-initializer | Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#clientAuthenticationInitializer--[EnableSecurity.clientAuthentiationInitializer]
-| security.client.authenticator | Static creation method returning an Authenticator object used by a cluster member (Locator, Server) to verify the credentials of a connecting client. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAuthenticator--[EnableAuth.clientAuthenticator]
-| security.client.diffie-hellman-algorithm | Used for authentication. For secure transmission of sensitive credentials like passwords, you can encrypt the credentials using the Diffie-Hellman key-exchange algorithm. Do this by setting the security-client-dhalgo system property on the clients to the name of a valid, symmetric key cipher supported by the JDK. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientDiffieHellmanAlgorithm--[EnableAuth.clientDiffieHellmanAlgorithm]
-| security.log.file | Configures the pathname to a log file used for security log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogFile--[EnableAuth.securityLogFile]
-| security.log.level | Configures the log-level for security log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogLevel--[EnableAuth.securityLogLevel]
-| security.manager.class-name | Configures name of a class implementing org.apache.geode.security.SecurityManager. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityManagerClassName--[EnableSecurity.securityManagerClassName]
-| security.peer.authentication-initializer | Static creation method returning an AuthInitialize object, which obtains credentials for peers in a cluster. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#peerAuthenticationInitializer--[EnableSecurity.peerAuthenticationInitializer]
-| security.peer.authenticator | Static creation method returning an Authenticator object, which is used by a peer to verify the credentials of a connecting node. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerAuthenticator--[EnableAuth.peerAuthenticator]
-| security.peer.verify-member-timeout | Configures the timeout in milliseconds used by a peer to verify membership of an unknown authenticated peer requesting a secure connection. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerVerifyMemberTimeout--[EnableAuth.peerVerifyMemberTimeout]
-| security.post-processor.class-name | Configures the name of a class implementing the org.apache.geode.security.PostProcessor interface that can be used to change the returned results of Region get operations. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPostProcessorClassName--[EnableSecurity.securityPostProcessorClassName]
-| security.shiro.ini-resource-path | Configures the {geode-name} System Property referring to the location of an Apache Shiro INI file that configures the Apache Shiro Security Framework in order to secure {geode-name}. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#shiroIniResourcePath--[EnableSecurity.shiroIniResourcePath]
+| `security.username` | The name of the user used to authenticate with the servers. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityUsername--[`EnableSecurity.securityUsername`]
+| `security.password` | The user password used to authenticate with the servers. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPassword--[`EnableSecurity.securityPassword`]
+| `security.properties-file` | The system pathname to a properties file that contains security credentials. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityPropertiesFile--[`EnableAuth.propertiesFile`]
+| `security.client.accessor` | X | X | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessor--[`EnableAuth.clientAccessor`]
+| `security.client.accessor-post-processor` | The callback that should be invoked in the post-operation phase, which is when the operation has completed on the server but before the result is sent to the client. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAccessorPostProcessor--[`EnableAuth.clientAccessorPostProcessor`]
+| `security.client.authentication-initializer` | Static creation method that returns an `AuthInitialize` object, which obtains credentials for peers in a cluster. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#clientAuthenticationInitializer--[`EnableSecurity.clientAuthentiationInitializer`]
+| `security.client.authenticator` | Static creation method that returns an `Authenticator` object used by a cluster member (Locator or Server) to verify the credentials of a connecting client. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientAuthenticator--[`EnableAuth.clientAuthenticator`]
+| `security.client.diffie-hellman-algorithm` | Used for authentication. For secure transmission of sensitive credentials (such as passwords), you can encrypt the credentials by using the Diffie-Hellman key-exchange algorithm. You can do so by setting the `security-client-dhalgo` system property on the clients to the name of a valid, symmetric key cipher supported by the JDK. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#clientDiffieHellmanAlgorithm--[`EnableAuth.clientDiffieHellmanAlgorithm`]
+| `security.log.file` | The pathname to a log file used for security log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogFile--[`EnableAuth.securityLogFile`]
+| `security.log.level` | The log level for security log messages. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#securityLogLevel--[`EnableAuth.securityLogLevel`]
+| `security.manager.class-name` | The name of a class that implements `org.apache.geode.security.SecurityManager`. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityManagerClassName--[`EnableSecurity.securityManagerClassName`]
+| `security.peer.authentication-initializer` | Static creation method that returns an `AuthInitialize` object, which obtains credentials for peers in a cluster. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#peerAuthenticationInitializer--[`EnableSecurity.peerAuthenticationInitializer`]
+| `security.peer.authenticator` | Static creation method that returns an `Authenticator` object, which is used by a peer to verify the credentials of a connecting node. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerAuthenticator--[`EnableAuth.peerAuthenticator`]
+| security.peer.verify-member-timeout | The timeout in milliseconds used by a peer to verify membership of an unknown authenticated peer requesting a secure connection. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableAuth.html#peerVerifyMemberTimeout--[`EnableAuth.peerVerifyMemberTimeout`]
+| `security.post-processor.class-name` | The name of a class that implements the `org.apache.geode.security.PostProcessor` interface that can be used to change the returned results of Region get operations. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#securityPostProcessorClassName--[`EnableSecurity.securityPostProcessorClassName`]
+| `security.shiro.ini-resource-path` | The {geode-name} System property that refers to the location of an Apache Shiro INI file that configures the Apache Shiro Security Framework in order to secure {geode-name}. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSecurity.html#shiroIniResourcePath--[`EnableSecurity.shiroIniResourcePath`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` SSL properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| security.ssl.certificate.alias.cluster | Configures the alias to the stored SSL certificate used by the cluster to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
-| security.ssl.certificate.alias.default-alias | Configures the default alias to the stored SSL certificate used to secure communications across the entire {geode-name} system. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#defaultCertificateAlias--[EnableSsl.defaultCertificateAlias]
-| security.ssl.certificate.alias.gateway | Configures the alias to the stored SSL certificate used by the WAN Gateway Senders/Receivers to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
-| security.ssl.certificate.alias.jmx | Configures the alias to the stored SSL certificate used by the Manager's JMX based JVM MBeanServer and JMX clients to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
-| security.ssl.certificate.alias.locator | Configures the alias to the stored SSL certificate used by the Locator to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
-| security.ssl.certificate.alias.server | Configures the alias to the stored SSL certificate used by clients and servers to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
-| security.ssl.certificate.alias.web | Configures the alias to the stored SSL certificate used by the embedded HTTP server to secure communications (HTTPS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[EnableSsl.componentCertificateAliases]
-| security.ssl.ciphers | Comma-separated list of SSL ciphers or “any”. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#ciphers--[EnableSsl.ciphers]
-| security.ssl.components | Comma-delimited list of {geode-name} components (e.g. WAN) to be configured for SSL communication. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#components--[EnableSsl.components]
-| security.ssl.keystore | Configures the system pathname to the Java KeyStore file storing certificates for SSL. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystore--[EnableSsl.keystore]
-| security.ssl.keystore.password | Configures the password used to access the Java KeyStore file. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystorePassword--[EnableSsl.keystorePassword]
-| security.ssl.keystore.type | Configures the password used to access the Java KeyStore file (e.g. JKS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystoreType--[EnableSsl.keystoreType]
-| security.ssl.protocols | Comma-separated list of SSL protocols or “any”. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#protocols--[EnableSsl.protocols]
-| security.ssl.require-authentication | Configures whether 2-way authentication is required. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#requireAuthentication--[EnableSsl.requireAuthentication]
-| security.ssl.truststore | Configures the system pathname to the trust store (Java KeyStore file) storing certificates for SSL. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#truststore--[EnableSsl.truststore]
-| security.ssl.truststore.password | Configures the password used to access the trust store (Java KeyStore file). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#truststorePassword--[EnableSsl.truststorePassword]
-| security.ssl.truststore.type | Configures the password used to access the trust store (Java KeyStore file; e.g. JKS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#truststoreType--[EnableSsl.truststoreType]
-| security.ssl.web-require-authentication | Configures whether 2-way HTTP authentication is required. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#webRequireAuthentication--[EnableSsl.webRequireAuthentication]
+| `security.ssl.certificate.alias.cluster` | The alias to the stored SSL certificate used by the cluster to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[`EnableSsl.componentCertificateAliases`]
+| `security.ssl.certificate.alias.default-alias` | The default alias to the stored SSL certificate used to secure communications across the entire {geode-name} system. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#defaultCertificateAlias--[`EnableSsl.defaultCertificateAlias`]
+| `security.ssl.certificate.alias.gateway` | The alias to the stored SSL certificate used by the WAN Gateway Senders/Receivers to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[`EnableSsl.componentCertificateAliases`]
+| `security.ssl.certificate.alias.jmx` | The alias to the stored SSL certificate used by the Manager's JMX-based JVM MBeanServer and JMX clients to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[`EnableSsl.componentCertificateAliases`]
+| `security.ssl.certificate.alias.locator` | The alias to the stored SSL certificate used by the Locator to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[`EnableSsl.componentCertificateAliases`]
+| `security.ssl.certificate.alias.server` | The alias to the stored SSL certificate used by clients and servers to secure communications. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[`EnableSsl.componentCertificateAliases`]
+| `security.ssl.certificate.alias.web` | The alias to the stored SSL certificate used by the embedded HTTP server to secure communications (HTTPS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#componentCertificateAliases--[`EnableSsl.componentCertificateAliases`]
+| `security.ssl.ciphers` | Comma-separated list of SSL ciphers or `any`. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#ciphers--[`EnableSsl.ciphers`]
+| `security.ssl.components` | Comma-delimited list of {geode-name} components (for example, WAN) to be configured for SSL communication. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#components--[`EnableSsl.components`]
+| `security.ssl.keystore` | The system pathname to the Java KeyStore file storing certificates for SSL. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystore--[`EnableSsl.keystore`]
+| `security.ssl.keystore.password` | The password used to access the Java KeyStore file. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystorePassword--[`EnableSsl.keystorePassword`]
+| `security.ssl.keystore.type` | The password used to access the Java KeyStore file (for example, JKS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#keystoreType--[`EnableSsl.keystoreType`]
+| `security.ssl.protocols` | Comma-separated list of SSL protocols or `any`. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#protocols--[`EnableSsl.protocols`]
+| `security.ssl.require-authentication` | Whether two-way authentication is required. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#requireAuthentication--[`EnableSsl.requireAuthentication`]
+| `security.ssl.truststore` | The system pathname to the trust store (Java KeyStore file) that stores certificates for SSL. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#truststore--[`EnableSsl.truststore`]
+| `security.ssl.truststore.password` | The password used to access the trust store (Java KeyStore file). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#truststorePassword--[`EnableSsl.truststorePassword`]
+| `security.ssl.truststore.type` | The password used to access the trust store (Java KeyStore file -- for example, JKS). | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#truststoreType--[`EnableSsl.truststoreType`]
+| `security.ssl.web-require-authentication` | Whether two-way HTTP authentication is required. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableSsl.html#webRequireAuthentication--[`EnableSsl.webRequireAuthentication`]
 
 |=====================================================================================================================
-
 
 .`spring.data.gemfire.*` Service properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| service.http.bind-address | Configures the IP address or hostname of the system NIC used by the embedded HTTP server to bind and listen for HTTP(S) connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#bindAddress--[EnableHttpService.bindAddress]
-| service.http.port | Configures the port used by the embedded HTTP server to listen for HTTP(S) connections. | 7070 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#port--[EnableHttpService.port]
-| service.http.ssl-require-authentication | Configures whether 2-way HTTP authentication is required. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#sslRequireAuthentication--[EnableHttpService.sslRequireAuthentication]
-| service.http.dev-rest-api-start | Configures whether to start the Developer REST API web service. A full installation of {geode-name} is required and you must set the $GEODE environment variable. | false | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#startDeveloperRestApi--[EnableHttpService.startDeveloperRestApi]
-| service.memcached.port | Configures the port of the embedded Memcached server (service). | 11211| {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#port--[EnableMemcachedServer.port]
-| service.memcached.protocol | Configures the protocol used by the embedded Memcached server (service). | ASCII | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#protocol--[EnableMemcachedServer.protocol]
-| service.redis.bind-address | Configures the IP address or hostname of the system NIC used by the embedded Redis server to bind an listen for connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableRedisServer.html#bindAddress--[EnableRedis.bindAddress]
-| service.redis.port | Configures the port used by the embedded Redis server to listen for connections. | 6479 | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableRedisServer.html#port--[EnableRedisServer.port]
+| `service.http.bind-address` | The IP address or hostname of the system NIC used by the embedded HTTP server to bind and listen for HTTP(S) connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#bindAddress--[`EnableHttpService.bindAddress`]
+| `service.http.port` | The port used by the embedded HTTP server to listen for HTTP(S) connections. | `7070` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#port--[`EnableHttpService.port`]
+| `service.http.ssl-require-authentication` | Whether two-way HTTP authentication is required. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#sslRequireAuthentication--[`EnableHttpService.sslRequireAuthentication`]
+| `service.http.dev-rest-api-start` | Whether to start the Developer REST API web service. A full installation of {geode-name} is required, and you must set the `$GEODE` environment variable. | `false` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableHttpService.html#startDeveloperRestApi--[`EnableHttpService.startDeveloperRestApi`]
+| `service.memcached.port` | The port of the embedded Memcached server (service). | `11211`| {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#port--[`EnableMemcachedServer.port`]
+| `service.memcached.protocol` | The protocol used by the embedded Memcached server (service). | `ASCII` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableMemcachedServer.html#protocol--[`EnableMemcachedServer.protocol`]
+| `service.redis.bind-address` | The IP address or hostname of the system NIC used by the embedded Redis server to bind and listen for connections. | | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableRedisServer.html#bindAddress--[`EnableRedis.bindAddress`]
+| `service.redis.port` | The port used by the embedded Redis server to listen for connections. | `6479` | {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableRedisServer.html#port--[`EnableRedisServer.port`]
 
 |=====================================================================================================================
 
@@ -342,31 +331,29 @@ specified location and limited to the defined size.
 [[geode-configuration-metadata-springsession]]
 === Spring Session Based Properties
 
-The following properties all have a `spring.session.data.gemfire.*` prefix.  For example, to set the Session Region
-name, use `spring.session.data.gemfire.session.region.name` in Spring Boot `application.properties`.
-
+The following properties all have a `spring.session.data.gemfire.*` prefix. For example, to set the session Region name,
+set `spring.session.data.gemfire.session.region.name` in Spring Boot `application.properties`.
 
 .`spring.session.data.gemfire.*` properties
 [width="90%",options="header"]
 |=====================================================================================================================
 | Name                                              | Description                   | Default                   | From
 
-| cache.client.pool.name                            | Name of the Pool used to send data access operations between the client and server(s).                                       | gemfirePool              | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#poolName--[EnableGemFireHttpSession.poolName]
-| cache.client.region.shortcut                      | Configures the DataPolicy used by the client Region to manage (HTTP) Session state.                                          | {apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html#PROXY[ClientRegionShortcut.PROXY]  | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#clientRegionShortcut--[EnableGemFireHttpSession.clientRegionShortcut]
-| cache.server.region.shortcut                      | Configures the DataPolicy used by the server Region to manage (HTTP) Session state.                                          | {apache-geode-javadoc}/org/apache/geode/cache/RegionShortcut.html#PARTITION[RegionShortcut.PARTITION] | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#serverRegionShortcut--[EnableGemFireHttpSession.serverRegionShortcut]
-| session.attributes.indexable                      | Configures names of Session attributes for which an Index will be created.                                                   | []                       | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#indexableSessionAttributes--[EnableGemFireHttpSession.indexableSessionAttributes]
-| session.expiration.max-inactive-interval-seconds  | Configures the number of seconds in which a Session can remain inactive before it expires.                                   | 1800                     | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#maxInactiveIntervalSeconds--[EnableGemFireHttpSession.maxInactiveIntervalSeconds]
-| session.region.name                               | Configures name of the (client/server) Region used to manage (HTTP) Session state.                                           | ClusteredSpringSessions  | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#regionName--[EnableGemFireHttpSession.regionName]
-| session.serializer.bean-name                      | Configures the name of a Spring bean implementing org.springframework.session.data.gemfire.serialization.SessionSerializer.  |                          | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#sessionSerializerBeanName--[EnableGemFireHttpSession.sessionSerializerBeanName]
+| `cache.client.pool.name`                            | Name of the pool used to send data access operations between the client and servers.                                       | `gemfirePool`              | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#poolName--[`EnableGemFireHttpSession.poolName`]
+| `cache.client.Region.shortcut`                      | The `DataPolicy` used by the client Region to manage (HTTP) session state.                                          | {apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html#PROXY[`ClientRegionShortcut.PROXY`]  | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#clientRegionShortcut--[`EnableGemFireHttpSession.clientRegionShortcut`]
+| `cache.server.Region.shortcut`                      | The `DataPolicy` used by the server Region to manage (HTTP) session state.                                          | {apache-geode-javadoc}/org/apache/geode/cache/RegionShortcut.html#PARTITION[`RegionShortcut.PARTITION`] | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#serverRegionShortcut--[`EnableGemFireHttpSession.serverRegionShortcut`]
+| `session.attributes.indexable`                      | The names of session attributes for which an Index is created.                                                   | `[]`                       | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#indexableSessionAttributes--[`EnableGemFireHttpSession.indexableSessionAttributes`]
+| `session.expiration.max-inactive-interval-seconds`  | Configures the number of seconds in which a session can remain inactive before it expires.                                   | `1800`                     | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#maxInactiveIntervalSeconds--[`EnableGemFireHttpSession.maxInactiveIntervalSeconds`]
+| `session.Region.name`                               | The name of the (client/server) Region used to manage (HTTP) session state.                                           | `ClusteredSpringSessions`  | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#RegionName--[`EnableGemFireHttpSession.RegionName`]
+| `session.serializer.bean-name`                      | The name of a Spring bean that implements `org.springframework.session.data.gemfire.serialization.SessionSerializer`.  |                          | {spring-session-data-gemfire-javadoc}/org/springframework/session/data/gemfire/config/annotation/web/http/EnableGemFireHttpSession.html#sessionSerializerBeanName--[`EnableGemFireHttpSession.sessionSerializerBeanName`]
 
 |=====================================================================================================================
 
 [[geode-configuration-metadata-apachegeode]]
 === {geode-name} Properties
 
-While it is not recommended to use {geode-name} properties directly in your Spring applications, SBDG will not prevent
-you from doing so.  A complete reference to the {geode-name} specific properties can be found
-{apache-geode-docs}/reference/topics/gemfire_properties.html[here].
+While we do not recommend using {geode-name} properties directly in your Spring applications, SBDG does not prevent you
+from doing so. See the {apache-geode-docs}/reference/topics/gemfire_properties.html[complete reference to the {geode-name} specific properties].
 
-WARNING: {geode-name} is very strict about the properties that maybe specified in a `gemfire.properties` file. You
-cannot mix Spring properties with `gemfire.*` properties in an {geode-name} `gemfire.properties` file.
+WARNING: {geode-name} is very strict about the properties that may be specified in a `gemfire.properties` file.
+You cannot mix Spring properties with `gemfire.*` properties in an {geode-name} `gemfire.properties` file.

@@ -4,18 +4,20 @@
 :geode-name: {apache-geode-name}
 :stdg-website: https://github.com/spring-projects/spring-test-data-geode
 
+
 Spring Boot for {geode-name} (SBDG), with help from {stdg-website}[Spring Test for {geode-name} (STDG)], offers
-first-class support for both _Unit_ & _Integration Testing_ of {geode-name} in your Spring Boot applications.
+first-class support for both unit and integration testing with {geode-name} in your Spring Boot applications.
 
 TIP: See the Spring Test for Apache Geode (STDG) {stdg-website}/#stdg-in-a-nutshell[documentation] for more details.
 
 [[geode-testing-unit]]
 === Unit Testing
 
-_Unit Testing_ with {geode-name} using _mock objects_ in a Spring Boot Test is as simple as declaring the STDG
+Unit testing with {geode-name} using mock objects in a Spring Boot Test requires only that you declare the STDG
 `@EnableGemFireMockObjects` annotation in your test configuration:
 
 .Unit Test with {geode-name} using Spring Boot
+====
 [source,java]
 ----
 @SpringBootTest
@@ -59,50 +61,52 @@ class User {
 
 interface UserRepository extends CrudRepository<User, String> { }
 ----
+====
 
-While this test class is not a "pure" _Unit Test_, particularly since it bootstraps an actual Spring `ApplicationContext`
-using Spring Boot, it does, however, "_mock_" all {geode-name} objects, such as the "_Users_" `Region` declared by the
-`User` application entity class, which was annotated with SDG's `@Region` mapping annotation.
+This test class is not a "`pure`" unit test, particularly since it bootstraps an actual Spring `ApplicationContext`
+using Spring Boot. However, it does mock all {geode-name} objects, such as the `Users` `Region` declared by the `User`
+application entity class, which was annotated with SDG's `@Region` mapping annotation.
 
-This test class conveniently uses Spring Boot's _auto-configuration_ to auto-configure an {geode-name} `ClientCache`
+This test class conveniently uses Spring Boot's auto-configuration to auto-configure an {geode-name} `ClientCache`
 instance. In addition, SDG's `@EnableEntityDefinedRegions` annotation was used to conveniently create the {geode-name}
-"_Users_" `Region` to store instances of `User`.
+"Users` `Region` to store instances of `User`.
 
-Finally, Spring Data's _Repository_ abstraction was used to conveniently perform basic CRUD (e.g. `save`) and simple
-(OQL) query (e.g. `findById`) data access operations on the "_Users_" `Region`.
+Finally, Spring Data's Repository abstraction was used to conveniently perform basic CRUD (such as `save`)  and simple
+(OQL) query (such as `findById`) data access operations on the `Users` `Region`.
 
-Even though the {geode-name} objects (e.g. "_Users_" `Region`) are "_mock objects_", you can still perform many of
-the data access operations required by your Spring Boot application's business logic in a {geode-name} API agnostic way,
-that is, using Spring's powerful programming model and constructs!
+Even though the {geode-name} objects (such as the `Users` `Region`) are "`mock objects`", you can still perform many of
+the data access operations required by your Spring Boot application's components in an {geode-name} API-agnostic way
+-- that is, by using Spring's powerful programming model and constructs.
 
-TIP: By extending STDG's `org.springframework.data.gemfire.tests.integration.IntegrationTestSupport` class,
-you ensure that all {geode-name} mock objects and resources are properly released after the test class runs,
-thereby preventing any interference with downstream tests.
+TIP: By extending STDG's `org.springframework.data.gemfire.tests.integration.IntegrationTestSupport` class, you ensure
+that all {geode-name} mock objects and resources are properly released after the test class runs, thereby preventing
+any interference with downstream tests.
 
 While STDG tries to {stdg-website}/#mock-regions-with-data[mock the functionality and behavior] for many `Region`
-operations, it is simply not pragmatic to mock them all. For example, it would not be practical to mock `Region`
-query operations involving complex OQL statements having sophisticated predicates.
+operations, it is not pragmatic to mock them all. For example, it would not be practical to mock `Region` query
+operations involving complex OQL statements that have sophisticated predicates.
 
-If such functional testing is required, then the test might be better suited as an _Integration Test_. Alternatively,
-you can follow the advice in this {stdg-website}/#mocking-unsupported-region-operations[section].
+If such functional testing is required, the test might be better suited as an integration test. Alternatively, you can
+follow the advice in this section about {stdg-website}/#mocking-unsupported-region-operations[unsupported Region operations].
 
-In general, STDG provides the following capabilities when mocking {geode-name} objects out-of-the-box:
+In general, STDG provides the following capabilities when mocking {geode-name} objects:
 
 * {stdg-website}#mock-object-scope--lifecycle-management[Mock Object Scope & Lifecycle Management]
 * {stdg-website}#mock-regions-with-data[Support for Mock Regions with Data]
 * {stdg-website}#mock-region-callbacks[Support for Mocking Region Callbacks]
 * {stdg-website}#mocking-unsupported-region-operations[Support for Mocking Unsupported Region Operations]
 
-TIP: See documentation on {stdg-website}/#unit-testing-with-stdg[Unit Testing with STDG] for more details.
+TIP: See the documentation on {stdg-website}/#unit-testing-with-stdg[Unit Testing with STDG] for more details.
 
 [[geode-testing-integration]]
 === Integration Testing
 
-_Integration Testing_ with {geode-name} in a Spring Boot Test is as simple as **not** declaring STDG's
-`@EnableGemFireMockObjects` annotation in your test configuration. Of course, you may then want to additionally use
-SBDG's `@EnableClusterAware` annotation to conditionally detect the presence of a {geode-name} cluster:
+Integration testing with {geode-name} in a Spring Boot Test is as simple as *not* declaring STDG's
+`@EnableGemFireMockObjects` annotation in your test configuration. You may then want to use SBDG's `@EnableClusterAware`
+annotation to conditionally detect the presence of a {geode-name} cluster:
 
 .Using `@EnableClusterAware` in test configuration
+====
 [source,java]
 ----
 @SpringBootApplication
@@ -110,19 +114,21 @@ SBDG's `@EnableClusterAware` annotation to conditionally detect the presence of 
 @EnableEntityDefinedRegions(basePackageClasses = User.class)
 static class TestConfiguration { }
 ----
+====
 
-The SBDG `@EnableClusterAware` annotation will conveniently toggle your auto-configured `ClientCache` instance
-between local-only mode and client/server. Additionally, it will even push configuration metadata
-(e.g. `Region` definitions) up to the server(s) in the cluster required by the application to persist data.
+The SBDG `@EnableClusterAware` annotation conveniently toggles your auto-configured `ClientCache` instance between
+local-only mode and client/server. It even pushes configuration metadata (such as `Region` definitions) up to
+the servers in the cluster that are required by the application to store data.
 
-In most cases, in addition to testing with "_live_" {geode-name} objects (e.g. _Regions_), we also want to test
-in a client/server capacity. This unlocks the full capabilities of the {geode-name} data management system
-in a Spring context, and gets you as close as possible to production from the comfort of your IDE.
+In most cases, in addition to testing with "`live`" {geode-name} objects (such as Regions), we also want to test in
+a client/server capacity. This unlocks the full capabilities of the {geode-name} data management system in a Spring
+context and gets you as close as possible to production from the comfort of your IDE.
 
-Building on our example from the section on <<geode-testing-unit>>, you can modify the test to use "_live_"
-{geode-name} objects in a client/server topology as follows:
+Building on our example from the section on <<geode-testing-unit>>, you can modify the test to use "`live`" {geode-name}
+objects in a client/server topology as follows:
 
 .Integration Test with {geode-name} using Spring Boot
+====
 [source,java]
 ----
 @ActiveProfiles("client")
@@ -187,13 +193,15 @@ class User {
 
 interface UserRepository extends CrudRepository<User, String> { }
 ----
+====
 
-The application client/server-based _Integration Test_ class extend STDG's
+The application client/server-based integration test class extend STDG's
 `org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport` class.
 This ensures that all {geode-name} objects and resources are properly cleaned up after the test class runs. In addition,
-it coordinates the client & server components of the test (e.g. connecting the client to the server using a random port).
+it coordinates the client and server components of the test (for example connecting the client to the server using a
+random port).
 
-The server is started in a `@BeforeClass` setup method:
+The {geode-name} server is started in a `@BeforeClass` setup method:
 
 .Start the {geode-name} server
 [source,java]
@@ -207,11 +215,12 @@ class SpringBootApacheGeodeIntegrationTest extends ForkingClientServerIntegratio
 }
 ----
 
-STDG allows you to configure the server with Spring config, specified in the `TestGeodeServerConfiguration` class.
-The Java class needs to provide a `main` method. It uses the `SpringApplicationBuilder` to bootstrap the {geode-name}
-`CacheServer` application.
+STDG lets you configure the {geode-name} server with Spring configuration, specified in
+the `TestGeodeServerConfiguration` class. The Java class needs to provide a `main` method. It uses
+the `SpringApplicationBuilder` to bootstrap the {geode-name} `CacheServer` application:
 
 .{geode-name} server configuration
+====
 [source,java]
 ----
 @CacheServerApplication
@@ -228,24 +237,25 @@ static class TestGeodeServerConfiguration {
   }
 }
 ----
+====
 
-In this case, we provide very minimal configuration since the configuration is determined and pushed up to the server
-by the client. For example, we do not need to explicitly create the "_Users_" `Region` on the server-side since it is
+In this case, we provide minimal configuration, since the configuration is determined and pushed up to the server
+by the client. For example, we do not need to explicitly create the `Users` `Region` on the server since it is
 implicitly handled for you by the SBDG/STDG frameworks from the client.
 
-We take advantage of Spring _Profiles_ in the test setup to distinguish between the client & server configuration. Keep
-in mind that the test is the "client" in this arrangement.
+We take advantage of Spring profiles in the test setup to distinguish between the client and server configuration.
+Keep in mind that the test is the "`client`" in this arrangement.
 
-The STDG framework is doing as the supporting class states, "forking" the Spring Boot-based, {geode-name} `CacheServer`
-application in a separate JVM process. Subsequently, the STDG framework will stop the server upon completion of
-the tests in the test class.
+The STDG framework does what the supporting class demands: "`forking`" the Spring Boot-based, {geode-name} `CacheServer`
+application in a separate JVM process. Subsequently, the STDG framework stops the server upon completion of the tests
+in the test class.
 
-Of course, you are free to start your server(s) or cluster however you choose. STDG simply and conveniently provides
-this capability for you since it is a common concern.
+You are free to start your servers or cluster however you choose. STDG provides this capability as a convenience for you,
+since it is a common concern.
 
-This test class is very simple and much more complex test scenarios can be easily handled by STDG.
+This test class is simple. STDG can handle much more complex test scenarios.
 
 TIP: Review SBDG's test suite to witness the full power and functionality of the STDG framework for yourself.
 
-NOTE: See documentation on {stdg-website}/#integration-testing-with-stdg[Integration Testing with STDG]
+NOTE: See the documentation on {stdg-website}/#integration-testing-with-stdg[Integration Testing with STDG]
 for more details.
