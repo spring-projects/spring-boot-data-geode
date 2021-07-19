@@ -3,52 +3,53 @@
 :geode-name: {apache-geode-name}
 
 
-The primary purpose of any software development framework is to help you be productive as quickly and as easily
-as possible and to do so in a reliable manner.
+The primary purpose of any software development framework is to help you be productive as quickly and as easily as
+possible and to do so in a reliable manner.
 
 As application developers, we want a framework to provide constructs that are both intuitive and familiar so that their
-behaviors are predictable. This provided convenience not only helps you hit the ground running in the right
-direction sooner but increases your focus on the application domain so that you can better understand the problem
-you are trying to solve in the first place. Once the problem domain is well understood, you are more apt to make
-informed decisions about the design, which leads to better outcomes, faster.
+behaviors are predictable. This provided convenience not only helps you hit the ground running in the right direction
+sooner but increases your focus on the application domain so that you can better understand the problem you are trying
+to solve in the first place. Once the problem domain is well understood, you are more apt to make informed decisions
+about the design, which leads to better outcomes, faster.
 
-This is exactly what Spring Boot's auto-configuration provides for you. It enables features, services, and supporting
-infrastructure for Spring applications in a loosely integrated way by using conventions (such as the classpath) that ultimately
-help you keep your attention and focus on solving the problem at hand and not on the plumbing.
+This is exactly what Spring Boot's auto-configuration provides for you. It enables features, functionality, services
+and supporting infrastructure for Spring applications in a loosely integrated way by using conventions (such as the
+classpath) that ultimately help you keep your attention and focus on solving the problem at hand and not on the plumbing.
 
 For example, if you are building a web application, you can include the `org.springframework.boot:spring-boot-starter-web`
-dependency on your application classpath.  Not only does Spring Boot enable you to build Spring Web MVC Controllers
-appropriate to your application UC (your responsibility), but it also bootstraps your web application in an embedded servlet
-container on startup (Boot's responsibility).
+dependency on your application classpath. Not only does Spring Boot enable you to build Spring Web MVC Controllers
+appropriate to your application UC (your responsibility), but it also bootstraps your web application in an embedded
+Servlet container on startup (Spring Boot's responsibility).
 
-This saves you from having to handle many low-level, repetitive, and tedious development tasks that are highly error-prone
-when you are trying to solve problems. You need not care how the plumbing works until you need to customize something. And, when you
-do, you are better informed and prepared to do so.
+This saves you from having to handle many low-level, repetitive, and tedious development tasks that are error-prone and
+easy to get wrong when you are trying to solve problems. You need not care how the plumbing works until you need to
+customize something. And, when you do, you are better informed and prepared to do so.
 
-It is also equally essential that frameworks, such as Spring Boot, get out of the way quickly when application requirements
-diverge from the provided defaults. The is the beautiful and powerful thing about Spring Boot and why it is second
-to none in its class.
+It is also equally essential that frameworks, such as Spring Boot, get out of the way quickly when application
+requirements diverge from the provided defaults. This is the beautiful and powerful thing about Spring Boot and why
+it is second to none in its class.
 
 Still, auto-configuration does not solve every problem all the time. Therefore, you need to use declarative
-configuration in some cases, whether expressed as bean definitions, in properties, or by some other means.  This is so that
-frameworks do not leave things to chance, especially when they are ambiguous. The framework gives you a choice.
+configuration in some cases, whether expressed as bean definitions, in properties, or by some other means.  This is so
+that frameworks do not leave things to chance, especially when things are ambiguous. The framework gives you choice.
 
 Keeping our goals in mind, this chapter:
 
 * Refers you to the SDG annotations covered by SBDG's auto-configuration.
-* lists all SDG annotations not covered by SBDG's auto-configuration.
-* Covers the SBDG, SSDG, and SDG annotations that you must explicitly declare and that provide the most value
+* Lists all SDG annotations not covered by SBDG's auto-configuration.
+* Covers the SBDG, SSDG and SDG annotations that you must explicitly declare and that provide the most value
 and productivity when getting started with {geode-name} in Spring [Boot] applications.
 
 NOTE: SDG refers to {spring-data-geode-website}[Spring Data for {geode-name}]. SSDG refers to
 {spring-session-data-gemfire-website}[Spring Session for {geode-name}]. SBDG refers to
 Spring Boot for {geode-name} (this project).
 
-TIP: The list of SDG annotations covered by SBDG's auto-configuration is discussed in detail in the <<appendix,Appendix>>,
+TIP: The list of SDG annotations covered by SBDG's auto-configuration is discussed in detail in the <<appendix>>,
 in the <<geode-auto-configuration-annotations,Auto-configuration vs. Annotation-based configuration>> section.
 
-To be absolutely clear about which SDG Annotations we are referring to, we mean the SDG annotations in the
-{spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/package-summary.html[`org.springframework.data.gemfire.config.annotation`] package.
+To be absolutely clear about which SDG annotations we are referring to, we mean the SDG annotations in the
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/package-summary.html[`org.springframework.data.gemfire.config.annotation`]
+package.
 
 In subsequent sections, we also cover which annotations are added by SBDG.
 
@@ -88,9 +89,10 @@ The following SDG annotations are not implicitly applied by SBDG's auto-configur
 * `@EnableStatistics`
 * `@UseGemFireProperties`
 
-(Note that this content was also covered in <<geode-autoconfiguration-annotations-explicit>>.)
+NOTE: This content was also covered in <<geode-autoconfiguration-annotations-explicit>>.
 
-One reason for this is because several of the annotations are server-specific:
+One reason SBDG does not provide auto-configuration for several of the annotations is because the annotations
+are server-specific:
 
 * `@EnableCacheServer(s)`
 * `@EnableGatewayReceiver`
@@ -107,12 +109,12 @@ instance.
 Other annotations are driven by need, including:
 
 * `@EnableAutoRegionLookup` and `@EnableBeanFactoryLocator`: Really useful only when mixing configuration metadata
-formats, such as Spring config with {geode-name} `cache.xml`. This is usually the case only if you have legacy `cache.xml`
-config to begin with. Otherwise, you should not do this.
+formats, such as Spring config with {geode-name} `cache.xml`. This is usually the case only if you have legacy
+`cache.xml` config to begin with. Otherwise, you should not use these annotations.
 * `@EnableCompression`: Requires the Snappy Compression Library to be on your application classpath.
 * `@EnableDiskStore(s)` Used only for overflow and persistence.
-* `@EnableOffHeap`: Enables data to be stored in main memory, which is useful only when your application data
-(that is, objects stored in {geode-name}) are generally uniform in size.
+* `@EnableOffHeap`: Enables data to be stored in main memory, which is useful only when your application data (that is,
+objects stored in {geode-name}) are generally uniform in size.
 * `@EnableGemFireAsLastResource`: Needed only in the context of JTA Transactions.
 * `@EnableStatistics`: Useful if you need runtime metrics. However, enabling statistics gathering does consume
 considerable system resources (CPU & Memory).
@@ -123,20 +125,20 @@ Still other annotations require more careful planning:
 * `@EnableExpiration`
 * `@EnableIndexing`
 
-One annotation is used exclusively for Unit Testing:
+One annotation is used exclusively for unit testing:
 
 * `@EnableGemFireMockObjects`
 
 The bottom-line is that a framework should not auto-configure every possible feature, especially when the features
 consume additional system resources or require more careful planning (as determined by the use case).
 
-Still, all of these annotations are available for the application developer to use when needed.
+However, all of these annotations are available for the application developer to use when needed.
 
 [[geode-configuration-declarative-annotations-productivity]]
 === Productivity Annotations
 
 This section calls out the annotations we believe to be most beneficial for your application development purposes when
-using {geode-name} in Spring Boot applications.
+using {geode-name} in Spring [Boot] applications.
 
 [[geode-configuration-declarative-annotations-productivity-enableclusteraware]]
 ==== `@EnableClusterAware` (SBDG)
@@ -153,33 +155,35 @@ class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 ====
 
-When you annotate your main `@SpringBootApplication` class with `@EnableClusterAware`,
-your Spring Boot, {geode-name} `ClientCache` application is able to seamlessly switch between client/server
-and local-only topologies with no code or configuration changes, regardless of the runtime environment
-(such as local/standalone versus cloud-managed environments).
+When you annotate your main `@SpringBootApplication` class with `@EnableClusterAware`, your Spring Boot, {geode-name}
+`ClientCache` application is able to seamlessly switch between client/server and local-only topologies with no code
+or configuration changes, regardless of the runtime environment (such as local/standalone versus cloud-managed
+environments).
 
 When a cluster of {geode-name} servers is detected, the client application sends and receives data to and from the
-cluster. If a cluster is not available, the client automatically switches to storing data locally on the client
-by using `LOCAL` Regions.
+{geode-name} cluster. If a cluster is not available, the client automatically switches to storing data locally on the
+client by using `LOCAL` Regions.
 
 Additionally, the `@EnableClusterAware` annotation is meta-annotated with SDG's
-{spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html[`@EnableClusterConfiguration`] annotation.
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableClusterConfiguration.html[`@EnableClusterConfiguration`]
+annotation.
 
-The `@EnableClusterConfiguration` annotation lets configuration metadata defined on the client (such as region and index
-definitions, as needed by the application based on requirements and use cases) be sent to the cluster of servers.
-If those schema objects are not already present, they are created by the servers in the cluster in such a way that
-the servers remember the configuration on restart as well as provide the configuration to new servers that join
-the cluster when it scales out. This feature is careful not to stomp on any existing region or index objects already
-present on the servers, particularly since you may already have data stored in the regions.
+The `@EnableClusterConfiguration` annotation lets configuration metadata defined on the client (such as Region and Index
+definitions, as needed by the application based on requirements and use cases) be sent to the cluster of servers. If
+those schema objects are not already present, they are created by the servers in the cluster in such a way that the
+servers remember the configuration on restart as well as provide the configuration to new servers that join the cluster
+when it is scaled out. This feature is careful not to stomp on any existing Region or Index objects already defined on
+the servers, particularly since you may already have critical data stored in the Regions.
 
-The primary motivation behind the `@EnableClusterAware` annotation is to let you switch environments with minimal
-effort. It is a common development practice to debug and test your application locally (in your IDE) and
-then push up to a production-like environment for more rigorous integration testing.
+The primary motivation for the `@EnableClusterAware` annotation is to let you switch environments with minimal effort.
+It is a common development practice to debug and test your application locally (in your IDE) and then push up to a
+production-like (staging) environment for more rigorous integration testing.
 
-By default, the configuration metadata is sent to the cluster by using a non-secure HTTP connection. However, you can configure
-HTTPS, change the host and port, and configure the data management policy used by the servers when creating regions.
+By default, the configuration metadata is sent to the cluster by using a non-secure HTTP connection. However, you can
+configure HTTPS, change the host and port, and configure the data management policy used by the servers when creating
+Regions.
 
-TIP: See the section in the SDG Reference Guide on
+TIP: See the section in the SDG reference documentation on
 {spring-data-geode-docs-html}/#bootstrap-annotation-config-cluster[Configuring Cluster Configuration Push]
 for more details.
 
@@ -189,12 +193,12 @@ for more details.
 The `strictMatch` attribute has been added to the `@EnableClusterAware` annotation to enable fail-fast behavior.
 `strictMatch` is set to `false` by default.
 
-Essentially, when you set `strictMatch` to `true`, your Spring Boot, {geode-name} `ClientCache`
-application requires an {geode-name} cluster to exist. That is, the application requires a client/server topology
-to operate, and the application should fail to start if a cluster is not present. The application
-should not startup in a local-only capacity.
+Essentially, when you set `strictMatch` to `true`, your Spring Boot, {geode-name} `ClientCache` application requires
+an {geode-name} cluster to exist. That is, the application requires a client/server topology to operate, and the
+application should fail to start if a cluster is not present. The application should not startup in a local-only
+capacity.
 
-When `strictMatch` is set to `true` and an {geode-name} cluster is not present, your Spring Boot, {geode-name}
+When `strictMatch` is set to `true` and an {geode-name} cluster is not available, your Spring Boot, {geode-name}
 `ClientCache` application fails to start with a `ClusterNotFoundException`. The application does not attempt to
 start in a local-only capacity.
 
@@ -210,7 +214,8 @@ class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 ====
 
-Alternatively, you can set `strictMatch` by using the corresponding property in Spring Boot `application.properties`:
+Alternatively, you can set `strictMatch` attribute by using the corresponding property
+in Spring Boot `application.properties`:
 
 .Set `strictMatch` using a property
 ====
@@ -222,12 +227,11 @@ spring.boot.data.gemfire.cluster.condition.match.strict=true
 ----
 ====
 
-This is convenient when you need to apply this configuration setting conditionally, based on a Spring Profile.
+This is convenient when you need to apply this configuration setting conditionally, based on a Spring profile.
 
 When you adjust the log level of the `org.springframework.geode.config.annotation.ClusterAwareConfiguration` logger
-to `INFO`, you get more details from the `@EnableClusterAware` functionality when applying the logic
-to determine the presence of an {geode-name} cluster, such as which explicitly or implicitly configured connections
-were successful.
+to `INFO`, you get more details from the `@EnableClusterAware` functionality when applying the logic to determine
+the presence of an {geode-name} cluster, such as which explicitly or implicitly configured connections were successful.
 
 The following example shows typical output:
 
@@ -243,8 +247,8 @@ The following example shows typical output:
 ----
 ====
 
-NOTE: An attempt is always made to connect to `localhost` on the default locator port, `10334`,
-and the default `CacheServer` port, `40404`.
+NOTE: An attempt is always made to connect to `localhost` on the default `Locator` port, `10334`, and the default
+`CacheServer` port, `40404`.
 
 TIP: You can force a successful match by setting the `spring.boot.data.gemfire.cluster.condition.match` property
 to `true` in Spring Boot `application.properties`. This is sometimes useful for testing purposes.
@@ -252,9 +256,9 @@ to `true` in Spring Boot `application.properties`. This is sometimes useful for 
 [[geode-configuration-declarative-annotations-productivity-regions]]
 ==== `@EnableCachingDefinedRegions`, `@EnableClusterDefinedRegions` and `@EnableEntityDefinedRegions` (SDG)
 
-These annotations are used to create regions in the cache to manage your application data.
+These annotations are used to create Regions in the cache to manage your application data.
 
-You can create regions by using Java configuration and the Spring API as follows:
+You can create Regions by using Java configuration and the Spring API as follows:
 
 .Creating a Region with Spring JavaConfig
 ====
@@ -263,16 +267,17 @@ You can create regions by using Java configuration and the Spring API as follows
 @Configuration
 class GeodeConfiguration {
 
-  @Bean("Customers")
-  ClientRegionFactoryBean<Long, Customer> customersRegion(GemFireCache cache) {
+    @Bean("Customers")
+    ClientRegionFactoryBean<Long, Customer> customersRegion(GemFireCache cache) {
 
-    ClientRegionFactoryBean<Long, Customer> customers = new ClientRegionFactoryBean<>();
+        ClientRegionFactoryBean<Long, Customer> customers =
+            new ClientRegionFactoryBean<>();
 
-    customers.setCache(cache);
-    customers.setShortcut(ClientRegionShortcut.PROXY);
+        customers.setCache(cache);
+        customers.setShortcut(ClientRegionShortcut.PROXY);
 
-    return customers;
-  }
+        return customers;
+    }
 }
 ----
 ====
@@ -287,16 +292,18 @@ You can do the same in XML:
 ----
 ====
 
-However, using the provided annotations is far easier, especially during development, when the complete region
-configuration may be unknown and you want only to create a region to persist your application data and move on.
+However, using the provided annotations is far easier, especially during development, when the complete Region
+configuration may be unknown and you want only to create a Region to persist your application data and move on.
 
 [[geode-configuration-declarative-annotations-productivity-regions-enablecachingdefined]]
 ===== `@EnableCachingDefinedRegions`
 
 The `@EnableCachingDefinedRegions` annotation is used when you have application components registered in the Spring
-container that are annotated with Spring or JSR-107 JCache {spring-framework-docs}/integration.html#cache-jsr-107[annotations].
+container that are annotated with Spring or JSR-107 JCache
+{spring-framework-docs}/integration.html#cache-jsr-107[annotations].
 
-Caches that are identified by name in the caching annotations are used to create regions that hold the data you want cached.
+Caches that are identified by name in the caching annotations are used to create Regions that hold the data
+you want cached.
 
 Consider the following example:
 
@@ -307,15 +314,16 @@ Consider the following example:
 @Service
 class CustomerService {
 
-  @Cacheable(cacheNames = "CustomersByAccountNumber", key = "#account.number")
-  Customer findBy(Account account) {
-    // ...
-  }
+    @Cacheable(cacheNames = "CustomersByAccountNumber", key = "#account.number")
+    Customer findBy(Account account) {
+        // ...
+    }
 }
 ----
 ====
 
-Further consider the following example, in which the main `@SpringBootApplication` class is annotated with `@EnableCachingDefinedRegions`:
+Further consider the following example, in which the main `@SpringBootApplication` class is annotated with
+`@EnableCachingDefinedRegions`:
 
 .Using `@EnableCachingDefinedRegions`
 ====
@@ -327,24 +335,25 @@ class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 ====
 
-With this setup, SBDG would create a client `PROXY` Region (or `PARTITION_REGION` if your application were a peer member of the
-cluster) with a name of `CustomersByAccountNumber`, as though you created the region by using either the Java configuration or XML
-approaches shown earlier.
+With this setup, SBDG would create a client `PROXY` Region (or `PARTITION_REGION` if your application were a peer member
+of the {geode-name} cluster) with a name of "`CustomersByAccountNumber`", as though you created the Region by using
+either the Java configuration or XML approaches shown earlier.
 
-You can use the `clientRegionShortcut` or `serverRegionShortcut` attribute to change the data management policy of the
-regions created on the client or servers, respectively.
+You can use the `clientRegionShortcut` or `serverRegionShortcut` attribute to change the data management policy of
+the Regions created on the client or servers, respectively.
 
-For client regions, you can also set the `poolName` attribute to assign a specific pool of connections
-to be used by the client `*PROXY` regions to send data to the cluster.
+For client Regions, you can also set the `poolName` attribute to assign a specific `Pool` of connections to be used by
+the client `*PROXY` Regions to send data to the cluster.
 
 [[geode-configuration-declarative-annotations-productivity-regions-enableentitydefined]]
 ===== `@EnableEntityDefinedRegions`
 
-As with `@EnableCachingDefinedRegions`, `@EnableEntityDefinedRegions` lets you create regions based on the entity
+As with `@EnableCachingDefinedRegions`, `@EnableEntityDefinedRegions` lets you create Regions based on the entity
 classes you have defined in your application domain model.
 
 For instance, consider an entity class annotated with SDG's
-{spring-data-geode-javadoc}/org/springframework/data/gemfire/mapping/annotation/Region.html[`@Region`] mapping annotation:
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/mapping/annotation/Region.html[`@Region`]
+mapping annotation:
 
 .Customer entity class annotated with `@Region`
 ====
@@ -353,19 +362,19 @@ For instance, consider an entity class annotated with SDG's
 @Region("Customers")
 class Customer {
 
-  @Id
-  private Long id;
+    @Id
+    private Long id;
 
-  @Indexed
-  private String name;
+    @Indexed
+    private String name;
 
 }
 ----
 ====
 
-For this class, SBDG creates regions from the name specified in the `@Region` mapping annotation on the entity class. In this
-case, the `Customer` application-defined entity class results in the creation of a region named `Customers` when
-the main `@SpringBootApplication` class is annotated with `@EnableEntityDefinedRegions`:
+For this class, SBDG creates Regions from the name specified in the `@Region` mapping annotation on the entity class.
+In this case, the `Customer` application-defined entity class results in the creation of a Region named "`Customers`"
+when the main `@SpringBootApplication` class is annotated with `@EnableEntityDefinedRegions`:
 
 .Using `@EnableEntityDefinedRegions`
 ====
@@ -378,13 +387,12 @@ class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 ====
 
-As with the `@EnableCachingDefinedRegions` annotation, you can set the client and server region data management policy
-by using the `clientRegionShortcut` and `serverRegionShortcut` attributes, respectively, and set a dedicated pool
-of connections used by client regions with the `poolName` attribute.
+As with the `@EnableCachingDefinedRegions` annotation, you can set the client and server Region data management policy
+by using the `clientRegionShortcut` and `serverRegionShortcut` attributes, respectively, and set a dedicated `Pool`
+of connections used by client Regions with the `poolName` attribute.
 
 However, unlike the `@EnableCachingDefinedRegions` annotation, you must specify either the `basePackage` attribute
-or the type-safe `basePackageClasses` attribute (recommended) when you use the `@EnableEntityDefinedRegions`
-annotation.
+or the type-safe `basePackageClasses` attribute (recommended) when you use the `@EnableEntityDefinedRegions` annotation.
 
 Part of the reason for this is that `@EnableEntityDefinedRegions` performs a component scan for the entity classes
 defined by your application. The component scan loads each class to inspect the annotation metadata for that class.
@@ -393,10 +401,10 @@ This is not unlike the JPA entity scan when working with JPA providers, such as 
 Therefore, it is customary to limit the scope of the scan. Otherwise, you end up potentially loading many classes
 unnecessarily. After all, the JVM uses dynamic linking to load classes only when needed.
 
-Both the `basePackages` and `basePackageClasses` attributes accept an array of values.  With `basePackageClasses`, you
+Both the `basePackages` and `basePackageClasses` attributes accept an array of values. With `basePackageClasses`, you
 need only refer to a single class type in that package and every class in that package as well as classes in the
-sub-packages are scanned to determine if the class type represents an entity. A class type is an entity if it
-is annotated with the `@Region` mapping annotation. Otherwise, it is not considered to be an entity.
+sub-packages are scanned to determine if the class type represents an entity. A class type is an entity if it is
+annotated with the `@Region` mapping annotation. Otherwise, it is not considered to be an entity.
 
 For example, suppose you had the following structure:
 
@@ -432,20 +440,21 @@ class SpringBootApacheGeodeClientCacheApplication {  }
 ====
 
 If `Customer`, `Address`, `PhoneNumber` and `Account` were all entity classes properly annotated with `@Region`,
-the component scan would pick up all these classes and create regions for them. The `NonEntity` class serves only as
+the component scan would pick up all these classes and create Regions for them. The `NonEntity` class serves only as
 a marker in this case, to point to where (that is, which package) the scan should begin.
 
 Additionally, the `@EnableEntityDefinedRegions` annotation provides include and exclude filters, the same as
 the core Spring Frameworks `@ComponentScan` annotation.
 
-TIP: See the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-regions[Configuring Regions]
+TIP: See the SDG reference documentation on
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-regions[Configuring Regions]
 for more details.
 
 [[geode-configuration-declarative-annotations-productivity-regions-enableclusterdefined]]
 ===== `@EnableClusterDefinedRegions`
 
-Sometimes, it is ideal or even necessary to pull configuration from the cluster (rather than push to the cluster).
-That is, you want the regions defined on the servers to be created on the client and used by your application.
+Sometimes, it is ideal or even necessary to pull configuration from the cluster (rather than push configuration to the
+cluster). That is, you want the Regions defined on the servers to be created on the client and used by your application.
 
 To do so, annotate your main `@SpringBootApplication` class with `@EnableClusterDefinedRegions`:
 
@@ -459,11 +468,11 @@ class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 ====
 
-Every region that exists on the cluster of servers has a corresponding `PROXY` region defined and created on the
-client as a bean in your Spring Boot application.
+Every Region that exists on the servers in the {geode-name} cluster will have a corresponding `PROXY` Region defined
+and created on the client as a bean in your Spring Boot application.
 
-If the cluster of servers defines a region called `ServerRegion`, you can inject a client `PROXY` region
-with the same name (`ServerRegion`) into your Spring Boot application:
+If the cluster of servers defines a Region called "`ServerRegion`", you can inject a client `PROXY` Region with
+the same name ("`ServerRegion`") into your Spring Boot application:
 
 .Using a server-side Region on the client
 ====
@@ -472,23 +481,24 @@ with the same name (`ServerRegion`) into your Spring Boot application:
 @Component
 class SomeApplicationComponent {
 
-  @Resource(name = "ServerRegion")
-  private Region<Integer, EntityType> serverRegion;
+    @Resource(name = "ServerRegion")
+    private Region<Integer, EntityType> serverRegion;
 
-  public void someMethod() {
+    public void someMethod() {
 
-    EntityType entity = new EntityType();
+        EntityType entity = new EntityType();
 
-    this.serverRegion.put(1, entity);
+        this.serverRegion.put(1, entity);
 
-    // ...
-  }
+        // ...
+    }
 }
 ----
 ====
 
-SBDG auto-configures a `GemfireTemplate` for the `ServerRegion` region (see <<geode-configuration-declarative-auto-configuration-regiontemplates,>>),
-so a better way to interact with the client `PROXY` region that corresponds to the `ServerRegion` region on the server
+SBDG auto-configures a `GemfireTemplate` for the "`ServerRegion`" Region
+(see <<geode-configuration-declarative-auto-configuration-regiontemplates>>),
+so a better way to interact with the client `PROXY` Region that corresponds to the "`ServerRegion`" Region on the server
 is to inject the template:
 
 .Using a server-side Region on the client with a template
@@ -498,41 +508,44 @@ is to inject the template:
 @Component
 class SomeApplicationComponent {
 
-  @Autowired
-  @Qualifier("serverRegionTemplate")
-  private GemfireTemplate serverRegionTemplate;
+    @Autowired
+    @Qualifier("serverRegionTemplate")
+    private GemfireTemplate serverRegionTemplate;
 
-  public void someMethod() {
+    public void someMethod() {
 
-    EntityType entity = new EntityType();
+        EntityType entity = new EntityType();
 
-    this.serverRegionTemplate.put(1, entity);
+        this.serverRegionTemplate.put(1, entity);
 
-    //...
-  }
+        //...
+    }
 }
 ----
 ====
 
-TIP: See the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-cluster-defined[Configuring Cluster-defined Regions]
+TIP: See the SDG reference documentation on
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-region-cluster-defined[Configuring Cluster-defined Regions]
 for more details.
 
 [[geode-configuration-declarative-annotations-productivity-enableindexing]]
 ==== `@EnableIndexing` (SDG)
 
-You can also use the `@EnableIndexing` annotation -- but only when you use `@EnableEntityDefinedRegions`. This is because
-`@EnableIndexing` requires the entities to be scanned and analyzed for mapping metadata (defined on the class type
-of the entity).  This includes annotations such as the Spring Data Commons `@Id` annotation a the annotations provided by SDG:
-`@Indexed` and `@LuceneIndexed`.
+You can also use the `@EnableIndexing` annotation -- but only when you use `@EnableEntityDefinedRegions`. This is
+because `@EnableIndexing` requires the entities to be scanned and analyzed for mapping metadata (defined on the class
+type of the entity). This includes annotations such as the Spring Data Commons `@Id` annotation and the annotations
+provided by SDG, such as `@Indexed` and `@LuceneIndexed`.
 
-The `@Id` annotation identifies the (primary) key of the entity. The `@Indexed` annotation defines OQL indexes on object fields,
-which are used in the predicates of your OQL Queries.  The `@LuceneIndexed` annotation is used to define the Apache Lucene
-indexes required for searches.
+The `@Id` annotation identifies the (primary) key of the entity. The `@Indexed` annotation defines OQL indexes on object
+fields, which can be used in the predicates of your OQL queries. The `@LuceneIndexed` annotation is used to define the
+Apache Lucene Indexes required for searches.
 
-NOTE: Lucene Indexes can only be created on `PARTITION` regions, and `PARTITION` regions are only defined
-on the server side.
+NOTE: Lucene Indexes can only be created on `PARTITION` Regions, and `PARTITION` Regions can only be defined on
+the server side.
 
 You may have noticed that the `Customer` entity class's `name` field was annotated with `@Indexed`.
+Consider the following listing:
+
 Consider the following listing:
 
 .Customer entity class with `@Indexed` annotated `name` field
@@ -542,19 +555,18 @@ Consider the following listing:
 @Region("Customers")
 class Customer {
 
-  @Id
-  private Long id;
+    @Id
+    private Long id;
 
-  @Indexed
-  private String name;
+    @Indexed
+    private String name;
 
 }
 ----
 ====
 
-As a result, when our main `@SpringBootApplication` class is annotated with `@EnableIndexing`,
-an {geode-name} OQL index for the `Customer.name` field is created, making OQL Queries on customers by name
-use this index:
+As a result, when our main `@SpringBootApplication` class is annotated with `@EnableIndexing`, an {geode-name} OQL Index
+for the `Customer.name` field is created, allowing OQL queries on customers by name to use this Index:
 
 .Using `@EnableIndexing`
 ====
@@ -567,48 +579,49 @@ class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 ====
 
-NOTE: Keep in mind that OQL Indexes are not persistent between restarts (that is, {geode-name} maintains indexes in memory
-only). An OQL Index is always rebuilt when the node is restarted.
+NOTE: Keep in mind that OQL Indexes are not persistent between restarts (that is, {geode-name} maintains Indexes
+in memory only). An OQL Index is always rebuilt when the node is restarted.
 
-When you combine `@EnableIndexing` with either `@EnableClusterConfiguration` or `@EnableClusterAware`, the index
-definitions are pushed to the server-side regions where OQL Queries are generally executed.
+When you combine `@EnableIndexing` with either `@EnableClusterConfiguration` or `@EnableClusterAware`, the Index
+definitions are pushed to the server-side Regions where OQL queries are generally executed.
 
-TIP: See the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-indexes[Configuring Indexes]
+TIP: See the SDG reference documentation on
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-region-indexes[Configuring Indexes]
 for more details.
 
 [[geode-configuration-declarative-annotations-productivity-enableexpiration]]
 ==== `@EnableExpiration` (SDG)
 
 It is often useful to define both eviction and expiration policies, particularly with a system like {geode-name},
-because it primarily keeps data in memory (on the JVM heap). Your data volume size may far
-exceed the amount of available JVM heap memory, and keeping too much data on the JVM Heap can cause Garbage Collection
-(GC) issues.
+because it primarily keeps data in memory (on the JVM Heap). Your data volume size may far exceed the amount of
+available JVM Heap memory, and keeping too much data on the JVM Heap can cause Garbage Collection (GC) issues.
 
 TIP: You can enable off-heap (or main memory usage) capabilities by declaring SDG's `@EnableOffHeap` annotation.
-See the SDG Reference Guide on {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-off-heap[Configuring Off-Heap Memory]
+See the SDG reference documentation on
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-region-off-heap[Configuring Off-Heap Memory]
 for more details.
 
 Defining eviction and expiration policies lets you limit what is kept in memory and for how long.
 
-While {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-eviction[configuring eviction] is easy with
-SDG, we particularly want to call out expiration since
-{spring-data-geode-docs-html}/#bootstrap-annotation-config-region-expiration[configuring expiration] has special
-support in SDG.
+While {spring-data-geode-docs-html}/#bootstrap-annotation-config-region-eviction[configuring eviction] is easy with SDG,
+we particularly want to call out expiration since
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-region-expiration[configuring expiration] has special support
+in SDG.
 
-With SDG, you can define the expiration policies associated with a particular application class type on the
-class type itself, by using the {spring-data-geode-javadoc}/org/springframework/data/gemfire/expiration/Expiration.html[`@Expiration`],
-{spring-data-geode-javadoc}/org/springframework/data/gemfire/expiration/IdleTimeoutExpiration.html[`@IdleTimeoutExpiration`],
+With SDG, you can define the expiration policies associated with a particular application class type on the class type
+itself, by using the {spring-data-geode-javadoc}/org/springframework/data/gemfire/expiration/Expiration.html[`@Expiration`],
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/expiration/IdleTimeoutExpiration.html[`@IdleTimeoutExpiration`]
 and {spring-data-geode-javadoc}/org/springframework/data/gemfire/expiration/TimeToLiveExpiration.html[`@TimeToLiveExpiration`]
 annotations.
 
 TIP: See the {geode-name} {apache-geode-docs}/developing/expiration/how_expiration_works.html[User Guide]
-for more details on the different expiration types -- that is idle timeout (TTI) versus time-to-live (TTL).
+for more details on the different expiration types -- that is _Idle Timeout_ (TTI) versus _Time-to-Live_ (TTL).
 
 For example, suppose we want to limit the number of `Customers` maintained in memory for a period of time (measured in
-seconds) based on the last time a `Customer` was accessed (for example, the last time it was read). To do so, we can define an idle timeout expiration
-policy on our `Customer` class type:
+seconds) based on the last time a `Customer` was accessed (for example, the last time a `Customer` was read). To do so,
+we can define an idle timeout expiration (TTI) policy on our `Customer` class type:
 
-.Customer entity class with `@Indexed` annotated `name` field
+.Customer entity class with Idle Timeout Expiration (TTI)
 ====
 [source,java]
 ----
@@ -616,11 +629,11 @@ policy on our `Customer` class type:
 @IdleTimeoutExpiration(action = "INVALIDATE", timeout = "300")
 class Customer {
 
-  @Id
-  private Long id;
+    @Id
+    private Long id;
 
-  @Indexed
-  private String name;
+    @Indexed
+    private String name;
 
 }
 ----
@@ -644,29 +657,29 @@ class SpringBootApacheGeodeApplication {  }
 NOTE: Technically, this entity-class-specific annotation-based expiration policy is implemented by using {geode-name}'s
 {apache-geode-javadoc}/org/apache/geode/cache/CustomExpiry.html[`CustomExpiry`] interface.
 
-TIP: See the SDG Reference Guide for more details on
-{spring-data-geode-docs-html}/#bootstrap-annotation-config-region-expiration[configuring Expiration], along with
-{spring-data-geode-docs-html}/#bootstrap:region:expiration:annotation[Annotation-based Data Expiration] in particular.
+TIP: See the SDG reference doccumentation for more details on
+{spring-data-geode-docs-html}/#bootstrap-annotation-config-region-expiration[configuring expiration], along with
+{spring-data-geode-docs-html}/#bootstrap:region:expiration:annotation[annotation-based data expiration] in particular.
 
 [[geode-configuration-declarative-annotations-productivity-enablemockobjects]]
 ==== `@EnableGemFireMockObjects` (STDG)
 
-Software testing in general and unit testing in particular are a very important development tasks to ensure
-the quality of your Spring Boot applications.
+Software testing in general and unit testing in particular are a very important development tasks to ensure the quality
+of your Spring Boot applications.
 
 {geode-name} can make testing difficult in some cases, especially when tests have to be written as integration tests
-to assert the correct behavior. This can be very costly and lengthens the feedback cycle. Fortunately, you
-can write unit tests as well.
+to assert the correct behavior. This can be very costly and lengthens the feedback cycle. Fortunately, you can write
+unit tests as well.
 
-Spring provides a framework for testing Spring Boot applications that use {geode-name}. This
-is where the {spring-test-data-gemfire-website}[Spring Test for {geode-name} (STDG)] project can help, particularly with
+Spring provides a framework for testing Spring Boot applications that use {geode-name}. This is where the
+{spring-test-data-gemfire-website}[Spring Test for {geode-name} (STDG)] project can help, particularly with
 unit testing.
 
 For example, if you do not care what {geode-name} would actually do in certain cases and only care about the "`contract`",
-which is what mocking a collaborator is all about, you could effectively mock {geode-name} objects to
-isolate the "`Subject Under Test`" (SUT) and focus on the interactions or outcomes you expect to happen.
+which is what mocking a collaborator is all about, you could effectively mock {geode-name} objects to isolate the SUT,
+or "`Subject Under Test`", and focus on the interactions or outcomes you expect to happen.
 
-With STDG, you need not change a bit of configuration to enable mocks in the unit tests for your Spring Boot
+With STDG, you need not change a bit of configuration to enable mock objects in the unit tests for your Spring Boot
 applications. You need only annotate the test class with `@EnableGemFireMockObjects`:
 
 .Using Mock {geode-name} Objects
@@ -677,20 +690,20 @@ applications. You need only annotate the test class with `@EnableGemFireMockObje
 @SpringBootTest
 class MyApplicationTestClass {
 
-  @Test
-  public void someTestCase() {
-    // ...
-  }
+    @Test
+    public void someTestCase() {
+        // ...
+    }
 
-  @Configuration
-  @EnableGemFireMockObjects
-  static class GeodeConfiguration { }
+    @Configuration
+    @EnableGemFireMockObjects
+    static class GeodeConfiguration { }
 
 }
 ----
 ====
 
-Your Spring Boot configuration of {geode-name} returns mock objects for all {geode-name} objects, such as regions.
+Your Spring Boot configuration of {geode-name} returns mock objects for all {geode-name} objects, such as Regions.
 
 Mocking {geode-name} objects even works for objects created from the productivity annotations discussed in the previous
 sections.
@@ -707,9 +720,9 @@ class SpringBootApacheGeodeClientCacheApplication {  }
 ----
 ====
 
-In the preceding example, the `Customers` region defined by the `Customer` entity class and created by the `@EnableEntityDefinedRegions`
-annotation would be a "`mock`" region and not an actual region.  You can still inject the region in your test
-and assert interactions on the region based on your application workflows:
+In the preceding example, the `"Customers`" Region defined by the `Customer` entity class and created by
+the `@EnableEntityDefinedRegions` annotation would be a mock Region and not an actual Region. You can still inject
+the Region in your test and assert interactions on the Region based on your application workflows:
 
 .Using Mock {geode-name} Objects
 ====
@@ -719,30 +732,30 @@ and assert interactions on the region based on your application workflows:
 @SpringBootTest
 class MyApplicationTestClass {
 
-  @Resource(name = "Customers")
-  private Region<Long, Customer> customers;
+    @Resource(name = "Customers")
+    private Region<Long, Customer> customers;
 
-  @Test
-  public void someTestCase() {
+    @Test
+    public void someTestCase() {
 
-    Customer jonDoe = new Customer(1, "Jon Doe");
+        Customer jonDoe = new Customer(1, "Jon Doe");
 
-    // Use the application in some way and test the interaction on the "Customers" Region
+        // Use the application in some way and test the interaction on the "Customers" Region
 
-    assertThat(this.customers).containsValue(jonDoe);
+        assertThat(this.customers).containsValue(jonDoe);
 
-    // ...
-  }
+        // ...
+    }
 }
 ----
 ====
 
 There are many more things that STDG can do for you in both unit testing and integration testing.
 
-See the https://github.com/spring-projects/spring-test-data-geode#unit-testing-with-stdg[documentation on Unit Testing]
+See the https://github.com/spring-projects/spring-test-data-geode#unit-testing-with-stdg[documentation on unit testing]
 for more details.
 
 You can https://github.com/spring-projects/spring-test-data-geode#integration-testing-with-stdg[write integration tests]
 that use STDG as well. Writing integration tests is an essential concern when you need to assert whether your
-application OQL Queries are well-formed, for instance. There are many other valid cases where integration testing
+application OQL queries are well-formed, for instance. There are many other valid cases where integration testing
 is also applicable.

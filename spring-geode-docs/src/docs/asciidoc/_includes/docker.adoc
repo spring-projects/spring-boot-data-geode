@@ -9,42 +9,51 @@ The state of modern software application development is moving towards https://w
 Containers offer a controlled environment to predictably build (configure and package), run, and manage your applications
 in a reliable and repeatable manner, regardless of context. In many situations, the intrinsic benefit of using containers is obvious.
 
-Understandably, {docker-site-url}[Docker's] popularity took off like wildfire, given its highly powerful and simplified
-model for creating, using, and managing containers to run packaged applications.
+The state of modern software application development is moving towards https://www.docker.com/resources/what-container[containerization].
+Containers offer a controlled environment to predictably build (compile, configure and package), run, and manage your
+applications in a reliable and repeatable manner, regardless of context. In many situations, the intrinsic benefit of
+using containers is obvious.
 
-Docker's ecosystem is also quite impressive, with the advent of {testcontainers-url}[testcontainers]
-and Spring Boot's now {spring-boot-docs-html}/spring-boot-features.html#building-docker-images[dedicated support]
-to create packaged Spring Boot apps in {docker-docs-url}/get-started/overview/#docker-objects[Docker images]
-that are then later run in a Docker container.
+Understandably, {docker-site-url}[Docker's] popularity took off like wildfire, given its highly powerful and simplified
+model for creating, using and managing containers to run packaged applications.
+
+Docker's ecosystem is also quite impressive, with the advent of {testcontainers-url}[Testcontainers] and Spring Boot's
+now {spring-boot-docs-html}/spring-boot-features.html#building-docker-images[dedicated support] to create packaged
+Spring Boot applications in {docker-docs-url}/get-started/overview/#docker-objects[Docker images] that are then later
+run in a Docker container.
 
 TIP: See also {spring-boot-docs-html}/deployment.html#containers-deployment["`Deploying to Containers`"] to learn more.
 
-{geode-name} can also run in a controlled, containerized environment. The goal of this chapter
-is to get you started running {geode-name} in a container and interfacing to a containerized {geode-name} cluster from
-your Spring Boot, {geode-name} client applications.
+{geode-name} can also run in a controlled, containerized environment. The goal of this chapter is to get you started
+running {geode-name} in a container and interfacing to a containerized {geode-name} cluster from your Spring Boot,
+{geode-name} client applications.
 
 This chapter does not cover how to run your Spring Boot, {geode-name} client applications in a container, since that is
-already covered by Spring Boot (again, see the Spring Boot documentation for {spring-boot-docs-html}/spring-boot-features.html#building-docker-images[Docker images]
-and {spring-boot-docs-html}/deployment.html#containers-deployment[container deployment], along with Docker's {docker-docs-url}/get-started/overview/[documentation]).
+already covered by Spring Boot (again, see the Spring Boot documentation for
+{spring-boot-docs-html}/spring-boot-features.html#building-docker-images[Docker images]
+and {spring-boot-docs-html}/deployment.html#containers-deployment[container deployment],
+along with Docker's {docker-docs-url}/get-started/overview/[documentation]).
 Instead, our focus is on how to run an {geode-name} cluster in a container and connect to it from a Spring Boot,
-{geode-name} client application, regardless of whether the app runs in a container or not.
+{geode-name} client application, regardless of whether the application runs in a container or not.
 
 [[geode-docker-image]]
 === Acquiring the {geode-name} Docker Image
 
-To run an {geode-name} cluster inside a Docker container, you must first acquire the Docker image. You can get the {geode-name}
-Docker image from https://hub.docker.com/r/apachegeode/geode/[Docker Hub].
+To run an {geode-name} cluster inside a Docker container, you must first acquire the Docker image. You can get
+the {geode-name} Docker image from https://hub.docker.com/r/apachegeode/geode/[Docker Hub].
 
-While {geode-name}'s official {apache-geode-docs}[documentation] is less than clear on how to use {geode-name} in Docker,
-we find a bit of relief in the {apache-geode-wiki}/How+to+use+Geode+on+Docker[Wiki]. However, for a complete and
-comprehensive write up, see the instructions in the https://github.com/markito/geode-docker#building-the-container-image[README]
+While {geode-name}'s {apache-geode-docs}[official documentation] is less than clear on how to use {geode-name} in Docker,
+we find a bit of relief in the {apache-geode-wiki}/How+to+use+Geode+on+Docker[Wiki]. However, for a complete
+and comprehensive write up, see the instructions in
+the https://github.com/markito/geode-docker#building-the-container-image[README]
 from this https://github.com/markito/geode-docker[GitHub Repo].
 
-NOTE: You must have {docker-docs-url}/get-docker[Docker] installed on your local system to complete the following steps.
+NOTE: You must have {docker-docs-url}/get-docker[Docker] installed on your computer to complete the following steps.
 
 Effectively, the high-level steps are as follows:
 
-1) Acquire the {geode-name} Docker image from Docker Hub by using the `docker pull` command (shown with typical output) from the command-line:
+1) Acquire the {geode-name} Docker image from Docker Hub by using the `docker pull` command (shown with typical output)
+from the command-line:
 
 .Download/Install the {geode-name} Docker Image
 ====
@@ -59,11 +68,11 @@ docker.io/apachegeode/geode:latest
 ----
 ====
 
-Instead of pulling from the `nightly` tag as suggested, the Spring team highly recommends that you pull from the
-`latest` tag, which pulls a stable, production-ready {geode-name} Docker image based on the latest {geode-name}
+Instead of pulling from the `nightly` tag as suggested, the Spring team highly recommends that you pull from
+the `latest` tag, which pulls a stable, production-ready {geode-name} Docker image based on the latest {geode-name}
 GA version.
 
-2) Verify that the {geode-name} Docker Image was downloaded and installed successfully:
+2) Verify that the {geode-name} Docker image was downloaded and installed successfully:
 
 ====
 [source,text]
@@ -83,8 +92,8 @@ Now you are ready to run {geode-name} in a Docker container.
 [[geode-docker-container]]
 === Running {geode-name} in a Docker Container
 
-Now that you have acquired the {geode-name} Docker image, you can run {geode-name} in a Docker container. Use the
-following `docker run` command to start {geode-name} in a Docker Container:
+Now that you have acquired the {geode-name} Docker image, you can run {geode-name} in a Docker container.
+Use the following `docker run` command to start {geode-name} in a Docker container:
 
 .Start the {geode-name} Docker Container
 ====
@@ -115,11 +124,11 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 ----
 ====
 
-We know that the {geode-name} Docker container is running since we ended up at a Gfsh command prompt in the
-interactive shell.
+You know that the {geode-name} Docker container is running since we ended up at a Gfsh command prompt in
+the interactive shell.
 
 We also mapped ports between the Docker container and the host system, exposing well-known ports used by {geode-name}
-server-side cluster processes, such as locators and cache servers:
+server-side cluster processes, such as Locators and CacheServers:
 
 .{geode-name} Ports
 [width=30%, options="header", cols="2,1"]
@@ -136,15 +145,15 @@ server-side cluster processes, such as locators and cache servers:
 
 |===
 
-It is unfortunate that the {geode-name} Docker image gives you only a Gfsh command prompt, leaving you with the task
-of provisioning a cluster. It would have been more useful to provide preconfigured Docker images with different
-{geode-name} cluster configurations, such as one Locator and one server or two locators and four servers, and so on. However, we
-can start the cluster ourselves.
+It is unfortunate that the {geode-name} Docker image gives you only a Gfsh command prompt, leaving you with the task of
+provisioning a cluster. It would have been more useful to provide preconfigured Docker images with different {geode-name}
+cluster configurations, such as one Locator and one server or two Locators and four servers, and so on. However, we can
+start the cluster ourselves.
 
 [[geode-docker-cluster]]
 === Start an {geode-name} Cluster in Docker
 
-From inside the {geode-name} Docker container, we can start a locator and a server:
+From inside the {geode-name} Docker container, we can start a Locator and a server:
 
 .Start {geode-name} Locator & Server
 ====
@@ -226,8 +235,8 @@ Client Connections : 0
 ----
 ====
 
-We now have an {geode-name} cluster running with one locator and one server inside a Docker container. We deliberately
-started the cluster with a minimal configuration. For example, we have no regions in which to store data:
+We now have an {geode-name} cluster running with one Locator and one server inside a Docker container. We deliberately
+started the cluster with a minimal configuration. For example, we have no Regions in which to store data:
 
 ====
 [source,text]
@@ -274,7 +283,7 @@ class Customer {
 ----
 ====
 
-Also, we define a Spring Data CRUD repository to persist and access `Customers` stored in the `/Customers` region:
+Also, we define a Spring Data CRUD Repository to persist and access `Customers` stored in the `/Customers` Region:
 
 .`CustomerRepository` interface
 ====
@@ -290,21 +299,21 @@ interface CustomerRepository extends CrudRepository<Customer, Long> {
 
 Our main class is annotated with `@SpringBootApplication`, making it be a proper Spring Boot application.
 
-We additionally annotate the main class with SBDG's `@EnableClusterAware` to automatically detect the {geode-name}
-cluster that runs in the Docker Container and to push cluster configuration metadata from the application to
-the cluster as required by the application.
+We additionally annotate the main class with SBDG's `@EnableClusterAware` annotation to automatically detect
+the {geode-name} cluster that runs in the Docker container and to push cluster configuration metadata from
+the application to the cluster as required by the application.
 
-Specifically, the application requires that a region called `Customers`, as defined by the `@Region` mapping annotation
-on the `Customer` application domain model class, exists on the servers in the cluster, to persist `Customer` data.
+Specifically, the application requires that a Region called "Customers", as defined by the `@Region` mapping annotation
+on the `Customer` application domain model class, exists on the servers in the cluster, to store `Customer` data.
 
-We use the SDG `@EnableEntityDefinedRegions` annotation to define the matching client `PROXY` `Customers` Region.
+We use the SDG `@EnableEntityDefinedRegions` annotation to define the matching client `PROXY` "Customers" Region.
 
 Optionally, we have also annotated our main class with SBDG's `@UseMemberName` annotation to give the `ClientCache`
 a name, which we assert in the `assertClientCacheAndConfigureMappingPdxSerializer(:ClientCache)` method.
 
-The primary work performed by this application is done in the Spring Boot `ApplicationRunner` bean definition. We
-essentially create a `Customer` instance (`Jon Doe`), save it to the `Customers` region that is managed by the server
-in the cluster, and then query for `Jon Doe` using OQL, asserting that the result is equal to what we expect.
+The primary work performed by this application is done in the Spring Boot `ApplicationRunner` bean definition. We create
+a `Customer` instance (`Jon Doe`), save it to the "Customers" Region that is managed by the server in the cluster,
+and then query for `Jon Doe` using OQL, asserting that the result is equal to what we expect.
 
 We log the output from the application's operations to see the application in action.
 
@@ -336,8 +345,8 @@ Process finished with exit code 0
 ----
 ====
 
-When we review the configuration of the cluster, we see that the `/Customers` region was created
-when the application ran:
+When we review the configuration of the cluster, we see that the `/Customers` Region was created when the application
+ran:
 
 ./Customers Region Configuration
 ====
@@ -363,7 +372,7 @@ Region | size        | 1
 ----
 ====
 
-Our `/Customers` region contains a value (`Jon Doe`), and we can verify this by running the following OQL Query
+Our `/Customers` Region contains a value (`Jon Doe`), and we can verify this by running the following OQL Query
 with Gfsh:
 
 .Query the "/Customers" Region
@@ -389,6 +398,6 @@ Our application ran successfully.
 In this chapter, we saw how to connect a Spring Boot, {geode-name} `ClientCache` application to an {geode-name} cluster
 that runs in a Docker container.
 
-Later, we provide more information on how to scale up, or rather scale out, our {geode-name} cluster that runs in
-Docker. Additionally, we provide details on how you can use {geode-name}'s Docker Image with Testcontainers
-when you write integration tests, which formally became part of the Spring Test for {geode-name} (STDG) project.
+Later, we provide more information on how to scale up, or rather scale out, our {geode-name} cluster that runs in Docker.
+Additionally, we provide details on how you can use {geode-name}'s Docker image with Testcontainers when you write
+integration tests, which formally became part of the Spring Test for {geode-name} (STDG) project.

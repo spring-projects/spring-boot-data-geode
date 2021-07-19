@@ -39,8 +39,8 @@ public class MySpringBootApplication {
 ----
 ====
 
-You can disable more than one auto-configuration class at a time by specifying each class
-in the `exclude` attribute using array syntax:
+You can disable more than one auto-configuration class at a time by specifying each class in the `exclude` attribute
+using array syntax:
 
 .Disable Auto-configuration of PDX & SSL
 ====
@@ -78,24 +78,28 @@ The current set of auto-configuration classes in Spring Boot for {geode-name} in
 * `SslAutoConfiguration`
 
 [[geode-gemfire-switch]]
-=== Switching from {geode-name} to Pivotal GemFire or Pivotal Cloud Cache (PCC)
+=== Switching from {geode-name} to {pivotal-gemfire-name} or {pivotal-cloudcache-name}
+
+Spring Boot for {geode-name} (SBDG) stopped providing support for {pivotal-gemfire-name} after SBDG 1.3. SBDG 1.3 was
+the last version to support both {geode-name} and {pivotal-gemfire-name}. If you need support for {pivotal-gemfire-name}
+in Spring Boot, then you will need to downgrade to SBDG 1.3.
 
 WARNING: This section is now deprecated. Spring Boot for {geode-name} (SBDG) no longer provides the
-`spring-gemfire-starter` and related starter modules. As of SBDG 1.4, SBDG is based on {geode-name} 1.13. Standalone
-GemFire bits based on {geode-name} are no longer being released by VMware, Inc. after GemFire 9.10. GemFire 9.10 was
-based on {geode-name} 1.12, and SBDG can no longer properly support standalone GemFire bits (version <= 9.10).
+`spring-gemfire-starter` or related starter modules. As of SBDG 1.4, SBDG is based on {geode-name} 1.13. Standalone
+GemFire bits based on {geode-name} are no longer being released by VMware, Inc. after GemFire 9.10. GemFire 9.10
+was based on {geode-name} 1.12, and SBDG can no longer properly support standalone GemFire bits (version <= 9.10).
 
-NOTE: What was Pivotal GemFire has now been rebranded as {pivotal-gemfire-website}[VMware Tanzu GemFire] and what
-was Pivotal Cloud Cache (PCC) running on Pivotal CloudFoundry (PCF) has been rebranded as
-{pivotal-cloudcache-website}[VMware Tanzu GemFire for VMs]
-and {pivotal-cloudfoundry-website}[VMware Tanzu Application Service (TAS)], respectively.
+NOTE: What was Pivotal GemFire has now been rebranded as {pivotal-gemfire-website}[{pivotal-gemfire-name}]
+and what was Pivotal Cloud Cache (PCC) running on Pivotal CloudFoundry (PCF) has been rebranded as
+{pivotal-cloudcache-website}[{pivotal-cloudcache-name}] and {pivotal-cloudfoundry-website}[{pivotal-cloudfoundry-name} (TAS)],
+respectively.
 
 [[geode-cluster-configuration-bootstrapping]]
-=== Running an {geode-name} Cluster with Spring Boot from Your IDE
+=== Running an {geode-name} cluster with Spring Boot from your IDE
 
-As described in <<geode-clientcache-applications>>, you can configure and run a small {geode-name} cluster
-from inside your IDE using Spring Boot. This is extremely helpful during development, since it you manually
-spin up, test, and debug your applications quickly and easily.
+As described in <<geode-clientcache-applications>>, you can configure and run a small {geode-name} cluster from inside
+your IDE using Spring Boot. This is extremely helpful during development because it enables you to manually run, test,
+and debug your applications quickly and easily.
 
 Spring Boot for {geode-name} includes such a class:
 
@@ -108,23 +112,23 @@ include::{docs-src-dir}/org/springframework/geode/docs/example/app/server/Spring
 ====
 
 This class is a proper Spring Boot application that you can use to configure and bootstrap multiple {geode-name} servers
-and join them together to form a small cluster by modifying the runtime configuration of this class ever so
-slightly.
+and join them together to form a small cluster. You only need to modify the runtime configuration of this class
+to startup multiple servers.
 
-Initially, you probably want to start a single (primary) server with the embedded locator and manager service.
+Initially, you will need to start a single (primary) server with an embedded Locator and Manager.
 
-The locator service enables members in the cluster to locate one another and lets new members try to
-join the cluster as a peer. The locator service also lets clients connect to the servers
-in the cluster. When the cache client's pool is configured to use locators, the pool can intelligently
-route data requests directly to the server hosting the data (a.k.a. single-hop access), especially when the data
-is partitioned/sharded across servers in the cluster. Locator pools include support for load balancing connections
-and handling automatic fail-over in the event of failed connections, among other things.
+The Locator enables members in the cluster to locate one another and lets new members join the cluster as a peer.
+The Locator also lets clients connect to the servers in the cluster. When the cache client's connection pool
+is configured to use Locators, the pool of connections can intelligently route data requests directly to the server
+hosting the data (a.k.a. single-hop access), especially when the data is partitioned/sharded across multiple servers
+in the cluster. Locator-based connection pools include support for load balancing connections and handling automatic
+fail-over in the event of failed connections, among other things.
 
-The manager service lets you connect to this server using Gfsh (the {geode-name}
+The Manager lets you connect to this server using Gfsh ({geode-name}'s
 {apache-geode-docs}/tools_modules/gfsh/chapter_overview.html[command-line shell tool]).
 
 To start your primary server, create a run configuration in your IDE for the `SpringBootApacheGeodeCacheServerApplication`
-class with the following, recommended JRE command-line options:
+class using the following, recommended JRE command-line options:
 
 .Server 1 run profile configuration
 ====
@@ -134,7 +138,7 @@ class with the following, recommended JRE command-line options:
 ----
 ====
 
-Start the class. You should see output similar to the following:
+Run the class. You should see output similar to the following:
 
 .Server 1 output on startup
 ====
@@ -304,22 +308,22 @@ Client Connections       : 0
 ----
 ====
 
-Now you can start some additional servers to scale-out your cluster.
+Now you can run additional servers to scale-out your cluster.
 
-To do so, you need to vary the name of the members you add to your cluster as peers. {geode-name} requires
-that the members in a cluster be named, and the names of each member in the cluster be unique.
+To do so, you must vary the name of the members you add to your cluster as peers. {geode-name} requires members in a
+cluster to be named and for the names of each member in the cluster to be unique.
 
 Additionally, since we are running multiple instances of our `SpringBootApacheGeodeCacheServerApplication` class,
-which also embeds a `CacheServer` instance enabling cache clients to connect, we need to be careful to vary our
-ports used by the embedded services.
+which also embeds a `CacheServer` component enabling cache clients to connect. Therefore, you must vary the ports
+used by the embedded services.
 
-Fortunately, we do not need to run another embedded locator or manager service (we need only one in this case).
-Therefore, we can switch profiles from non-clustered to using the Spring `clustered` profile, which includes different
+Fortunately, you do not need to run another embedded Locator or Manager (you need only one of each in this case).
+Therefore, you can switch profiles from non-clustered to using the Spring "clustered" profile, which includes different
 configuration (the `ClusterConfiguration` class) to connect another server as a peer member in the cluster,
-which currently has only one member, as shown in the `list members` Gfsh command output (shown earlier).
+which currently has only one member, as shown in Gfsh with the `list members` command (shown earlier).
 
-To add another server, set the member name and the `CacheServer` port to a different number with the following
-run profile configuration:
+To add another server, set the member name and `CacheServer` port to different values with the following
+run configuration:
 
 .Run profile configuration for server 2
 ====
@@ -329,36 +333,36 @@ run profile configuration:
 ----
 ====
 
-Notice that we explicitly activated the `clustered` Spring profile, which enables the configuration provided
-in the nested `ClusteredConfiguration` class while disabling the `LonerConfiguration` class.
+Notice that we explicitly activated the "clustered" Spring profile, which enables the configuration provided in
+the nested `ClusteredConfiguration` class while disabling the configuration provided in the `LonerConfiguration` class.
 
-This `ClusteredConfiguration` class is also annotated with `@UseLocators`, which sets the {geode-name} `locators`
-property to `localhost[10334]`.  By default, it assumes that the locator process/service runs on locahost,
-listening on the default locator port of 10334. You can adjust your locators endpoint if your locators
-run elsewhere in your network by using the `locators` attribute of the `@UseLocators` annotation.
+The `ClusteredConfiguration` class is also annotated with `@UseLocators`, which sets the {geode-name} `locators`
+property to "localhost[10334]".  By default, it assumes that the Locator runs on localhost, listening on the default
+Locator port of 10334. You can adjust your `locators` connection endpoint if your Locators run elsewhere in your network
+by using the `locators` attribute of the `@UseLocators` annotation.
 
-TIP: It is common in production environments to run multiple locators as a separate process. Running multiple locators
-provides redundancy in case a Locator process fails. If all locator processes in your network fail,
-your cluster does not go down. It means that no other members can join the cluster, letting you
-scale out your cluster. Any clients also cannot connect. Restart the Locators if this happens.
+TIP: In production environments, it is common to run multiple Locators in separate processes. Running multiple Locators
+provides redundancy in case a Locator fails. If all Locators in your cluster fail, then your cluster will continue to
+run, but no other members will be able to join the cluster, which is important when scaling out the cluster. Clients
+also will not be able to connect. Restart the Locators if this happens.
 
-Also, we set the `spring.data.gemfire.name` property to `ServerTwo`, adjusting the name of our member
-when it joins the cluster as a peer.
+Also, we set the `spring.data.gemfire.name` property to `ServerTwo`, adjusting the name of our member when it joins
+the cluster as a peer.
 
-Finally, we set the `spring.data.gemfire.cache.server.port` to `41414` to vary the `CacheServer` port
-used by `ServerTwo`.  The default `CacheServer` port is `40404`. If we had not set this property before starting
-`ServerTwo`, we would have hit a `java.net.BindException`.
+Finally, we set the `spring.data.gemfire.cache.server.port` property to `41414` to vary the `CacheServer` port used by
+`ServerTwo`.  The default `CacheServer` port is `40404`. If we had not set this property before starting `ServerTwo`,
+we would have encounter a `java.net.BindException`.
 
-TIP: Both the `spring.data.gemfire.name` and `spring.data.gemfire.cache.server.port` properties are well-known properties
-used by SDG to dynamically configure {geode-name} with a Spring Boot `application.properties` file
-or Java System properties. You can find these properties in the annotation Javadoc in SDG's annotation-based
-configuration model. For example, see the Javadoc for the
+TIP: Both `spring.data.gemfire.name` and `spring.data.gemfire.cache.server.port` are well-known properties used by SDG
+to dynamically configure {geode-name} with a Spring Boot `application.properties` file or by using Java System
+properties. You can find these properties in the annotation Javadoc in SDG's annotation-based configuration model.
+For example, see the Javadoc for the
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html#port--[`spring.data.gemfire.cache.server.port` property].
-Most of the SDG annotations include corresponding properties that can be defined in `application.properties`
-and is explained in more detail {spring-data-geode-docs-html}/#bootstrap-annotation-config-properties[documentation].
+Most SDG annotations include corresponding properties that can be defined in Spring Boot `application.properties`,
+which is explained in detail in the {spring-data-geode-docs-html}/#bootstrap-annotation-config-properties[documentation].
 
-After starting our second server, `ServerTwo`, we should see output similar to the following at the command-line and in Gfsh
-when we again `list members` and `describe member`:
+After starting our second server, `ServerTwo`, we should see output similar to the following at the command-line
+and in Gfsh when we again `list members` and `describe member`:
 
 .Gfsh output after starting server 2
 ====
@@ -392,8 +396,8 @@ Client Connections       : 0
 ----
 ====
 
-When we list members, we see `ServerTwo`, and, when we `describe` `ServerTwo`, we see that its `CacheServer` port
-is appropriately set to `41414`.
+When we list the members of the cluster, we see `ServerTwo`, and when we `describe` `ServerTwo`, we see that its
+`CacheServer` port is appropriately set to `41414`.
 
 We can add one more server, `ServerThree`, by using the following run configuration:
 
@@ -440,26 +444,26 @@ Client Connections       : 0
 ----
 ====
 
-Congratulations. You have started a small {geode-name} cluster, with 3 members, by using Spring Boot from inside your IDE.
+Congratulations. You have just started a small {geode-name} cluster with 3 members by using Spring Boot from inside
+your IDE.
 
-You can build and run a Spring Boot, {geode-name} `ClientCache` application that connects to this cluster.
-To do so, include and use Spring Boot for {geode-name}.
+Now you can build and run a Spring Boot, {geode-name} `ClientCache` application that connects to this cluster. To do so,
+include and use Spring Boot for {geode-name}.
 
 [[geode-testing-support]]
 === Testing
 
-https://github.com/spring-projects/spring-test-data-geode[Spring Test for {geode-name}] is a new, soon-to-be-released
-and upcoming project to help you write both unit and integration tests when you use {geode-name} in a Spring
-context.
-
-In fact, the entire {github-url}/tree/master/spring-geode-autoconfigure/src/test/java/org/springframework/geode/boot/autoconfigure[test suite]
+https://github.com/spring-projects/spring-test-data-geode[Spring Test for {geode-name}] (STDG) is a relatively new project
+to help you write both unit and integration tests when you use {geode-name} in a Spring context. In fact, the entire
+{github-url}/tree/master/spring-geode-autoconfigure/src/test/java/org/springframework/geode/boot/autoconfigure[test suite]
 in Spring Boot for {geode-name} is based on this project.
 
-All Spring projects that integrate with {geode-name} will use this new test framework for all their testing needs, making
-this new test framework for {geode-name} a proven and reliable solution for all your {geode-name} application testing
-needs when using Spring as well.
+All Spring projects that integrate with {geode-name} will use this new test framework for all their testing needs,
+making this new test framework for {geode-name} a proven and reliable solution for all your {geode-name} application
+testing needs when using Spring as well.
 
-In future versions, this reference guide will include an entire chapter on testing.
+In future versions, this reference guide will include an entire chapter on testing along with samples. In the meantime,
+look to the STDG https://github.com/spring-projects/spring-test-data-geode#stdg-in-a-nutshell[README].
 
 [[geode-examples]]
 === Examples
@@ -467,15 +471,14 @@ In future versions, this reference guide will include an entire chapter on testi
 The definitive source of truth on how to best use Spring Boot for {geode-name} is to refer to
 the <<geode-samples,samples>>.
 
-See also the https://github.com/jxblum/temperature-service[Temperature Service], Spring Boot
-application that implements a temperature sensor and monitoring, internet of things (IOT) example. The example uses SBDG
-to showcase {geode-name} CQ, function implementations and executions, and positions {geode-name} as a caching provider
-in Spring's cache abstraction. It is a working, sophisticated, and complete example, and we highly recommend it as a good
-starting point for real-world use cases.
+See also the https://github.com/jxblum/temperature-service[Temperature Service], Spring Boot application that implements
+a temperature sensor and monitoring, Internet of Things (IOT) example. The example uses SBDG to showcase {geode-name} CQ,
+function implementations and executions, and positions {geode-name} as a caching provider in Spring's Cache Abstraction.
+It is a working, sophisticated, and complete example, and we highly recommend it as a good starting point for real-world
+use cases.
 
-See the https://github.com/jxblum/contacts-application/tree/master/boot-example[Boot example]
-from the contact application reference implementation (RI) for Spring Data for {geode-name} (SDG) as yet another
-example.
+See the https://github.com/jxblum/contacts-application/tree/master/boot-example[Boot example] from the contact
+application reference implementation (RI) for Spring Data for {geode-name} (SDG) as yet another example.
 
 [[references]]
 === References

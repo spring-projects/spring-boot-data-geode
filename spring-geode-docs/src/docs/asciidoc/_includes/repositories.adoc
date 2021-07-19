@@ -5,23 +5,27 @@
 Using Spring Data Repositories with {geode-name} makes short work of data access operations when you use {geode-name}
 as your System of Record (SoR) to persist your application's state.
 
-{spring-data-commons-docs-html}/#repositories[Spring Data repositories] provide a convenient and powerful way
-to define basic CRUD and simple query data access operations by specifying the contract of those data access
-operations in a Java interface.
+Using Spring Data Repositories with {geode-name} makes short work of data access operations when you use {geode-name}
+as your System of Record (SoR) to persist your application's state.
 
-Spring Boot for {geode-name} auto-configures the Spring Data for {geode-name} {spring-data-geode-docs-html}/#gemfire-repositories[repository extension]
-when either is declared on your application's classpath. You need not do anything special to enable it. You can
-start coding your application-specific Repository interfaces.
+{spring-data-commons-docs-html}/#repositories[Spring Data Repositories] provide a convenient and powerful way to define
+basic CRUD and simple query data access operations by specifying the contract of those data access operations in a Java
+interface.
 
-The following example defines a `Customer` class to model customers and map it to the {geode-name} `Customers` region by using the SDG
-{spring-data-geode-javadoc}/org/springframework/data/gemfire/mapping/annotation/Region.html[`@Region`] mapping
-annotation:
+Spring Boot for {geode-name} auto-configures the Spring Data for {geode-name}
+{spring-data-geode-docs-html}/#gemfire-repositories[Repository extension]
+when either is declared on your application's classpath. You need not do anything special to enable it. You can start
+coding your application-specific Repository interfaces.
+
+The following example defines a `Customer` class to model customers and map it to the {geode-name} `Customers` Region
+by using the SDG {spring-data-geode-javadoc}/org/springframework/data/gemfire/mapping/annotation/Region.html[`@Region`]
+mapping annotation:
 
 .`Customer` entity class
 ====
 [source,java]
 ----
-package example.app.books.model;
+package example.app.crm.model;
 
 @Region("Customers")
 class Customer {
@@ -35,13 +39,14 @@ class Customer {
 ----
 ====
 
-The following example shows how to declare your repository (a.k.a. {wikipedia-docs}/Data_access_object[Data Access Object (DAO)]) for `Customers`:
+The following example shows how to declare your Repository (a.k.a. {wikipedia-docs}/Data_access_object[Data Access Object (DAO)])
+for `Customers`:
 
 .`CustomerRepository` for peristing and accessing `Customers`
 ====
 [source,java]
 ----
-package example.app.books.repo;
+package example.app.crm.repo;
 
 interface CustomerRepository extends CrudRepository<Customer, Long> {
 
@@ -80,6 +85,6 @@ class SpringBootApacheGeodeClientCacheApplication {
 ----
 ====
 
-See Spring Data Commons' {spring-data-commons-docs-html}/#repositories[repositories abstraction]
-and Spring Data for {geode-name}'s {spring-data-geode-docs-html}/#gemfire-repositories[repositories extension]
+See Spring Data Commons' {spring-data-commons-docs-html}/#repositories[Repositories abstraction]
+and Spring Data for {geode-name}'s {spring-data-geode-docs-html}/#gemfire-repositories[Repositories extension]
 for more detail.

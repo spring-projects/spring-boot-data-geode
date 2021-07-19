@@ -5,17 +5,16 @@
 
 This section contains working examples that show how to use Spring Boot for {geode-name} (SBDG) effectively.
 
-Some examples focus on specific use cases (such as (HTTP) session state caching), while other examples show how
-SBDG works under the hood, to give you a better understanding of what is actually happening and how to debug problems
-with your {geode-name}, Spring Boot applications.
+Some examples focus on specific use cases (such as (HTTP) session state caching), while other examples show how SBDG
+works under the hood, to give you a better understanding of what is actually happening and how to debug problems with
+your Spring Boot {geode-name} applications.
 
 .Example Spring Boot applications using {geode-name}
 |===
 | Guide | Description | Source
 
 | link:guides/getting-started.html[Getting Started with Spring Boot for {geode-name}]
-| Explains how to get started quickly, easily, and reliably building {geode-name} and Pivotal Cloud Cache-powered
-applications with Spring Boot.
+| Explains how to get started quickly, easily, and reliably building {geode-name} powered applications with Spring Boot.
 | {github-samples-url}/intro/getting-started[Getting Started]
 
 | link:guides/boot-configuration.html[Spring Boot Auto-Configuration for {geode-name}]
@@ -27,37 +26,36 @@ applications with Spring Boot.
 | {github-samples-url}/boot/actuator[Spring Boot Actuator]
 
 | link:guides/boot-security.html[Spring Boot Security for {geode-name}]
-| Explains how to configure auth and TLS with SSL when you use {geode-name} and Pivotal Cloud Cache
-in Spring Boot applications.
+| Explains how to configure auth and TLS with SSL when you use {geode-name} in your Spring Boot applications.
 | {github-samples-url}/boot/security[Spring Boot Security]
 
 | link:guides/caching-look-aside.html[Look-Aside Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring Cache Abstraction with {geode-name} as the caching provider for look-aside caching.
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider
+for look-aside caching.
 | {github-samples-url}/caching/look-aside[Look-Aside Caching]
 
 | link:guides/caching-inline.html[Inline Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring cache abstraction with {geode-name} as the caching provider for inline caching.
-This sample builds on the look-aside caching sample, described earlier.
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider for inline caching.
+This sample builds on the look-aside caching sample.
 | {github-samples-url}/caching/inline[Inline Caching]
 
 | link:guides/caching-inline-async.html[Asynchronous Inline Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring cache abstraction with {geode-name} as the caching provider for asynchronous
-inline caching. This sample builds on the look-aside caching and inline caching samples, described earlier.
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider for asynchronous
+inline caching. This sample builds on the look-aside and inline caching samples.
 | {github-samples-url}/caching/inline-async[Asynchronous Inline Caching]
 
 | link:guides/caching-near.html[Near Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring cache abstraction with {geode-name} as the caching provider for near caching.
-This sample builds on the look-aside caching sample, described earlier.
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider for near caching.
+This sample builds on the look-aside caching sample.
 | {github-samples-url}/caching/near[Near Caching]
 
 | link:guides/caching-multi-site.html[Multi-Site Caching with Spring's Cache Abstraction and {geode-name}]
-| Explains how to enable and use the Spring cache abstraction with {geode-name} as the caching provider for multi-site caching.
-This sample builds on the look-aside caching sample, described earlier, and is the fourth and final leg in our study
-of caching patterns.
+| Explains how to enable and use Spring's Cache Abstraction with {geode-name} as the caching provider for multi-site
+caching. This sample builds on the look-aside caching sample.
 | {github-samples-url}/caching/multi-site[Multi-Site Caching]
 
 | link:guides/caching-http-session.html[HTTP Session Caching with Spring Session and {geode-name}]
-| Explains how to enable and use Spring Session with {geode-name} to manage HTTP Session state.
+| Explains how to enable and use Spring Session with {geode-name} to manage HTTP session state.
 | {github-samples-url}/caching/http-session[HTTP Session Caching]
 
 |===

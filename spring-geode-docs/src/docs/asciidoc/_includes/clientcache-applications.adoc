@@ -4,16 +4,16 @@
 
 
 The first opinionated option provided to you by Spring Boot for {geode-name} (SBDG) is a
-{apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html[`ClientCache`] instance that you get by declaring
-Spring Boot for {geode-name} on your application classpath.
+{apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html[`ClientCache`] instance
+that you get by declaring Spring Boot for {geode-name} on your application classpath.
 
-It is assumed that most application developers who use Spring Boot to build applications backed by {geode-name} are
-building cache client applications deployed in an {geode-name}
+It is assumed that most application developers who use Spring Boot to build applications backed by {geode-name}
+are building cache client applications deployed in an {geode-name}
 {apache-geode-docs}/topologies_and_comm/cs_configuration/chapter_overview.html[Client/Server Topology].
-The client/server topology is the most common and traditional architecture employed by enterprise applications that
-use {geode-name}.
+The client/server topology is the most common and traditional architecture employed by enterprise applications
+that use {geode-name}.
 
-For example, you can begin building a Spring Boot, {geode-name} `ClientCache` application by declaring the
+For example, you can begin building a Spring Boot {geode-name} `ClientCache` application by declaring the
 `spring-geode-starter` on your application's classpath:
 
 .Spring Boot for {geode-name} on the application classpath
@@ -44,12 +44,12 @@ public class SpringBootApacheGeodeClientCacheApplication {
 ----
 ====
 
-Your application now has a `ClientCache` instance that can connect to an {geode-name} server running on
-`localhost` and listen on the default `CacheServer` port, `40404`.
+Your application now has a `ClientCache` instance that can connect to an {geode-name} server running on `localhost`
+and listening on the default `CacheServer` port, `40404`.
 
-By default, an {geode-name} server (that is, `CacheServer`) must be running for the application to use the `ClientCache` instance.
-However, it is perfectly valid to create a `ClientCache` instance and perform data access operations by using `LOCAL`
-Regions. This is useful during development.
+By default, an {geode-name} server (that is, `CacheServer`) must be running for the application to use the `ClientCache`
+instance. However, it is perfectly valid to create a `ClientCache` instance and perform data access operations by using
+`LOCAL` Regions. This is useful during development.
 
 TIP: To develop with `LOCAL` Regions, configure your cache Regions with the
 {apache-geode-javadoc}/org/apache/geode/cache/client/ClientRegionShortcut.html#LOCAL[`ClientRegionShortcut.LOCAL`]
@@ -63,9 +63,9 @@ TIP: Compare and contrast the preceding configuration with the Spring Data for {
 {spring-data-geode-docs-html}/#bootstrap-annotation-config-geode-applications[approach].
 
 It is uncommon to ever need a direct reference to the `ClientCache` instance provided by SBDG injected into your
-application components (for example, `@Service` or `@Repository` beans defined in a Spring `ApplicationContext`), whether you
-are configuring additional {geode-name} objects (regions, indexes, and so on) or are using those objects indirectly
-in your applications. However, it is possible to do so if and when needed.
+application components (for example, `@Service` or `@Repository` beans defined in a Spring `ApplicationContext`),
+whether you are configuring additional {geode-name} objects (Regions, Indexes, and so on) or are using those objects
+indirectly in your applications. However, it is possible to do so if and when needed.
 
 For example, perhaps you want to perform some additional `ClientCache` initialization in a Spring Boot
 {spring-boot-javadoc}/org/springframework/boot/ApplicationRunner.html[`ApplicationRunner`] on startup:
@@ -101,18 +101,19 @@ public class SpringBootApacheGeodeClientCacheApplication {
 What if you want to build an embedded peer `Cache` application instead?
 
 Perhaps you need an actual peer cache member, configured and bootstrapped with Spring Boot, along with the ability
-to join this member to an existing cluster (of data servers) as a peer node.  You can do that too.
+to join this member to an existing cluster (of data servers) as a peer node.
 
 Remember the second goal in Spring Boot's {spring-boot-docs-html}/#getting-started-introducing-spring-boot[documentation]:
 
 > Be opinionated out of the box but get out of the way quickly as requirements start to diverge from the defaults.
 
-Here, we focus on the second part of the goal: "`get out of the way quickly as requirements start to diverge from the defaults`"
+Here, we focus on the second part of the goal: "_get out of the way quickly as requirements start to diverge
+from the defaults_".
 
-If your application requirements demand you use Spring Boot to configure and bootstrap an embedded peer `Cache`
-instance, declare your intention with either SDG's
+If your application requirements demand you use Spring Boot to configure and bootstrap an embedded peer `Cache` instance,
+declare your intention with either SDG's
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/PeerCacheApplication.html[`@PeerCacheApplication`] annotation,
-or, if you also need to enable connections from `ClientCache` apps, use SDG's
+or, if you also need to enable connections from `ClientCache` applications, use SDG's
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/CacheServerApplication.html[`@CacheServerApplication`] annotation:
 
 .Spring Boot, {geode-name} `CacheServer` Application
@@ -130,21 +131,19 @@ public class SpringBootApacheGeodeCacheServerApplication {
 ----
 ====
 
-TIP: An {geode-name} "`server`" is not necessarily a `CacheServer` capable of serving cache clients. It is merely a peer
+TIP: An {geode-name} server is not necessarily a `CacheServer` capable of serving cache clients. It is merely a peer
 member node in an {geode-name} cluster (that is, a distributed system) that stores and manages data.
 
-By explicitly declaring the `@CacheServerApplication` annotation, you tell Spring Boot that you do not want
-the default `ClientCache` instance but rather want an embedded peer `Cache` instance with a `CacheServer` component,
-which enables connections from `ClientCache` apps.
+By explicitly declaring the `@CacheServerApplication` annotation, you tell Spring Boot that you do not want the default
+`ClientCache` instance but rather want an embedded peer `Cache` instance with a `CacheServer` component, which enables
+connections from `ClientCache` applications.
 
 You can also enable two other {geode-name} services:
-* An embedded _Locator_, which allows clients or even other peers
-to "`locate`" servers in the cluster.
-* An embedded _Manager_, which allows the {geode-name} application process
-to be managed and monitored by using {apache-geode-docs}/tools_modules/gfsh/chapter_overview.html[Gfsh], {geode-name}'s
-command-line shell:
+* An embedded _Locator_, which allows clients or even other peers to locate servers in the cluster.
+* An embedded _Manager_, which allows the {geode-name} application process to be managed and monitored by using
+{apache-geode-docs}/tools_modules/gfsh/chapter_overview.html[Gfsh], {geode-name}'s command-line shell tool:
 
-.Spring Boot, {geode-name} `CacheServer` Application with _Locator_ and _Manager_ services enabled
+.Spring Boot {geode-name} `CacheServer` Application with _Locator_ and _Manager_ services enabled
 ====
 [source,java]
 ----
@@ -161,7 +160,7 @@ public class SpringBootApacheGeodeCacheServerApplication {
 ----
 ====
 
-Then you can use Gfsh  to connect to and manage this server:
+Then you can use Gfsh to connect to and manage this server:
 
 ====
 [source,text]
@@ -189,7 +188,7 @@ gfsh>list members
 ------------------------------------------- | --------------------------------------------------------------------------
 SpringBootApacheGeodeCacheServerApplication | 10.0.0.121(SpringBootApacheGeodeCacheServerApplication:29798)<ec><v0>:1024
 
-gfsh>
+
 gfsh>describe member --name=SpringBootApacheGeodeCacheServerApplication
 Name        : SpringBootApacheGeodeCacheServerApplication
 Id          : 10.0.0.121(SpringBootApacheGeodeCacheServerApplication:29798)<ec><v0>:1024
@@ -211,10 +210,10 @@ Client Connections       : 0
 ----
 ====
 
-You can even start additional servers in Gfsh. These additional servers connect to your configured and bootstrapped Spring Boot,
-{geode-name} `CacheServer` application. These additional servers started in Gfsh know about the Spring Boot,
-{geode-name} server because of the embedded lcator service, which is running on `localhost` and listening on
-the default locator port, `10334`:
+You can even start additional servers in Gfsh. These additional servers connect to your Spring Boot configured
+and bootstrapped  {geode-name} `CacheServer` application. These additional servers started in Gfsh know about
+the Spring Boot, {geode-name} server because of the embedded Locator service, which is running on `localhost`
+and listening on the default Locator port, `10334`:
 
 ====
 [source,text]
@@ -240,9 +239,9 @@ GfshServer                                  | 10.0.0.121(GfshServer:30031)<v1>:1
 ----
 ====
 
-Perhaps you want to start the other way around.  You may need to connect a configured
-and bootstrapped Spring Boot, {geode-name} server application to an existing cluster. You can start the cluster in Gfsh
-with the following commands (shown with partial typical output):
+Perhaps you want to start the other way around. You may need to connect a Spring Boot configured and bootstrapped
+{geode-name} server application to an existing cluster. You can start the cluster in Gfsh with the following commands
+(shown with partial typical output):
 
 ====
 [source,text]
@@ -287,7 +286,7 @@ GfshServer  | 10.0.0.121(GfshServer:30270)<v1>:1025
 
 Then modify the `SpringBootApacheGeodeCacheServerApplication` class to connect to the existing cluster:
 
-.Spring Boot, {geode-name} `CacheServer` Application connecting to an external cluster
+.Spring Boot {geode-name} `CacheServer` Application connecting to an external cluster
 ====
 [source,java]
 ----
@@ -303,10 +302,11 @@ public class SpringBootApacheGeodeCacheServerApplication {
 ====
 
 TIP: Notice that the `SpringBootApacheGeodeCacheServerApplication` class, `@CacheServerApplication` annotation's
-`locators` property are configured with the host and port (`localhost[11235]`), on which the locator was started by using _Gfsh_.
+`locators` property are configured with the host and port (`localhost[11235]`), on which the Locator was started
+by using Gfsh.
 
-After running your Spring Boot, {geode-name} `CacheServer` application again and then running `list members` in Gfsh,
-you should see output similar to the following when you run the `list members` command:
+After running your Spring Boot {geode-name} `CacheServer` application again and executing the `list members` command
+in Gfsh again, you should see output similar to the following:
 
 ====
 [source,text]
@@ -340,20 +340,20 @@ Client Connections       : 0
 ----
 ====
 
-In both scenarios, the configured and bootstrapped Spring Boot, {geode-name} server and the Gfsh locator
-and Gfsh server formed a cluster.
+In both scenarios, the Spring Boot configured and bootstrapped {geode-name} server, the Gfsh Locator and Gfsh server
+formed a cluster.
 
 While you can use either approach and Spring does not care, it is far more convenient to use Spring Boot and your IDE
-to form a small cluster while developing. Spring profiles make it far simpler and much faster to
-configure and start a small cluster.
+to form a small cluster while developing. Spring profiles make it far simpler and much faster to configure and start
+a small cluster.
 
-Also, approach enables rapidly prototyping, testing, and debugging of your entire end-to-end application
-and system architecture, all right from the comfort and familiarity of your IDE. No additional tooling
-(such as Gfsh) or knowledge is required to get started quickly and easily. Just build and run.
+Also, this approach enables rapidly prototyping, testing, and debugging your entire end-to-end application
+and system architecture right from the comfort and familiarity of your IDE. No additional tooling (such as Gfsh)
+or knowledge is required to get started quickly and easily. Just build and run.
 
-TIP: Be careful to vary your port numbers for the embedded services, like the `CacheServer`, locators, and the manager,
-especially if you start multiple instances. Otherwise, you are likely to run into a `java.net.BindException`
-due to port conflicts.
+TIP: Be careful to vary your port numbers for the embedded services, like the `CacheServer`, Locators, and the Manager,
+especially if you start multiple instances on the same machine. Otherwise, you are likely to run into
+a `java.net.BindException` caused by port conflicts.
 
 TIP: See the <<geode-cluster-configuration-bootstrapping>> appendix for more details.
 
@@ -361,23 +361,23 @@ TIP: See the <<geode-cluster-configuration-bootstrapping>> appendix for more det
 === Building Locator Applications
 
 In addition to `ClientCache`, `CacheServer`, and peer `Cache` applications, SDG, and by extension SBDG, now supports
-locator-based Spring Boot applications.
+Spring Boot {geode-name} Locator applications.
 
-An {geode-name} locator is a location-based service or, more typically, a standalone process that lets
-clients locate a cluster of {geode-name} servers to manage data. Many cache clients can connect to the same cluster
-to share data. Running multiple clients is common in a Microservices architecture where you need to scale-up
-the number of application instances to satisfy the demand.
+An {geode-name} Locator is a location-based service or, more typically, a standalone process that lets clients locate
+a cluster of {geode-name} servers to manage data. Many cache clients can connect to the same cluster to share data.
+Running multiple clients is common in a Microservices architecture where you need to scale-up the number of application
+instances to satisfy the demand.
 
-A locator is also used by joining members of an existing cluster to scale-out and increase capacity of the logically
-pooled system resources (memory, CPU, and disk).  A locator maintains metadata that is sent to the clients to
-enable such capabilities as single-hop data access, routing data access operations to the data node in the cluster
-maintaining the data of interests. A locator also maintains load information for servers in the cluster, which enables
-the load to be uniformly distributed across the cluster while also providing fail-over services to a redundant member
-if the primary fails. A locator provides many more benefits, and we encourage you to read
-the {apache-geode-docs}/configuring/running/running_the_locator.html[documentation] for more details.
+An {geode-name} Locator is also used by joining members of an existing cluster to scale-out and increase capacity of
+the logically pooled system resources (memory, CPU, network and disk). A Locator maintains metadata that is sent to
+the clients to enable such capabilities as single-hop data access to route data access operations to the data node
+in the cluster maintaining the data of interests. A Locator also maintains load information for servers in the cluster,
+which enables the load to be uniformly distributed across the cluster while also providing fail-over services to a
+redundant member if the primary fails. A Locator provides many more benefits, and we encourage you to read the
+{apache-geode-docs}/configuring/running/running_the_locator.html[documentation] for more details.
 
-As shown earlier, you can embed a locator service within either a peer `Cache` or a `CacheServer` Spring Boot application
-by using the SDG `@EnableLocator` annotation:
+As shown earlier, you can embed a Locator service within either a Spring Boot peer `Cache` or a `CacheServer`
+application by using the SDG `@EnableLocator` annotation:
 
 .Embedded Locator Service
 ====
@@ -392,20 +392,19 @@ class SpringBootCacheServerWithEmbeddedLocatorApplication {
 ----
 ====
 
-However, it is more common to start standalone locator JVM processes. This is useful when you want to increase
-the resiliency of your cluster in the face of network and process failures, which are bound to happen.  If a locator JVM
-process crashes or gets severed from the cluster due to a network failure, having multiple Locators provides a
-higher degree of availability (HA) through redundancy.
+However, it is more common to start standalone Locator JVM processes. This is useful when you want to increase the
+resiliency of your cluster in the face of network and process failures, which are bound to happen. If a Locator JVM
+process crashes or gets severed from the cluster due to a network failure or partition, having multiple Locators
+provides a higher degree of availability (HA) through redundancy.
 
-However, if all Locators in the cluster go down, the cluster still remains intact.
-You cannot add more peer members (that is, scale-up the number of data nodes in the cluster)
-or connect any more clients. If all the locators in the cluster go down, it is safe to restart them
-only after a thorough diagnosis.
+Even if all Locators in the cluster go down, the cluster still remains intact. You cannot add more peer members
+(that is, scale-up the number of data nodes in the cluster) or connect any more clients, but the cluster is fine.
+If all the locators in the cluster go down, it is safe to restart them only after a thorough diagnosis.
 
-NOTE: Once a client receives metadata about the cluster of servers, all data-access operations are sent directly
-to servers in the cluster, not a locator. Therefore, existing, connected clients remain connected and operable.
+NOTE: Once a client receives metadata about the cluster of servers, all data-access operations are sent directly to
+servers in the cluster, not a Locator. Therefore, existing, connected clients remain connected and operable.
 
-To configure and bootstrap locator-based Spring Boot applications as standalone JVM processes, use the following
+To configure and bootstrap Spring Boot {geode-name} Locator applications as standalone JVM processes, use the following
 configuration:
 
 .Standalone Locator Process
@@ -425,16 +424,15 @@ Instead of using the `@EnableLocator` annotation, you now use the `@LocatorAppli
 The `@LocatorApplication` annotation works in the same way as the `@PeerCacheApplication` and `@CacheServerApplication`
 annotations, bootstrapping an {geode-name} process and overriding the default `ClientCache` instance provided by SBDG.
 
-NOTE: If your `@SpringBootApplication` class is annotated with `@LocatorApplication`, it must be a `Locator`
-and not a `ClientCache`, `CacheServer`, or peer `Cache` application.  If you need the application to function as a
-peer `Cache`, perhaps with an embedded `CacheServer` components and embedded locator, you need to follow
-the approach shown earlier: using the `@EnableLocator` annotation with either the `@PeerCacheApplication`
-or `@CacheServerApplication` annotation.
+NOTE: If your `@SpringBootApplication` class is annotated with `@LocatorApplication`, it must be a `Locator` and not
+a `ClientCache`, `CacheServer`, or peer `Cache` application.  If you need the application to function as a peer `Cache`,
+perhaps with embedded `CacheServer` components and an embedded Locator, you need to follow the approach shown earlier:
+using the `@EnableLocator` annotation with either the `@PeerCacheApplication` or `@CacheServerApplication` annotation.
 
-With our Spring Boot, {geode-name} locator application, we can connect both configured and bootstrapped Spring Boot
-peer members (peer `Cache`, `CacheServer` and `Locator` applications) as well as Gfsh started locators and servers.
+With our Spring Boot {geode-name} Locator application, we can connect both Spring Boot configured and bootstrapped
+peer members (peer `Cache`, `CacheServer` and `Locator` applications) as well as Gfsh started Locators and servers.
 
-First, we need to start two locators by using our {geode-name} locator Spring Boot application class.
+First, we need to start two Locators by using our Spring Boot {geode-name} Locator application class:
 
 .SpringBootApacheGeodeLocatorApplication class
 ====
@@ -444,30 +442,31 @@ include::{docs-src-dir}/org/springframework/geode/docs/example/app/locator/Sprin
 ----
 ====
 
-We also need to vary the configuration for each locator application instance.
+We also need to vary the configuration for each Locator application instance.
 
-{geode-name} requires each peer member in the cluster to be uniquely named. We can set the name of the locator by using
+{geode-name} requires each peer member in the cluster to be uniquely named. We can set the name of the Locator by using
 the `spring.data.gemfire.locator.name` SDG property set as a JVM System Property in your IDE's run configuration profile
-for the application main class: `-Dspring.data.gemfire.locator.name=SpringLocatorOne`. We name the second
-locator application instance `SpringLocatorTwo`.
+for the main application class: `-Dspring.data.gemfire.locator.name=SpringLocatorOne`. We name the second Locator
+application instance `SpringLocatorTwo`.
 
-Additionally, we must vary the port numbers that the locators use to listen for connections. By default, an {geode-name}
-locator listens on port `10334`.  We can set the locator port by using the `spring.data.gemfire.locator.port` SDG property.
+Additionally, we must vary the port numbers that the Locators use to listen for connections. By default, an {geode-name}
+Locator listens on port `10334`. We can set the Locator port by using the `spring.data.gemfire.locator.port`
+SDG property.
 
-For our first locator application instance (`SpringLocatorOne`), we also enable the manager profile so that
-we can connect to the locator by using Gfsh.
+For our first Locator application instance (`SpringLocatorOne`), we also enable the "manager" profile so that
+we can connect to the Locator by using Gfsh.
 
-Our IDE run configuration profile for our first locator application instance appears as:
+Our IDE run configuration profile for our first Locator application instance appears as:
 
 `-server -ea -Dspring.profiles.active=manager -Dspring.data.gemfire.locator.name=SpringLocatorOne -Dlogback.log.level=INFO`
 
-And our IDE run configuration profile for our second locator application instance appears as:
+And our IDE run configuration profile for our second Locator application instance appears as:
 
 `-server -ea -Dspring.profiles.active= -Dspring.data.gemfire.locator.name=SpringLocatorTwo -Dspring.data.gemfire.locator.port=11235 -Dlogback.log.level=INFO`
 
-You should see log output similar to the following when you start a locator app instance:
+You should see log output similar to the following when you start a Locator application instance:
 
-.Spring Boot, {geode-name} Locator log output
+.Spring Boot {geode-name} Locator log output
 ====
 [source,txt]
 ----
@@ -547,8 +546,8 @@ Press <enter> to exit!
 ----
 ====
 
-Next, start up the second locator application instance (you should see log output similar to the preceding list).  Then connect to
-the cluster of Locators by using Gfsh:
+Next, start up the second Locator application instance (you should see log output similar to the preceding list).
+Then connect to the cluster of Locators by using Gfsh:
 
 .Cluster of Locators
 ====
@@ -580,7 +579,7 @@ SpringLocatorTwo | 10.99.199.24(SpringLocatorTwo:30077:locator)<ec><v1>:41001
 ====
 
 By using our `SpringBootApacheGeodeCacheServerApplication` main class from the previous section, we can configure
-and bootstrap an {geode-name} `CacheServer` application with Spring Boot and connect it to our cluster of locators:
+and bootstrap an {geode-name} `CacheServer` application with Spring Boot and connect it to our cluster of Locators:
 
 .SpringBootApacheGeodeCacheServerApplication class
 ====
@@ -590,7 +589,7 @@ include::{docs-src-dir}/org/springframework/geode/docs/example/app/server/Spring
 ----
 ====
 
-To do so, enable the "`clustered`" profile by using an IDE run profile configuration similar to:
+To do so, enable the "clustered" profile by using an IDE run profile configuration similar to:
 
 `-server -ea -Dspring.profiles.active=clustered -Dspring.data.gemfire.name=SpringServer -Dspring.data.gemfire.cache.server.port=41414 -Dlogback.log.level=INFO`
 
@@ -609,7 +608,7 @@ SpringServer     | 10.99.199.24(SpringServer:30216)<v2>:41002
 ----
 ====
 
-Finally, we can even start additional Locators and Servers connected to this cluster by using Gfsh:
+Finally, we can even start additional Locators and servers connected to this cluster by using Gfsh:
 
 .Gfsh started Locators and Servers
 ====
@@ -656,19 +655,19 @@ for {geode-name} (SBDG) in particular, make doing so easy.
 [[geode-manager-applications]]
 === Building Manager Applications
 
-As discussed in the previous sections, you can enable a configured and bootstrapped Spring Boot,
-{geode-name} peer member node in the cluster to function as a manager.
+As discussed in the previous sections, you can enable a Spring Boot configured and bootstrapped {geode-name}
+peer member node in the cluster to function as a Manager.
 
-An {geode-name} manager is a peer member node in the cluster that runs the management service, letting the cluster
-be managed and monitored by using JMX-based tools, such as Gfsh, JConsole, or JVisualVM. Any tool
-that uses the JMX API can connect to and manage an {geode-name} cluster for whatever purpose.
+An {geode-name} Manager is a peer member node in the cluster that runs the management service, letting the cluster
+be managed and monitored with JMX-based tools, such as Gfsh, JConsole, or JVisualVM. Any tool using the JMX API
+can connect to and manage an {geode-name} cluster for whatever purpose.
 
-The cluster may have more than one manager, for redundancy.  Only server-side, peer member nodes in the cluster
-may function as managers.  Therefore, a `ClientCache` application cannot be a manager.
+Like Locators, the cluster may have more than one Manager for redundancy.  Only server-side, peer member nodes
+in the cluster may function Managers.  Therefore, a `ClientCache` application cannot be a Manager.
 
-To create a manager, use the SDG `@EnableManager` annotation.
+To create a Manager, use the SDG `@EnableManager` annotation.
 
-The three primary uses of the `@EnableManager` annotation to create a manager are:
+The three primary uses of the `@EnableManager` annotation to create a Manager are:
 
 1 - CacheServer Manager Application
 ====
@@ -710,22 +709,22 @@ class LocatorManagerApplication {
 ====
 
 #1 creates a peer `Cache` instance with a `CacheServer` component that accepts client connections along with
-an embedded manager that lets JMX clients connect.
+an embedded Manager that lets JMX clients connect.
 
-#2 creates only a peer `Cache` instance along with an embedded manager. As a peer `Cache` with no `CacheServer`
+#2 creates only a peer `Cache` instance along with an embedded Manager. As a peer `Cache` with no `CacheServer`
 component, clients are not able to connect to this node. It is merely a server managing data.
 
-#3 creates a locator instance with an embedded manager.
+#3 creates a Locator instance with an embedded Manager.
 
-In all configuration arrangements, the manager is configured to start immediately.
+In all configuration arrangements, the Manager is configured to start immediately.
 
 TIP: See the Javadoc for the
 {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/EnableManager.html[`@EnableManager` annotation]
 for additional configuration options.
 
 As of {geode-name} 1.11.0, you must include additional {geode-name} dependencies on your Spring Boot application
-classpath to make your application a proper {geode-name} manager in the cluster, particularly if you also enable
-the embedded HTTP service in the manager.
+classpath to make your application a proper {geode-name} Manager in the cluster, particularly if you also enable
+the embedded HTTP service in the Manager.
 
 The required dependencies are:
 
@@ -750,10 +749,12 @@ and `spring-boot-starter-jetty` dependencies.
 Optionally, you may also include the `geode-pulse` dependency, as follows:
 
 .Additional, optional Manager depdendencies expressed in Gradle
+====
 [source,groovy]
 ----
 runtime "org.apache.geode:geode-pulse"
 ----
+====
 
 The `geode-pulse` dependency is only required if you want the _Manager_ to automatically start
 the {geode-name} {apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool.  _Pulse_ enables

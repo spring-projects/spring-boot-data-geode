@@ -5,6 +5,9 @@
 This sections covers security configuration for {geode-name}, which includes both authentication and authorization
 (collectively, auth) as well as Transport Layer Security (TLS) using SSL.
 
+This chapter covers security configuration for {geode-name}, which includes both authentication and authorization
+(collectively, auth) as well as Transport Layer Security (TLS) using SSL.
+
 NOTE: Securing data at rest is not supported by {geode-name}.
 
 TIP: See the corresponding sample link:guides/boot-security.html[guide] and {github-samples-url}/boot/security[code]
@@ -14,28 +17,29 @@ to see Spring Boot Security for {geode-name} in action.
 === Authentication and Authorization
 
 {geode-name} employs username- and password-based {apache-geode-docs}/managing/security/authentication_overview.html[authentication]
-and role-based {apache-geode-docs}/managing/security/authorization_overview.html[authorization] to secure
-your client to server data exchanges and operations.
+and role-based {apache-geode-docs}/managing/security/authorization_overview.html[authorization] to secure your client to
+server data exchanges and operations.
 
 Spring Data for {geode-name} provides {spring-data-geode-docs-html}/#bootstrap-annotation-config-security[first-class support]
 for {geode-name}'s Security framework, which is based on the
 {apache-geode-javadoc}/org/apache/geode/security/SecurityManager.html[`SecurityManager`] interface.
 Additionally, {geode-name}'s Security framework is integrated with https://shiro.apache.org/[Apache Shiro].
 
-NOTE: Eventually, SBDG will also provide support for and integration with https://spring.io/projects/spring-security[Spring Security].
+NOTE: SBDG will eventually provide support for and integration with
+https://spring.io/projects/spring-security[Spring Security].
 
-When you use Spring Boot for {geode-name}, which builds on the bits provided in Spring Data for {geode-name},
-it makes short work of enabling auth in both your clients and servers.
+When you use Spring Boot for {geode-name}, which builds Spring Data for {geode-name}, it makes short work of
+enabling auth in both your clients and servers.
 
 [[geode-security-auth-servers]]
 ==== Auth for Servers
 
 The easiest and most standard way to enable auth in the servers of your cluster is to simply define one or more
-Apache Shiro https://shiro.apache.org/realm.html[realms] as beans in the Spring `ApplicationContext`.
+Apache Shiro https://shiro.apache.org/realm.html[Realms] as beans in the Spring `ApplicationContext`.
 
 Consider the following example:
 
-.Declaring an Apache Shiro realm
+.Declaring an Apache Shiro Realm
 ====
 [source,java]
 ----
@@ -52,10 +56,9 @@ class ApacheGeodeSecurityConfiguration {
 ----
 ====
 
-When an Apache Shiro realm (such as `DefaultLdapRealm`) is declared and registered in the Spring `ApplicationContext` as a
-Spring bean, Spring Boot automatically detects this `Realm` bean (or `Realm` beans if more than one is configured),
-and the {geode-name} servers in the cluster are automatically configured with authentication and authorization
-enabled.
+When an Apache Shiro Realm (such as `DefaultLdapRealm`) is declared and registered in the Spring `ApplicationContext`
+as a Spring bean, Spring Boot automatically detects this `Realm` bean (or `Realm` beans if more than one is configured),
+and the servers in the {geode-name} cluster are automatically configured with authentication and authorization enabled.
 
 Alternatively, you can provide a custom, application-specific implementation of {geode-name}'s
 {apache-geode-javadoc}/org/apache/geode/security/SecurityManager.html[`SecurityManager`] interface,
@@ -78,27 +81,28 @@ class ApacheGeodeSecurityConfiguration {
 ----
 ====
 
-Spring Boot discovers your custom, application-specific `SecurityManager` implementation and configures
-the servers in the {geode-name} cluster with authentication and authorization enabled.
+Spring Boot discovers your custom, application-specific `SecurityManager` implementation and configures the servers
+in the {geode-name} cluster with authentication and authorization enabled.
 
 TIP: The Spring team recommends that you use Apache Shiro to manage the authentication and authorization of your
-{geode-name} servers over implementing {geode-name}'s `SecurityManager` interface.
+servers over implementing {geode-name}'s `SecurityManager` interface.
 
 [[geode-security-auth-clients]]
 ==== Auth for Clients
 
-When {geode-name} servers have been configured with authentication and authorization enabled, clients must
-authenticate when connecting.
+When servers in an {geode-name} cluster have been configured with authentication and authorization enabled, clients
+must authenticate when connecting.
 
-Spring Boot for {geode-name} makes this easy, regardless of whether you run your Spring Boot `ClientCache`
-applications in a local, non-managed environment or run in a cloud-managed environment.
+Spring Boot for {geode-name} makes this easy, regardless of whether you run your Spring Boot `ClientCache` applications
+in a local, non-managed environment or run in a cloud-managed environment.
 
 [[geode-security-auth-clients-non-managed]]
 ===== Non-Managed Auth for Clients
 
-To enable Auth for clients that connect to a secure {geode-name} cluster, you need only set a username
-and password in your Spring Boot `application.properties` file:
+To enable auth for clients that connect to a secure {geode-name} cluster, you need only set a username and password
+in Spring Boot `application.properties`:
 
+.Spring Boot `application.properties` for the client
 ====
 [source,txt]
 ----
@@ -114,21 +118,22 @@ Spring Boot for {geode-name} handles the rest.
 [[geode-secuirty-auth-clients-managed]]
 ===== Managed Auth for Clients
 
-Enabling auth for clients that connect to a Pivotal Cloud Cache (PCC) service instance in Pivotal CloudFoundry (PCF)
-is even easier: You need do nothing.
+Enabling auth for clients that connect to a {pivotal-cloudcache-name} service instance (PCC)
+in {pivotal-cloudfoundry-name} (PCF) is even easier: You need do nothing.
 
-If your Spring Boot application uses SBDG and is bound to PCC, when you push (that is, deploy) your app to PCF,
-Spring Boot for {geode-name} extracts the required auth credentials from the environment that you set up when you
-provisioned a PCC service instance in your PCF organization and space. PCC automatically assigns two users with roles of
-`cluster_operator` and `developer`, respectively, to any Spring Boot application bound to the PCC service instance.
+If your Spring Boot application uses SBDG and is bound to PCC, when you deploy (that is, `cf push`) your application
+to PCF, Spring Boot for {geode-name} extracts the required auth credentials from the environment that you set up when
+you provisioned a PCC service instance in your PCF organization and space. PCC automatically assigns two users with
+roles of `cluster_operator` and `developer`, respectively, to any Spring Boot application bound to the PCC service
+instance.
 
 By default, SBDG auto-configures your Spring Boot application to run with the user that has the `cluster_operator` role.
-This ensures that your Spring Boot application has the necessary permissions (authorization) to perform all data access
+This ensures that your Spring Boot application has the necessary permission (authorization) to perform all data access
 operations on the servers in the PCC cluster, including, for example, pushing configuration metadata from the client
 to the servers in the PCC cluster.
 
 See the <<cloudfoundry-cloudcache-security-auth-runtime-user-configuration,Running Spring Boot applications as a specific user>> section
-in the <<cloudfoundry,Pivotal Cloud Foundry>> chapter for additional details on user authentication and authorization.
+in the <<cloudfoundry,Pivotal CloudFoundry>> chapter for additional details on user authentication and authorization.
 
 See the <<cloudfoundry,chapter>> (titled "`Pivotal CloudFoundry`") for more general details.
 
@@ -138,14 +143,14 @@ when you use PCC and PCF.
 [[geode-security-ssl]]
 === Transport Layer Security using SSL
 
-Securing data in motion is also essential to the integrity of your application.
+Securing data in motion is also essential to the integrity of your Spring [Boot] applications.
 
 For instance, it would not do much good to send usernames and passwords over plain text socket connections
-between your clients and servers nor to send sensitive data over those same connections.
+between your clients and servers nor to send other sensitive data over those same connections.
 
-Therefore, {geode-name} supports SSL between clients and servers, between JMX clients (such as Gfsh) and the manager,
-between HTTP clients when you use the developer REST API or Pulse, between peers in the cluster, and when you use the WAN Gateway
-to connect multiple sites (that is, clusters).
+Therefore, {geode-name} supports SSL between clients and servers, between JMX clients (such as Gfsh) and the Manager,
+between HTTP clients when you use the Developer REST API or Pulse, between peers in the cluster, and when you use
+the WAN Gateway to connect multiple sites (clusters).
 
 Spring Data for {geode-name} provides
 https://docs.spring.io/spring-data/geode/docs/current/reference/html/#bootstrap-annotation-config-ssl[first-class support]
@@ -153,10 +158,10 @@ for configuring and enabling SSL as well. Still, Spring Boot makes it even easie
 especially during development.
 
 {geode-name} requires certain properties to be configured. These properties translate to the appropriate
-`javax.net.ssl.*` properties required by the JRE to create Secure Socket Connections by using
+`javax.net.ssl.*` properties required by the JRE to create secure socket connections by using
 https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html[JSSE].
 
-However,, ensuring that you have set all the required SSL properties correctly is an error prone and tedious task.
+However, ensuring that you have set all the required SSL properties correctly is an error prone and tedious task.
 Therefore, Spring Boot for {geode-name} applies some basic conventions for you.
 
 You can create a `trusted.keystore` as a JKS-based `KeyStore` file and place it in one of three well-known locations:
@@ -168,7 +173,7 @@ You can create a `trusted.keystore` as a JKS-based `KeyStore` file and place it 
 When this file is named `trusted.keystore` and is placed in one of these three well-known locations, Spring Boot
 for {geode-name} automatically configures your client to use SSL socket connections.
 
-You can use Spring Boot to configure and bootstrap an {geode-name} server:
+If you use Spring Boot to configure and bootstrap an {geode-name} server:
 
 .Spring Boot configured and bootstrapped {geode-name} server
 ====
@@ -196,14 +201,14 @@ If your `trusted.keystore` file is secured with a password, you need to addition
 ----
 # Spring Boot application.properties
 
-spring.data.gemfire.security.ssl.keystore.password = p@55w0rd!
+spring.data.gemfire.security.ssl.keystore.password=p@55w0rd!
 ----
 ====
 
 You can also configure the location of the keystore and truststore files, if they are separate and have not been placed
 in one of the default, well-known locations searched by Spring Boot:
 
-.Accessing a secure `trusted.keystore`
+.Accessing a secure `trusted.keystore` by location
 ====
 [source,txt]
 ----
@@ -222,11 +227,11 @@ annotation for all the configuration attributes and the corresponding properties
 [[geode-security-encryption]]
 === Securing Data at Rest
 
-Currently, neither {geode-name} nor Spring Boot nor Spring Data for {geode-name} offer any support for securing your data
-while at rest (for example, when your data has been overflowed or persisted to disk).
+Currently, neither {geode-name} nor Spring Boot nor Spring Data for {geode-name} offer any support for securing your
+data while at rest (for example, when your data has been overflowed or persisted to disk).
 
-To secure data at rest when using {geode-name}, with or without Spring, you must employ third-party solutions, such as disk
-encryption, which is usually highly contextual and technology-specific.
+To secure data at rest when using {geode-name}, with or without Spring, you must employ third-party solutions, such as
+disk encryption, which is usually highly contextual and technology-specific.
 
 For example, to secure data at rest when you use Amazon EC2, see
 https://aws.amazon.com/blogs/security/how-to-protect-data-at-rest-with-amazon-ec2-instance-store-encryption/[Instance Store Encryption].
