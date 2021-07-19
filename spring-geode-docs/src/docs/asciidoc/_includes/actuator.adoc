@@ -1,24 +1,24 @@
 [[actuator]]
 == Spring Boot Actuator
+:geode-name: {apache-geode-name}
 
+Spring Boot for {geode-name} (SBDG) adds {spring-boot-docs-html}/production-ready.html[Spring Boot Actuator] support
+and dedicated `HealthIndicators` for {geode-name}. Equally, the provided `HealthIndicators` even work with Tanzu Cache
+(which is backed by {pivotal-gemfire-name}) when you push your Spring Boot applications using {geode-name}
+to {VMware Tanzu Application Service (TAS)} platform.
 
-Spring Boot for {apache-geode-name} (SBDG) adds {spring-boot-docs-html}/production-ready.html[Spring Boot Actuator]
-support and dedicated `HealthIndicators` for {apache-geode-name}. Equally, the provided `HealthIndicators` even work
-with Tanzu Cache (which is backed by {pivotal-gemfire-name}) when you push your Spring Boot applications
-using {apache-geode-name} to {VMware Tanzu Application Service (TAS)} platform.
-
-Spring Boot `HealthIndicators` provide details about the runtime operation and behavior of your {apache-geode-name}-based
+Spring Boot `HealthIndicators` provide details about the runtime operation and behavior of your {geode-name}-based
 Spring Boot applications. For instance, by querying the right `HealthIndicator` endpoint, you can get the current
 hit/miss count for your `Region.get(key)` data access operations.
 
 In addition to vital health information, SBDG provides basic, pre-runtime configuration metadata about the
-{apache-geode-name} components that are monitored by Spring Boot Actuator. This makes it easier to see how
+{geode-name} components that are monitored by Spring Boot Actuator. This makes it easier to see how
 the application was configured all in one place, rather than in properties files, Spring configuration, XML,
 and so on.
 
 The provided Spring Boot `HealthIndicators` fall into three categories:
 
-* Base `HealthIndicators` that apply to all {apache-geode-name}, Spring Boot applications, regardless of cache type,
+* Base `HealthIndicators` that apply to all {geode-name}, Spring Boot applications, regardless of cache type,
 such as `Regions`, `Indexes`, and `DiskStores`.
 * Peer `Cache`-based `HealthIndicators` that apply only to peer `Cache` applications, such as `AsyncEventQueues`,
 `CacheServers`, `GatewayReceivers`, and `GatewaySenders`.
@@ -26,19 +26,19 @@ such as `Regions`, `Indexes`, and `DiskStores`.
 and connection `Pools`.
 
 The following sections give a brief overview of all the available Spring Boot `HealthIndicators` provided for
-{apache-geode-name}.
+{geode-name}.
 
 TIP: See the corresponding sample link:guides/boot-actuator.html[guide] and {github-samples-url}/boot/actuator[code]
-to see Spring Boot Actuator for {apache-geode-name} in action.
+to see Spring Boot Actuator for {geode-name} in action.
 
 [[actuator-base-healthindicators]]
 === Base HealthIndicators
 
-This section covers Spring Boot `HealthIndicators` that apply to both {apache-geode-name} peer `Cache` and `ClientCache`,
+This section covers Spring Boot `HealthIndicators` that apply to both {geode-name} peer `Cache` and `ClientCache`,
 Spring Boot applications. That is, these `HealthIndicators` are not specific to the cache type.
 
-In {apache-geode-name}, the cache instance is either a peer `Cache` instance (which makes your Spring Boot application
-part of a {apache-geode-name} cluster) or, more commonly, a `ClientCache` instance (which talks to an existing cluster).
+In {geode-name}, the cache instance is either a peer `Cache` instance (which makes your Spring Boot application
+part of a {geode-name} cluster) or, more commonly, a `ClientCache` instance (which talks to an existing cluster).
 Your Spring Boot application can only be one cache type or the other and can only have a single instance of
 that cache type.
 
@@ -327,7 +327,7 @@ In addition, the following CQ query and statistical data is covered:
 
 |=====================================================================================================================
 
-The {apache-geode-name} Continuous Query system is also tracked with the following additional details on the client:
+The {geode-name} Continuous Query system is also tracked with the following additional details on the client:
 
 .Continuous Query (CQ), Additional Statistic Details
 [width="90%",cols="^3,<10",options="header"]
@@ -403,7 +403,7 @@ The peer `Cache`-based `HealthIndicators` provide additional details specificall
 applications. These `HealthIndicators` are available only when the Spring Boot application creates a peer `Cache`
 instance.
 
-NOTE: The default cache instance created by Spring Boot for {apache-geode-name} is a `ClientCache` instance.
+NOTE: The default cache instance created by Spring Boot for {geode-name} is a `ClientCache` instance.
 
 TIP: To control what type of cache instance is created, such as a "`peer`", you can explicitly declare either the
 `@PeerCacheApplication` or, alternatively, the `@CacheServerApplication` annotation on your
@@ -412,7 +412,7 @@ TIP: To control what type of cache instance is created, such as a "`peer`", you 
 [[actuator-peercache-healthindicators-cacheservers]]
 ==== GeodeCacheServersHealthIndicator
 
-The `GeodeCacheServersHealthIndicator` provides details about the configured {apache-geode-name} `CacheServer` instances.
+The `GeodeCacheServersHealthIndicator` provides details about the configured {geode-name} `CacheServer` instances.
 `CacheServer` instances are required to enable clients to connect to the servers in the cluster.
 
 This `HealthIndicator` captures basic configuration metadata and the runtime behavior and characteristics of
@@ -508,7 +508,7 @@ or serial.
 ==== GeodeGatewayReceiversHealthIndicator
 
 `GeodeGatewayReceiversHealthIndicator` provides details about the configured (WAN) `GatewayReceivers`,
-which are capable of receiving events from remote clusters when using {apache-geode-name}'s
+which are capable of receiving events from remote clusters when using {geode-name}'s
 {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site, WAN topology].
 
 This `HealthIndicator` captures configuration metadata along with the running state for each `GatewayReceiver`:
@@ -541,8 +541,8 @@ the `GatewayReceiver` is chosen.
 ==== GeodeGatewaySendersHealthIndicator
 
 The `GeodeGatewaySendersHealthIndicator` provides details about the configured `GatewaySenders`. `GatewaySender`
-instances are attached to Regions in order to send Region events to remote clusters in {apache-geode-name}'s
- {apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site, WAN topology].
+instances are attached to Regions in order to send Region events to remote clusters in {geode-name}'s
+{apache-geode-docs}/topologies_and_comm/multi_site_configuration/chapter_overview.html[multi-site, WAN topology].
 
 This `HealthIndicator` captures essential configuration metadata and runtime characteristics for each `GatewaySender`:
 

@@ -27,7 +27,7 @@ For example, you can begin building a Spring Boot {geode-name} `ClientCache` app
 ----
 ====
 
-Then you configure and bootstrap your Spring Boot {geode-name} `ClientCache` application with the following
+Then you configure and bootstrap your Spring Boot, {geode-name} `ClientCache` application with the following
 main application class:
 
 .Spring Boot, {geode-name} `ClientCache` Application
@@ -689,7 +689,7 @@ class CacheServerManagerApplication {
 @SpringBootApplication
 @PeerCacheApplication(name = "PeerCacheManagerApplication")
 @EnableManager(start = "true")
-class SpringBootPeerCacheManagerApplication {
+class PeerCacheManagerApplication {
 	// ...
 }
 ----
@@ -739,11 +739,11 @@ runtime "org.springframework.boot:spring-boot-starter-jetty"
 ====
 
 The embedded HTTP service (implemented with the Eclipse Jetty Servlet Container), runs the Management (Admin) REST API,
-which is used by {geode-name} tooling, such as Gfsh, to connect to the cluster over HTTP. In addition, it also enables
-the {geode-name} {apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool
+which is used by {geode-name} tooling, such as Gfsh, to connect to an {geode-name} cluster over HTTP. In addition, it
+also enables the {geode-name} {apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool
 (and Web application) to run.
 
-Even if you do not start the embedded HTTP service, a _Manager_ still requires the `geode-http-service`, `geode-web`
+Even if you do not start the embedded HTTP service, a Manager still requires the `geode-http-service`, `geode-web`
 and `spring-boot-starter-jetty` dependencies.
 
 Optionally, you may also include the `geode-pulse` dependency, as follows:
@@ -756,6 +756,6 @@ runtime "org.apache.geode:geode-pulse"
 ----
 ====
 
-The `geode-pulse` dependency is only required if you want the _Manager_ to automatically start
-the {geode-name} {apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool.  _Pulse_ enables
-you to view the nodes of your {geode-name} cluster and monitor them in realtime.
+The `geode-pulse` dependency is only required if you want the Manager to automatically start
+the {geode-name} {apache-geode-docs}/tools_modules/pulse/pulse-overview.html[Pulse] Monitoring Tool. Pulse enables you
+to view the nodes of your {geode-name} cluster and monitor them in realtime.

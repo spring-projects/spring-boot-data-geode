@@ -113,7 +113,7 @@ For instance, by default, SBDG sets the session expiration timeout to 30 minutes
 session state when the Spring Boot application is using a `ClientCache`, which it does
 by <<geode-clientcache-applications,default>>.
 
-However, what if the defaults are not sufficient for your application requirements? In that case, see the next section.
+However, what if the defaults are not sufficient for your application requirements?
 
 In that case, see the next section.
 
@@ -258,7 +258,7 @@ gfsh> create region --name=MySessions --type=PARTITION --entry-idle-time-expirat
 ----
 ====
 
-You must create the cache region with the appropriate name and an expiration policy.
+You must create the cache Region with the appropriate name and an expiration policy.
 
 In this case, we created an idle expiration policy with a timeout of `1800` seconds (30 minutes), after which the entry
 (session object) is `invalidated`.

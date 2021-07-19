@@ -1,6 +1,7 @@
 [[geode-data-using]]
 == Using Data
-:geode-name: Apache Geode
+:geode-name: {apache-geode-name}
+
 
 One of the most important tasks during development is ensuring your Spring Boot application handles data correctly.
 To verify the accuracy, integrity, and availability of your data, your application needs data with which to work.

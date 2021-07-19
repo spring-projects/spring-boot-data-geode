@@ -2,8 +2,6 @@
 == Security
 :geode-name: {apache-geode-name}
 
-This sections covers security configuration for {geode-name}, which includes both authentication and authorization
-(collectively, auth) as well as Transport Layer Security (TLS) using SSL.
 
 This chapter covers security configuration for {geode-name}, which includes both authentication and authorization
 (collectively, auth) as well as Transport Layer Security (TLS) using SSL.

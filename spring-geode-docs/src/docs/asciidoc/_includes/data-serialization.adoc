@@ -2,8 +2,6 @@
 == Data Serialization with PDX
 :geode-name: {apache-geode-name}
 
-Anytime data is overflowed or persisted to disk, transferred between clients and servers, transferred between peers in a cluster or between
-different clusters in a multi-site topology, all data stored in {geode-name} must be serializable.
 
 Anytime data is overflowed or persisted to disk, transferred between clients and servers, transferred between peers
 in a cluster or between different clusters in a multi-site WAN topology, all data stored in {geode-name} must be

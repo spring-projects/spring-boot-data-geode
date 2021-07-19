@@ -544,7 +544,6 @@ NOTE: Lucene Indexes can only be created on `PARTITION` Regions, and `PARTITION`
 the server side.
 
 You may have noticed that the `Customer` entity class's `name` field was annotated with `@Indexed`.
-Consider the following listing:
 
 Consider the following listing:
 

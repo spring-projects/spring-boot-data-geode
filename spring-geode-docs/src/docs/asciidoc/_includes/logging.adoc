@@ -1,6 +1,6 @@
 [[geode-logging]]
 == Logging
-:geode-name: Apache Geode
+:geode-name: {apache-geode-name}
 
 
 {geode-name} `1.9.2` was modularized to separate its use of the Apache Log4j API to log output in {geode-name} code
@@ -140,7 +140,7 @@ compatibility. By default, it logs output at `INFO`. This Logger's use should be
 The `org.apache.geode` Logger is the primary Logger used to control log output from all {geode-name} components
 during the runtime operation of {geode-name}. By default, it logs output at `INFO`.
 
-The `org.jgroups` logger is used to log output from {geode-name}'s message distribution and membership system.
+The `org.jgroups` Logger is used to log output from {geode-name}'s message distribution and membership system.
 {geode-name} uses JGroups for membership and message distribution between peer members (nodes) in the cluster
 (distributed system). By default, JGroups logs output at `ERROR`.
 

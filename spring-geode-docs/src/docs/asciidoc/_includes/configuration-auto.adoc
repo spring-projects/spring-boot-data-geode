@@ -375,7 +375,7 @@ interface MyCustomerApplicationFunctions {
 ----
 ====
 
-Then you can inject the function execution into any application component and use it:
+Then you can inject the Function execution into any application component and use it:
 
 .Use the Function
 ====

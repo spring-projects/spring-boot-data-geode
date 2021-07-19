@@ -2,12 +2,9 @@
 == Docker
 :docker-docs-url: https://docs.docker.com
 :docker-site-url: https://www.docker.com/
-:geode-name: Apache Geode
+:geode-name: {apache-geode-name}
 :testcontainers-url: https://www.testcontainers.org
 
-The state of modern software application development is moving towards https://www.docker.com/resources/what-container[containerization].
-Containers offer a controlled environment to predictably build (configure and package), run, and manage your applications
-in a reliable and repeatable manner, regardless of context. In many situations, the intrinsic benefit of using containers is obvious.
 
 The state of modern software application development is moving towards https://www.docker.com/resources/what-container[containerization].
 Containers offer a controlled environment to predictably build (compile, configure and package), run, and manage your

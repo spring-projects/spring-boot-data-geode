@@ -47,7 +47,7 @@ To learn more about the motivation behind SDG's annotation-based configuration m
 Currently, SBDG provides auto-configuration for the following features:
 
 * `ClientCache`
-* Caching with Spring's cache abstraction
+* Caching with Spring's Cache Abstraction
 * Continuous Query
 * Function Execution and Implementation
 * Logging

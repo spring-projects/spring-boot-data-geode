@@ -5,6 +5,7 @@
 :pcc-name: Pivotal Cloud Cache
 :pcf-name: Pivotal CloudFoundry
 
+
 NOTE: As of the VMware, Inc. acquisition of Pivotal Software, Inc., {pcf-name} (PCF) is now known as VMware Tanzu
 Application Service (TAS) for VMs. Also, {pcc-name} (PCC) has been rebranded as VMware Tanzu GemFire for VMS.
 This documentation will eventually be updated to reflect the rebranding.
@@ -505,7 +506,7 @@ ServerOne  | 10.99.199.24(ServerOne:14401)<v1>:1025
 ----
 ====
 
-Currently, we have not defined any regions in which to store our application's data:
+Currently, we have not defined any Regions in which to store our application's data:
 
 .No Application Regions
 ====

@@ -1,6 +1,6 @@
 [[geode-configuration-gemfire-properties]]
 == Using Geode Properties
-:geode-name: Apache Geode
+:geode-name: {apache-geode-name}
 
 
 As of Spring Boot for {geode-name} (SBDG) 1.3, you can declare {geode-name} properties from `gemfire.properties`
@@ -72,7 +72,7 @@ Valid attribute names are: ack-severe-alert-threshold ack-wait-threshold archive
 ----
 ====
 
-It is inconvenient to have to separate {geode-name} properties from other application properties,or to have to declare
+It is inconvenient to have to separate {geode-name} properties from other application properties, or to have to declare
 only {geode-name} properties in a `gemfire.properties` file and application properties in a separate properties file,
 such as Spring Boot `application.properties`.
 
@@ -116,7 +116,8 @@ from SDG for a complete list of {geode-name} properties with no corresponding SD
 Furthermore, many of the SDG properties also correspond to API calls.
 
 For example, {spring-data-geode-javadoc}/org/springframework/data/gemfire/config/annotation/ClientCacheApplication.html#keepAlive[`spring.data.gemfire.cache.client.keep-alive`]
-translates to the {apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html#close-boolean[`ClientCache.close(boolean keepAlive)`] API call.
+translates to the {apache-geode-javadoc}/org/apache/geode/cache/client/ClientCache.html#close-boolean[`ClientCache.close(boolean keepAlive)`]
+API call.
 
 Still, it would be convenient to be able to declare application and {geode-name} properties together, in a single
 properties file, such as Spring Boot `application.properties`. After all, it is not uncommon to declare JDBC Connection

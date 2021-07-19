@@ -1,6 +1,7 @@
 [[geode-data-access-region-templates]]
 == Data Access with GemfireTemplate
-:geode-name: Apache Geode
+:geode-name: {apache-geode-name}
+
 
 There are several ways to access data stored in {geode-name}.
 

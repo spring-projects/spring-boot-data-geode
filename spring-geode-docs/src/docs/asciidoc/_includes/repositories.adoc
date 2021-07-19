@@ -2,8 +2,6 @@
 == Spring Data Repositories
 :geode-name: {apache-geode-name}
 
-Using Spring Data Repositories with {geode-name} makes short work of data access operations when you use {geode-name}
-as your System of Record (SoR) to persist your application's state.
 
 Using Spring Data Repositories with {geode-name} makes short work of data access operations when you use {geode-name}
 as your System of Record (SoR) to persist your application's state.

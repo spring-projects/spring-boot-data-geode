@@ -2,15 +2,13 @@
 == Configuration Metadata Reference
 :geode-name: {apache-geode-name}
 
+
 The following reference sections cover documented and well-known properties recognized and processed by
 Spring Data for {geode-name} (SDG) and Spring Session for {geode-name} (SSDG).
 
-The following reference sections cover documented and well-known properties recognized and processed by Spring Data
-for {geode-name} (SDG) and Spring Session for {geode-name} (SSDG).
-
 These properties may be used in Spring Boot `application.properties` or as JVM System properties, to configure different
 aspects of or enable individual features of {geode-name} in a Spring application. When combined with the power of
-Spring Boot, they give you the ability to quickly create an application that uses {geode_name}.
+Spring Boot, they give you the ability to quickly create an application that uses {geode-name}.
 
 [[geode-configuration-metadata-springdata]]
 === Spring Data Based Properties

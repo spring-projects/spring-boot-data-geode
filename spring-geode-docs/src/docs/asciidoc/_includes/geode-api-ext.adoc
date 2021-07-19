@@ -1,7 +1,8 @@
 [[geode-api-extensions]]
 == Apache Geode API Extensions
-:geode-name: Apache Geode
+:geode-name: {apache-geode-name}
 :images-dir: ./images
+
 
 When using the Spring programming model and abstractions, it should not be necessary to use {geode-name}
 {apache-geode-javadoc}[APIs] at all -- for example, when using the Spring Cache Abstraction for caching
@@ -252,8 +253,6 @@ The `ObjectMapper` constructed by {geode-name}'s own `PdxInstance` implementatio
 configurable, nor was it configured correctly. Unfortunately, since `PdxInstance` is not extensible, the `getObject()`
 method fails when converting the JSON generated from PDX back into a POJO for any practical application domain model
 type.
-
-The following example wraps an existing `PdxInstance`:
 
 The following example wraps an existing `PdxInstance`:
 

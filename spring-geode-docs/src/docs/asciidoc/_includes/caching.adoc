@@ -10,12 +10,13 @@ in {spring-framework-docs}/integration.html#cache[Spring's Cache Abstraction]. S
 {spring-framework-docs}/integration.html#cache-store-configuration-gemfire[enables]
 {geode-name} to function as a caching provider in Spring's Cache Abstraction.
 
-TIP: See the _Spring Data for {geode-name} Reference Guide_ for more details on the
-{spring-data-geode-docs-html}/#apis:spring-cache-abstraction[support] and {spring-data-geode-docs-html}/#bootstrap-annotation-config-caching[configuration]
+TIP: See the _Spring Data for {geode-name} Reference Guide_ for more details on
+the {spring-data-geode-docs-html}/#apis:spring-cache-abstraction[support]
+and {spring-data-geode-docs-html}/#bootstrap-annotation-config-caching[configuration]
 of {geode-name} as a caching provider in Spring's Cache Abstraction.
 
 TIP: Make sure you thoroughly understand the {spring-framework-docs}/integration.html#cache-strategies[concepts]
-behind Spring's cache abstraction before you continue.
+behind Spring's Cache Abstraction before you continue.
 
 TIP: See also the relevant section on {spring-boot-docs-html}/#boot-features-caching[caching]
 in Spring Boot's reference documentation. Spring Boot even provides auto-configuration support for a few of the simple
@@ -36,8 +37,8 @@ Spring's {spring-framework-docs}/integration.html#cache-annotations[declarative,
 simple to get started with caching, which is as easy as annotating your application components with the appropriate
 Spring cache annotations.
 
-TIP: Spring's declarative, annotation-based caching also {spring-framework-docs}/integration.html#cache-jsr-107[supports]
-JCache (JSR-107) annotations.
+TIP: Spring's declarative, annotation-based caching also
+{spring-framework-docs}/integration.html#cache-jsr-107[supports] JSR-107 JCache annotations.
 
 For example, suppose you want to cache the results of determining a person's eligibility when applying for a loan. A
 person's financial status is unlikely to change in the time that the computer runs the algorithms to compute a person's
@@ -141,8 +142,8 @@ will be presented in a later release.
 [[geode-caching-provider-look-aside-caching]]
 ==== Look-Aside Caching
 
-TIP: See the corresponding sample link:guides/caching-look-aside.html[guide] and {github-samples-url}/caching/look-aside[code]
-to see Look-aside caching with {apache-geode-name} in action.
+TIP: See the corresponding sample link:guides/caching-look-aside.html[guide]
+and {github-samples-url}/caching/look-aside[code] to see Look-aside caching with {apache-geode-name} in action.
 
 The caching pattern demonstrated in the preceding example is a form of
 https://content.pivotal.io/blog/an-introduction-to-look-aside-vs-inline-caching-patterns[Look-aside caching]
@@ -199,7 +200,7 @@ to see Near caching with {apache-geode-name} in action.
 Near caching is another pattern of caching where the cache is collocated with the application. This is useful when
 the caching technology is configured in a client/server arrangement.
 
-We already mentioned that Spring Boot for {geode-name} <<clientcache-applications.adoc#geode-clientcache-applications, provides>>
+We already mentioned that Spring Boot for {geode-name} <<clientcache-applications.adoc#geode-clientcache-applications,provides>>
 an auto-configured `ClientCache` instance by default. A `ClientCache` instance is most effective when the data access
 operations, including cache access, are distributed to the servers in a cluster that is accessible to the client and,
 in most cases, multiple clients. This lets other cache client applications access the same data. However, this also
@@ -624,7 +625,8 @@ class GeodeConfiguration {
 While this approach affords you a lot of control over the low-level configuration, in addition to
 your `AsyncEventListener` implementation, this is a lot of boilerplate code.
 
-TIP: See the Javadoc for SDG's {spring-data-geode-javadoc}/org/springframework/data/gemfire/wan/AsyncEventQueueFactoryBean.html[`AsyncEventQueueFactoryBean`]
+TIP: See the Javadoc for SDG's
+{spring-data-geode-javadoc}/org/springframework/data/gemfire/wan/AsyncEventQueueFactoryBean.html[`AsyncEventQueueFactoryBean`]
 for more detail on the configuration of the AEQ.
 
 TIP: See {geode-name}'s {apache-geode-docs}/developing/events/implementing_write_behind_event_handler.html[User Guide]
@@ -912,7 +914,8 @@ Programming (AOP) and the https://en.wikipedia.org/wiki/Decorator_pattern[Decora
 The `apply*` methods and the supplied `Function` let you decorate, enhance, post-process, or otherwise modify
 the {geode-name} objects created by the configurer.
 
-The `AsyncInlineCachingRegionConfigurer` strictly adheres to the https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[open/close principle]
+The `AsyncInlineCachingRegionConfigurer` strictly adheres to
+the https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle[open/close principle]
 and is, therefore, flexibly extensible.
 
 [[geode-caching-provider-multi-site-caching]]
