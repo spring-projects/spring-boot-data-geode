@@ -213,7 +213,7 @@ that were indexed. For all other `Indexes`, returns `*`.
 |=====================================================================================================================
 
 Additionally, when statistics are enabled (for example, when you use `@EnableStatistics` --
-see {spring-data-geode-docs-html}/#bootstrap-annotation-config-statistics["`Configuring Statistics`"] for more details),
+see {spring-data-geode-docs-html}/#bootstrap-annotation-config-statistics[Configuring Statistics] for more details),
 the following metadata is available:
 
 .Index Statistic Details
@@ -284,7 +284,7 @@ instance (that is, the application is a cache client), which is the default.
 client applications receive automatic notification about events that satisfy some criteria. That criteria can be easily
 expressed by using the predicate of an OQL query (for example, `SELECT * FROM /Customers c WHERE c.age > 21`).
 When data is inserted or updated and the data matches the criteria specified in the OQL query predicate
-("data of interests"), an event is sent to the registered client.
+(data of interests), an event is sent to the registered client.
 
 The following details are covered for CQs by name:
 

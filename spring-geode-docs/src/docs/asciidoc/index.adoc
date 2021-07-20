@@ -163,10 +163,10 @@ of {apache-geode-name} applications in a Spring context, using Spring's powerful
 programming model. This part of the story was greatly enhanced in Spring Data Kay,
 with the {spring-data-geode-docs-html}/#bootstrap-annotation-config[Annotation-based configuration model].
 Though this new configuration approach uses annotations and provides sensible defaults, its use is also very explicit
-and assumes nothing. If any part of the configuration is ambiguous, SDG will fail fast. SDG gives you "`_choice_`",
-so you still must tell SDG what you want.
+and assumes nothing. If any part of the configuration is ambiguous, SDG will fail fast. SDG gives you choice, so you
+still must tell SDG what you want.
 
-Next, we venture into Spring Boot and all of its wonderfully expressive and highly opinionated "`_convention over configuration_`"
+Next, we venture into Spring Boot and all of its wonderfully expressive and highly opinionated "`convention over configuration`"
 approach for getting the most out of your Spring {apache-geode-name} applications in the easiest, quickest, and most
 reliable way possible. We accomplish this by combining Spring Data for {apache-geode-name}'s {spring-data-geode-docs-html}/#bootstrap-annotation-config[annotation-based configuration]
 with Spring Boot's {spring-boot-docs-html}/#using-boot-auto-configuration[auto-configuration] to get you up and running
@@ -302,7 +302,7 @@ For example, SBDG `1.4.0` is based on Spring Boot `2.4.0`. SBDG `1.3.5.RELEASE` 
 and so on. It is important that the versions align.
 
 TIP: All of these concerns are handled for you by going to https://start.spring.io[start.spring.io]
-and adding the "_Spring for {apache-geode-name}_" dependency to a project. For convenience, you can click
+and adding the "`_Spring for {apache-geode-name}_`" dependency to a project. For convenience, you can click
 this https://start.spring.io/#!platformVersion={spring-boot-version}&dependencies=geode[link] to get started.
 
 [[gradle-dependency-management]]
@@ -376,7 +376,7 @@ such as `SNAPSHOT`, `M#`, `RC#`, or `RELEASE`, if applicable). For example, SBDG
 SBDG `1.3.5.RELEASE` is based on Spring Boot `2.3.5.RELEASE`, and so on. It is important that the versions align.
 
 TIP: All of these concerns are handled for you by going to https://start.spring.io[start.spring.io]
-and adding the "_Spring for {apache-geode-name}_" dependency to a project. For convenience, you can click
+and adding the "`_Spring for {apache-geode-name}_`" dependency to a project. For convenience, you can click
 this https://start.spring.io/#!platformVersion={spring-boot-version}&dependencies=geode[link] to get started.
 
 ifeval::["{version-snapshot}" == "true"]

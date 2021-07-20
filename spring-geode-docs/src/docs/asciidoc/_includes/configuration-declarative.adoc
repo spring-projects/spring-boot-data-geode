@@ -56,7 +56,7 @@ In subsequent sections, we also cover which annotations are added by SBDG.
 [[geode-configuration-declarative-auto-configuration]]
 === Auto-configuration
 
-We explained auto-configuration in detail in the "<<geode-configuration-auto,Auto-configuration>>" chapter.
+We explained auto-configuration in detail in the <<geode-configuration-auto,Auto-configuration>> chapter.
 
 [[geode-configuration-declarative-annotations]]
 === Annotations Not Covered by Auto-configuration

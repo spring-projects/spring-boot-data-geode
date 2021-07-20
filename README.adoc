@@ -210,7 +210,7 @@ annotating the `User` class with the SDG `@Region` mapping annotation along with
 to be the ID of `User` instances.
 
 By declaring the `@Region` mapping annotation we are stating that instances of `User` will be stored in an {geode-name}
-cache `Region` named "Users". The _Spring Data_ `@Id` annotation serves to declare the identifier for a `User` object
+cache `Region` named "`Users`". The _Spring Data_ `@Id` annotation serves to declare the identifier for a `User` object
 stored in {geode-name}. This is not unlike JPA's `@javax.persistence.Table` and `@javax.persistence.Id` mapping
 annotations.
 
@@ -298,11 +298,11 @@ The `UserApplication` class is annotated with `@SpringBootApplication` making it
 With SBDG on the classpath, this effectively makes our application an {geode-name} application as well. SBDG will
 _auto-configure_ an {geode-name} `ClientCache` instance by default when SBDG is on the application classpath.
 
-With the SDG `@Region` mapping annotation, we declared that instances of `User` will be stored in the "Users" `Region`.
-However, we have not yet created a "Users" `Region`. This is where the `@EnableEntityDefinedRegions` annotation comes
+With the SDG `@Region` mapping annotation, we declared that instances of `User` will be stored in the "`Users`" `Region`.
+However, we have not yet created a "`Users`" `Region`. This is where the `@EnableEntityDefinedRegions` annotation comes
 in handy. Like JPA/Hibernate's ability to create database tables from our `@Entity` declared classes, SDG's
 `@EnableEntityDefineRegions` annotation scans the classpath for application entity classes (e.g. `User`)
-and detects any classes annotated with `@Region` in order to create the "named" `Region` required by the application
+and detects any classes annotated with `@Region` in order to create the named `Region` required by the application
 to persist data. The `basePackageClasses` attribute is a type-safe way to pinpoint the scan.
 
 While useful and convenient during development, `@EnableEntityDefinedRegions` was not made into an _auto-configuration_

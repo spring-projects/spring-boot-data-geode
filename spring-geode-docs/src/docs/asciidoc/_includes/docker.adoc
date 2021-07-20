@@ -300,16 +300,17 @@ We additionally annotate the main class with SBDG's `@EnableClusterAware` annota
 the {geode-name} cluster that runs in the Docker container and to push cluster configuration metadata from
 the application to the cluster as required by the application.
 
-Specifically, the application requires that a Region called "Customers", as defined by the `@Region` mapping annotation
-on the `Customer` application domain model class, exists on the servers in the cluster, to store `Customer` data.
+Specifically, the application requires that a Region called "`Customers`", as defined by the `@Region` mapping
+annotation on the `Customer` application domain model class, exists on the servers in the cluster, to store `Customer`
+data.
 
-We use the SDG `@EnableEntityDefinedRegions` annotation to define the matching client `PROXY` "Customers" Region.
+We use the SDG `@EnableEntityDefinedRegions` annotation to define the matching client `PROXY` "`Customers`" Region.
 
 Optionally, we have also annotated our main class with SBDG's `@UseMemberName` annotation to give the `ClientCache`
 a name, which we assert in the `assertClientCacheAndConfigureMappingPdxSerializer(:ClientCache)` method.
 
 The primary work performed by this application is done in the Spring Boot `ApplicationRunner` bean definition. We create
-a `Customer` instance (`Jon Doe`), save it to the "Customers" Region that is managed by the server in the cluster,
+a `Customer` instance (`Jon Doe`), save it to the "`Customers`" Region that is managed by the server in the cluster,
 and then query for `Jon Doe` using OQL, asserting that the result is equal to what we expect.
 
 We log the output from the application's operations to see the application in action.
@@ -372,7 +373,7 @@ Region | size        | 1
 Our `/Customers` Region contains a value (`Jon Doe`), and we can verify this by running the following OQL Query
 with Gfsh:
 
-.Query the "/Customers" Region
+.Query the `/Customers` Region
 ====
 [source,text]
 ----
