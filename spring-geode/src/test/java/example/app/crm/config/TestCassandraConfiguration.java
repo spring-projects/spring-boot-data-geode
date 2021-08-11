@@ -52,18 +52,19 @@ public abstract class TestCassandraConfiguration extends AbstractCassandraConfig
 	private static final String KEYSPACE_NAME = "CustomerService";
 	private static final String SESSION_NAME = "CustomerServiceCluster";
 
-	@NonNull @Override
+	@NonNull
+	@Override
 	protected String getKeyspaceName() {
 		return KEYSPACE_NAME;
 	}
 
 	@Override
-	@SuppressWarnings("all")
 	protected String getLocalDataCenter() {
 		return LOCAL_DATA_CENTER;
 	}
 
-	@Nullable @Override
+	@Nullable
+	@Override
 	protected String getSessionName() {
 		return SESSION_NAME;
 	}
@@ -87,7 +88,7 @@ public abstract class TestCassandraConfiguration extends AbstractCassandraConfig
 		return startupScripts;
 	}
 
-	private List<String> readLines(Resource resource) {
+	private @NonNull List<String> readLines(@NonNull Resource resource) {
 
 		BufferedReader resourceReader = null;
 

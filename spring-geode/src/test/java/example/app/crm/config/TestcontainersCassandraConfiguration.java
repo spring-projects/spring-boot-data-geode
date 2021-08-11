@@ -42,8 +42,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	@SuppressWarnings("rawtypes")
 	GenericContainer cassandraContainer() {
 
-		GenericContainer cassandraContainer = newCassandraContainer()
-			.withExposedPorts(CASSANDRA_DEFAULT_PORT);
+		GenericContainer cassandraContainer = newCustomCassandraContainer();
 
 		cassandraContainer.start();
 
@@ -52,11 +51,21 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 
 	@SuppressWarnings("rawtypes")
 	private GenericContainer newCassandraContainer() {
-		return new GenericContainer(CASSANDRA_DOCKER_IMAGE_NAME);
+		return new GenericContainer(CASSANDRA_DOCKER_IMAGE_NAME)
+			.withExposedPorts(CASSANDRA_DEFAULT_PORT);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private GenericContainer newCustomCassandraContainer() {
+
+		return newCassandraContainer()
+			.withEnv("HEAP_NEWSIZE", "128M")
+			.withEnv("MAX_HEAP_SIZE", "1024M")
+			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0")
+			.withEnv("CASSANDRA_SNITCH", "GossipingPropertyFileSnitch");
 	}
 
 	@Override
-	@SuppressWarnings("all")
 	protected String getContactPoints() {
 		return cassandraContainer().getContainerIpAddress();
 	}
