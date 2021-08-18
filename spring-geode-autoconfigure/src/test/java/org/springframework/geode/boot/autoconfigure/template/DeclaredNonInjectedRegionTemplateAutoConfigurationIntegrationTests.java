@@ -43,7 +43,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  * Integration Tests for {@link RegionTemplateAutoConfiguration}.
  *
  * This Integration Test class tests that the {@link GemfireTemplate} is created regardless of whether
- * the {@literal Example} client {@link Region} bean is actually referenced (injected) into application code.
+ * the {@literal Example} client {@link Region} bean is actually referenced (autowired/injected) into
+ * application code.
  *
  * @author John Blum
  * @see org.junit.Test

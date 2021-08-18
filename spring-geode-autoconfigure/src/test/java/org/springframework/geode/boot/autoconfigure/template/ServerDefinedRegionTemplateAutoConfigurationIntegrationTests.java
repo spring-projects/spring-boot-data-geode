@@ -147,7 +147,6 @@ public class ServerDefinedRegionTemplateAutoConfigurationIntegrationTests
 			LocalRegionFactoryBean<Object, Object> exampleServerRegion = new LocalRegionFactoryBean<>();
 
 			exampleServerRegion.setCache(gemfireCache);
-			exampleServerRegion.setClose(false);
 			exampleServerRegion.setPersistent(false);
 
 			return exampleServerRegion;

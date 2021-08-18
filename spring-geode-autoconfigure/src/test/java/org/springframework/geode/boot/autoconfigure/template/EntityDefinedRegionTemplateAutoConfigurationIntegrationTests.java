@@ -98,7 +98,9 @@ public class EntityDefinedRegionTemplateAutoConfigurationIntegrationTests extend
 			.collect(Collectors.toList())).containsExactly("Authors", "Books");
 
 		assertThat(this.authors).isNotNull();
+		assertThat(this.authors.getName()).isEqualTo("Authors");
 		assertThat(this.books).isNotNull();
+		assertThat(this.books.getName()).isEqualTo("Books");
 	}
 
 	@Test
@@ -118,7 +120,7 @@ public class EntityDefinedRegionTemplateAutoConfigurationIntegrationTests extend
 	@SpringBootApplication
 	@EnableGemFireMockObjects
 	@EnableEntityDefinedRegions(basePackageClasses = Book.class, clientRegionShortcut = ClientRegionShortcut.LOCAL)
-	static class TestApplicationConfiguration {
+	static class TestConfiguration {
 
 		@Bean("TestBean")
 		Object testBean(@Qualifier("booksTemplate") GemfireTemplate booksTemplate) {

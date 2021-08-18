@@ -83,7 +83,6 @@ public class ExistingRegionTemplateByNameAutoConfigurationIntegrationTests exten
 			ClientRegionFactoryBean<Object, Object> exampleRegion = new ClientRegionFactoryBean<>();
 
 			exampleRegion.setCache(gemfireCache);
-			exampleRegion.setClose(false);
 			exampleRegion.setShortcut(ClientRegionShortcut.LOCAL);
 
 			return exampleRegion;

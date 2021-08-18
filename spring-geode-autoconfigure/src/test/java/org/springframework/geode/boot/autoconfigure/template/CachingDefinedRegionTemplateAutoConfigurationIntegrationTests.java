@@ -106,8 +106,11 @@ public class CachingDefinedRegionTemplateAutoConfigurationIntegrationTests exten
 			.collect(Collectors.toList())).containsExactly("BooksByAuthor", "BooksByYear", "CachedBooks");
 
 		assertThat(this.booksByAuthor).isNotNull();
+		assertThat(this.booksByAuthor.getName()).isEqualTo("BooksByAuthor");
 		assertThat(this.booksByTitle).isNotNull();
+		assertThat(this.booksByTitle.getName()).isEqualTo("CachedBooks");
 		assertThat(this.booksByYear).isNotNull();
+		assertThat(this.booksByYear.getName()).isEqualTo("BooksByYear");
 	}
 
 	@Test
@@ -131,18 +134,21 @@ public class CachingDefinedRegionTemplateAutoConfigurationIntegrationTests exten
 		assertThat(this.booksByYearTemplate.getRegion()).isEqualTo(this.booksByYear);
 	}
 
-	@EnableGemFireMockObjects
-	@EnableCachingDefinedRegions(clientRegionShortcut = ClientRegionShortcut.LOCAL)
 	@SpringBootApplication(scanBasePackageClasses = { NonBeanType.class, LibraryService.class })
-	static class TestApplicationConfiguration {
+	@EnableCachingDefinedRegions(clientRegionShortcut = ClientRegionShortcut.LOCAL)
+	@EnableGemFireMockObjects
+	static class TestConfiguration {
 
 		@Bean
 		LibraryService libraryService() {
 			return new LibraryService();
 		}
 
+		// TODO: Cannot autowire/inject the "booksByAuthorTemplate" GemfireTemplate bean since the "BooksByAuthor"
+		//  Region does not yet exist when processing the Java-based Spring configuration given the nature of
+		//  the EnableCachingDefinedRegions annotation configuration bean creation.
 		//@Bean("TestBean")
-		Object testBean(@Qualifier("booksByAuthor") GemfireTemplate booksByAuthorTemplate) {
+		Object testBean(@Qualifier("booksByAuthorTemplate") GemfireTemplate booksByAuthorTemplate) {
 			return "TEST";
 		}
 	}

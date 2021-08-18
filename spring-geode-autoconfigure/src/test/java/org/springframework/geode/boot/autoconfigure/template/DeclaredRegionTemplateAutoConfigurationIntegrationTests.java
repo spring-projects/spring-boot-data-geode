@@ -85,7 +85,7 @@ public class DeclaredRegionTemplateAutoConfigurationIntegrationTests extends Int
 
 	@SpringBootApplication
 	@EnableGemFireMockObjects
-	static class TestGemFireConfiguration {
+	static class TestConfiguration {
 
 		@Bean("Example")
 		ClientRegionFactoryBean<Long, String> exampleRegion(GemFireCache gemfireCache) {
@@ -96,6 +96,11 @@ public class DeclaredRegionTemplateAutoConfigurationIntegrationTests extends Int
 			exampleRegion.setShortcut(ClientRegionShortcut.LOCAL);
 
 			return exampleRegion;
+		}
+
+		@Bean("TestBean")
+		public Object testBean(@Qualifier("exampleTemplate") GemfireTemplate exampleTemplate) {
+			return "TEST";
 		}
 	}
 }

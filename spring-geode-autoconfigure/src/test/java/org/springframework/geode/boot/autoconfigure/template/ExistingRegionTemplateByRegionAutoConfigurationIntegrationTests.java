@@ -37,6 +37,7 @@ import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
+import org.springframework.geode.core.util.SpringExtensions;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -69,11 +70,19 @@ public class ExistingRegionTemplateByRegionAutoConfigurationIntegrationTests ext
 	@Resource(name = "Example")
 	private Region<Object, Object> example;
 
+	private void printBeanDefinitionMetadata(String beanName) {
+
+		System.err.printf("BEAN DEFINITION METADATA [%s]%n",
+			SpringExtensions.getBeanDefinitionMetadata("exampleTemplate", this.applicationContext));
+	}
+
 	@Test
-	public void exampleTemplateIsPresentButIsNotGemfireTemplate() {
+	public void exampleTemplateIsPresentButIsNotAGemfireTemplate() {
 
 		assertThat(this.applicationContext.containsBean("exampleTemplate")).isTrue();
 		assertThat(this.applicationContext.getBean("exampleTemplate")).isNotInstanceOf(GemfireTemplate.class);
+
+		//printBeanDefinitionMetadata("exampleTemplate");
 	}
 
 	@Test
@@ -84,6 +93,7 @@ public class ExistingRegionTemplateByRegionAutoConfigurationIntegrationTests ext
 	@Test
 	public void testTemplateIsPresent() {
 
+		assertThat(this.example).isNotNull();
 		assertThat(this.testTemplate).isNotNull();
 		assertThat(this.testTemplate.getRegion()).isEqualTo(this.example);
 	}
@@ -98,7 +108,6 @@ public class ExistingRegionTemplateByRegionAutoConfigurationIntegrationTests ext
 			ClientRegionFactoryBean<Object, Object> clientRegion = new ClientRegionFactoryBean<>();
 
 			clientRegion.setCache(gemfireCache);
-			clientRegion.setClose(false);
 			clientRegion.setShortcut(ClientRegionShortcut.LOCAL);
 
 			return clientRegion;
