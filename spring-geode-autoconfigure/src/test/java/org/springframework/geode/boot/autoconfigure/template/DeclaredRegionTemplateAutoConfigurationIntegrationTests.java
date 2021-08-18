@@ -66,8 +66,16 @@ public class DeclaredRegionTemplateAutoConfigurationIntegrationTests extends Int
 	@Qualifier("exampleTemplate")
 	private GemfireTemplate exampleTemplate;
 
+	@Autowired
+	@Qualifier("testRegionTemplate")
+	private GemfireTemplate testRegionTemplate;
+
 	@Resource(name = "Example")
 	private Region<Long, String> exampleRegion;
+
+	@Resource(name = "TestRegion")
+	@SuppressWarnings("rawtypes")
+	private Region testRegion;
 
 	@Test
 	public void exampleRegionIsPresent() {
@@ -81,6 +89,21 @@ public class DeclaredRegionTemplateAutoConfigurationIntegrationTests extends Int
 
 		assertThat(this.exampleTemplate).isNotNull();
 		assertThat(this.exampleTemplate.getRegion()).isEqualTo(this.exampleRegion);
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testRegionIsPresent() {
+
+		assertThat(this.testRegion).isNotNull();
+		assertThat(this.testRegion.getName()).isEqualTo("TestRegion");
+	}
+
+	@Test
+	public void testRegionTemplateIsPresent() {
+
+		assertThat(this.testRegionTemplate).isNotNull();
+		assertThat(this.testRegionTemplate.getRegion()).isEqualTo(this.testRegion);
 	}
 
 	@SpringBootApplication
@@ -101,6 +124,20 @@ public class DeclaredRegionTemplateAutoConfigurationIntegrationTests extends Int
 		@Bean("TestBean")
 		public Object testBean(@Qualifier("exampleTemplate") GemfireTemplate exampleTemplate) {
 			return "TEST";
+		}
+
+		// NOTE: Raw type definition is deliberate to ensure the generic FactoryBean and Region signature
+		// can be properly autowired/injected into the auto-configured GemfireTemplate for this Region!
+		@Bean("TestRegion")
+		@SuppressWarnings("rawtypes")
+		public ClientRegionFactoryBean testRegion(GemFireCache gemfireCache) {
+
+			ClientRegionFactoryBean clientRegion = new ClientRegionFactoryBean();
+
+			clientRegion.setCache(gemfireCache);
+			clientRegion.setShortcut(ClientRegionShortcut.PROXY);
+
+			return clientRegion;
 		}
 	}
 }
