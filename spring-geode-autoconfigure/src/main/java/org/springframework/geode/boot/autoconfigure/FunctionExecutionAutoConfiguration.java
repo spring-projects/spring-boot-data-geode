@@ -17,11 +17,11 @@ package org.springframework.geode.boot.autoconfigure;
 
 import org.apache.geode.cache.GemFireCache;
 
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.function.config.EnableGemfireFunctions;
 import org.springframework.data.gemfire.function.execution.GemfireFunctionOperations;
@@ -33,8 +33,8 @@ import org.springframework.geode.function.config.GemFireFunctionExecutionAutoCon
  *
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.function.config.EnableGemfireFunctions
  * @see org.springframework.data.gemfire.function.config.EnableGemfireFunctionExecutions
@@ -43,7 +43,7 @@ import org.springframework.geode.function.config.GemFireFunctionExecutionAutoCon
  * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  * @since 1.0.0
  */
-@Configuration
+@SpringBootConfiguration
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemfireFunctionOperations.class, GemFireCache.class })

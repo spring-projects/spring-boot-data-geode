@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 
 import org.apache.geode.cache.GemFireCache;
 
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -51,9 +51,9 @@ import org.slf4j.LoggerFactory;
  * @author John Blum
  * @see java.util.Properties
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.annotation.Bean
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.Ordered
  * @see org.springframework.core.annotation.Order
  * @see org.springframework.core.env.ConfigurableEnvironment
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * @see <a href="https://geode.apache.org/docs/guide/112/reference/topics/gemfire_properties.html">Geode Properties</a>
  * @since 1.3.0
  */
-@Configuration
+@SpringBootConfiguration
 @ConditionalOnClass({ GemFireCache.class, CacheFactoryBean.class })
 @AutoConfigureBefore({ ClientCacheAutoConfiguration.class })
 @SuppressWarnings("unused")

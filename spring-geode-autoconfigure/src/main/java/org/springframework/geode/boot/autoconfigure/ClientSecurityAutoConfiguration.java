@@ -24,6 +24,7 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
@@ -60,6 +61,7 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.SpringApplication
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.AutoConfigureBefore
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.autoconfigure.condition.AllNestedConditions
@@ -71,7 +73,6 @@ import org.slf4j.LoggerFactory;
  * @see org.springframework.boot.cloud.CloudPlatform
  * @see org.springframework.boot.env.EnvironmentPostProcessor
  * @see org.springframework.context.annotation.Conditional
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertySource
@@ -85,7 +86,7 @@ import org.slf4j.LoggerFactory;
  * @see org.springframework.geode.core.env.support.User
  * @since 1.0.0
  */
-@Configuration
+@SpringBootConfiguration
 @AutoConfigureBefore(ClientCacheAutoConfiguration.class)
 @Conditional(ClientSecurityAutoConfiguration.EnableSecurityCondition.class)
 @ConditionalOnClass({ ClientCacheFactoryBean.class, ClientCache.class })

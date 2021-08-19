@@ -17,11 +17,11 @@ package org.springframework.geode.boot.autoconfigure;
 
 import org.apache.geode.cache.GemFireCache;
 
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableLogging;
 
@@ -29,16 +29,16 @@ import org.springframework.data.gemfire.config.annotation.EnableLogging;
  * Spring Boot {@link EnableAutoConfiguration auto-Configuration} for Apache Geode logging.
  *
  * @author John Blum
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnBean
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnClass
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.EnableLogging
  * @since 1.1.0
  */
-@Configuration
+@SpringBootConfiguration
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass(CacheFactoryBean.class)
 @ConditionalOnMissingBean(name = {

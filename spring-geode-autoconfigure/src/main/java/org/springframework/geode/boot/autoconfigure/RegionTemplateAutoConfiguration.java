@@ -39,6 +39,7 @@ import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -78,20 +79,20 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.beans.factory.config.ConfigurableBeanFactory
  * @see org.springframework.beans.factory.support.BeanDefinitionBuilder
  * @see org.springframework.beans.factory.support.BeanDefinitionRegistry
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.AutoConfigureAfter
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnBean
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnClass
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ConfigurableApplicationContext
  * @see org.springframework.context.annotation.Bean
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.event.EventListener
  * @see org.springframework.data.gemfire.GemfireTemplate
  * @see org.springframework.data.gemfire.ResolvableRegionFactoryBean
  * @see org.springframework.geode.config.annotation.support.TypelessAnnotationConfigSupport
  * @since 1.0.0
  */
-@Configuration
+@SpringBootConfiguration
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass(GemfireTemplate.class)

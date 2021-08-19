@@ -28,6 +28,7 @@ import java.util.Properties;
 import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
@@ -38,7 +39,6 @@ import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -66,6 +66,7 @@ import org.slf4j.LoggerFactory;
  * @see java.util.Properties
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.SpringApplication
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.AutoConfigureBefore
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnClass
@@ -74,7 +75,6 @@ import org.slf4j.LoggerFactory;
  * @see org.springframework.context.annotation.Condition
  * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.context.annotation.Conditional
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
  * @see org.springframework.core.env.PropertiesPropertySource
@@ -87,7 +87,7 @@ import org.slf4j.LoggerFactory;
  * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  * @since 1.0.0
  */
-@Configuration
+@SpringBootConfiguration
 @AutoConfigureBefore(ClientCacheAutoConfiguration.class)
 @Conditional(SslAutoConfiguration.EnableSslCondition.class)
 @ConditionalOnClass({ CacheFactoryBean.class, GemFireCache.class })

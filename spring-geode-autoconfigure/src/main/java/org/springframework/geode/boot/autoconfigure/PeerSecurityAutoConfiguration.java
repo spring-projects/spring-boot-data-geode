@@ -15,6 +15,7 @@
  */
 package org.springframework.geode.boot.autoconfigure;
 
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,8 +31,8 @@ import org.springframework.geode.config.annotation.EnableSecurityManager;
  *
  * @author John Blum
  * @see org.apache.geode.security.SecurityManager
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
@@ -40,7 +41,7 @@ import org.springframework.geode.config.annotation.EnableSecurityManager;
  * @see org.springframework.geode.config.annotation.EnableSecurityManager
  * @since 1.0.0
  */
-@Configuration
+@SpringBootConfiguration
 @ConditionalOnBean(org.apache.geode.security.SecurityManager.class)
 @ConditionalOnMissingBean({
 	ClientCacheFactoryBean.class,

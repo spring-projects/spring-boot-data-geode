@@ -17,11 +17,11 @@ package org.springframework.geode.boot.autoconfigure;
 
 import org.apache.geode.cache.client.ClientCache;
 
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableContinuousQueries;
@@ -34,10 +34,10 @@ import org.springframework.geode.config.annotation.ClusterAvailableConfiguration
  *
  * @author John Blum
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Conditional
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheConfigurer
@@ -46,7 +46,7 @@ import org.springframework.geode.config.annotation.ClusterAvailableConfiguration
  * @see org.springframework.geode.config.annotation.ClusterAvailableConfiguration.AnyClusterAvailableCondition
  * @since 1.0.0
  */
-@Configuration
+@SpringBootConfiguration
 @Conditional(ClusterAvailableConfiguration.AnyClusterAvailableCondition.class)
 @ConditionalOnBean(ClientCacheFactoryBean.class)
 @ConditionalOnMissingBean(name = "continuousQueryBeanPostProcessor",

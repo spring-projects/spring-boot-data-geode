@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -33,7 +34,6 @@ import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -54,6 +54,7 @@ import org.springframework.util.StringUtils;
  * @see java.util.Properties
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.SpringApplication
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.AutoConfigureAfter
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnBean
@@ -63,7 +64,6 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.context.annotation.Condition
  * @see org.springframework.context.annotation.ConditionContext
  * @see org.springframework.context.annotation.Conditional
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Import
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.PropertiesPropertySource
@@ -76,7 +76,7 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.session.web.http.SessionRepositoryFilter
  * @since 1.0.0
  */
-@Configuration
+@SpringBootConfiguration
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @Conditional(SpringSessionAutoConfiguration.SpringSessionStoreTypeCondition.class)
 @ConditionalOnBean(GemFireCache.class)

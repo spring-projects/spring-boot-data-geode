@@ -19,10 +19,10 @@ import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 
 /**
@@ -33,12 +33,12 @@ import org.springframework.data.gemfire.config.annotation.EnablePdx;
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.config.annotation.EnablePdx
  * @since 1.0.0
  */
-@Configuration
+@SpringBootConfiguration
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnMissingBean(
 	name = { "clientCachePdxConfigurer", "peerCachePdxConfigurer" },

@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -51,6 +52,7 @@ import org.springframework.lang.Nullable;
  * @author John Blum
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.autoconfigure.condition.AnyNestedCondition
  * @see org.springframework.boot.autoconfigure.condition.ConditionalOnBean
@@ -59,7 +61,6 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Condition
  * @see org.springframework.context.annotation.Conditional
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.core.env.ConfigurableEnvironment
  * @see org.springframework.core.env.Environment
  * @see org.springframework.data.gemfire.CacheFactoryBean
@@ -69,7 +70,7 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.geode.data.support.LifecycleAwareCacheDataImporterExporter
  * @since 1.3.0
  */
-@Configuration
+@SpringBootConfiguration
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ CacheFactoryBean.class, GemFireCache.class })
 @SuppressWarnings("unused")

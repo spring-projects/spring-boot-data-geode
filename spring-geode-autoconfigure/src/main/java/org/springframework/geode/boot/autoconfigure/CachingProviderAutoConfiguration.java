@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizers;
@@ -50,24 +51,24 @@ import org.springframework.util.StringUtils;
  * @author John Blum
  * @see javax.annotation.PostConstruct
  * @see org.apache.geode.cache.GemFireCache
+ * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration
  * @see org.springframework.boot.autoconfigure.cache.CacheManagerCustomizers
  * @see org.springframework.boot.autoconfigure.cache.CacheProperties
  * @see org.springframework.cache.CacheManager
- * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.data.gemfire.cache.GemfireCacheManager
  * @see org.springframework.data.gemfire.cache.config.EnableGemfireCaching
  * @see org.springframework.geode.boot.autoconfigure.ClientCacheAutoConfiguration
  * @since 1.0.0
  */
-@Configuration
+@SpringBootConfiguration
 @AutoConfigureAfter(ClientCacheAutoConfiguration.class)
 @Conditional(CachingProviderAutoConfiguration.SpringCacheTypeCondition.class)
 @ConditionalOnBean(GemFireCache.class)
 @ConditionalOnClass({ GemfireCacheManager.class, GemFireCache.class })
 @ConditionalOnMissingBean(CacheManager.class)
 @EnableGemfireCaching
-@SuppressWarnings("all")
+@SuppressWarnings("unused")
 public class CachingProviderAutoConfiguration {
 
 	protected static final Set<String> SPRING_CACHE_TYPES = asSet("gemfire", "geode");
