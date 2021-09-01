@@ -39,6 +39,12 @@ import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockO
 import org.springframework.geode.boot.autoconfigure.RegionTemplateAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
 /**
  * Integration Tests for {@link RegionTemplateAutoConfiguration} using explicitly declared {@link Region}
  * bean definitions in a Spring {@link ApplicationContext}.
@@ -70,12 +76,19 @@ public class DeclaredRegionTemplateAutoConfigurationIntegrationTests extends Int
 	@Qualifier("testRegionTemplate")
 	private GemfireTemplate testRegionTemplate;
 
+	@Autowired
+	@Qualifier("usersTemplate")
+	private GemfireTemplate usersTemplate;
+
 	@Resource(name = "Example")
 	private Region<Long, String> exampleRegion;
 
 	@Resource(name = "TestRegion")
 	@SuppressWarnings("rawtypes")
 	private Region testRegion;
+
+	@Resource(name = "Users")
+	private Region<Long, User> users;
 
 	@Test
 	public void exampleRegionIsPresent() {
@@ -106,6 +119,37 @@ public class DeclaredRegionTemplateAutoConfigurationIntegrationTests extends Int
 		assertThat(this.testRegionTemplate.getRegion()).isEqualTo(this.testRegion);
 	}
 
+	@Test
+	public void usersRegionIsPresent() {
+
+		assertThat(this.users).isNotNull();
+		assertThat(this.users.getName()).isEqualTo("Users");
+	}
+
+	@Test
+	public void usersRegionTemplateIsPresent() {
+
+		assertThat(this.usersTemplate).isNotNull();
+		assertThat(this.usersTemplate.getRegion()).isEqualTo(this.users);
+	}
+
+	@Getter
+	@ToString(of = "name")
+	@EqualsAndHashCode(of = "name")
+	@RequiredArgsConstructor(staticName = "newUser")
+	static class User {
+
+		private Long id;
+
+		@NonNull
+		private final String name;
+
+		User identifiedBy(Long id) {
+			this.id = id;
+			return this;
+		}
+	}
+
 	@SpringBootApplication
 	@EnableGemFireMockObjects
 	static class TestConfiguration {
@@ -132,12 +176,23 @@ public class DeclaredRegionTemplateAutoConfigurationIntegrationTests extends Int
 		@SuppressWarnings("rawtypes")
 		public ClientRegionFactoryBean testRegion(GemFireCache gemfireCache) {
 
-			ClientRegionFactoryBean clientRegion = new ClientRegionFactoryBean();
+			ClientRegionFactoryBean testRegion = new ClientRegionFactoryBean();
 
-			clientRegion.setCache(gemfireCache);
-			clientRegion.setShortcut(ClientRegionShortcut.PROXY);
+			testRegion.setCache(gemfireCache);
+			testRegion.setShortcut(ClientRegionShortcut.PROXY);
 
-			return clientRegion;
+			return testRegion;
+		}
+
+		@Bean("Users")
+		public ClientRegionFactoryBean<Long, User> usersRegions(GemFireCache cache) {
+
+			ClientRegionFactoryBean<Long, User> usersRegion = new ClientRegionFactoryBean<>();
+
+			usersRegion.setCache(cache);
+			usersRegion.setPersistent(false);
+
+			return usersRegion;
 		}
 	}
 }
