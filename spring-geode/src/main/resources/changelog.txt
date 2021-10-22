@@ -6,7 +6,7 @@ https://github.com/spring-projects/spring-boot-data-geode
 
 Changes in version 1.5.6 (2021-10-21)
 -------------------------------------
-Aligns SBDG with Spring Boot 2.4.12.
+Aligns SBDG with Spring Boot 2.5.6.
 
 * Upgrades to VMware Tanzu (Pivotal) GemFire 9.10.10.
 * Upgrades to Spring Framework 5.3.12.
