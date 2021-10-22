@@ -4,6 +4,19 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.5.6 (2021-10-21)
+-------------------------------------
+Aligns SBDG with Spring Boot 2.4.12.
+
+* Upgrades to VMware Tanzu (Pivotal) GemFire 9.10.10.
+* Upgrades to Spring Framework 5.3.12.
+* Upgrades to Spring Boot 2.5.6.
+* Upgrades to Spring Data 2021.0.6 (Pascal-SR6).
+* Upgrades to Spring Data for Apache Geode 2.5.6.
+* Upgrades to Spring Session BOM 2021.0.3.
+* Upgrades to Spring Session for Apache Geode 2.5.5.
+
+
 Changes in version 1.4.12 (2021-10-21)
 --------------------------------------
 Aligns SBDG with Spring Boot 2.4.12.
