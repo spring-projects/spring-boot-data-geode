@@ -4,6 +4,20 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.4.12 (2021-10-21)
+--------------------------------------
+Aligns SBDG with Spring Boot 2.4.12.
+
+* Upgrades to Byte Buddy 1.11.21.
+* Upgrades to Mockito 4.0.0.
+* Upgrades to Spring Framework 5.3.12.
+* Upgrades to Spring Boot 2.4.12.
+* Upgrades to Spring Data 2020.0.14 (Ockham-SR14).
+* Upgrades to Spring Data for Apache Geode 2.4.14.
+* Upgrades to Spring Session BOM 2020.0.7.
+* Upgrades to Spring Session for Apache Geode 2.4.8.
+
+
 Changes in version 1.6.0-M3 (2021-09-28)
 ----------------------------------------
 Aligns SBDG with Spring Boot 2.6.0-M3.
