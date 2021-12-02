@@ -42,6 +42,7 @@ asciidoctor {
 
 asciidoctorj {
 
+	def apacheGeodeDocVersion = resolveApacheGeodeDocVersion("${apacheGeodeVersion}")
 	def githubBaseUrl = "https://github.com/spring-projects/spring-boot-data-geode"
 	def githubTag = snapshotBuild ? 'master' : project.version
 	def githubUrl = "$githubBaseUrl/tree/$githubTag"
@@ -56,7 +57,7 @@ asciidoctorj {
 		'highlightjsdir@': "js/highlight",
 		'docinfodir@': ".",
 		'apache-geode-artifact-version' : "${apacheGeodeVersion}",
-		'apache-geode-doc-version' : "113",
+		'apache-geode-doc-version' : apacheGeodeDocVersion,
 		'apache-geode-src' : "https://github.com/apache/geode/blob/rel/v${apacheGeodeVersion}",
 		'pivotal-cloudcache-artifact-version' : "${pivotalCloudCacheVersion}",
 		'pivotal-cloudcache-doc-version' : "1-13",
@@ -113,4 +114,20 @@ processResources {
 			]
 		}
 	}
+}
+
+String resolveApacheGeodeDocVersion(String apacheGeodeVersion) {
+
+	def apacheGeodeDocVersion = ''
+	def index = apacheGeodeVersion.lastIndexOf(".")
+
+	apacheGeodeVersion = index > -1 ? apacheGeodeVersion.substring(0, index) : apacheGeodeVersion
+
+	for (char character : apacheGeodeVersion.toCharArray()) {
+		if (Character.isDigit(character)) {
+			apacheGeodeDocVersion += character
+		}
+	}
+
+	return apacheGeodeDocVersion
 }
