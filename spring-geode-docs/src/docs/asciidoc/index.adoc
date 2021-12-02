@@ -14,8 +14,9 @@ John Blum
 :java-version: 8
 :jdk-javadoc: https://docs.oracle.com/javase/{java-version}/docs/api
 :apache-geode-name: Apache Geode
-:apache-geode-version: {apache-geode-doc-version}
-:apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-version}
+:apache-geode-version: {apache-geode-artifact-version}
+:apache-geode-doc-version: {apache-geode-doc-version}
+:apache-geode-docs: https://geode.apache.org/docs/guide/{apache-geode-doc-version}
 :apache-geode-javadoc: https://geode.apache.org/releases/latest/javadoc
 :apache-geode-website: https://geode.apache.org/
 :apache-geode-wiki: https://cwiki.apache.org/confluence/display/GEODE
@@ -447,6 +448,127 @@ repositories {
 ----
 ====
 endif::[]
+
+[[sbdg-dependency-versions]]
+== Primary Dependency Versions
+
+Spring Boot for {apache-geode-name} {revnumber} builds and depends on the following versions of the base projects
+listed below:
+
+.Dependencies & Versions
+|===
+| Name | Version
+
+| {apache-geode-name} | {apache-geode-version}
+
+| Spring Framework | {spring-version}
+
+| Spring Boot | {spring-boot-version}
+
+| Spring Data for {apache-geode-name} | {spring-data-geode-version}
+
+| Spring Session for {apache-geode-name} | {spring-session-data-geode-version}
+
+| Spring Test for {apache-geode-name} | {spring-test-data-geode-version}
+
+|===
+
+It is essential that the versions of all the dependencies listed in the table above align accordingly. If the dependency
+versions are misaligned, then functionality could be missing, or certain functions could behave unpredictably
+from its specified contract.
+
+Please follow dependency versions listed in the table above and use it as a guide when setting up
+your Spring Boot projects using {apache-geode-name}.
+
+Again, the best way to setup your Spring Boot projects is by first, declaring the `spring-boot-starter-parent` Maven POM
+as the parent POM in your project POM:
+
+.Spring Boot application Maven POM parent
+====
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>{spring-boot-version}</version>
+</parent>
+----
+====
+
+Or, when using Grade:
+
+.Spring Boot application Gradle build file Gradle Plugins required for dependency management
+====
+[source,groovy]
+[subs="verbatim,attributes"]
+----
+plugins {
+  id 'org.springframework.boot' version '{spring-boot-version}'
+  id 'io.spring.dependency-management' version '{spring-dependency-management-gradle-plugin-version}'
+  id 'java'
+}
+----
+====
+
+And then, use the Spring Boot for {apache-geode-name}, `spring-geode-bom`.  For example, with Maven:
+
+.Spring Boot application using the Spring Boot for {apache-geode-name}, `spring-geode-bom` BOM in Maven
+====
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<properties>
+    <spring-geode.version>{spring-boot-data-geode-version}</spring-geode.version>
+</properties>
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.geode</groupId>
+            <artifactId>spring-geode-bom</artifactId>
+            <version>${spring-geode.version}</version>
+            <scope>import</scope>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.geode</groupId>
+        <artifactId>spring-geode-starter</artifactId>
+    </dependency>
+</dependencies>
+----
+====
+
+Or, with Gradle:
+
+.Spring Boot application using the Spring Boot for {apache-geode-name}, `spring-geode-bom` BOM in Gradle
+====
+[source,groovy]
+[subs="verbatim,attributes"]
+----
+ext {
+    set('springGeodeVersion', "{spring-boot-data-geode-version}")
+}
+
+dependencies {
+    implementation 'org.springframework.geode:spring-geode-starter'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.geode:spring-geode-bom:$\{springGeodeVersion\}"
+    }
+}
+----
+====
+
+All of this is made simple by going to https://start.spring.io[start.spring.io] and creating a Spring Boot
+`{spring-boot-version}` project using {apache-geode-name}.
+
 
 include::{include-dir}/clientcache-applications.adoc[]
 include::{include-dir}/configuration-auto.adoc[]
