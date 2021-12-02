@@ -135,11 +135,11 @@ will explore throughout this reference documentation.
 [[introduction-goals]]
 === Goals
 
-While the SBDG project has many goals and objectives, the primary goals of this project centers around
-three key principles:
+While the SBDG project has many goals and objectives, the primary goals of this project center around three key
+principles:
 
 1. From **_Open Source_** ({apache-geode-name}) to **_Commercial_** ({pivotal-gemfire-name}).
-2. From **_Non-Managed_** (self-managed/hosted or on-premise installations) to **_Managed_**
+2. From **_Non-Managed_** (self-managed/self-hosted or on-premise installations) to **_Managed_**
 ({pivotal-cloudcache-name}, {vmware-gemfire-name}) environments.
 3. With **little to no code or configuration changes** necessary.
 
@@ -172,7 +172,8 @@ reliable way possible. We accomplish this by combining Spring Data for {apache-g
 with Spring Boot's {spring-boot-docs-html}/#using-boot-auto-configuration[auto-configuration] to get you up and running
 even faster and more reliably so that you are productive from the start.
 
-As a result, it would be pertinent to begin your Spring Boot education with {spring-boot-docs-html}/#getting-started[Spring Boot's documentation].
+As a result, it would be pertinent to begin your Spring Boot education
+with {spring-boot-docs-html}/#getting-started[Spring Boot's documentation].
 
 Finally, we arrive at Spring Boot for {apache-geode-name} (SBDG).
 
@@ -311,7 +312,7 @@ this https://start.spring.io/#!platformVersion={spring-boot-version}&dependencie
 Using Gradle is similar to using Maven.
 
 Again, if you declare and use more than one SBDG module in your Spring Boot application (for example,
-the `spring-geode-starter` along with the `spring-geode-starter-actuator` dependency), declaring the `spring-geode-bom`
+the `spring-geode-starter` along with the `spring-geode-starter-session` dependency), declaring the `spring-geode-bom`
 inside your application Gradle build file helps.
 
 Your application Gradle build file configuration (roughly) appears as follows:
@@ -355,9 +356,9 @@ In a nutshell, the _Spring Dependency Management Gradle Plugin_ provides depende
 much like Maven. The _Spring Boot Gradle Plugin_ defines a curated and tested set of versions for many third party Java
 libraries. Together, they make adding dependencies and managing (compatible) versions easier.
 
-Again, you need not explicitly declare the version when adding a dependency, including a new SBDG module dependency
-(for example, `spring-geode-starter-session`), since this has already been determined for you. You can declare the
-dependency as follows:
+Again, you do not need to explicitly declare the version when adding a dependency, including a new SBDG module
+dependency (for example, `spring-geode-starter-session`), since this has already been determined for you.
+You can declare the dependency as follows:
 
 ====
 [source,groovy]
