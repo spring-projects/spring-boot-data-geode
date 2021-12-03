@@ -61,6 +61,9 @@ pipeline {
 		}
 
 		stage ('Deploy Docs') {
+			options {
+				timeout(time: 15, unit: "MINUTES")
+			}
 			steps {
 				script {
 					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
@@ -81,6 +84,9 @@ pipeline {
 		}
 
 		stage ('Deploy Artifacts') {
+			options {
+				timeout(time: 15, unit: "MINUTES")
+			}
 			steps {
 				script {
 					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
