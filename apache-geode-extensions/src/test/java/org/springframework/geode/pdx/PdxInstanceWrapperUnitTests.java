@@ -45,6 +45,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import org.junit.Test;
 
@@ -61,6 +62,7 @@ import org.apache.geode.pdx.WritablePdxInstance;
  * @see org.mockito.Mockito
  * @see com.fasterxml.jackson.core.JsonGenerator
  * @see com.fasterxml.jackson.databind.ObjectMapper
+ * @see com.fasterxml.jackson.databind.json.JsonMapper
  * @see org.apache.geode.pdx.JSONFormatter
  * @see org.apache.geode.pdx.PdxInstance
  * @see org.apache.geode.pdx.WritablePdxInstance
@@ -161,24 +163,35 @@ public class PdxInstanceWrapperUnitTests {
 	@Test
 	public void objectMapperConfigurationIsCorrect() {
 
-		PdxInstanceWrapper wrapper = spy(PdxInstanceWrapper.from(mock(PdxInstance.class)));
+		PdxInstance mockPdxInstance = mock(PdxInstance.class);
+
+		PdxInstanceWrapper wrapper = spy(PdxInstanceWrapper.from(mockPdxInstance));
 
 		ObjectMapper mockObjectMapper = mock(ObjectMapper.class);
 
-		doReturn(mockObjectMapper).when(wrapper).newObjectMapper();
-		doReturn(mockObjectMapper).when(mockObjectMapper).configure(any(DeserializationFeature.class), anyBoolean());
-		doReturn(mockObjectMapper).when(mockObjectMapper).configure(any(MapperFeature.class), anyBoolean());
-		doReturn(mockObjectMapper).when(mockObjectMapper).findAndRegisterModules();
+		JsonMapper.Builder mockJsonMapperBuilder = mock(JsonMapper.Builder.class);
+
+		JsonMapper mockJsonMapper = mock(JsonMapper.class);
+
+		doReturn(mockJsonMapperBuilder).when(wrapper).newJsonMapperBuilder();
+		doReturn(mockJsonMapperBuilder).when(mockJsonMapperBuilder).configure(any(DeserializationFeature.class), anyBoolean());
+		doReturn(mockJsonMapperBuilder).when(mockJsonMapperBuilder).configure(any(MapperFeature.class), anyBoolean());
+		doReturn(mockJsonMapper).when(mockJsonMapperBuilder).build();
+		doReturn(mockObjectMapper).when(mockJsonMapper).findAndRegisterModules();
+
+		assertThat(wrapper.getDelegate()).isEqualTo(mockPdxInstance);
 
 		ObjectMapper objectMapper = wrapper.getObjectMapper().orElse(null);
 
 		assertThat(objectMapper).isNotNull();
 
-		verify(mockObjectMapper, times(1)).configure(eq(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES), eq(false));
-		verify(mockObjectMapper, times(1)).configure(eq(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES), eq(false));
-		verify(mockObjectMapper, times(1)).configure(eq(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS), eq(true));
-		verify(mockObjectMapper, times(1)).findAndRegisterModules();
-		verifyNoMoreInteractions(mockObjectMapper);
+		verify(mockJsonMapperBuilder, times(1)).configure(eq(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES), eq(false));
+		verify(mockJsonMapperBuilder, times(1)).configure(eq(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES), eq(false));
+		verify(mockJsonMapperBuilder, times(1)).configure(eq(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS), eq(true));
+		verify(mockJsonMapperBuilder, times(1)).build();
+		verify(mockJsonMapper, times(1)).findAndRegisterModules();
+		verifyNoMoreInteractions(mockJsonMapperBuilder, mockJsonMapper);
+		verifyNoInteractions(mockPdxInstance, mockObjectMapper);
 	}
 
 	@Test
@@ -789,6 +802,7 @@ public class PdxInstanceWrapperUnitTests {
 	}
 
 	interface Account {
+		@SuppressWarnings("unused")
 		String getName();
 	}
 

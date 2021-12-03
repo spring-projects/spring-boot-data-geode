@@ -27,6 +27,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import org.apache.geode.internal.Sendable;
 import org.apache.geode.pdx.JSONFormatter;
@@ -160,23 +161,24 @@ public class PdxInstanceWrapper implements PdxInstance, Sendable {
 	 */
 	protected Optional<ObjectMapper> getObjectMapper() {
 
-		ObjectMapper objectMapper = newObjectMapper()
+		ObjectMapper objectMapper = newJsonMapperBuilder()
 			.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false)
 			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 			.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+			.build()
 			.findAndRegisterModules();
 
 		return Optional.of(objectMapper);
 	}
 
 	/**
-	 * Constructs a new instance of Jackson's {@link ObjectMapper}.
+	 * Constructs a new instance of Jackson's {@link JsonMapper}.
 	 *
-	 * @return a new instance of Jackson's {@link ObjectMapper}; never {@literal null}.
-	 * @see com.fasterxml.jackson.databind.ObjectMapper
+	 * @return a new instance of Jackson's {@link JsonMapper}; never {@literal null}.
+	 * @see com.fasterxml.jackson.databind.json.JsonMapper
 	 */
-	ObjectMapper newObjectMapper() {
-		return new ObjectMapper();
+	JsonMapper.Builder newJsonMapperBuilder() {
+		return JsonMapper.builder();
 	}
 
 	/**
