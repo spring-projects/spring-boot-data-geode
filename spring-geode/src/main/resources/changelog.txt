@@ -4,6 +4,20 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.6.2 (2022-01-10)
+-------------------------------------
+Aligns SBDG with Spring Boot 2.6.2.
+
+* Upgrades to Apache Geode 1.14.2
+* Upgrades to VMware Tanzu (Pivotal) GemFire 9.10.13.
+* Upgrades to VMware Tanzu GemFire for VMs (Pivotal Cloud Cache) 1.14.2.
+* Upgrades to Spring Framework 5.3.14.
+* Upgrades to Spring Boot 2.6.2.
+* Upgrades to Spring Cloud Bindings 1.8.1.
+* Upgrades to Spring Session BOM 2021.1.1.
+* Upgrades to Gradle 6.9.2.
+
+
 Changes in version 1.5.8 (2022-01-10)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.5.8.
@@ -11,7 +25,7 @@ Aligns SBDG with Spring Boot 2.5.8.
 * Upgrades to Apache Geode 1.13.6.
 * Upgrades to VMware Tanzu (Pivotal) GemFire 9.10.13.
 * Upgrades to VMware Tanzu GemFire for VMs (Pivotal Cloud Cache) 1.13.5.
-* Upgrades to Spring Framework 5.3.18.
+* Upgrades to Spring Framework 5.3.14.
 * Upgrades to Spring Boot 2.5.8.
 * Upgrades to Spring Session BOM 2021.0.4.
 * Upgrades to Gradle 6.9.2.
