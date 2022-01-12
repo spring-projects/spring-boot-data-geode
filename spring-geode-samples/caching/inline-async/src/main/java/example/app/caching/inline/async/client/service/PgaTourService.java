@@ -22,7 +22,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;

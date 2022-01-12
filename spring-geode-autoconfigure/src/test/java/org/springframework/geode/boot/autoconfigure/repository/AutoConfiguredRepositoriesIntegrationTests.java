@@ -17,7 +17,7 @@ package org.springframework.geode.boot.autoconfigure.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

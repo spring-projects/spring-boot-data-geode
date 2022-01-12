@@ -15,8 +15,8 @@
  */
 package example.app.crm.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.Indexed;

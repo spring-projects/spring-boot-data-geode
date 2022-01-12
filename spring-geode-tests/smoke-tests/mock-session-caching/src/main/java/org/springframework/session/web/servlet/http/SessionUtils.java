@@ -15,8 +15,8 @@
  */
 package org.springframework.session.web.servlet.http;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.geode.core.util.ObjectUtils;
 import org.springframework.lang.Nullable;

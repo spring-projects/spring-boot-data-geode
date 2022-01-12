@@ -19,9 +19,9 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Enumeration;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionContext;
 
 import org.springframework.lang.NonNull;
 import org.springframework.session.Session;

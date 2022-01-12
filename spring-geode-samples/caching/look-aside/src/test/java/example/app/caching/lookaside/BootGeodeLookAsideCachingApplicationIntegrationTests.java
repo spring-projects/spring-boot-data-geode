@@ -17,7 +17,7 @@ package example.app.caching.lookaside;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.geode.cache.Region;
 

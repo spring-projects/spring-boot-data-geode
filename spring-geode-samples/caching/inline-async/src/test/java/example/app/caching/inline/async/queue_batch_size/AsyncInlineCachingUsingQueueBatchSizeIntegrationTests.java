@@ -21,7 +21,7 @@ import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newI
 import java.time.Duration;
 import java.util.Optional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.Before;
 import org.junit.Test;

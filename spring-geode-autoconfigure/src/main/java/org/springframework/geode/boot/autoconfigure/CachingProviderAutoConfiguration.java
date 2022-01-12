@@ -20,7 +20,7 @@ import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.apache.geode.cache.GemFireCache;
 

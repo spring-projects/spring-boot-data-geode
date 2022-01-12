@@ -20,8 +20,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionContext;
 
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;

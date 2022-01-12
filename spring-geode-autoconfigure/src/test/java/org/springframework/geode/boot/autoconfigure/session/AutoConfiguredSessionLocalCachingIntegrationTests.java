@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 
 import org.junit.AfterClass;
 import org.junit.Before;

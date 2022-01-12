@@ -17,7 +17,7 @@ package org.springframework.geode.config.annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.AfterClass;
 import org.junit.Before;
