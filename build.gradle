@@ -42,6 +42,12 @@ allprojects {
 	}
 }
 
+subprojects {
+	plugins.withType(JavaPlugin) {
+		sourceCompatibility = JavaVersion.VERSION_17
+	}
+}
+
 nohttp {
 	source.excludes = [ "**/.gradle/**", "**/.m2/**" ]
 }
