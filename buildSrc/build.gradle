@@ -1,0 +1,73 @@
+plugins {
+    id "java-gradle-plugin"
+    id "java"
+    id "groovy"
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+    maven { url 'https://repo.spring.io/plugins-release/' }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = []
+        }
+        groovy {
+            srcDirs += ["src/main/java"]
+        }
+    }
+}
+
+gradlePlugin {
+    plugins {
+        managementConfiguration {
+            id = "io.spring.convention.management-configuration"
+            implementationClass = "io.spring.gradle.convention.ManagementConfigurationPlugin"
+        }
+        sagan {
+            id = "org.springframework.security.sagan"
+            implementationClass = "org.springframework.gradle.sagan.SaganPlugin"
+        }
+        githubMilestone {
+            id = "org.springframework.github.milestone"
+            implementationClass = "org.springframework.gradle.github.milestones.GitHubMilestonePlugin"
+        }
+        propdeps {
+            id = "org.springframework.propdeps"
+            implementationClass = "org.springframework.gradle.propdeps.PropDepsPlugin"
+        }
+    }
+}
+
+configurations {
+    implementation {
+        exclude module: 'groovy-all'
+    }
+}
+
+dependencies {
+
+    implementation localGroovy()
+
+    implementation 'com.apollographql.apollo:apollo-runtime:2.4.5'
+    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.github.ben-manes:gradle-versions-plugin:0.38.0'
+    implementation 'com.github.spullara.mustache.java:compiler:0.9.10'
+    implementation 'io.github.gradle-nexus:publish-plugin:1.1.0'
+    implementation 'io.projectreactor:reactor-core:3.4.11'
+    implementation 'io.spring.nohttp:nohttp-gradle:0.0.9'
+    implementation 'io.spring.gradle:dependency-management-plugin:1.0.10.RELEASE'
+    implementation 'net.sourceforge.htmlunit:htmlunit:2.55.0'
+    implementation 'net.sourceforge.saxon:saxon:9.1.0.8'
+    implementation 'org.asciidoctor:asciidoctor-gradle-jvm:3.3.2'
+    implementation 'org.asciidoctor:asciidoctor-gradle-jvm-pdf:3.3.2'
+    implementation 'org.jfrog.buildinfo:build-info-extractor-gradle:4.24.20'
+    implementation 'org.hidetake:gradle-ssh-plugin:2.10.1'
+    implementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7.1'
+
+}
