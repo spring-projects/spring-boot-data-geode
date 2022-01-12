@@ -9,33 +9,33 @@ description = "Spring Boot for Apache Geode"
 
 dependencies {
 
-	compile project(':apache-geode-extensions')
+	implementation project(':apache-geode-extensions')
 
-	compile "org.springframework:spring-context-support"
-	compile "org.springframework:spring-jcl"
-	compile "org.springframework.boot:spring-boot-starter"
-	compile "org.springframework.data:spring-data-geode"
+	implementation "org.springframework:spring-context-support"
+	implementation "org.springframework:spring-jcl"
+	implementation "org.springframework.boot:spring-boot-starter"
+	implementation "org.springframework.data:spring-data-geode"
 
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
 	optional "org.springframework:spring-test"
 
-	runtime "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+	runtimeOnly "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 
-	testCompile "junit:junit"
-	testCompile "org.assertj:assertj-core"
-	testCompile "org.mockito:mockito-core"
-	testCompile "org.projectlombok:lombok"
-	testCompile "org.testcontainers:testcontainers"
-	testCompile "edu.umd.cs.mtc:multithreadedtc"
+	testImplementation "junit:junit"
+	testImplementation "org.assertj:assertj-core"
+	testImplementation "org.mockito:mockito-core"
+	testImplementation "org.projectlombok:lombok"
+	testImplementation "org.testcontainers:testcontainers"
+	testImplementation "edu.umd.cs.mtc:multithreadedtc"
 
-	testCompile("org.springframework.boot:spring-boot-starter-test") {
+	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude group: "org.skyscreamer", module: "jsonassert"
 	}
 
-	testCompile "org.springframework.boot:spring-boot-starter-data-jpa"
-	testCompile "org.springframework.boot:spring-boot-starter-data-cassandra"
-	testCompile "org.springframework.data:spring-data-geode-test"
+	testImplementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	testImplementation "org.springframework.boot:spring-boot-starter-data-cassandra"
+	testImplementation "org.springframework.data:spring-data-geode-test"
 
 	testRuntime "org.hsqldb:hsqldb"
 

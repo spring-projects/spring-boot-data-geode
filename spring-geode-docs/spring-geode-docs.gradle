@@ -15,18 +15,18 @@ repositories {
 
 dependencies {
 
-	compile project(':spring-geode-starter')
+	implementation project(':spring-geode-starter')
 
 	optional project(":spring-geode-starter-logging")
 
-	compile "org.assertj:assertj-core"
-	compile "org.projectlombok:lombok"
+	implementation "org.assertj:assertj-core"
+	implementation "org.projectlombok:lombok"
 
-	testCompile "junit:junit"
-	testCompile "org.mockito:mockito-core"
-	testCompile "edu.umd.cs.mtc:multithreadedtc"
+	testImplementation "junit:junit"
+	testImplementation "org.mockito:mockito-core"
+	testImplementation "edu.umd.cs.mtc:multithreadedtc"
 
-	testCompile project(":spring-geode-starter-test")
+	testImplementation project(":spring-geode-starter-test")
 
 }
 

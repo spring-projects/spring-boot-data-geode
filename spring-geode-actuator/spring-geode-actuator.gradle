@@ -5,19 +5,19 @@ description = "Spring Boot Actuator for Apache Geode"
 
 dependencies {
 
-    compile project(":spring-geode")
+    implementation project(":spring-geode")
 
-    compile "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
 
     provided "org.apache.geode:geode-logging:$apacheGeodeVersion"
     provided "org.apache.geode:geode-serialization:$apacheGeodeVersion"
 
-    testCompile "junit:junit"
-    testCompile "org.assertj:assertj-core"
-    testCompile "org.mockito:mockito-core"
-    testCompile "org.projectlombok:lombok"
-    testCompile "org.springframework.boot:spring-boot-starter-test"
-    testCompile "org.springframework.data:spring-data-geode-test"
-    testCompile "edu.umd.cs.mtc:multithreadedtc"
+    testImplementation "junit:junit"
+    testImplementation "org.assertj:assertj-core"
+    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.projectlombok:lombok"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.data:spring-data-geode-test"
+    testImplementation "edu.umd.cs.mtc:multithreadedtc"
 
 }

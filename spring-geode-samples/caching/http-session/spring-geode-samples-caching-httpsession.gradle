@@ -4,18 +4,16 @@ description = "Spring Geode Sample demonstrating Spring Session with Apache Geod
 
 dependencies {
 
-	compile project(":spring-geode-starter")
+	implementation project(":spring-geode-starter")
 
-	compile "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-web"
 
-//	runtime project(":spring-geode-starter-session")
+	runtimeOnly "org.springframework.boot:spring-boot-starter-thymeleaf"
 
-	runtime "org.springframework.boot:spring-boot-starter-thymeleaf"
+	testImplementation project(":spring-geode-starter-session")
+	testImplementation project(":spring-geode-starter-test")
 
-	testCompile project(":spring-geode-starter-session")
-	testCompile project(":spring-geode-starter-test")
-
-	testCompile "org.springframework.boot:spring-boot-starter-test"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
 
 }
 

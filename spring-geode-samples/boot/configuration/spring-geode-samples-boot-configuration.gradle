@@ -10,15 +10,15 @@ description = "Spring Geode Sample demonstrating the use of Spring Boot Auto-Con
 
 dependencies {
 
-	compile project(":spring-geode-starter")
-	compile project(":spring-geode-starter-test")
+	implementation project(":spring-geode-starter")
+	implementation project(":spring-geode-starter-test")
 
-	compile "org.assertj:assertj-core"
-	compile "org.projectlombok:lombok"
-
-	testCompile "org.springframework.boot:spring-boot-starter-test"
+	implementation "org.assertj:assertj-core"
+	implementation "org.projectlombok:lombok"
 
 	testCompileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
 
 }
 

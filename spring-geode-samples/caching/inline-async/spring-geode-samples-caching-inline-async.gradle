@@ -8,20 +8,20 @@ description = "Spring Geode Sample demonstrating Spring's Cache Abstraction usin
 
 dependencies {
 
-	compile project(":spring-geode-starter")
+	implementation project(":spring-geode-starter")
 
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
-	compile "org.projectlombok:lombok"
-	compile "org.springframework.boot:spring-boot-starter-data-jpa"
-	compile "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.projectlombok:lombok"
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation "org.springframework.boot:spring-boot-starter-web"
 
-	runtime "org.hsqldb:hsqldb"
+	runtimeOnly "org.hsqldb:hsqldb"
 
-	testCompile project(":spring-geode-starter-test")
+	testImplementation project(":spring-geode-starter-test")
 
-	testCompile "org.awaitility:awaitility:$awaitilityVersion"
-	testCompile "org.springframework.boot:spring-boot-starter-test"
+	testImplementation "org.awaitility:awaitility:$awaitilityVersion"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
 
 }
 

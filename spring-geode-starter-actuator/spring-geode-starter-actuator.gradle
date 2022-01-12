@@ -5,7 +5,7 @@ description = "Spring Boot Actuator Starter for Apache Geode"
 
 dependencies {
 
-    compile project(":spring-geode-starter")
-    compile project(":spring-geode-actuator-autoconfigure")
+    implementation project(":spring-geode-starter")
+    implementation project(":spring-geode-actuator-autoconfigure")
 
 }

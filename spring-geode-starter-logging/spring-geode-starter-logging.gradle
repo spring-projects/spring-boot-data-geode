@@ -5,10 +5,10 @@ description = "Spring Boot Logging Starter for Apache Geode with Logback as the 
 
 dependencies {
 
-    compile "ch.qos.logback:logback-classic"
-    compile "org.apache.logging.log4j:log4j-to-slf4j"
-    compile "org.springframework.boot:spring-boot-starter-logging"
+    implementation "ch.qos.logback:logback-classic"
+    implementation "org.apache.logging.log4j:log4j-to-slf4j"
+    implementation "org.springframework.boot:spring-boot-starter-logging"
 
-    testCompile project(":spring-geode-starter-test")
+    testImplementation project(":spring-geode-starter-test")
 
 }

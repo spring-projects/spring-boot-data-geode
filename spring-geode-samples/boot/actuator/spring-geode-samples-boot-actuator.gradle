@@ -8,10 +8,10 @@ description = "Spring Geode Sample demonstrating the use of Spring Boot Actuator
 
 dependencies {
 
-	compile project(":spring-geode-starter-actuator")
-	compile project(":spring-geode-starter-test")
+	implementation project(":spring-geode-starter-actuator")
+	implementation project(":spring-geode-starter-test")
 
-	compile "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-web"
 
 }
 

@@ -9,18 +9,18 @@ repositories {
 
 dependencies {
 
-	compile project(":spring-geode-autoconfigure")
+	implementation project(":spring-geode-autoconfigure")
 
 	implementation "org.springframework.cloud:spring-cloud-bindings:${springCloudBindingsVersion}"
 
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
-	testCompile "junit:junit"
-	testCompile "org.assertj:assertj-core"
-	testCompile "org.mockito:mockito-core"
-	testCompile "org.projectlombok:lombok"
-	testCompile "org.springframework.boot:spring-boot-starter-test"
-	testCompile "org.springframework.data:spring-data-geode-test"
-	testCompile "edu.umd.cs.mtc:multithreadedtc"
+	testImplementation "junit:junit"
+	testImplementation "org.assertj:assertj-core"
+	testImplementation "org.mockito:mockito-core"
+	testImplementation "org.projectlombok:lombok"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testImplementation "org.springframework.data:spring-data-geode-test"
+	testImplementation "edu.umd.cs.mtc:multithreadedtc"
 
 }

@@ -9,7 +9,7 @@ description = "Spring Boot Auto-Configuration for Apache Geode"
 
 dependencies {
 
-	compile project(":spring-geode")
+	implementation project(":spring-geode")
 
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
@@ -19,15 +19,15 @@ dependencies {
 	optional "org.springframework.boot:spring-boot-configuration-processor"
 	optional "org.springframework.session:spring-session-data-geode"
 
-	testCompile "jakarta.servlet:jakarta.servlet-api"
-	testCompile "junit:junit"
-	testCompile "org.assertj:assertj-core"
-	testCompile "org.mockito:mockito-core"
-	testCompile "org.projectlombok:lombok"
-	testCompile "org.springframework.boot:spring-boot-starter-test"
-	testCompile "org.springframework.boot:spring-boot-starter-web"
-	testCompile "org.springframework.data:spring-data-geode-test"
-	testCompile "edu.umd.cs.mtc:multithreadedtc"
+	testImplementation "jakarta.servlet:jakarta.servlet-api"
+	testImplementation "junit:junit"
+	testImplementation "org.assertj:assertj-core"
+	testImplementation "org.mockito:mockito-core"
+	testImplementation "org.projectlombok:lombok"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testImplementation "org.springframework.boot:spring-boot-starter-web"
+	testImplementation "org.springframework.data:spring-data-geode-test"
+	testImplementation "edu.umd.cs.mtc:multithreadedtc"
 
 	testCompileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 

@@ -8,18 +8,18 @@ description = "Spring Geode Sample demonstrating Spring's Cache Abstraction usin
 
 dependencies {
 
-	compile project(":apache-geode-extensions")
-	compile project(":spring-geode-starter")
+	implementation project(":apache-geode-extensions")
+	implementation project(":spring-geode-starter")
 
-	compile "org.assertj:assertj-core"
-	compile "org.projectlombok:lombok"
-	compile "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.assertj:assertj-core"
+	implementation "org.projectlombok:lombok"
+	implementation "org.springframework.boot:spring-boot-starter-web"
 
-	runtime "org.springframework.boot:spring-boot-starter-jetty"
+	runtimeOnly "org.springframework.boot:spring-boot-starter-jetty"
 
-	testCompile project (":spring-geode-starter-test")
+	testImplementation project (":spring-geode-starter-test")
 
-	testCompile "org.springframework.boot:spring-boot-starter-test"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
 
 }
 

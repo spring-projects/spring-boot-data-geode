@@ -5,9 +5,9 @@ description = "Spring Boot Test Starter for Apache Geode"
 
 dependencies {
 
-	compile project(':spring-geode-starter')
+	implementation project(':spring-geode-starter')
 
-	compile "org.springframework.boot:spring-boot-starter-test"
-	compile 'org.springframework.data:spring-data-geode-test'
+	implementation "org.springframework.boot:spring-boot-starter-test"
+	implementation 'org.springframework.data:spring-data-geode-test'
 
 }

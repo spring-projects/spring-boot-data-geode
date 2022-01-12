@@ -8,13 +8,13 @@ description = "Spring Geode Sample demonstrating Apache Geode security configure
 
 dependencies {
 
-	compile project(":spring-geode-starter")
-	compile project(":spring-geode-starter-test")
+	implementation project(":spring-geode-starter")
+	implementation project(":spring-geode-starter-test")
 
-	compile "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-web"
 
-	compile "org.assertj:assertj-core"
-	compile "org.projectlombok:lombok"
+	implementation "org.assertj:assertj-core"
+	implementation "org.projectlombok:lombok"
 }
 
 bootJar {
