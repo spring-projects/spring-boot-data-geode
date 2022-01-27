@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,10 +20,12 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 
 /**
- * Adds and configures Checkstyle plugin.
+ * Configures and applies the Checkstyle Gradle {@link Plugin}.
  *
  * @author Vedran Pavic
  * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
  */
 class CheckstylePlugin implements Plugin<Project> {
 
@@ -36,13 +38,11 @@ class CheckstylePlugin implements Plugin<Project> {
 
 			def checkstyleDirectory = project.rootProject.file(CHECKSTYLE_PATHNAME)
 
-			if (checkstyleDirectory.exists() && checkstyleDirectory.directory) {
+			if (checkstyleDirectory?.isDirectory()) {
 
 				project.getPluginManager().apply('checkstyle')
-				project.dependencies.add('checkstyle',
-					'io.spring.javaformat:spring-javaformat-checkstyle:0.0.29')
-				project.dependencies.add('checkstyle',
-					'io.spring.nohttp:nohttp-checkstyle:0.0.3.RELEASE')
+				project.dependencies.add('checkstyle', 'io.spring.javaformat:spring-javaformat-checkstyle')
+				project.dependencies.add('checkstyle', 'io.spring.nohttp:nohttp-checkstyle')
 
 				project.checkstyle {
 					configDirectory = checkstyleDirectory

@@ -1,4 +1,4 @@
-import io.spring.gradle.convention.SpringMavenPlugin
+import io.spring.gradle.convention.SpringModulePlugin
 
 apply plugin: 'io.spring.convention.bom'
 apply from: MAVEN_POM_EDITOR_GRADLE
@@ -6,7 +6,7 @@ apply from: MAVEN_POM_EDITOR_GRADLE
 sonarqube.skipProject = true
 
 project.rootProject.allprojects.each { p ->
-    p.plugins.withType(SpringMavenPlugin) {
+    p.plugins.withType(SpringModulePlugin) {
         if (!project.name.equals(p.name)) {
             project.mavenBom.projects.add(p)
         }

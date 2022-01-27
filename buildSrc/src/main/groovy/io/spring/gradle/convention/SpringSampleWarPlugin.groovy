@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2021 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -21,15 +21,19 @@ import org.gradle.api.plugins.PluginManager
 import org.gradle.api.tasks.testing.Test
 
 /**
+ * Spring Sample Gradle Plugin used to build Samples as a Java Web Application (WAR archive).
+ *
  * @author Rob Winch
  * @author John Blum
+ * @see org.gradle.api.Project
+ * @see org.gradle.api.Task
  */
 class SpringSampleWarPlugin extends SpringSamplePlugin {
 
     @Override
-    void additionalPlugins(Project project) {
+    void applyAdditionalPlugins(Project project) {
 
-        super.additionalPlugins(project);
+        super.applyAdditionalPlugins(project);
 
         PluginManager pluginManager = project.getPluginManager();
 
@@ -44,10 +48,10 @@ class SpringSampleWarPlugin extends SpringSamplePlugin {
 
         Task prepareAppServerForIntegrationTests = project.tasks.create('prepareAppServerForIntegrationTests') {
             group = 'Verification'
-            description = 'Prepares the app server for integration tests'
+            description = 'Prepares the Web application server for Integration Testing'
             doFirst {
                 project.gretty {
-                    httpPort = getRandomFreePort()
+                    httpPort = getRandomPort()
                     httpsPort = getRandomPort()
                 }
             }
@@ -58,7 +62,7 @@ class SpringSampleWarPlugin extends SpringSamplePlugin {
         }
 
         project.tasks.withType(Test).all { task ->
-            if("integrationTest".equals(task.name)) {
+            if ("integrationTest".equals(task.name)) {
                 applyForIntegrationTest(project, task)
             }
         }
@@ -79,8 +83,8 @@ class SpringSampleWarPlugin extends SpringSamplePlugin {
 
             int port = isHttps ? httpsPort : httpPort
 
-            String host = project.gretty.host ?: 'localhost'
-            String contextPath = project.gretty.contextPath
+            String host = gretty.host ?: 'localhost'
+            String contextPath = gretty.contextPath
             String httpBaseUrl = "http://${host}:${httpPort}${contextPath}"
             String httpsBaseUrl = "https://${host}:${httpsPort}${contextPath}"
             String baseUrl = isHttps ? httpsBaseUrl : httpBaseUrl

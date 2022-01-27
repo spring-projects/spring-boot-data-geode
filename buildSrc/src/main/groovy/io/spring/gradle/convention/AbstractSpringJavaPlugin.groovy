@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -28,7 +28,11 @@ import org.springframework.gradle.propdeps.PropDepsIdeaPlugin
 import org.springframework.gradle.propdeps.PropDepsPlugin
 
 /**
- * Base Gradle API Plugin for all Spring Java project Gradle Plugins.
+ * Abstract base Gradle {@link Plugin} for all Spring Java & Groovy Gradle Plugins used by SBDG.
+ *
+ * This abstract base Gradle {@link Plugin} primarily serves to apply a common set of Gradle {@link Plugin Plugins),
+ * such as the {@link JavaPlugin} and {@link GroovyPlugin} for the various SBDG project Spring modules as well as other
+ * Spring Gradle {@link Plugin Plugins} to manage builds, IDE integration, releases and so on.
  *
  * @author Rob Winch
  * @author John Blum
@@ -40,31 +44,67 @@ abstract class AbstractSpringJavaPlugin implements Plugin<Project> {
 	@Override
 	final void apply(Project project) {
 
-		PluginManager pluginManager = project.getPluginManager()
+		applyPlugins(project)
+		setJarManifestAttributes(project)
 
-		pluginManager.apply(JavaPlugin.class)
-		pluginManager.apply(ManagementConfigurationPlugin.class)
-
-		if (project.file("src/main/groovy").exists()
-				|| project.file("src/test/groovy").exists()
-				|| project.file("src/integration-test/groovy").exists()) {
-
-			pluginManager.apply(GroovyPlugin.class)
+		project.test {
+			useJUnitPlatform()
 		}
 
-		pluginManager.apply("io.spring.convention.repository")
+		applyAdditionalPlugins(project)
+	}
+
+	private void applyPlugins(Project project) {
+
+		PluginManager pluginManager = project.getPluginManager()
+
+		applyJavaPlugin(pluginManager)
+		applyGroovyPlugin(project)
+		applyIdePlugins(pluginManager)
+		applySpringPlugins(pluginManager)
+	}
+
+	@SuppressWarnings("all")
+	private void applyGroovyPlugin(Project project) {
+
+		if (project.file("src/main/groovy").exists()
+			|| project.file("src/test/groovy").exists()
+			|| project.file("src/integration-test/groovy").exists()) {
+
+			project.getPluginManager().apply(GroovyPlugin.class)
+		}
+	}
+
+	@SuppressWarnings("all")
+	private void applyIdePlugins(PluginManager pluginManager) {
+
 		pluginManager.apply(EclipseWtpPlugin)
 		pluginManager.apply(IdeaPlugin)
+	}
+
+	@SuppressWarnings("all")
+	private void applyJavaPlugin(PluginManager pluginManager) {
+		pluginManager.apply(JavaPlugin.class)
+	}
+
+	@SuppressWarnings("all")
+	private void applySpringPlugins(PluginManager pluginManager) {
+
 		pluginManager.apply(PropDepsPlugin)
 		pluginManager.apply(PropDepsEclipsePlugin)
 		pluginManager.apply(PropDepsIdeaPlugin)
+		pluginManager.apply("io.spring.convention.springdependencymangement")
+		pluginManager.apply("io.spring.convention.dependency-set")
+		pluginManager.apply("io.spring.convention.repository")
+		pluginManager.apply("io.spring.convention.javadoc-options")
 		pluginManager.apply("io.spring.convention.tests-configuration")
 		pluginManager.apply("io.spring.convention.integration-test")
-        pluginManager.apply("io.spring.convention.springdependencymangement")
-		pluginManager.apply("io.spring.convention.dependency-set")
-		pluginManager.apply("io.spring.convention.javadoc-options")
+		pluginManager.apply("io.spring.convention.jacoco");
 		pluginManager.apply("io.spring.convention.checkstyle")
 		pluginManager.apply(CopyPropertiesPlugin)
+	}
+
+	private void setJarManifestAttributes(Project project) {
 
 		project.jar {
 			manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
@@ -72,14 +112,8 @@ abstract class AbstractSpringJavaPlugin implements Plugin<Project> {
 			manifest.attributes["Implementation-Version"] = project.version
 			manifest.attributes["Automatic-Module-Name"] = project.name.replace('-', '.')
 		}
-
-        project.test {
-            useJUnitPlatform()
-        }
-
-		additionalPlugins(project);
 	}
 
-	protected abstract void additionalPlugins(Project project);
+	protected abstract void applyAdditionalPlugins(Project project);
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -21,26 +21,38 @@ import org.gradle.api.plugins.PluginManager
 import org.springframework.gradle.maven.SpringMavenPlugin
 
 /**
- * Defines the Gradle project as a proper Spring Module.
+ * Defines a Gradle {@link Project} as a proper Spring module.
  *
  * @author Rob Winch
  * @author John Blum
+ * @see io.spring.gradle.convention.AbstractSpringJavaPlugin
+ * @see org.gradle.api.Project
  */
 class SpringModulePlugin extends AbstractSpringJavaPlugin {
 
 	@Override
-	void additionalPlugins(Project project) {
+	void applyAdditionalPlugins(Project project) {
+
+		applyPlugins(project);
+		configureDeployArtifactsTask(project)
+	}
+
+	@SuppressWarnings("all")
+	private void applyPlugins(Project project) {
 
 		PluginManager pluginManager = project.getPluginManager();
 
 		pluginManager.apply(JavaLibraryPlugin.class)
 		pluginManager.apply(SpringMavenPlugin.class);
-		pluginManager.apply("io.spring.convention.jacoco");
+	}
+
+	@SuppressWarnings("all")
+	private void configureDeployArtifactsTask(Project project) {
 
 		def deployArtifacts = project.task("deployArtifacts")
 
-		deployArtifacts.group = 'Deploy tasks'
-		deployArtifacts.description = "Deploys the artifacts to either Artifactory or Maven Central"
+		deployArtifacts.group = 'Deployments'
+		deployArtifacts.description = "Deploys project artifacts to either Artifactory or Maven Central"
 
 		if (!Utils.isRelease(project)) {
 			deployArtifacts.dependsOn project.tasks.artifactoryPublish

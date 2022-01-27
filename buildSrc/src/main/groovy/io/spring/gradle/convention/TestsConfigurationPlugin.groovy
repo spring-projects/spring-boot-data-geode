@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2021 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -21,7 +21,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.jvm.tasks.Jar
 
 /**
- * Adds the ability to depends on the test jar within other projects using:
+ * Adds ability to depend on the test JAR within other Gradle {@link Project Projects} using:
  *
  * <code>
  * testImplementation project(path: ':foo', configuration: 'tests')
@@ -29,29 +29,28 @@ import org.gradle.jvm.tasks.Jar
  *
  * @author Rob Winch
  * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
  */
 class TestsConfigurationPlugin implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
+
 		project.plugins.withType(JavaPlugin) {
-			applyJavaProject(project)
-		}
-	}
 
-	private void applyJavaProject(Project project) {
+			project.configurations {
+				tests.extendsFrom testRuntime, testRuntimeClasspath
+			}
 
-		project.configurations {
-			tests.extendsFrom testRuntime, testRuntimeClasspath
-		}
+			project.tasks.create('testJar', Jar) {
+				archiveClassifier = 'test'
+				from project.sourceSets.test.output
+			}
 
-		project.tasks.create('testJar', Jar) {
-			classifier = 'test'
-			from project.sourceSets.test.output
-		}
-
-		project.artifacts {
-			tests project.testJar
+			project.artifacts {
+				tests project.testJar
+			}
 		}
 	}
 }

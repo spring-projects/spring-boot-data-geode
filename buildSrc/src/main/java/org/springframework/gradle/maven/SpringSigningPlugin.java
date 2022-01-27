@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,34 +24,76 @@ import org.gradle.api.publish.PublishingExtension;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
+import io.spring.gradle.convention.Utils;
+
+/**
+ * Signs all Gradle {@link Project} artifacts.
+ *
+ * @author Rob Winch
+ * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
+ * @see org.gradle.plugins.signing.SigningPlugin
+ */
 public class SpringSigningPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
 
-		project.getPluginManager().apply(SigningPlugin.class);
+		if (isSigningRequired(project)) {
+			project.getPluginManager().apply(SigningPlugin.class);
+			sign(project);
+		}
+	}
 
-		project.getPlugins().withType(SigningPlugin.class).all(signingPlugin -> {
+	private boolean isSigningRequired(Project project) {
+		return isSigningKeyPresent(project) && isRelease(project);
+	}
 
-			boolean hasSigningKey = project.hasProperty("signing.keyId")
-				|| project.hasProperty("signingKey");
+	private boolean isSigningKeyPresent(Project project) {
 
-			if (hasSigningKey) {
-				sign(project);
-			}
-		});
+		return project.hasProperty("signing.keyId")
+			|| project.hasProperty("signingKeyId")
+			|| project.hasProperty("signingKey");
+	}
+
+	private boolean isRelease(Project project) {
+		return Utils.isRelease(project);
 	}
 
 	private void sign(Project project) {
 
+		SigningExtension signing = resolveAndConfigureSigningExtension(project);
+
+		project.getPlugins().withType(PublishAllJavaComponentsPlugin.class).all(publishingPlugin -> {
+			PublishingExtension publishing = project.getExtensions().findByType(PublishingExtension.class);
+			Publication maven = publishing.getPublications().getByName("mavenJava");
+			signing.sign(maven);
+		});
+	}
+
+	private SigningExtension resolveAndConfigureSigningExtension(Project project) {
+
 		SigningExtension signing = project.getExtensions().findByType(SigningExtension.class);
 
-		signing.setRequired((Callable<Boolean>) () ->
-			project.getGradle().getTaskGraph().hasTask("publishArtifacts"));
+		return configurePgpKeys(project, configureSigningRequired(project, signing));
+	}
 
-		String signingKey = (String) project.findProperty("signingKey");
-		String signingKeyId = (String) project.findProperty("signingKeyId");
-		String signingPassword = (String) project.findProperty("signingPassword");
+	private SigningExtension configureSigningRequired(Project project, SigningExtension signing) {
+
+		Callable<Boolean> signingRequired =
+			() -> project.getGradle().getTaskGraph().hasTask("publishArtifacts");
+
+		signing.setRequired(signingRequired);
+
+		return signing;
+	}
+
+	private SigningExtension configurePgpKeys(Project project, SigningExtension signing) {
+
+		String signingKey = Utils.findPropertyAsString(project, "signingKey");
+		String signingKeyId = resolveSigningKeyId(project);
+		String signingPassword = Utils.findPropertyAsString(project, "signingPassword");
 
 		if (signingKeyId != null) {
 			signing.useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword);
@@ -60,10 +102,14 @@ public class SpringSigningPlugin implements Plugin<Project> {
 			signing.useInMemoryPgpKeys(signingKey, signingPassword);
 		}
 
-		project.getPlugins().withType(PublishAllJavaComponentsPlugin.class).all(publishingPlugin -> {
-			PublishingExtension publishing = project.getExtensions().findByType(PublishingExtension.class);
-			Publication maven = publishing.getPublications().getByName("mavenJava");
-			signing.sign(maven);
-		});
+		return signing;
+	}
+
+	private String resolveSigningKeyId(Project project) {
+
+		String signingKeyId = Utils.findPropertyAsString(project, "signingKeyId");
+
+		return signingKeyId != null ? signingKeyId
+			: Utils.findPropertyAsString(project, "signing.keyId");
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2021 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,6 @@
 package io.spring.gradle.convention
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.PluginManager
 
 /**
  * @author Rob Winch
@@ -25,13 +24,11 @@ import org.gradle.api.plugins.PluginManager
 class SpringSampleBootPlugin extends SpringSamplePlugin {
 
     @Override
-    void additionalPlugins(Project project) {
+    void applyAdditionalPlugins(Project project) {
 
-        super.additionalPlugins(project);
+        super.applyAdditionalPlugins(project);
 
-        PluginManager pluginManager = project.getPluginManager();
-
-        pluginManager.apply("org.springframework.boot");
+        project.getPluginManager().apply("org.springframework.boot");
 
         project.repositories {
             maven { url 'https://repo.spring.io/snapshot' }

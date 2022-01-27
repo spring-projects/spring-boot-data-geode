@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,8 +19,13 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
+ * Declares Maven Repositories (for example: mavenLocal(), mavenCentral(), jcenter(), Spring Repositories, etc)
+ * based on a {@link Project Project's} release artifact(s).
+ *
  * @author Rob Winch
  * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
  */
 class RepositoryConventionPlugin implements Plugin<Project> {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,15 +20,23 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.javadoc.Javadoc
 
 /**
+ * Configures Javadoc (Gradle Task) to disable the DocLint tool by setting the {@literal -Xdoclint} JVM extension option
+ * to {@literal none} as well as setting the {@literal -quiet} Javadoc option thereby suppressing the output from
+ * the Javadoc tool.
+ *
  * @author Rob Winch
  * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
+ * @see org.gradle.api.tasks.javadoc.Javadoc
  */
 class JavadocOptionsPlugin implements Plugin<Project> {
 
 	@Override
 	void apply(Project project) {
-		project.getTasks().withType(Javadoc).all { t->
-			t.options.addStringOption('Xdoclint:none', '-quiet')
+
+		project.getTasks().withType(Javadoc).all { task ->
+			task.options.addStringOption('Xdoclint:none', '-quiet')
 		}
 	}
 }

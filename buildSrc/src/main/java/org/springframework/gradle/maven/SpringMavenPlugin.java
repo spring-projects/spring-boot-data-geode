@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,8 +22,12 @@ import org.gradle.api.plugins.PluginManager;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 
 /**
+ * Declares and enables Maven functionality for a Spring Gradle {@link Project Projects}.
+ *
  * @author Rob Winch
  * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
  */
 public class SpringMavenPlugin implements Plugin<Project> {
 
@@ -33,11 +37,11 @@ public class SpringMavenPlugin implements Plugin<Project> {
 		PluginManager pluginManager = project.getPluginManager();
 
 		pluginManager.apply(MavenPublishPlugin.class);
-		pluginManager.apply(SpringSigningPlugin.class);
 		pluginManager.apply(MavenPublishingConventionsPlugin.class);
 		pluginManager.apply(PublishAllJavaComponentsPlugin.class);
-		pluginManager.apply(PublishLocalPlugin.class);
 		pluginManager.apply(PublishArtifactsPlugin.class);
+		pluginManager.apply(PublishLocalPlugin.class);
+		pluginManager.apply(SpringSigningPlugin.class);
 		pluginManager.apply(ArtifactoryPlugin.class);
 	}
 }

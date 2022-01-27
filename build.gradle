@@ -28,18 +28,12 @@ allprojects {
 
 	repositories {
 
-		mavenCentral()
-
 		if (version.contains('-')) {
 			maven { url "https://repo.spring.io/milestone" }
 		}
 		if (version.endsWith('-SNAPSHOT')) {
 			maven { url "https://repo.spring.io/snapshot" }
 		}
-	}
-
-	configurations.all {
-		resolutionStrategy.cacheChangingModulesFor 0, "minutes"
 	}
 }
 
@@ -57,5 +51,3 @@ description = 'Spring Boot for Apache Geode'
 ext.snapshotBuild = Utils.isSnapshot(project)
 ext.milestoneBuild = Utils.isMilestone(project)
 ext.releaseBuild = Utils.isRelease(project)
-
-ext.MAVEN_POM_EDITOR_GRADLE = "$rootDir/gradle/maven-pom-editor.gradle"
