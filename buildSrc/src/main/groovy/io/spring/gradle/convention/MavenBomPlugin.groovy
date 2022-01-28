@@ -17,8 +17,6 @@ package io.spring.gradle.convention
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPlatformPlugin
-import org.springframework.gradle.CopyPropertiesPlugin
 import org.springframework.gradle.maven.SpringMavenPlugin
 
 /**
@@ -27,9 +25,44 @@ import org.springframework.gradle.maven.SpringMavenPlugin
  */
 class MavenBomPlugin implements Plugin<Project> {
 
+	static String MAVEN_BOM_TASK_NAME = "mavenBom"
+
+	@Override
 	void apply(Project project) {
-		project.plugins.apply(JavaPlatformPlugin)
+
+		// Declares a new configuration that will be used to associate with Project artifacts
+		// (namely, the Maven BOM file).
+		project.configurations {
+			archives
+		}
+
+		project.group = project.rootProject.group
 		project.plugins.apply(SpringMavenPlugin)
-		project.plugins.apply(CopyPropertiesPlugin)
+
+		Utils.skipProjectWithSonarQubePlugin(project)
+
+		project.task(MAVEN_BOM_TASK_NAME, type: MavenBomTask, group: 'Generate',
+			description: 'Configures the Maven POM as a Maven BOM (Bill of Materials)')
+
+		project.tasks.artifactoryPublish.dependsOn project.mavenBom
+		project.tasks.publishToOssrh.dependsOn project.mavenBom
+
+		project.rootProject.allprojects.each { p ->
+			p.plugins.withType(SpringMavenPlugin) {
+				if (!project.name.equals(p.name)) {
+					project.mavenBom.projects.add(p)
+				}
+			}
+		}
+
+		// TODO: Shouldn't this be { archives project.mavenBom } according to:
+		//  https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#getArtifacts--
+		// TODO: Is this even necessary since this block is defined in MavenBomTask?
+		project.artifacts {
+			archives project.mavenBom.bomFile
+		}
+
+		// TODO: Why?
+		Utils.configureDeployArtifactsTask(project)
 	}
 }
