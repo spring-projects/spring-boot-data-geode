@@ -26,6 +26,6 @@ class SpringTestPlugin extends AbstractSpringJavaPlugin {
 
 	@Override
 	void applyAdditionalPlugins(Project project) {
-		project.sonarqube.skipProject = true
+		Utils.skipProjectWithSonarQubePlugin(project)
 	}
 }

@@ -33,29 +33,12 @@ class SpringModulePlugin extends AbstractSpringJavaPlugin {
 	@Override
 	void applyAdditionalPlugins(Project project) {
 
-		applyPlugins(project);
-		configureDeployArtifactsTask(project)
-	}
-
-	@SuppressWarnings("all")
-	private void applyPlugins(Project project) {
-
 		PluginManager pluginManager = project.getPluginManager();
 
 		pluginManager.apply(JavaLibraryPlugin.class)
 		pluginManager.apply(SpringMavenPlugin.class);
-	}
 
-	@SuppressWarnings("all")
-	private void configureDeployArtifactsTask(Project project) {
-
-		def deployArtifacts = project.task("deployArtifacts")
-
-		deployArtifacts.group = 'Deployments'
-		deployArtifacts.description = "Deploys project artifacts to either Artifactory or Maven Central"
-
-		if (!Utils.isRelease(project)) {
-			deployArtifacts.dependsOn project.tasks.artifactoryPublish
-		}
+		// TODO: Why?
+		Utils.configureDeployArtifactsTask(project)
 	}
 }

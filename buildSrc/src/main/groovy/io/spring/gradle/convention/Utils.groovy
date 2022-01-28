@@ -15,7 +15,8 @@
  */
 package io.spring.gradle.convention;
 
-import org.gradle.api.Project;
+import org.gradle.api.Project
+import org.sonarqube.gradle.SonarQubePlugin;
 
 /**
  * Utility class encapsulating common operations on Gradle {@link Project Projects}.
@@ -56,7 +57,26 @@ class Utils {
 		return String.valueOf(project.getVersion());
 	}
 
+	static void configureDeployArtifactsTask(Project project) {
+
+		def deployArtifacts = project.task("deployArtifacts")
+
+		deployArtifacts.group = 'Deployments'
+		deployArtifacts.description = "Deploys project artifacts to either Artifactory or Maven Central"
+
+		if (!isRelease(project)) {
+			deployArtifacts.dependsOn project.tasks.artifactoryPublish
+		}
+	}
+
 	static String findPropertyAsString(Project project, String propertyName) {
 		return (String) project.findProperty(propertyName);
+	}
+
+	static void skipProjectWithSonarQubePlugin(Project project) {
+
+		project.plugins.withType(SonarQubePlugin) {
+			project.sonarqube.skipProject = true
+		}
 	}
 }

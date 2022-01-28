@@ -13,10 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.spring.gradle.convention;
+package io.spring.gradle.convention
 
 import org.gradle.api.Project
-import org.sonarqube.gradle.SonarQubePlugin;
 
 /**
  * Gradle Spring Java Plugin used to identify a Gradle {@link Project} as a {@literal Sample} and add configuration
@@ -30,8 +29,6 @@ class SpringSamplePlugin extends AbstractSpringJavaPlugin {
 
     @Override
     void applyAdditionalPlugins(Project project) {
-        project.plugins.withType(SonarQubePlugin) {
-            project.sonarqube.skipProject = true
-        }
+        Utils.skipProjectWithSonarQubePlugin(project)
     }
 }
