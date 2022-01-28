@@ -33,7 +33,7 @@ import lombok.ToString;
  * Abstract Data Type (ADT) modeling contact information for a person.
  *
  * @author John Blum
- * @see javax.persistence.Entity
+ * @see jakarta.persistence.Entity
  * @see org.springframework.data.annotation.Id
  * @since 1.2.0
  */
@@ -49,7 +49,7 @@ import lombok.ToString;
 @SuppressWarnings("unused")
 public class Contact {
 
-	@javax.persistence.Id @Id @NonNull
+	@jakarta.persistence.Id @Id @NonNull
 	private String name;
 
 	@Column(name = "email_address")

@@ -37,8 +37,8 @@ import lombok.ToString;
  * and {@link Integer score} of the {@link Golfer} when s/he competes/plays in a golf tournament.
  *
  * @author John Blum
- * @see javax.persistence.Entity
- * @see javax.persistence.Table
+ * @see jakarta.persistence.Entity
+ * @see jakarta.persistence.Table
  * @see org.springframework.data.annotation.Id
  * @since 1.4.0
  */
@@ -52,7 +52,7 @@ import lombok.ToString;
 @SuppressWarnings("unused")
 public class Golfer implements Comparable<Golfer> {
 
-	@javax.persistence.Id @Id @NonNull
+	@jakarta.persistence.Id @Id @NonNull
 	private String name;
 
 	@Setter

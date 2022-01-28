@@ -47,7 +47,7 @@ import lombok.NoArgsConstructor;
 public class Customer {
 
 	@Id
-	@javax.persistence.Id
+	@jakarta.persistence.Id
 	@PrimaryKey
 	private Long id;
 
