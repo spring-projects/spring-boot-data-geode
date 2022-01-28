@@ -32,15 +32,15 @@ dependencies {
 
 	testCompileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
-	testRuntime "javax.cache:cache-api"
-	testRuntime "org.apache.geode:geode-http-service:$apacheGeodeVersion"
-	testRuntime "org.apache.geode:geode-web:$apacheGeodeVersion"
-	testRuntime "org.springframework.boot:spring-boot-starter-jetty"
-	testRuntime "org.springframework.boot:spring-boot-starter-json"
-	testRuntime "org.springframework.shell:spring-shell:$springShellVersion"
+	testRuntimeOnly "javax.cache:cache-api"
+	testRuntimeOnly "org.apache.geode:geode-http-service:$apacheGeodeVersion"
+	testRuntimeOnly "org.apache.geode:geode-web:$apacheGeodeVersion"
+	testRuntimeOnly "org.springframework.boot:spring-boot-starter-jetty"
+	testRuntimeOnly "org.springframework.boot:spring-boot-starter-json"
+	testRuntimeOnly "org.springframework.shell:spring-shell:$springShellVersion"
 
 	// Runtime Test dependency on Spring Cloud Services (SCS) to verify workaround to SCS problem!
-	//testRuntime("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:2.0.3.RELEASE") {
+	//testRuntimeOnly("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:2.0.3.RELEASE") {
 	//	exclude group: "org.apache.logging.log4j", module: "log4j-core"
 	//}
 

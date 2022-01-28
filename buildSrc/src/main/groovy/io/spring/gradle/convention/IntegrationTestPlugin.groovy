@@ -29,7 +29,7 @@ import org.springframework.gradle.propdeps.PropDepsPlugin
  * Adds Integration Test support to Java projects.
  *
  * <ul>
- * <li>Adds integrationTestCompile and integrationTestRuntime configurations</li>
+ * <li>Adds integrationTestCompile and integrationTestRuntimeOnly configurations</li>
  * <li>Adds new source test folder of src/integration-test/java</li>
  * <li>Adds a task to run integration tests named integrationTest</li>
  * <li>Adds a new source test folder src/integration-test/groovy if the Groovy Plugin was added</li>
@@ -58,10 +58,10 @@ class IntegrationTestPlugin implements Plugin<Project> {
 
 			project.configurations {
 				integrationTestCompile {
-					extendsFrom testImplementation
+					extendsFrom testCompileClasspath
 				}
 				integrationTestRuntime {
-					extendsFrom integrationTestCompile, testRuntime, testRuntimeOnly
+					extendsFrom integrationTestCompile, testRuntimeOnly
 				}
 			}
 

@@ -40,7 +40,7 @@ class TestsConfigurationPlugin implements Plugin<Project> {
 		project.plugins.withType(JavaPlugin) {
 
 			project.configurations {
-				tests.extendsFrom testRuntime, testRuntimeClasspath
+				tests.extendsFrom testRuntimeClasspath
 			}
 
 			project.tasks.create('testJar', Jar) {

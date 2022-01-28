@@ -43,7 +43,7 @@ class DependencyManagementExportTask extends DefaultTask {
 		def projects = this.projects ?: project.subprojects + project
 
 		def configurations = projects*.configurations*.findAll {
-			[ 'testRuntime', 'integrationTestRuntime', 'grettyRunnerTomcat10', 'ajtools' ].contains(it.name)
+			[ 'testRuntimeOnly', 'integrationTestRuntime', 'grettyRunnerTomcat10', 'ajtools' ].contains(it.name)
 		}
 
 		def dependencyResults = configurations*.incoming*.resolutionResult*.allDependencies.flatten()
