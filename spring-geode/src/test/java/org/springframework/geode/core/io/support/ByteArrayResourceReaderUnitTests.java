@@ -17,12 +17,12 @@ package org.springframework.geode.core.io.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -35,6 +35,7 @@ import org.springframework.core.io.Resource;
  * Unit Tests for {@link ByteArrayResourceReader}.
  *
  * @author John Blum
+ * @see java.io.ByteArrayInputStream
  * @see org.junit.Test
  * @see org.mockito.Mockito
  * @see org.springframework.core.io.Resource
@@ -48,7 +49,7 @@ public class ByteArrayResourceReaderUnitTests {
 
 		byte[] data = { (byte) 0xCA, (byte) 0xFE, (byte) 0xBA, (byte) 0xBE };
 
-		ByteArrayInputStream in = spy(new ByteArrayInputStream(data));
+		ByteArrayInputStream in = new ByteArrayInputStream(data);
 
 		ByteArrayResourceReader reader = spy(new ByteArrayResourceReader());
 
@@ -59,10 +60,10 @@ public class ByteArrayResourceReaderUnitTests {
 
 		assertThat(reader.read(mockResource)).isEqualTo(data);
 
+		verify(reader, times(1)).read(eq(mockResource));
 		verify(mockResource, times(1)).getInputStream();
-		verify(in, times(1)).available();
-		verify(in, times(3)).read(isA(byte[].class));
 		verify(reader, times(1)).doRead(eq(in));
+		verifyNoMoreInteractions(mockResource);
 	}
 
 	@Test
