@@ -331,7 +331,7 @@ public abstract class ResourceCapableCacheDataImporterExporter extends AbstractC
 		 *
 		 * This constructor initializes the SpEL objects used to parse and evaluate SpEL expressions in order to
 		 * fully qualify and resolve {@link Resource} {@link String locations} defined as properties
-		 * in Spring Boot {@literal application.properties} for Import & Export {@link Resource Resources}.
+		 * in Spring Boot {@literal application.properties} for Import and Export {@link Resource Resources}.
 		 *
 		 * @see #newExpressionParser()
 		 * @see #newEvaluationContextBuilder()
