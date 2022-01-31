@@ -55,7 +55,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
- * Integration Tests testing and asserting the interaction between an Apache Geode client & server
+ * Integration Tests testing and asserting the interaction between an Apache Geode client &amp; server
  * in the client/server topology, bootstrapped, configured and initialized with Spring Boot for Apache Geode.
  *
  * @author John Blum

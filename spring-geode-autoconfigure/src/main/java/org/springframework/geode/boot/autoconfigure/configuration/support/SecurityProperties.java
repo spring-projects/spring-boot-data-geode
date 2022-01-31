@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 /**
  * Spring Boot {@link ConfigurationProperties} used to configure Apache Geode Security.
  *
- * Security configuration covers Authentication & Authorization (AUTH) as well as Secure Transport using SSL
+ * Security configuration covers Authentication &amp; Authorization (AUTH) as well as Secure Transport using SSL
  * (i.e. securing data in motion).  Securing data at rest (e.g. disk based encryption) is not yet supported.
  *
  * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode (SDG)

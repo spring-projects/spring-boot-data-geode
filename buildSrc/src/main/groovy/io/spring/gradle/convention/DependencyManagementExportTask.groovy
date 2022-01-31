@@ -22,7 +22,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 /**
- * Gradle API Task to output all the configured project & subproject (runtime) dependencies.
+ * Gradle API Task to output all the configured project &amp; subproject (runtime) dependencies.
  *
  * @author Rob Winch
  * @author John Blum

@@ -28,7 +28,7 @@ import org.springframework.gradle.propdeps.PropDepsIdeaPlugin
 import org.springframework.gradle.propdeps.PropDepsPlugin
 
 /**
- * Abstract base Gradle {@link Plugin} for all Spring Java & Groovy Gradle Plugins used by SBDG.
+ * Abstract base Gradle {@link Plugin} for all Spring Java &amp; Groovy Gradle Plugins used by SBDG.
  *
  * This abstract base Gradle {@link Plugin} primarily serves to apply a common set of Gradle {@link Plugin Plugins),
  * such as the {@link JavaPlugin} and {@link GroovyPlugin} for the various SBDG project Spring modules as well as other

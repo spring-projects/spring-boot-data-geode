@@ -49,7 +49,7 @@ import org.springframework.util.StringUtils;
  * using Apache Geode as the caching provider.
  *
  * @author John Blum
- * @see javax.annotation.PostConstruct
+ * @see jakarta.annotation.PostConstruct
  * @see org.apache.geode.cache.GemFireCache
  * @see org.springframework.boot.SpringBootConfiguration
  * @see org.springframework.boot.autoconfigure.EnableAutoConfiguration

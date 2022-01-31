@@ -23,7 +23,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * Spring Boot {@link ConfigurationProperties} used to configure an Apache Geode peer {@link Cache} Security
- * (authentication & authorization).
+ * (authentication &amp; authorization).
  *
  * The configuration {@link Properties} are based on well-known, documented Spring Data for Apache Geode (SDG)
  * {@link Properties}.
