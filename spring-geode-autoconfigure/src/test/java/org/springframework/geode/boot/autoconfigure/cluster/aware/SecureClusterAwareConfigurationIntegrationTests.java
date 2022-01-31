@@ -17,7 +17,6 @@ package org.springframework.geode.boot.autoconfigure.cluster.aware;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.util.List;
@@ -64,7 +63,6 @@ import org.springframework.data.gemfire.tests.integration.ForkingClientServerInt
 import org.springframework.geode.config.annotation.ClusterAwareConfiguration;
 import org.springframework.geode.config.annotation.EnableClusterAware;
 import org.springframework.geode.security.TestSecurityManager;
-import org.springframework.geode.util.GeodeConstants;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.test.annotation.DirtiesContext;
@@ -119,8 +117,9 @@ public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClie
 
 	@BeforeClass
 	public static void startGeodeServer() throws IOException {
-		startGemFireServer(TestGeodeServerConfiguration.class,
-			"-Dspring.profiles.active=cluster-aware-with-secure-server,ssl");
+		//startGemFireServer(TestGeodeServerConfiguration.class,
+		//	"-Dspring.profiles.active=cluster-aware-with-secure-server,ssl",
+		//	"-Dapache-geode.logback.log.level=INFO");
 	}
 
 	@BeforeClass @AfterClass
@@ -215,25 +214,12 @@ public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClie
 	@Profile("cluster-aware-with-secure-server")
 	static class TestGeodeServerConfiguration {
 
-		private static final String GEODE_HOME_PROPERTY = GeodeConstants.GEMFIRE_PROPERTY_PREFIX + "home";
-
 		public static void main(String[] args) throws IOException {
-
-			resolveAndConfigureGeodeHome();
 
 			new SpringApplicationBuilder(TestGeodeServerConfiguration.class)
 				.web(WebApplicationType.NONE)
 				.build()
 				.run(args);
-		}
-
-		private static void resolveAndConfigureGeodeHome() throws IOException {
-
-			ClassPathResource resource = new ClassPathResource("/geode-home");
-
-			File resourceFile = resource.getFile();
-
-			System.setProperty(GEODE_HOME_PROPERTY, resourceFile.getAbsolutePath());
 		}
 
 		@Bean

@@ -17,7 +17,6 @@ package org.springframework.geode.boot.autoconfigure.cluster.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -43,7 +42,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.gemfire.GemfireTemplate;
 import org.springframework.data.gemfire.GemfireUtils;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
@@ -186,23 +184,10 @@ public class ClusterConfigurationWithAuthenticationIntegrationTests extends Fork
 
 		public static void main(String[] args) throws IOException {
 
-			resolveAndConfigureGeodeHome();
-
-			//System.err.printf("%s [%s]%n", GEODE_HOME_PROPERTY, System.getProperty(GEODE_HOME_PROPERTY));
-
 			new SpringApplicationBuilder(GeodeServerConfiguration.class)
 				.web(WebApplicationType.NONE)
 				.build()
 				.run(args);
-		}
-
-		private static void resolveAndConfigureGeodeHome() throws IOException {
-
-			ClassPathResource resource = new ClassPathResource("/geode-home");
-
-			File resourceFile = resource.getFile();
-
-			System.setProperty(GEODE_HOME_PROPERTY, resourceFile.getAbsolutePath());
 		}
 
 		@Bean
