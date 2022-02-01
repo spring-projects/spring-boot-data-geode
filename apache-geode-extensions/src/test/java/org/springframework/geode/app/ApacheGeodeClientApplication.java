@@ -32,6 +32,7 @@ import org.apache.geode.cache.client.ClientRegionShortcut;
  * @see java.util.Properties
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.cache.client.ClientCache
+ * @see org.apache.geode.cache.client.ClientCacheFactory
  * @since 1.3.0
  */
 @SuppressWarnings("unused")
@@ -78,6 +79,9 @@ public class ApacheGeodeClientApplication implements Runnable {
 
 		gemfireProperties.setProperty("name", APPLICATION_NAME);
 		gemfireProperties.setProperty("log-level", GEMFIRE_LOG_LEVEL);
+		// See: https://issues.apache.org/jira/browse/GEODE-7891
+		//gemfireProperties.setProperty("geode.disallow-internal-messages-without-credentials", Boolean.TRUE.toString());
+		//gemfireProperties.setProperty("tombstone-gc-threshold", "100");
 
 		return gemfireProperties;
 	}
