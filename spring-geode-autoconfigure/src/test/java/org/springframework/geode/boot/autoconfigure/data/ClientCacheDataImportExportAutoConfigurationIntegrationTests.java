@@ -68,9 +68,6 @@ import example.app.books.model.ISBN;
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Profile
  * @see org.springframework.data.gemfire.GemfireTemplate
- * @see org.springframework.data.gemfire.LocalRegionFactoryBean
- * @see org.springframework.data.gemfire.client.ClientRegionFactoryBean
- * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
  * @see org.springframework.geode.boot.autoconfigure.DataImportExportAutoConfiguration
  * @see org.springframework.test.annotation.DirtiesContext

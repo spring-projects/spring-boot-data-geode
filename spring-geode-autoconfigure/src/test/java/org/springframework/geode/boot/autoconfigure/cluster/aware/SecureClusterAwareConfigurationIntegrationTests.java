@@ -77,6 +77,7 @@ import example.app.books.model.ISBN;
  * (server(s)) are secure (i.e. when both Authentication and TLS/SSL are enabled).
  *
  * @author John Blum
+ * @see java.security.KeyStore
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
@@ -86,10 +87,11 @@ import example.app.books.model.ISBN;
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Profile
+ * @see org.springframework.core.env.Environment
+ * @see org.springframework.core.env.Profiles
  * @see org.springframework.data.gemfire.GemfireTemplate
- * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
- * @see org.springframework.data.gemfire.config.annotation.EnableManager
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
+ * @see org.springframework.geode.config.annotation.ClusterAwareConfiguration
  * @see org.springframework.geode.config.annotation.EnableClusterAware
  * @see org.springframework.geode.security.TestSecurityManager
  * @see org.springframework.test.annotation.DirtiesContext
@@ -117,9 +119,9 @@ public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClie
 
 	@BeforeClass
 	public static void startGeodeServer() throws IOException {
-		//startGemFireServer(TestGeodeServerConfiguration.class,
-		//	"-Dspring.profiles.active=cluster-aware-with-secure-server,ssl",
-		//	"-Dapache-geode.logback.log.level=INFO");
+		startGemFireServer(TestGeodeServerConfiguration.class,
+			"-Dspring.profiles.active=cluster-aware-with-secure-server,ssl",
+			"-Dapache-geode.logback.log.level=INFO");
 	}
 
 	@BeforeClass @AfterClass

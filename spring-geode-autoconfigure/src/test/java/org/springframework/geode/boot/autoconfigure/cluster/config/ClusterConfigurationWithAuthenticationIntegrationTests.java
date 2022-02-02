@@ -50,7 +50,6 @@ import org.springframework.data.gemfire.config.annotation.EnableEntityDefinedReg
 import org.springframework.data.gemfire.config.annotation.EnableManager;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
 import org.springframework.geode.security.TestSecurityManager;
-import org.springframework.geode.util.GeodeConstants;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -67,18 +66,22 @@ import example.app.books.model.ISBN;
  * server is configured with Security (Authentication).
  *
  * @author John Blum
- * @see java.io.File
  * @see java.net.URI
  * @see org.junit.Test
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.cache.Region
+ * @see org.springframework.boot.ApplicationRunner
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @see org.springframework.boot.test.context.SpringBootTest
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Profile
+ * @see org.springframework.data.gemfire.GemfireTemplate
  * @see org.springframework.data.gemfire.config.annotation.EnableClusterConfiguration
+ * @see org.springframework.data.gemfire.config.annotation.EnableEntityDefinedRegions
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
+ * @see org.springframework.geode.security.TestSecurityManager
+ * @see org.springframework.test.annotation.DirtiesContext
  * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
  * @since 1.0.0
@@ -179,8 +182,6 @@ public class ClusterConfigurationWithAuthenticationIntegrationTests extends Fork
 	@CacheServerApplication(name = "ClusterConfigurationWithAuthenticationIntegrationTests")
 	@EnableManager(start = true)
 	static class GeodeServerConfiguration {
-
-		private static final String GEODE_HOME_PROPERTY = GeodeConstants.GEMFIRE_PROPERTY_PREFIX + "home";
 
 		public static void main(String[] args) throws IOException {
 
