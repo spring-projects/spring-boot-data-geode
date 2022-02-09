@@ -33,6 +33,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.dsl.RepositoryHandler;
+import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.tasks.Sync;
 
@@ -65,6 +66,16 @@ import org.gradle.api.tasks.Sync;
  */
 public class AsciidoctorConventionPlugin implements Plugin<Project> {
 
+	private static final String SPRING_ASCIIDOCTOR_EXTENSIONS_BLOCK_SWITCH_VERSION = "0.4.2.RELEASE";
+	private static final String SPRING_DOC_RESOURCES_VERSION = "0.2.5";
+
+	private static final String SPRING_ASCIIDOCTOR_EXTENSION_BLOCK_SWITCH_DEPENDENCY =
+		String.format("io.spring.asciidoctor:spring-asciidoctor-extensions-block-switch:%s",
+			SPRING_ASCIIDOCTOR_EXTENSIONS_BLOCK_SWITCH_VERSION);
+
+	private static final String SPRING_DOC_RESOURCES_DEPENDENCY =
+		String.format("io.spring.docresources:spring-doc-resources:%s", SPRING_DOC_RESOURCES_VERSION);
+
 	@Override
 	public void apply(Project project) {
 
@@ -78,13 +89,14 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 			project.getTasks().withType(AbstractAsciidoctorTask.class, asciidoctorTask -> {
 
 				asciidoctorTask.dependsOn(unzipResources);
+				configureAttributes(project, asciidoctorTask);
 				configureExtensions(project, asciidoctorTask);
-				configureCommonAttributes(project, asciidoctorTask);
 				configureOptions(asciidoctorTask);
 				asciidoctorTask.baseDirFollowsSourceDir();
 				asciidoctorTask.useIntermediateWorkDir();
 
 				asciidoctorTask.resources(resourcesSpec -> {
+					resourcesSpec.setDuplicatesStrategy(DuplicatesStrategy.INCLUDE);
 					resourcesSpec.from(unzipResources);
 					resourcesSpec.from(asciidoctorTask.getSourceDir(), resourcesSrcDirSpec -> {
 						// https://github.com/asciidoctor/asciidoctor-gradle-plugin/issues/523
@@ -114,23 +126,36 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		});
 	}
 
+	/**
+	 * Requests the base Spring Documentation Resources from {@literal https://repo.spring.io/release} and uses it
+	 * to format and render documentation.
+	 *
+	 * @param project {@literal this} Gradle {@link Project}.
+	 * @return a {@link Sync} task used to copy the Spring Documentation Resources to a build directory
+	 * used to generate documentation.
+	 * @see <a href="https://repo.spring.io/ui/native/release/io/spring/docresources/spring-doc-resources">spring-doc-resources</a>
+	 * @see org.gradle.api.tasks.Sync
+	 * @see org.gradle.api.Project
+	 */
 	@SuppressWarnings("all")
 	private Sync createUnzipDocumentationResourcesTask(Project project) {
 
 		Configuration documentationResources = project.getConfigurations().maybeCreate("documentationResources");
 
 		documentationResources.getDependencies()
-			.add(project.getDependencies().create("io.spring.docresources:spring-doc-resources:0.2.5"));
+			.add(project.getDependencies().create(SPRING_DOC_RESOURCES_DEPENDENCY));
 
 		Sync unzipResources = project.getTasks().create("unzipDocumentationResources", Sync.class, sync -> {
 
 			sync.dependsOn(documentationResources);
 
-			sync.from((Callable<List<FileTree>>) () -> {
+			Callable<List<FileTree>> source = () -> {
 				List<FileTree> result = new ArrayList<>();
 				documentationResources.getAsFileTree().forEach(file -> result.add(project.zipTree(file)));
 				return result;
-			});
+			};
+
+			sync.from(source);
 
 			File destination = new File(project.getBuildDir(), "docs/resources");
 
@@ -141,7 +166,8 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		return unzipResources;
 	}
 
-	private void configureCommonAttributes(Project project, AbstractAsciidoctorTask asciidoctorTask) {
+	@SuppressWarnings("unused")
+	private void configureAttributes(Project project, AbstractAsciidoctorTask asciidoctorTask) {
 
 		Map<String, Object> attributes = new HashMap<>();
 
@@ -155,6 +181,16 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		attributes.put("today-year", LocalDate.now().getYear());
 
 		asciidoctorTask.attributes(attributes);
+	}
+
+	private void configureExtensions(Project project, AbstractAsciidoctorTask asciidoctorTask) {
+
+		Configuration extensionsConfiguration = project.getConfigurations().maybeCreate("asciidoctorExtensions");
+
+		extensionsConfiguration.defaultDependencies(dependencies -> dependencies.add(project.getDependencies()
+			.create(SPRING_ASCIIDOCTOR_EXTENSION_BLOCK_SWITCH_DEPENDENCY)));
+
+		asciidoctorTask.configurations(extensionsConfiguration);
 	}
 
 	private void configureHtmlOnlyAttributes(Project project, AbstractAsciidoctorTask asciidoctorTask) {
@@ -182,16 +218,6 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		});
 
 		asciidoctorTask.attributes(attributes);
-	}
-
-	private void configureExtensions(Project project, AbstractAsciidoctorTask asciidoctorTask) {
-
-		Configuration extensionsConfiguration = project.getConfigurations().maybeCreate("asciidoctorExtensions");
-
-		extensionsConfiguration.defaultDependencies(dependencies -> dependencies.add(project.getDependencies()
-			.create("io.spring.asciidoctor:spring-asciidoctor-extensions-block-switch:0.4.2.RELEASE")));
-
-		asciidoctorTask.configurations(extensionsConfiguration);
 	}
 
 	private void configureOptions(AbstractAsciidoctorTask asciidoctorTask) {
