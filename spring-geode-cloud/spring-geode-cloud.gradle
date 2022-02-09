@@ -8,9 +8,9 @@ repositories {
 
 dependencies {
 
-	implementation project(":spring-geode-autoconfigure")
+	api project(":spring-geode-autoconfigure")
 
-	implementation "org.springframework.cloud:spring-cloud-bindings:${springCloudBindingsVersion}"
+	api "org.springframework.cloud:spring-cloud-bindings:${springCloudBindingsVersion}"
 
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 

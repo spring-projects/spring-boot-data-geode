@@ -4,9 +4,9 @@ description = "Spring Boot Actuator for Apache Geode"
 
 dependencies {
 
-    implementation project(":spring-geode")
+    api project(":spring-geode")
 
-    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    api "org.springframework.boot:spring-boot-starter-actuator"
 
     provided "org.apache.geode:geode-logging:$apacheGeodeVersion"
     provided "org.apache.geode:geode-serialization:$apacheGeodeVersion"

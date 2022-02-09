@@ -4,8 +4,8 @@ description = "Spring Boot Actuator Auto-Configuration for Apache Geode"
 
 dependencies {
 
-    implementation project(":spring-geode-actuator")
-    implementation project(":spring-geode-autoconfigure")
+    api project(":spring-geode-actuator")
+    api project(":spring-geode-autoconfigure")
 
     compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 

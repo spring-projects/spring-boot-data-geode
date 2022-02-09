@@ -4,10 +4,10 @@ description = "Spring Boot Starter for Apache Geode"
 
 dependencies {
 
-	implementation "org.springframework.boot:spring-boot-starter"
+	api "org.springframework.boot:spring-boot-starter"
 
-	implementation project(':spring-geode')
-	implementation project(':spring-geode-autoconfigure')
+	api project(':spring-geode')
+	api project(':spring-geode-autoconfigure')
 
 	runtimeOnly 'org.springframework.shell:spring-shell'
 

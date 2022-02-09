@@ -4,10 +4,10 @@ description = "Apache Geode Extensions"
 
 dependencies {
 
-    implementation "org.apache.geode:geode-core:$apacheGeodeVersion"
-    implementation "org.apache.geode:geode-cq:$apacheGeodeVersion"
-    implementation "org.apache.geode:geode-lucene:$apacheGeodeVersion"
-    implementation "org.apache.geode:geode-wan:$apacheGeodeVersion"
+    api "org.apache.geode:geode-core:$apacheGeodeVersion"
+    api "org.apache.geode:geode-cq:$apacheGeodeVersion"
+    api "org.apache.geode:geode-lucene:$apacheGeodeVersion"
+    api "org.apache.geode:geode-wan:$apacheGeodeVersion"
 
     implementation "com.fasterxml.jackson.core:jackson-databind"
 

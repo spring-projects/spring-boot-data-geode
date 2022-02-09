@@ -8,12 +8,12 @@ description = "Spring Boot for Apache Geode"
 
 dependencies {
 
-	implementation project(':apache-geode-extensions')
+	api project(':apache-geode-extensions')
 
-	implementation "org.springframework:spring-context-support"
-	implementation "org.springframework:spring-jcl"
-	implementation "org.springframework.boot:spring-boot-starter"
-	implementation "org.springframework.data:spring-data-geode"
+	api "org.springframework:spring-context-support"
+	api "org.springframework:spring-jcl"
+	api "org.springframework.boot:spring-boot-starter"
+	api "org.springframework.data:spring-data-geode"
 
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
