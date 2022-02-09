@@ -87,12 +87,12 @@ public class PetClinicApplicationSmokeTests extends ForkingClientServerIntegrati
 			"-Dspring.profiles.active=petclinic-server-function-execution");
 	}
 
-	private Pet castle = Pet.newPet("Castle").as(Pet.Type.CAT);
-	private Pet cocoa = Pet.newPet("Cocoa").as(Pet.Type.CAT);
-	private Pet maha = Pet.newPet("Maha").as(Pet.Type.DOG);
-	private Pet mittens = Pet.newPet("Mittens").as(Pet.Type.CAT);
+	private final Pet castle = Pet.newPet("Castle").as(Pet.Type.CAT);
+	private final Pet cocoa = Pet.newPet("Cocoa").as(Pet.Type.CAT);
+	private final Pet maha = Pet.newPet("Maha").as(Pet.Type.DOG);
+	private final Pet mittens = Pet.newPet("Mittens").as(Pet.Type.CAT);
 
-	private Set<Pet> pets = CollectionUtils.asSet(castle, cocoa, maha, mittens);
+	private final Set<Pet> pets = CollectionUtils.asSet(castle, cocoa, maha, mittens);
 
 	@Autowired
 	private PetRepository petRepository;
@@ -123,7 +123,7 @@ public class PetClinicApplicationSmokeTests extends ForkingClientServerIntegrati
 		this.petRepository.findAll().forEach(pet -> {
 
 			assertThat(pet.getVaccinationDateTime())
-				.describedAs("Vaccinations [%s] for [%s] was not correct", pet.getVaccinationDateTime(), pet)
+				.describedAs("Vaccinations [%s] for Pet [%s] was not correct", pet.getVaccinationDateTime(), pet)
 				.isAfterOrEqualTo(beforeVaccinations);
 
 			assertThat(pet.getVaccinationDateTime()).isBeforeOrEqualTo(afterVaccinations);
@@ -164,6 +164,7 @@ public class PetClinicApplicationSmokeTests extends ForkingClientServerIntegrati
 
 	public static class PetServiceFunctions {
 
+		@SuppressWarnings("rawtypes")
 		@GemfireFunction(id = "AdministerPetVaccinations", optimizeForWrite = true)
 		public void administerPetVaccinations(FunctionContext functionContext) {
 
@@ -174,11 +175,11 @@ public class PetClinicApplicationSmokeTests extends ForkingClientServerIntegrati
 				.map(Region::values)
 				.ifPresent(pets -> pets.forEach(pet -> {
 
-					Pet resolvePet = (Pet) pet;
+					Pet resolvedPet = (Pet) pet;
 
-					resolvePet.vaccinate();
+					resolvedPet.vaccinate();
 
-					((RegionFunctionContext) functionContext).getDataSet().put(resolvePet.getName(), resolvePet);
+					((RegionFunctionContext) functionContext).getDataSet().put(resolvedPet.getName(), resolvedPet);
 				}));
 		}
 	}
