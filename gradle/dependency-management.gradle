@@ -1,6 +1,9 @@
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
+		// Declared and managed Eclipse Jetty (BOM) version based on Apache Geode 1.14.3's declared,
+		// required Jetty version (9.x)! This Jetty version is incompatible with Jakarta EE 9 and Spring Boot 3.
+		mavenBom "org.eclipse.jetty:jetty-bom:$eclipseJettyVersion"
 	}
 	dependencies {
 		dependency "antlr:antlr:$antlrVersion"
