@@ -17,15 +17,21 @@ package org.springframework.geode.context.logging;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
+import org.springframework.geode.core.util.SpringBootExtensions;
 import org.springframework.geode.logging.slf4j.logback.StringAppender;
 import org.springframework.geode.logging.slf4j.logback.support.LogbackSupport;
+import org.springframework.lang.NonNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +40,7 @@ import org.slf4j.LoggerFactory;
  * Abstract base class containing functionality common to all Spring {@literal log-level} property Integration Tests.
  *
  * @author John Blum
+ * @see org.junit.Test
  * @see org.slf4j.Logger
  * @see org.slf4j.LoggerFactory
  * @see org.springframework.boot.ApplicationRunner
@@ -47,6 +54,22 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("unused")
 public abstract class AbstractSpringConfiguredLogLevelPropertyIntegrationTests extends IntegrationTestsSupport {
 
+	@Autowired
+	@Qualifier("orgApacheGeodeLogger")
+	private Logger orgApacheGeodeLogger;
+
+	@BeforeClass
+	public static void cleanUpSpringBootLoggingSystem() {
+		SpringBootExtensions.cleanUpLoggingSystem();
+	}
+
+	@Before
+	public void assertOrgApacheGeodeLoggerConfiguration() {
+
+		LogbackSupport.requireAppender(LogbackSupport.toLogbackLogger(this.orgApacheGeodeLogger).orElse(null),
+			getStringAppender().getName(), StringAppender.class);
+	}
+
 	@Test
 	public void debugLogStatementsIsLogged() {
 		assertThat(getStringAppender().getLogOutput()).containsSequence("DEBUG TEST");
@@ -57,11 +80,11 @@ public abstract class AbstractSpringConfiguredLogLevelPropertyIntegrationTests e
 		assertThat(getStringAppender().getLogOutput()).doesNotContain("TRACE TEST");
 	}
 
-	protected Logger getOrgApacheGeodeLogger() {
-		return GeodeConfiguration.logger;
+	protected @NonNull Logger getOrgApacheGeodeLogger() {
+		return this.orgApacheGeodeLogger;
 	}
 
-	protected StringAppender getStringAppender() {
+	protected @NonNull StringAppender getStringAppender() {
 		return GeodeConfiguration.stringAppender;
 	}
 
@@ -69,26 +92,38 @@ public abstract class AbstractSpringConfiguredLogLevelPropertyIntegrationTests e
 	@EnableGemFireMockObjects
 	static class GeodeConfiguration {
 
-		// NOTE: The 'org.apache.geode' Logger declaration must be in this GeodeConfiguration class so Spring Boot
-		// LoggingSystem auto-configuration has a opportunity to configure logging and the logging provider first!
-		// This is needed by SBDG since the GeodeLoggingApplicationListener must also run!
-		private static final Logger logger = LoggerFactory.getLogger("org.apache.geode");
+		private static final String ORG_APACHE_GEODE_LOGGER_NAME = "org.apache.geode";
 
-		private static final StringAppender stringAppender = new StringAppender.Builder().buildAndStart();
-
-		static {
-			LogbackSupport.toLogbackLogger(logger).ifPresent(it -> {
-				LogbackSupport.removeConsoleAppender(it);
-				LogbackSupport.addAppender(it, stringAppender);
-			});
-		}
+		private static final StringAppender stringAppender = new StringAppender.Builder()
+			.useSynchronization()
+			.buildAndStart();
 
 		@Bean
-		ApplicationRunner runner() {
+		ApplicationRunner runner(Logger logger) {
+
 			return args -> {
 				logger.debug("DEBUG TEST");
 				logger.trace("TRACE TEST");
 			};
+		}
+
+		/**
+		 * The {@literal org.apache.geode} {@link Logger} declaration must be in this {@link GeodeConfiguration} class
+		 * so that Spring Boot LoggingSystem auto-configuration has an opportunity to configure logging
+		 * and the logging provider first, rather than placing this {@link Logger} declaration in the test class above.
+		 * This is needed by SBDG since the GeodeLoggingApplicationListener must also run!
+		 */
+		@Bean
+		Logger orgApacheGeodeLogger() {
+
+			Logger orgApacheGeodeLogger = LoggerFactory.getLogger(ORG_APACHE_GEODE_LOGGER_NAME);
+
+			LogbackSupport.toLogbackLogger(orgApacheGeodeLogger).ifPresent(it -> {
+				LogbackSupport.removeConsoleAppender(it);
+				assertThat(LogbackSupport.addAppender(it, stringAppender)).isTrue();
+			});
+
+			return orgApacheGeodeLogger;
 		}
 	}
 }

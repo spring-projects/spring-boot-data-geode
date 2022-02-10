@@ -114,6 +114,9 @@ public class ApacheGeodeLoggingApplication {
 
 		return args -> {
 
+			// LogbackSupport.requireLoggerContext().getLoggerList().forEach(logger ->
+			// 	System.err.printf("Logger name [%s] level [%s]%n", logger.getName(), logger.getLevel()));
+
 			this.logger.info("RUNNER RAN!");
 			this.logger.debug("DEBUG TEST");
 
