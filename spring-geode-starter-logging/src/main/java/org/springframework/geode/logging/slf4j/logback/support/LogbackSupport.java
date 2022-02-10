@@ -75,20 +75,37 @@ public abstract class LogbackSupport {
 	public static void resetLogback() {
 
 		try {
-
-			Method loggerFactoryReset = LoggerFactory.class.getDeclaredMethod("reset");
-
-			loggerFactoryReset.setAccessible(true);
-			loggerFactoryReset.invoke(null);
-
-			Method staticLoggerBinderReset = StaticLoggerBinder.class.getDeclaredMethod("reset");
-
-			staticLoggerBinderReset.setAccessible(true);
-			staticLoggerBinderReset.invoke(null);
+			resetLoggerContext();
+			resetLoggerFactory();
+			resetStaticLoggerBinder();
 		}
 		catch (Throwable cause) {
 			throw new IllegalStateException("Failed to reset Logback", cause);
 		}
+	}
+
+	private static void resetLoggerContext() {
+
+		resolveLoggerContext().ifPresent(loggerContext -> {
+			loggerContext.reset();
+			loggerContext.getStatusManager().clear();
+		});
+	}
+
+	private static void resetLoggerFactory() throws Exception {
+
+		Method loggerFactoryReset = LoggerFactory.class.getDeclaredMethod("reset");
+
+		loggerFactoryReset.setAccessible(true);
+		loggerFactoryReset.invoke(null);
+	}
+
+	private static void resetStaticLoggerBinder() throws Exception {
+
+		Method staticLoggerBinderReset = StaticLoggerBinder.class.getDeclaredMethod("reset");
+
+		staticLoggerBinderReset.setAccessible(true);
+		staticLoggerBinderReset.invoke(null);
 	}
 
 	/**
@@ -149,7 +166,7 @@ public abstract class LogbackSupport {
 			.filter(ch.qos.logback.classic.Logger.class::isInstance)
 			.map(ch.qos.logback.classic.Logger.class::cast)
 			.orElseThrow(() -> new IllegalStateException(String.format(ILLEGAL_LOGGER_TYPE_EXCEPTION_MESSAGE,
-				ROOT_LOGGER_NAME, nullSafeTypeName(resolveRootLogger()))));
+				ROOT_LOGGER_NAME, nullSafeTypeName(resolveRootLogger().orElse(null)))));
 	}
 
 	/**
