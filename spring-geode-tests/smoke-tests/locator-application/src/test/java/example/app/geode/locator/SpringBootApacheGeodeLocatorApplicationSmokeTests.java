@@ -18,7 +18,6 @@ package example.app.geode.locator;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -70,18 +69,14 @@ public class SpringBootApacheGeodeLocatorApplicationSmokeTests extends ForkingCl
 
 		int locatorPort = findAvailablePort();
 
-		long waitTimeout = TimeUnit.SECONDS.toMillis(10);
-
 		startGemFireServer(ApacheGeodeLocator.class, String.valueOf(locatorPort));
-		waitForServerToStart(ApacheGeodeLocator.HOSTNAME_FOR_CLIENTS, locatorPort, waitTimeout);
 
 		System.setProperty(SPRING_DATA_GEMFIRE_LOCATORS_PROPERTY,
 			String.format("%1$s[%2$d]", ApacheGeodeLocator.HOSTNAME_FOR_CLIENTS, locatorPort));
 	}
 
 	@AfterClass
-	public static void stopGeodeLocator() {
-		stopGemFireServer();
+	public static void afterGeodeLocatorStop() {
 		System.clearProperty(SPRING_DATA_GEMFIRE_LOCATORS_PROPERTY);
 	}
 

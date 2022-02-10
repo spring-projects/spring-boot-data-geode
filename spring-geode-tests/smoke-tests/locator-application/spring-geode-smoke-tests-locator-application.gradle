@@ -7,7 +7,7 @@ dependencies {
 	implementation "org.assertj:assertj-core"
 
 	implementation project(':spring-geode-starter')
-	//	implementation project(':spring-geode-starter-logging')
+	//implementation project(':spring-geode-starter-logging')
 
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
