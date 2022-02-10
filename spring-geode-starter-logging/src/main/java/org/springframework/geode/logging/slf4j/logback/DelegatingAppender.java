@@ -62,7 +62,12 @@ public class DelegatingAppender<T> extends AppenderBase<T> {
 
 	@SuppressWarnings("unchecked")
 	protected Appender<T> getAppender() {
-		return Optional.ofNullable(this.appender).orElse(DEFAULT_APPENDER);
+
+		Appender<T> configuredAppender = this.appender;
+
+		return configuredAppender != null
+			? configuredAppender
+			: DEFAULT_APPENDER;
 	}
 
 	@Override
