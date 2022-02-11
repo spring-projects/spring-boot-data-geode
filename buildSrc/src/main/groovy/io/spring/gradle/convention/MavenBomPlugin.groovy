@@ -45,15 +45,20 @@ class MavenBomPlugin implements Plugin<Project> {
 			description: 'Configures the Maven POM as a Maven BOM (Bill of Materials)')
 
 		project.tasks.artifactoryPublish.dependsOn project.mavenBom
+		project.tasks.publishToMavenLocal.dependsOn project.mavenBom
 		project.tasks.publishToOssrh.dependsOn project.mavenBom
 
 		project.rootProject.allprojects.each { p ->
 			p.plugins.withType(SpringMavenPlugin) {
 				if (!project.name.equals(p.name)) {
+					//println("Maven BOM Project [${p.name}]")
 					project.mavenBom.projects.add(p)
 				}
 			}
 		}
+
+		// TODO: Why?
+		Utils.configureDeployArtifactsTask(project)
 
 		// TODO: Shouldn't this be { archives project.mavenBom } according to:
 		//  https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#getArtifacts--
@@ -61,8 +66,5 @@ class MavenBomPlugin implements Plugin<Project> {
 		project.artifacts {
 			archives project.mavenBom.bomFile
 		}
-
-		// TODO: Why?
-		Utils.configureDeployArtifactsTask(project)
 	}
 }

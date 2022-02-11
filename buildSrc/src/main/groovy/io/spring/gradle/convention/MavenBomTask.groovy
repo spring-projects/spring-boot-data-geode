@@ -35,8 +35,8 @@ class MavenBomTask extends DefaultTask {
 	void configureBom() {
 
 		bomFile.parentFile.mkdirs()
-		bomFile.write("Maven BOM (Bill of Materials)" +
-			" See https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Importing_Dependencies")
+		bomFile.write("Maven BOM (Bill of Materials)"
+			+ " See https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Importing_Dependencies")
 
 		// TODO: Shouldn't this be { archives project.mavenBom } according to:
 		//  https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#getArtifacts--
@@ -45,25 +45,27 @@ class MavenBomTask extends DefaultTask {
 			archives(bomFile)
 		}
 
+		def pomDependencyManagementNode = {
+			delegate.dependencyManagement {
+				delegate.dependencies {
+					projects.sort { dep -> "$dep.group:$dep.name" }.each { p ->
+						delegate.dependency {
+							delegate.groupId p.group
+							delegate.artifactId p.name
+							delegate.version p.version
+						}
+					}
+				}
+			}
+		}
+
 		project.publishing {
 			publications {
 				mavenJava(MavenPublication) {
 					pom {
 						packaging = "pom"
 						withXml {
-							asNode().children().last() + {
-								delegate.dependencyManagement {
-									delegate.dependencies {
-										projects.sort { dep -> "$dep.group:$dep.name" }.each { p ->
-											delegate.dependency {
-												delegate.groupId(p.group)
-												delegate.artifactId(p.name)
-												delegate.version(p.version)
-											}
-										}
-									}
-								}
-							}
+							asNode().children().last() + pomDependencyManagementNode
 						}
 					}
 				}
