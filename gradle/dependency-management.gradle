@@ -4,6 +4,7 @@ dependencyManagement {
 		// Declared and managed Eclipse Jetty (BOM) version based on Apache Geode 1.14.3's declared,
 		// required Jetty version (9.x)! This Jetty version is incompatible with Jakarta EE 9 and Spring Boot 3.
 		mavenBom "org.eclipse.jetty:jetty-bom:$eclipseJettyVersion"
+		mavenBom "org.testcontainers:testcontainers-bom:$testcontainersVersion"
 	}
 	dependencies {
 		dependency "antlr:antlr:$antlrVersion"
@@ -20,6 +21,5 @@ dependencyManagement {
 		dependency "org.springframework.data:spring-data-geode-test:$springDataGeodeTestVersion"
 		dependency "org.springframework.session:spring-session-data-geode:$springSessionDataGeodeVersion"
 		dependency "org.springframework.shell:spring-shell:$springShellVersion"
-		dependency "org.testcontainers:testcontainers:$testcontainersVersion"
 	}
 }
