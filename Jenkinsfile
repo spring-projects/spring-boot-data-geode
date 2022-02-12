@@ -29,7 +29,7 @@ pipeline {
 			steps {
 				script {
 					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
-						docker.image('adoptopenjdk/openjdk8:latest').inside('-u root -v /usr/bin/docker:/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp') {
+						docker.image('eclipse-temurin:17.0.1_12-jdk').inside('-u root -v /usr/bin/docker:/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp') {
 
 							sh "echo 'Setup build environment...'"
 							sh "ci/setup.sh"
@@ -67,7 +67,7 @@ pipeline {
 			steps {
 				script {
 					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
-						docker.image('adoptopenjdk/openjdk8:latest').inside("--name ${env.HOSTNAME}Two -u root -v /tmp:/tmp") {
+						docker.image('eclipse-temurin:17.0.1_12-jdk').inside("--name ${env.HOSTNAME}Two -u root -v /tmp:/tmp") {
 							withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
 								try {
 									sh "ci/deployDocs.sh"
@@ -90,7 +90,7 @@ pipeline {
 			steps {
 				script {
 					docker.withRegistry('', 'hub.docker.com-springbuildmaster') {
-						docker.image('adoptopenjdk/openjdk8:latest').inside("--name ${env.HOSTNAME}One -u root -v /tmp:/tmp") {
+						docker.image('eclipse-temurin:17.0.1_12-jdk').inside("--name ${env.HOSTNAME}One -u root -v /tmp:/tmp") {
 							withCredentials([file(credentialsId: 'spring-signing-secring.gpg', variable: 'SIGNING_KEYRING_FILE')]) {
 								withCredentials([string(credentialsId: 'spring-gpg-passphrase', variable: 'SIGNING_PASSWORD')]) {
 									withCredentials([usernamePassword(credentialsId: 'oss-token', passwordVariable: 'OSSRH_PASSWORD', usernameVariable: 'OSSRH_USERNAME')]) {
