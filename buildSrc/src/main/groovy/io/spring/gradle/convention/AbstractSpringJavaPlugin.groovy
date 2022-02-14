@@ -20,7 +20,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.PluginManager
-import org.gradle.plugins.ide.eclipse.EclipseWtpPlugin
+import org.gradle.plugins.ide.eclipse.EclipsePlugin
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.springframework.gradle.CopyPropertiesPlugin
 import org.springframework.gradle.propdeps.PropDepsEclipsePlugin
@@ -78,7 +78,7 @@ abstract class AbstractSpringJavaPlugin implements Plugin<Project> {
 	@SuppressWarnings("all")
 	private void applyIdePlugins(PluginManager pluginManager) {
 
-		pluginManager.apply(EclipseWtpPlugin)
+		pluginManager.apply(EclipsePlugin)
 		pluginManager.apply(IdeaPlugin)
 	}
 
@@ -90,17 +90,18 @@ abstract class AbstractSpringJavaPlugin implements Plugin<Project> {
 	@SuppressWarnings("all")
 	private void applySpringPlugins(PluginManager pluginManager) {
 
+		pluginManager.apply(ManagementConfigurationPlugin)
+		pluginManager.apply(RepositoryConventionPlugin)
 		pluginManager.apply(PropDepsPlugin)
 		pluginManager.apply(PropDepsEclipsePlugin)
 		pluginManager.apply(PropDepsIdeaPlugin)
-		pluginManager.apply("io.spring.convention.springdependencymangement")
-		pluginManager.apply("io.spring.convention.dependency-set")
-		pluginManager.apply("io.spring.convention.repository")
-		pluginManager.apply("io.spring.convention.javadoc-options")
-		pluginManager.apply("io.spring.convention.tests-configuration")
-		pluginManager.apply("io.spring.convention.integration-test")
-		pluginManager.apply("io.spring.convention.jacoco");
-		pluginManager.apply("io.spring.convention.checkstyle")
+		pluginManager.apply(SpringDependencyManagementConventionPlugin)
+		pluginManager.apply(DependencySetPlugin)
+		pluginManager.apply(TestsConfigurationPlugin)
+		pluginManager.apply(IntegrationTestPlugin)
+		pluginManager.apply(JacocoPlugin);
+		pluginManager.apply(JavadocOptionsPlugin)
+		pluginManager.apply(CheckstylePlugin)
 		pluginManager.apply(CopyPropertiesPlugin)
 	}
 

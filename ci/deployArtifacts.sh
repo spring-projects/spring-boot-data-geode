@@ -10,7 +10,7 @@ echo "Deploying artifacts on host [$HOSTNAME]"
 chown -R 1001:1001 .
 
 GRADLE_OPTS="-Duser.name=jenkins -Djava.io.tmpdir=/tmp -Dgradle.user.home=/tmp/geode/boot/artifacts-gradle-cache" \
-  ./gradlew deployArtifacts finalizeDeployArtifacts --no-build-cache --no-configuration-cache --no-daemon --stacktrace \
+  ./gradlew publishArtifacts releasePublishedArtifacts --no-build-cache --no-configuration-cache --no-daemon --stacktrace \
     -PartifactoryUsername=$ARTIFACTORY_USERNAME \
     -PartifactoryPassword=$ARTIFACTORY_PASSWORD \
     -PossrhUsername=$OSSRH_USERNAME \

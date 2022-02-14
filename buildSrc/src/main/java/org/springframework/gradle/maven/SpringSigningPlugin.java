@@ -63,20 +63,20 @@ public class SpringSigningPlugin implements Plugin<Project> {
 
 	private void sign(Project project) {
 
-		SigningExtension signing = resolveAndConfigureSigningExtension(project);
+		SigningExtension signing = findAndConfigureSigningExtension(project);
 
-		project.getPlugins().withType(PublishAllJavaComponentsPlugin.class).all(publishingPlugin -> {
+		project.getPlugins().withType(PublishAllJavaComponentsPlugin.class).all(publishJavaComponentsPlugin -> {
 			PublishingExtension publishing = project.getExtensions().findByType(PublishingExtension.class);
 			Publication maven = publishing.getPublications().getByName("mavenJava");
 			signing.sign(maven);
 		});
 	}
 
-	private SigningExtension resolveAndConfigureSigningExtension(Project project) {
+	private SigningExtension findAndConfigureSigningExtension(Project project) {
 
-		SigningExtension signing = project.getExtensions().findByType(SigningExtension.class);
+		SigningExtension signingExtension = project.getExtensions().findByType(SigningExtension.class);
 
-		return configurePgpKeys(project, configureSigningRequired(project, signing));
+		return configurePgpKeys(project, configureSigningRequired(project, signingExtension));
 	}
 
 	private SigningExtension configureSigningRequired(Project project, SigningExtension signing) {

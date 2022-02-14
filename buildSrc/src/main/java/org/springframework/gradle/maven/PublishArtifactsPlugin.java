@@ -21,8 +21,7 @@ import org.gradle.api.Project;
 import io.spring.gradle.convention.Utils;
 
 /**
- * Publishes Gradle {@link Project} artifacts to either Artifactory (Spring Repositories) or Maven Central
- * through OSSRH.
+ * Publishes Gradle {@link Project} artifacts to either Artifactory or Maven Central.
  *
  * @author Rob Winch
  * @author John Blum
@@ -36,17 +35,17 @@ public class PublishArtifactsPlugin implements Plugin<Project> {
 	@Override
 	public void apply(Project project) {
 
-		project.getTasks().register("publishArtifacts", publishArtifacts -> {
+		project.getTasks().register("publishArtifacts", publishArtifactsTask -> {
 
-			publishArtifacts.setGroup("Publishing");
-			publishArtifacts.setDescription("Publish project artifacts to either Artifactory (Spring Repositories) "
-				+ "or Maven Central  based on the project version");
+			publishArtifactsTask.setGroup("Publishing");
+			publishArtifactsTask.setDescription("Publish project artifacts to either Artifactory or Maven Central"
+				+ " based on the project version.");
 
 			if (Utils.isRelease(project)) {
-				publishArtifacts.dependsOn("publishToOssrh");
+				publishArtifactsTask.dependsOn("publishToOssrh");
 			}
 			else {
-				publishArtifacts.dependsOn("artifactoryPublish");
+				publishArtifactsTask.dependsOn("artifactoryPublish");
 			}
 		});
 	}

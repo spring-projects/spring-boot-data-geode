@@ -21,11 +21,13 @@ import org.gradle.api.plugins.PluginManager
 import org.springframework.gradle.maven.SpringMavenPlugin
 
 /**
- * Defines a Gradle {@link Project} as a proper Spring module.
+ * Defines a Gradle {@link Project} as a Spring module.
  *
  * @author Rob Winch
  * @author John Blum
  * @see io.spring.gradle.convention.AbstractSpringJavaPlugin
+ * @see org.springframework.gradle.maven.SpringMavenPlugin
+ * @see org.gradle.api.plugins.JavaLibraryPlugin
  * @see org.gradle.api.Project
  */
 class SpringModulePlugin extends AbstractSpringJavaPlugin {
@@ -37,8 +39,5 @@ class SpringModulePlugin extends AbstractSpringJavaPlugin {
 
 		pluginManager.apply(JavaLibraryPlugin.class)
 		pluginManager.apply(SpringMavenPlugin.class);
-
-		// TODO: Why?
-		Utils.configureDeployArtifactsTask(project)
 	}
 }

@@ -36,6 +36,10 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
  * @author John Blum
  * @see org.gradle.api.Plugin
  * @see org.gradle.api.Project
+ * @see org.gradle.api.publish.PublishingExtension
+ * @see org.gradle.api.publish.maven.MavenPom
+ * @see org.gradle.api.publish.maven.MavenPublication
+ * @see org.gradle.api.publish.maven.plugins.MavenPublishPlugin
  */
 public class MavenPublishingConventionsPlugin implements Plugin<Project> {
 
@@ -44,12 +48,12 @@ public class MavenPublishingConventionsPlugin implements Plugin<Project> {
 
 		project.getPlugins().withType(MavenPublishPlugin.class).all(mavenPublishPlugin -> {
 
+			customizeJavaPlugin(project);
+
 			PublishingExtension publishingExtension = project.getExtensions().getByType(PublishingExtension.class);
 
 			publishingExtension.getPublications().withType(MavenPublication.class).all(mavenPublication ->
 				customizeMavenPom(project, mavenPublication.getPom()));
-
-			customizeJavaPlugin(project);
 		});
 	}
 

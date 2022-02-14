@@ -25,7 +25,7 @@ import io.github.gradlenexus.publishplugin.NexusPublishExtension;
 import io.github.gradlenexus.publishplugin.NexusPublishPlugin;
 
 /**
- * Enables a Gradle {@link Project} to publish to Maven Central through OSSRH using Sonatype's Nexus Repository Manager.
+ * Enables a Gradle {@link Project} to publish to Maven Central using Sonatype's Nexus Repository Manager.
  *
  * @author Rob Winch
  * @author John Blum
@@ -33,27 +33,29 @@ import io.github.gradlenexus.publishplugin.NexusPublishPlugin;
  */
 public class SpringNexusPublishPlugin implements Plugin<Project> {
 
+	private static final String SONATYPE_NEXUS_URL = "https://s01.oss.sonatype.org/service/local/";
+	private static final String SONATYPE_SNAPSHOT_REPOSITORY_URL = "https://s01.oss.sonatype.org/content/repositories/snapshots/";
+
 	@Override
 	public void apply(Project project) {
 
 		project.getPlugins().apply(NexusPublishPlugin.class);
 
-		NexusPublishExtension nexusPublishing = project.getExtensions().findByType(NexusPublishExtension.class);
+		NexusPublishExtension nexusPublishExtension = project.getExtensions().findByType(NexusPublishExtension.class);
 
 		// TODO: Why did we not simply use/configure the 'sonatype' repository and instead add a repo ('ossrh')?
 		//  See here: https://github.com/gradle-nexus/publish-plugin#publishing-to-maven-central-via-sonatype-ossrh
-		// NOTE: Careful, the keyword 'ossrh' is refered to in names in the Spring Build Conventions Gradle Plugins,
+		// NOTE: Careful, the keyword 'ossrh' is referred to in names in the Spring Build Conventions Gradle Plugins,
 		// such as, but not limited to:
 		// * 'ossrhUsername'
 		// * 'publishToOssrh'
 		// * 'closeAndReleaseOssrhStagingRepository'
-		nexusPublishing.getRepositories().create("ossrh", nexusRepository -> {
-			nexusRepository.getNexusUrl().set(URI.create("https://s01.oss.sonatype.org/service/local/"));
-			nexusRepository.getSnapshotRepositoryUrl()
-				.set(URI.create("https://s01.oss.sonatype.org/content/repositories/snapshots/"));
+		nexusPublishExtension.getRepositories().create("ossrh", nexusRepository -> {
+			nexusRepository.getNexusUrl().set(URI.create(SONATYPE_NEXUS_URL));
+			nexusRepository.getSnapshotRepositoryUrl().set(URI.create(SONATYPE_SNAPSHOT_REPOSITORY_URL));
 		});
 
-		nexusPublishing.getClientTimeout().set(Duration.ofMinutes(3));
-		nexusPublishing.getConnectTimeout().set(Duration.ofMinutes(3));
+		nexusPublishExtension.getClientTimeout().set(Duration.ofMinutes(3));
+		nexusPublishExtension.getConnectTimeout().set(Duration.ofMinutes(3));
 	}
 }

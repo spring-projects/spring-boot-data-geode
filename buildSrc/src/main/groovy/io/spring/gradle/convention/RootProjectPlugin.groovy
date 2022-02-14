@@ -18,6 +18,7 @@ package io.spring.gradle.convention
 import io.spring.nohttp.gradle.NoHttpPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.PluginManager
 import org.springframework.gradle.maven.SpringNexusPublishPlugin
@@ -47,19 +48,23 @@ class RootProjectPlugin implements Plugin<Project> {
             }
         }
 
-		// Add Maven Central Repository (resolution) to the list of repositories used by this build
-		// to resolve dependencies.
+		// Adds the Maven Central Repository to the list of repositories used by this build to resolve dependencies.
 		project.repositories.mavenCentral()
 
 		configureSonarQube(project)
 
         project.tasks.create("dependencyManagementExport", DependencyManagementExportTask)
 
-        def finalizeDeployArtifacts = project.task("finalizeDeployArtifacts")
+        project.task("releasePublishedArtifacts", { Task releasePublishedArtifacts ->
+			if (isReleasingToMavenCentral(project)) {
+				releasePublishedArtifacts.dependsOn project.tasks.closeAndReleaseOssrhStagingRepository
+			}
+		})
+	}
 
-		if (Utils.isRelease(project) && project.hasProperty("ossrhUsername")) {
-			finalizeDeployArtifacts.dependsOn project.tasks.closeAndReleaseOssrhStagingRepository
-		}
+	@SuppressWarnings("all")
+	private boolean isReleasingToMavenCentral(Project project) {
+		Utils.isRelease(project) && project.hasProperty("ossrhUsername")
 	}
 
 	@SuppressWarnings("all")

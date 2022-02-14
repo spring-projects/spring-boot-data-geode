@@ -19,8 +19,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
- * Applies the JFrag Artifactory Gradle {@link Plugin} to publish Gradle {@link Project} artifacts to
- * the Spring Artifactory Repositories.
+ * Applies and configures the JFrag Artifactory Gradle {@link Plugin} to publish Gradle {@link Project} artifacts
+ * to the Spring {@literal snapshot}, {@literal milestone} and {@literal release} repositories in Artifactory.
  *
  * @author Rob Winch
  * @author John Blum
@@ -39,7 +39,7 @@ class ArtifactoryPlugin implements Plugin<Project> {
 			publish {
 				repository {
 					repoKey = resolveRepositoryKey(project)
-					if (project.hasProperty('artifactoryUsername')) {
+					if (isAuthRequired(project)) {
 						username = artifactoryUsername
 						password = artifactoryPassword
 					}
@@ -50,6 +50,10 @@ class ArtifactoryPlugin implements Plugin<Project> {
 				}
 			}
 		}
+	}
+
+	private boolean isAuthRequired(Project project) {
+		project.hasProperty('artifactoryUsername')
 	}
 
 	private String resolveRepositoryKey(Project project) {

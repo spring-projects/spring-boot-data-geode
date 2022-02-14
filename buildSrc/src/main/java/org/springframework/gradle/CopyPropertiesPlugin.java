@@ -20,7 +20,7 @@ import org.gradle.api.Project;
 
 /**
  * Copies {@literal root} {@link Project} properties to the target ({@literal this}) {@link Project},
- * the {@link Project} for which {@literal this} Gadle {@link Plugin} is applied.
+ * the {@link Project} for which {@literal this} Gradle {@link Plugin} is applied.
  *
  * @author Rob Winch
  * @author John Blum

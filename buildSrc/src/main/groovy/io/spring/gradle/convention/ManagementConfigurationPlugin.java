@@ -31,7 +31,7 @@ import org.springframework.gradle.propdeps.PropDepsPlugin;
 
 /**
  * Creates a {@literal Management} Gradle {@link Configuration} that is appropriate for adding a platform
- * so that it is not exposed externally.
+ * that it is not exposed externally.
  *
  * If the {@link JavaPlugin} is applied, then the {@literal compileClasspath}, {@literal runtimeClasspath},
  * {@literal testCompileClasspath}, and {@literal testRuntimeClasspath} will extend from it.
@@ -73,9 +73,9 @@ public class ManagementConfigurationPlugin implements Plugin<Project> {
 
 			plugins.withType(MavenPublishPlugin.class, mavenPublishPlugin -> {
 
-				PublishingExtension publishing = project.getExtensions().getByType(PublishingExtension.class);
+				PublishingExtension publishingExtension = project.getExtensions().getByType(PublishingExtension.class);
 
-				publishing.getPublications().withType(MavenPublication.class, mavenPublication ->
+				publishingExtension.getPublications().withType(MavenPublication.class, mavenPublication ->
 					mavenPublication.versionMapping(versions ->
 						versions.allVariants(VariantVersionMappingStrategy::fromResolutionResult)));
 			});

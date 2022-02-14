@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,21 +15,26 @@
  */
 package io.spring.gradle.convention
 
-import java.util.regex.Pattern
-
-import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.util.regex.Pattern
+
 /**
+ * Generates Javadoc API documentation for {@literal this} {@link Project}.
+ *
  * @author Rob Winch
  * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
+ * @see org.gradle.api.plugins.JavaPluginExtension
+ * @see org.gradle.api.tasks.javadoc.Javadoc
  */
 class JavadocApiPlugin implements Plugin<Project> {
 
@@ -45,7 +50,7 @@ class JavadocApiPlugin implements Plugin<Project> {
 		Javadoc api = project.tasks.create("api", Javadoc)
 
 		api.setGroup("Documentation")
-		api.setDescription("Generates aggregated Javadoc API documentation.")
+		api.setDescription("Generates Javadoc API documentation.")
 		api.setDestinationDir(new File(project.getBuildDir(), "api"))
 		api.setMaxMemory("1024m")
 
@@ -80,26 +85,22 @@ class JavadocApiPlugin implements Plugin<Project> {
 		excludes.each {this.excludes.add(Pattern.compile(it)) }
 	}
 
-	private void addProject(Javadoc api, Project project) {
+	private void addProject(Javadoc javadoc, Project project) {
 
 		if (isProjectIncluded(project)) {
 
 			logInfo("Add sources for project {}", project)
 
-			project.getPlugins().withType(SpringModulePlugin.class).all { plugin ->
+			project.getPlugins().withType(SpringModulePlugin).all { plugin ->
 
-				JavaPluginConvention java = project.getConvention().getPlugin(JavaPluginConvention.class)
+				JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension)
+
 				SourceSet mainSourceSet = java.getSourceSets().getByName("main")
 
-				api.setSource(api.getSource().plus(mainSourceSet.getAllJava()))
+				javadoc.setSource(javadoc.getSource() + mainSourceSet.getAllJava())
 
-				project.getTasks().withType(Javadoc.class).all(new Action<Javadoc>() {
-
-					@Override
-					void execute(Javadoc projectJavadoc) {
-						api.setClasspath(api.getClasspath().plus(projectJavadoc.getClasspath()))
-					}
-				})
+				project.getTasks().withType(Javadoc).all((Javadoc javadocTask) ->
+					javadoc.setClasspath(javadoc.getClasspath() + javadocTask.getClasspath()))
 			}
 		}
 	}

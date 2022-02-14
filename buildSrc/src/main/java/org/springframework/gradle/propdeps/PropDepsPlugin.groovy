@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2021 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springframework.gradle.propdeps
-
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -25,12 +23,13 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 
 /**
- * Plugin to allow 'optional' and 'provided' dependency configurations
+ * Gradle {@link Plugin} to allow {@literal optional} and {@literal provided} dependency configurations.
  *
- * As stated in the maven documentation, provided scope "is only available on the compilation and test classpath,
- * and is not transitive".
+ * As stated in the Maven documentation, {@literal provided} scope {@literal "is only available on the compilation
+ * and test classpath, and is not transitive"}.
  *
- * This plugin creates two new configurations, and each one:
+ * This {@link Plugin} creates two new configurations, and each one:
+ *
  * <ul>
  * <li>is a parent of the compile configuration</li>
  * <li>is not visible, not transitive</li>
@@ -40,27 +39,35 @@ import org.gradle.api.tasks.javadoc.Javadoc
  * @author Phillip Webb
  * @author Brian Clozel
  * @author Rob Winch
+ * @author John Blum
  *
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
+ * @see org.springframework.gradle.propdeps.PropDepsEclipsePlugin
+ * @see org.springframework.gradle.propdeps.PropDepsIdeaPlugin
  * @see <a href="https://www.gradle.org/docs/current/userguide/java_plugin.html#N121CF">Maven documentation</a>
  * @see <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope">Gradle configurations</a>
- * @see PropDepsEclipsePlugin
- * @see PropDepsIdeaPlugin
  */
 class PropDepsPlugin implements Plugin<Project> {
 
-	public void apply(Project project) {
+	void apply(Project project) {
+
 		project.plugins.apply(JavaPlugin)
 
-		Configuration provided = addConfiguration(project, "provided")
 		Configuration optional = addConfiguration(project, "optional")
+		Configuration provided = addConfiguration(project, "provided")
 
 		Javadoc javadoc = project.tasks.getByName(JavaPlugin.JAVADOC_TASK_NAME)
-		javadoc.classpath = javadoc.classpath.plus(provided).plus(optional)
+
+		javadoc.classpath = javadoc.classpath + provided + optional
 	}
 
 	private Configuration addConfiguration(Project project, String name) {
+
 		Configuration configuration = project.configurations.create(name)
+
 		configuration.extendsFrom(project.configurations.implementation)
+
 		project.plugins.withType(JavaLibraryPlugin, {
 			configuration.extendsFrom(project.configurations.api)
 		})
@@ -72,5 +79,4 @@ class PropDepsPlugin implements Plugin<Project> {
 
 		return configuration
 	}
-
 }

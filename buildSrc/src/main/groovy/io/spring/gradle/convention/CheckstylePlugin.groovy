@@ -30,6 +30,7 @@ import org.gradle.api.plugins.JavaPlugin
 class CheckstylePlugin implements Plugin<Project> {
 
 	static final String CHECKSTYLE_PATHNAME = 'etc/checkstyle'
+	static final String CHECKSTYLE_VERSION = '8.21'
 
 	@Override
 	void apply(Project project) {
@@ -46,7 +47,7 @@ class CheckstylePlugin implements Plugin<Project> {
 
 				project.checkstyle {
 					configDirectory = checkstyleDirectory
-					toolVersion = '8.21'
+					toolVersion = CHECKSTYLE_VERSION
 				}
 			}
 		}

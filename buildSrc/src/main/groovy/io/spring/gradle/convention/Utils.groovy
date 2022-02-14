@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.spring.gradle.convention;
+package io.spring.gradle.convention
 
 import org.gradle.api.Project
-import org.sonarqube.gradle.SonarQubePlugin;
+import org.sonarqube.gradle.SonarQubePlugin
 
 /**
  * Utility class encapsulating common operations on Gradle {@link Project Projects}.
@@ -31,13 +31,13 @@ class Utils {
 
 	static String getProjectName(Project project) {
 
-		String projectName = project.getRootProject().getName();
+		String projectName = project.getRootProject().getName()
 
-		if(projectName.endsWith("-build")) {
-			projectName = projectName.substring(0, projectName.length() - "-build".length());
+		if (projectName.endsWith("-build")) {
+			projectName = projectName.substring(0, projectName.length() - "-build".length())
 		}
 
-		return projectName;
+		return projectName
 	}
 
 	static boolean isMilestone(Project project) {
@@ -54,23 +54,11 @@ class Utils {
 	}
 
 	private static String projectVersion(Project project) {
-		return String.valueOf(project.getVersion());
-	}
-
-	static void configureDeployArtifactsTask(Project project) {
-
-		def deployArtifacts = project.task("deployArtifacts")
-
-		deployArtifacts.group = 'Deployments'
-		deployArtifacts.description = "Deploys project artifacts to either Artifactory or Maven Central"
-
-		if (!isRelease(project)) {
-			deployArtifacts.dependsOn project.tasks.artifactoryPublish
-		}
+		return String.valueOf(project.version)
 	}
 
 	static String findPropertyAsString(Project project, String propertyName) {
-		return (String) project.findProperty(propertyName);
+		return (String) project.findProperty(propertyName)
 	}
 
 	static void skipProjectWithSonarQubePlugin(Project project) {

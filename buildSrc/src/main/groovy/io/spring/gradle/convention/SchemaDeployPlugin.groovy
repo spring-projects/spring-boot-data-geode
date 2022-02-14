@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 the original author or authors.
+ * Copyright 2022-present the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,10 +19,16 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
+ * Deploys the Spring XML schema (XSD) files to the spring.io server.
+ *
  * @author Rob Winch
  * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
  */
 class SchemaDeployPlugin implements Plugin<Project> {
+
+	static final String DEFAULT_SPRING_DOCS_HOST = 'docs-ip.spring.io';
 
 	@Override
 	void apply(Project project) {
@@ -42,7 +48,7 @@ class SchemaDeployPlugin implements Plugin<Project> {
 
 				host = project.hasProperty('deployDocsHost')
 					? project.findProperty('deployDocsHost')
-					: 'docs.af.pivotal.io'
+					: DEFAULT_SPRING_DOCS_HOST
 
 				user = project.findProperty('deployDocsSshUsername')
 
@@ -50,11 +56,11 @@ class SchemaDeployPlugin implements Plugin<Project> {
 					? project.file(project.findProperty('deployDocsSshKeyPath'))
 					: project.hasProperty('deployDocsSshKey')
 					? project.findProperty('deployDocsSshKey')
-					: identity
+					: null
 
 				passphrase = project.hasProperty('deployDocsSshPassphrase')
 					? project.findProperty('deployDocsSshPassphrase')
-					: passphrase
+					: null
 			}
 		}
 
@@ -71,9 +77,9 @@ class SchemaDeployPlugin implements Plugin<Project> {
 
 						execute "mkdir -p $tempPath"
 
-						project.tasks.schemaZip.outputs.each { o ->
-							println "Putting $o.files"
-							put from: o.files, into: tempPath
+						project.tasks.schemaZip.outputs.each { out ->
+							println "Putting $out.files"
+							put from: out.files, into: tempPath
 						}
 
 						execute "unzip $tempPath*.zip -d $tempPath"

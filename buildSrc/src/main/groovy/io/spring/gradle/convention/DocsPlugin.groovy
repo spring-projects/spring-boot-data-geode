@@ -18,6 +18,7 @@ package io.spring.gradle.convention
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.PluginManager
 import org.gradle.api.tasks.bundling.Zip
 
@@ -32,20 +33,20 @@ class DocsPlugin implements Plugin<Project> {
 	@Override
 	void apply(Project project) {
 
-		PluginManager pluginManager = project.getPluginManager();
+		PluginManager pluginManager = project.getPluginManager()
 
-		pluginManager.apply("org.asciidoctor.jvm.convert");
-		pluginManager.apply("org.asciidoctor.jvm.pdf");
-		pluginManager.apply(AsciidoctorConventionPlugin);
-		pluginManager.apply(DeployDocsPlugin);
-		pluginManager.apply(JavadocApiPlugin);
+		pluginManager.apply("org.asciidoctor.jvm.convert")
+		pluginManager.apply("org.asciidoctor.jvm.pdf")
+		pluginManager.apply(AsciidoctorConventionPlugin)
+		pluginManager.apply(DeployDocsPlugin)
+		pluginManager.apply(JavadocApiPlugin)
 
 		Task docsZip = project.tasks.create('docsZip', Zip) {
 
 			archiveBaseName = project.rootProject.name
 			archiveClassifier = 'docs'
 			group = 'Distribution'
-			description = "Builds -${archiveClassifier} archive containing all Docs for deployment at docs.spring.io."
+			description = "Builds -${archiveClassifier} archive containing all documenation for deployment to docs-ip.spring.io."
 			dependsOn 'api', 'asciidoctor'
 
 			from(project.tasks.api.outputs) {
@@ -53,7 +54,7 @@ class DocsPlugin implements Plugin<Project> {
 			}
 
 			into 'docs'
-			duplicatesStrategy 'exclude'
+			duplicatesStrategy DuplicatesStrategy.EXCLUDE
 		}
 
 		Task docs = project.tasks.create("docs") {
@@ -63,5 +64,6 @@ class DocsPlugin implements Plugin<Project> {
 		}
 
 		project.tasks.assemble.dependsOn docs
+
 	}
 }

@@ -22,12 +22,13 @@ import org.gradle.api.plugins.PluginManager;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 
 /**
- * Declares and enables Maven functionality for a Spring Gradle {@link Project Projects}.
+ * Enables publishing to Maven for a Spring module Gradle {@link Project}.
  *
  * @author Rob Winch
  * @author John Blum
  * @see org.gradle.api.Plugin
  * @see org.gradle.api.Project
+ * @see org.gradle.api.publish.maven.plugins.MavenPublishPlugin
  */
 public class SpringMavenPlugin implements Plugin<Project> {
 
@@ -40,7 +41,6 @@ public class SpringMavenPlugin implements Plugin<Project> {
 		pluginManager.apply(MavenPublishingConventionsPlugin.class);
 		pluginManager.apply(PublishAllJavaComponentsPlugin.class);
 		pluginManager.apply(PublishArtifactsPlugin.class);
-		pluginManager.apply(PublishLocalPlugin.class);
 		pluginManager.apply(SpringSigningPlugin.class);
 		pluginManager.apply(ArtifactoryPlugin.class);
 	}

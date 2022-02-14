@@ -57,9 +57,6 @@ class MavenBomPlugin implements Plugin<Project> {
 			}
 		}
 
-		// TODO: Why?
-		Utils.configureDeployArtifactsTask(project)
-
 		// TODO: Shouldn't this be { archives project.mavenBom } according to:
 		//  https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#getArtifacts--
 		// TODO: Is this even necessary since this block is defined in MavenBomTask?

@@ -17,12 +17,17 @@ package io.spring.gradle.convention
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.bundling.Zip
 
 /**
+ * Zips all Spring XML schemas (XSD) files.
+ *
  * @author Rob Winch
  * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
  */
 class SchemaZipPlugin implements Plugin<Project> {
 
@@ -33,8 +38,8 @@ class SchemaZipPlugin implements Plugin<Project> {
 
 		schemaZip.archiveBaseName = project.rootProject.name
 		schemaZip.archiveClassifier = 'schema'
-		schemaZip.description = "Builds -${schemaZip.archiveClassifier} archive containing all " +
-			"XSDs for deployment at static.springframework.org/schema."
+		schemaZip.description = "Builds -${schemaZip.archiveClassifier} archive containing all XSDs" +
+			" for deployment to static.springframework.org/schema."
 		schemaZip.group = 'Distribution'
 
 		project.rootProject.subprojects.each { module ->
@@ -49,9 +54,9 @@ class SchemaZipPlugin implements Plugin<Project> {
 
 				for (def key : schemas.keySet()) {
 
-					def shortName = key.replaceAll(/http.*schema.(.*).spring-.*/, '$1')
+					def zipEntryName = key.replaceAll(/http.*schema.(.*).spring-.*/, '$1')
 
-					assert shortName != key
+					assert zipEntryName != key
 
 					File xsdFile = module.sourceSets.main.resources.find {
 						it.path.endsWith(schemas.get(key))
@@ -59,8 +64,8 @@ class SchemaZipPlugin implements Plugin<Project> {
 
 					assert xsdFile != null
 
-					schemaZip.into (shortName) {
-						duplicatesStrategy 'exclude'
+					schemaZip.into(zipEntryName) {
+						duplicatesStrategy DuplicatesStrategy.EXCLUDE
 						from xsdFile.path
 					}
 				}

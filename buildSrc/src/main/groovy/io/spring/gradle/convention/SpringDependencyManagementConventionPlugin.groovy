@@ -41,7 +41,6 @@ class SpringDependencyManagementConventionPlugin implements Plugin<Project> {
 
         PluginManager pluginManager = project.getPluginManager()
 
-        pluginManager.apply(ManagementConfigurationPlugin)
         pluginManager.apply(DependencyManagementPlugin)
 
         project.dependencyManagement {
@@ -53,6 +52,7 @@ class SpringDependencyManagementConventionPlugin implements Plugin<Project> {
         applyDependencyManagementResources(project)
     }
 
+    @SuppressWarnings("all")
     private void applyDependencyManagementResources(Project project) {
 
         File rootDir = project.rootDir

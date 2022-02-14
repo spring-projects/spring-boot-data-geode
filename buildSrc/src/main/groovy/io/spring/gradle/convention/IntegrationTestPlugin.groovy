@@ -126,6 +126,7 @@ class IntegrationTestPlugin implements Plugin<Project> {
 		}
 	}
 
+	@SuppressWarnings("all")
 	private boolean isIntegrationTestSourceAvailable(Project project) {
 		return project.file('src/integration-test/').exists()
 	}
