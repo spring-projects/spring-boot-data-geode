@@ -57,6 +57,7 @@ class DependencySetPlugin implements Plugin<Project> {
 		project.ext.slf4jDependencies = [
 			"org.slf4j:slf4j-api",
 			"org.slf4j:jcl-over-slf4j",
+			"org.slf4j:jul-over-slf4j",
 			"org.slf4j:log4j-over-slf4j",
 			"ch.qos.logback:logback-classic"
 		]
