@@ -17,51 +17,29 @@ package io.spring.gradle.convention
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlatformPlugin
+import org.gradle.api.plugins.PluginManager
+import org.springframework.gradle.CopyPropertiesPlugin
 import org.springframework.gradle.maven.SpringMavenPlugin
 
 /**
+ * Gradle {@link Plugin} used to generate a Maven BOM for the Gradle {@link Project}.
+ *
  * @author Rob Winch
  * @author John Blum
+ * @see org.gradle.api.Plugin
+ * @see org.gradle.api.Project
  */
 class MavenBomPlugin implements Plugin<Project> {
-
-	static String MAVEN_BOM_TASK_NAME = "mavenBom"
 
 	@Override
 	void apply(Project project) {
 
-		// Declares a new configuration that will be used to associate with Project artifacts
-		// (namely, the Maven BOM file).
-		project.configurations {
-			archives
-		}
+		PluginManager pluginManager = project.getPluginManager();
 
-		project.group = project.rootProject.group
-		project.plugins.apply(SpringMavenPlugin)
+		pluginManager.apply(JavaPlatformPlugin)
+		pluginManager.apply(SpringMavenPlugin)
+		pluginManager.apply(CopyPropertiesPlugin)
 
-		Utils.skipProjectWithSonarQubePlugin(project)
-
-		project.task(MAVEN_BOM_TASK_NAME, type: MavenBomTask, group: 'Generate',
-			description: 'Configures the Maven POM as a Maven BOM (Bill of Materials)')
-
-		project.tasks.artifactoryPublish.dependsOn project.mavenBom
-		project.tasks.publishToMavenLocal.dependsOn project.mavenBom
-		project.tasks.publishToOssrh.dependsOn project.mavenBom
-
-		project.rootProject.allprojects.each { p ->
-			p.plugins.withType(SpringMavenPlugin) {
-				if (!project.name.equals(p.name)) {
-					//println("Maven BOM Project [${p.name}]")
-					project.mavenBom.projects.add(p)
-				}
-			}
-		}
-
-		// TODO: Shouldn't this be { archives project.mavenBom } according to:
-		//  https://docs.gradle.org/current/javadoc/org/gradle/api/Project.html#getArtifacts--
-		// TODO: Is this even necessary since this block is defined in MavenBomTask?
-		project.artifacts {
-			archives project.mavenBom.bomFile
-		}
 	}
 }

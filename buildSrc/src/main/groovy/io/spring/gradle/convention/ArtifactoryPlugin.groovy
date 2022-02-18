@@ -46,7 +46,6 @@ class ArtifactoryPlugin implements Plugin<Project> {
 				}
 				defaults {
 					publications('mavenJava')
-					publishConfigs('archives')
 				}
 			}
 		}
