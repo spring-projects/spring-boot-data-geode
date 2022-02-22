@@ -41,6 +41,9 @@ class DocsPlugin implements Plugin<Project> {
 		pluginManager.apply(DeployDocsPlugin)
 		pluginManager.apply(JavadocApiPlugin)
 
+		def projectName = Utils.getProjectName(project);
+		def pdfFilename = projectName + '-reference.pdf';
+
 		Task docsZip = project.tasks.create('docsZip', Zip) {
 
 			archiveBaseName = project.rootProject.name
@@ -51,6 +54,15 @@ class DocsPlugin implements Plugin<Project> {
 
 			from(project.tasks.api.outputs) {
 				into 'api'
+			}
+			from(project.tasks.asciidoctor.outputs) {
+				into 'reference/html5'
+				include '**'
+			}
+			from(project.tasks.asciidoctorPdf.outputs) {
+				into 'reference/pdf'
+				include '**'
+				rename "index.pdf", pdfFilename
 			}
 
 			into 'docs'
