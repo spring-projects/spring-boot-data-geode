@@ -9,7 +9,7 @@ echo "Deploying docs on host [$HOSTNAME]"
 # Syntax: `chown -R userId:groupId .`
 chown -R 1001:1001 .
 
-GRADLE_OPTS="--add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED -Duser.name=jenkins -Djava.io.tmpdir=/tmp -Dgradle.user.home=/tmp/geode/boot/docs-gradle-cache" \
+GRADLE_OPTS="--add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED -Duser.name=jenkins -Djava.io.tmpdir=/tmp" \
   ./gradlew deployDocs --no-daemon --stacktrace \
     -PdeployDocsSshKeyPath=$DEPLOY_SSH_KEY \
     -PdeployDocsSshUsername=$SPRING_DOCS_USERNAME
