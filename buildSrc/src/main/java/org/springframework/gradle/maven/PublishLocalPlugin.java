@@ -15,34 +15,39 @@
  */
 package org.springframework.gradle.maven;
 
-import io.spring.gradle.convention.ArtifactoryPlugin;
+import java.io.File;
+
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.PluginManager;
+import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 
 /**
- * Enables publishing to Maven for a Spring module Gradle {@link Project}.
+ * Gradle Plugin used to publish all {@link Project} artifacts locally
+ * under {@literal rootProject/buildDir/publications/repos}.
+ *
+ * This is useful for inspecting the generated {@link Project} artifacts to ensure they are correct
+ * before publishing the {@link Project} artifacts to Artifactory or Maven Central.
  *
  * @author Rob Winch
  * @author John Blum
  * @see org.gradle.api.Plugin
  * @see org.gradle.api.Project
- * @see org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+ * @since 2.0.0
  */
-public class SpringMavenPlugin implements Plugin<Project> {
+public class PublishLocalPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
 
-		PluginManager pluginManager = project.getPluginManager();
+		project.getPlugins().withType(MavenPublishPlugin.class).all(mavenPublish -> {
 
-		pluginManager.apply(MavenPublishPlugin.class);
-		pluginManager.apply(MavenPublishingConventionsPlugin.class);
-		pluginManager.apply(PublishAllJavaComponentsPlugin.class);
-		pluginManager.apply(PublishArtifactsPlugin.class);
-		pluginManager.apply(PublishLocalPlugin.class);
-		pluginManager.apply(SpringSigningPlugin.class);
-		pluginManager.apply(ArtifactoryPlugin.class);
+			PublishingExtension publishing = project.getExtensions().getByType(PublishingExtension.class);
+
+			publishing.getRepositories().maven(maven -> {
+				maven.setName("local");
+				maven.setUrl(new File(project.getRootProject().getBuildDir(), "publications/repos"));
+			});
+		});
 	}
 }
