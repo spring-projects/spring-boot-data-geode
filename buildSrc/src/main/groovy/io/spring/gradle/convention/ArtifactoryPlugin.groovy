@@ -34,11 +34,12 @@ class ArtifactoryPlugin implements Plugin<Project> {
 
 		project.plugins.apply('com.jfrog.artifactory')
 
+		def artifactoryRepoKey = resolveRepositoryKey(project)
 		project.artifactory {
 			contextUrl = 'https://repo.spring.io'
 			publish {
 				repository {
-					repoKey = resolveRepositoryKey(project)
+					repoKey = artifactoryRepoKey
 					if (isAuthRequired(project)) {
 						username = artifactoryUsername
 						password = artifactoryPassword
