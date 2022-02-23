@@ -11,12 +11,8 @@ dependencies {
     provided "org.apache.geode:geode-logging:$apacheGeodeVersion"
     provided "org.apache.geode:geode-serialization:$apacheGeodeVersion"
 
-    testImplementation "junit:junit"
-    testImplementation "org.assertj:assertj-core"
-    testImplementation "org.mockito:mockito-core"
-    testImplementation "org.projectlombok:lombok"
+    // See additional testImplementation dependencies declared in the testDependencies project extension
+    // defined in the DependencySetPlugin.
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.springframework.data:spring-data-geode-test"
-    testImplementation "edu.umd.cs.mtc:multithreadedtc"
 
 }

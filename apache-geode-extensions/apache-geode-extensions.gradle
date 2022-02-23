@@ -11,13 +11,9 @@ dependencies {
 
     implementation "com.fasterxml.jackson.core:jackson-databind"
 
+    // See additional testImplementation dependencies declared in the testDependencies project extension
+    // defined in the DependencySetPlugin.
     testImplementation "org.apache.geode:geode-membership:$apacheGeodeVersion"
     testImplementation "org.apache.geode:geode-serialization:$apacheGeodeVersion"
-
-    testImplementation "junit:junit"
-    testImplementation "org.assertj:assertj-core"
-    testImplementation "org.mockito:mockito-core"
-    testImplementation "org.projectlombok:lombok"
-    testImplementation "edu.umd.cs.mtc:multithreadedtc"
 
 }

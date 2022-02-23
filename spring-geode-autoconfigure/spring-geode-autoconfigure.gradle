@@ -20,15 +20,11 @@ dependencies {
 	optional "org.springframework.boot:spring-boot-configuration-processor"
 	optional "org.springframework.session:spring-session-data-geode"
 
+	// See additional testImplementation dependencies declared in the testDependencies project extension
+	// defined in the DependencySetPlugin.
 	testImplementation "jakarta.servlet:jakarta.servlet-api"
-	testImplementation "junit:junit"
-	testImplementation "org.assertj:assertj-core"
-	testImplementation "org.mockito:mockito-core"
-	testImplementation "org.projectlombok:lombok"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 	testImplementation "org.springframework.boot:spring-boot-starter-web"
-	testImplementation "org.springframework.data:spring-data-geode-test"
-	testImplementation "edu.umd.cs.mtc:multithreadedtc"
 
 	testCompileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 

@@ -22,6 +22,6 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 
-	testImplementation('org.springframework.data:spring-data-geode-test')
+	testImplementation project(':spring-geode-starter-test')
 
 }

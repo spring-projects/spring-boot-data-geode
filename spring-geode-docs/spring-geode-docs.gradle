@@ -22,10 +22,8 @@ dependencies {
 	implementation "org.assertj:assertj-core"
 	implementation "org.projectlombok:lombok"
 
-	testImplementation "junit:junit"
-	testImplementation "org.mockito:mockito-core"
-	testImplementation "edu.umd.cs.mtc:multithreadedtc"
-
+	// See additional testImplementation dependencies declared in the testDependencies project extension
+	// defined in the DependencySetPlugin.
 	testImplementation project(":spring-geode-starter-test")
 
 }

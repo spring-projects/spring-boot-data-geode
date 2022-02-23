@@ -21,17 +21,13 @@ dependencies {
 
 	runtimeOnly "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 
-	testImplementation "junit:junit"
-	testImplementation "org.assertj:assertj-core"
-	testImplementation "org.mockito:mockito-core"
-	testImplementation "org.projectlombok:lombok"
-	testImplementation "org.testcontainers:testcontainers"
-	testImplementation "edu.umd.cs.mtc:multithreadedtc"
-
+	// See additional testImplementation dependencies declared in the testDependencies project extension
+	// defined in the DependencySetPlugin.
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude group: "org.skyscreamer", module: "jsonassert"
 	}
 
+	testImplementation "org.testcontainers:testcontainers"
 	testImplementation "jakarta.persistence:jakarta.persistence-api"
 	testImplementation "org.springframework.boot:spring-boot-starter-data-jpa"
 	testImplementation "org.springframework.boot:spring-boot-starter-data-cassandra"
