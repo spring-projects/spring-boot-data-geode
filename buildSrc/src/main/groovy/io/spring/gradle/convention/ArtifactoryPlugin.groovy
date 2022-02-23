@@ -34,6 +34,7 @@ class ArtifactoryPlugin implements Plugin<Project> {
 
 		project.plugins.apply('com.jfrog.artifactory')
 
+		// (Externally-defined) Methods cannot be invoked inside the Groovy/Gradle DSL.
 		def artifactoryRepoKey = resolveRepositoryKey(project)
 		def authRequired = isAuthRequired(project)
 
@@ -54,10 +55,12 @@ class ArtifactoryPlugin implements Plugin<Project> {
 		}
 	}
 
+	@SuppressWarnings("all")
 	private boolean isAuthRequired(Project project) {
-		project.hasProperty('artifactoryUsername')
+		project?.hasProperty('artifactoryUsername')
 	}
 
+	@SuppressWarnings("all")
 	private String resolveRepositoryKey(Project project) {
 
 		boolean isSnapshot = Utils.isSnapshot(project);
