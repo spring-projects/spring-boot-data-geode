@@ -38,33 +38,11 @@ class RootProjectPlugin implements Plugin<Project> {
 	void apply(Project project) {
 
 		applyPlugins(project)
-
-        project.allprojects {
-            configurations.all {
-                resolutionStrategy {
-                    cacheChangingModulesFor 0, 'seconds'
-                    cacheDynamicVersionsFor 0, 'seconds'
-                }
-            }
-        }
-
-		// Adds the Maven Central Repository to the list of repositories used by this build to resolve dependencies.
-		project.repositories.mavenCentral()
-
+		configureMavenCentralRepository(project)
+		configureResolutionStrategy(project)
 		configureSonarQube(project)
-
-        project.tasks.create("dependencyManagementExport", DependencyManagementExportTask)
-
-        project.task("releasePublishedArtifacts", { Task releasePublishedArtifacts ->
-			if (isReleasingToMavenCentral(project)) {
-				releasePublishedArtifacts.dependsOn project.tasks.closeAndReleaseOssrhStagingRepository
-			}
-		})
-	}
-
-	@SuppressWarnings("all")
-	private boolean isReleasingToMavenCentral(Project project) {
-		Utils.isRelease(project) && project.hasProperty("ossrhUsername")
+        createDependencyManagementExportTask(project)
+		createReleasePublishedArtifactsTask(project)
 	}
 
 	@SuppressWarnings("all")
@@ -77,6 +55,30 @@ class RootProjectPlugin implements Plugin<Project> {
 		pluginManager.apply(SchemaPlugin)
 		pluginManager.apply(SpringNexusPublishPlugin)
 		pluginManager.apply("org.sonarqube")
+	}
+
+	/**
+	 * Adds the Maven Central Repository to the list of repositories used by this Gradle {@link Project} build
+	 * to resolve dependencies.
+	 *
+	 * @param project Gradle {@link Project}.
+	 * @see org.gradle.api.Project
+	 */
+	@SuppressWarnings("all")
+	private void configureMavenCentralRepository(Project project) {
+		project.repositories.mavenCentral()
+	}
+
+	private void configureResolutionStrategy(Project project) {
+
+		project.allprojects {
+			configurations.all {
+				resolutionStrategy {
+					cacheChangingModulesFor 0, 'seconds'
+					cacheDynamicVersionsFor 0, 'seconds'
+				}
+			}
+		}
 	}
 
 	private void configureSonarQube(Project project) {
@@ -95,5 +97,24 @@ class RootProjectPlugin implements Plugin<Project> {
 				property "sonar.links.scm_dev", "https://github.com/spring-projects/${projectName}.git"
 			}
 		}
+	}
+
+	@SuppressWarnings("all")
+	private void createDependencyManagementExportTask(Project project) {
+		project.tasks.create("dependencyManagementExport", DependencyManagementExportTask)
+	}
+
+	private void createReleasePublishedArtifactsTask(Project project) {
+
+		project.task("releasePublishedArtifacts", { Task releasePublishedArtifacts ->
+			if (isReleasingToMavenCentral(project)) {
+				releasePublishedArtifacts.dependsOn project.tasks.closeAndReleaseOssrhStagingRepository
+			}
+		})
+	}
+
+	@SuppressWarnings("all")
+	private boolean isReleasingToMavenCentral(Project project) {
+		Utils.isRelease(project) && project.hasProperty("ossrhUsername")
 	}
 }
