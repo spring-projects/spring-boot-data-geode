@@ -1,0 +1,6 @@
+#!/bin/gfsh
+# Gfsh shell script to configure and bootstrap an Apache Geode cluster.
+
+start locator --name=LocatorOne --log-level=config --classpath=@project-dir@/apache-geode-extensions/build/libs/apache-geode-extensions-@project-version@.jar --J=-Dgemfire.security-manager=org.springframework.geode.security.TestSecurityManager --J=-Dgemfire.http-service-port=8080
+
+start server --name=ServerOne --log-level=config --user=admin --password=admin --classpath=@project-dir@/apache-geode-extensions/build/libs/apache-geode-extensions-@project-version@.jar
