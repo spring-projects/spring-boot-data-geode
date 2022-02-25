@@ -7,7 +7,7 @@
 :geode-name: Apache Geode
 :gemfire-name: VMware Tanzu GemFire
 
-image:https://api.travis-ci.org/spring-projects/spring-boot-data-geode.svg?branch=master["Build Status", link="https://travis-ci.org/spring-projects/spring-boot-data-geode"]
+image:https://jenkins.spring.io/buildStatus/icon?job=spring-boot-data-geode%2F1.5.x&subject=Build[link=https://jenkins.spring.io/view/SpringData/job/spring-boot-data-geode/]
 
 [[about]]
 == Spring Boot for {geode-name}
