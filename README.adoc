@@ -214,7 +214,7 @@ stored in {geode-name}. This is not unlike JPA's `@javax.persistence.Table` and 
 annotations.
 
 NOTE: An {geode-name} `Region` is equivalent to a database table and the cache is equivalent to a database schema.
-A database schema is a namespace for a collection of tables whereas an {geode-name} cache is a namespace or group of
+A database schema is a namespace for a collection of tables whereas an {geode-name} cache is a namespace for a group of
 `Regions` that hold the data. Each data store has its own data structure to organize and manage data. An RDBMS uses
 a tabular data structure. Graph databases use a graph. Well, {geode-name} uses a `Region`, which is simply a key/value
 data structure, or a map. In fact, an {geode-name} `Region` implements `java.util.Map` (indirectly) and is essentially
@@ -300,9 +300,9 @@ _auto-configure_ an {geode-name} `ClientCache` instance by default when SBDG is 
 With the SDG `@Region` mapping annotation, we declared that instances of `User` will be stored in the "Users" `Region`.
 However, we have not yet created a "Users" `Region`. This is where the `@EnableEntityDefinedRegions` annotation comes
 in handy. Like JPA/Hibernate's ability to create database tables from our `@Entity` declared classes, SDG's
-`@EnableEntityDefineRegions` annotation scans the classpath for application entity classes (e.g. `User`)
-and detects any classes annotated with `@Region` in order to create the "named" `Region` required by the application
-to persist data. The `basePackageClasses` attribute is a type-safe way to pinpoint the scan.
+`@EnableEntityDefinedRegions` annotation scans the classpath for application entity classes (e.g. `User`)
+and detects any classes annotated with `@Region` in order to create the named `Region` required by the application
+to persist data. The `basePackageClasses` attribute is a type-safe way to limit the scope of the scan.
 
 While useful and convenient during development, `@EnableEntityDefinedRegions` was not made into an _auto-configuration_
 feature by default since there are many ways to define and configure a `Region`, which varies from data type to data
