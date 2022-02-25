@@ -43,7 +43,7 @@ To do so, include the appropriate Spring Session dependency on your Spring Boot 
   <dependency>
     <groupId>org.springframework.session</groupId>
     <artifactId>spring-session-data-geode</artifactId>
-    <version>{spring-session-data-gemfire-version}</version>
+    <version>{spring-session-data-geode-version}</version>
   </dependency>
 ----
 ====

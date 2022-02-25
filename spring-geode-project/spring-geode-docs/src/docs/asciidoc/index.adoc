@@ -59,8 +59,8 @@ John Blum
 :spring-session-docs: https://docs.spring.io/spring-session/docs/current/reference/html5
 :spring-session-javadoc: https://docs.spring.io/spring-session/docs/current/api
 :spring-session-website: https://spring.io/projects/spring-session
-:spring-session-data-gemfire-docs: https://docs.spring.io/autorepo/docs/spring-session-data-geode-build/{spring-session-data-gemfire-version}/reference/html5
-:spring-session-data-gemfire-javadoc: https://docs.spring.io/autorepo/docs/spring-session-data-geode-build/{spring-session-data-gemfire-version}/api
+:spring-session-data-gemfire-docs: https://docs.spring.io/autorepo/docs/spring-session-data-geode-build/{spring-session-data-geode-version}/reference/html5
+:spring-session-data-gemfire-javadoc: https://docs.spring.io/autorepo/docs/spring-session-data-geode-build/{spring-session-data-geode-version}/api
 :spring-session-data-gemfire-website: https://spring.io/projects/spring-session-data-geode
 :spring-test-data-gemfire-website: https://github.com/spring-projects/spring-test-data-geode#spring-test-framework-for-apache-geode--vmware-tanzu-gemfire
 :wikipedia-docs: https://en.wikipedia.org/wiki
