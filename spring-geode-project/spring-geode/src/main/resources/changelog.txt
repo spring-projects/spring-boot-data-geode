@@ -22,6 +22,18 @@ Aligns SBDG with Spring Boot 3.0.0-M1.
 * Upgrades to VMware Tanzu GemFire for VMs (Pivotal Cloud Cache) 1.14.3.
 
 
+Changes in version 1.7.0-M2 (2022-02-28)
+----------------------------------------
+Aligns SBDG with Spring Boot 2.7.0-M2.
+
+* Upgrades to Apache Geode 1.14.3.
+* Upgrades to VMware Tanzu GemFire for VMs (Pivotal Cloud Cache) 1.14.3.
+* Upgrades to Spring Framework 5.3.16.
+* Upgrades to Spring Boot 2.7.0-M2.
+* Upgrades to Spring Data BOM 2021.2.0-M3.
+* Upgrades to Spring Data for Apache Geode 2.7.0-M3.
+
+
 Changes in version 1.6.4 (2022-02-28)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.6.4.
