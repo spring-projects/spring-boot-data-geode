@@ -4,7 +4,7 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
-Changes in version 2.0.0-M1 (2022-02-16)
+Changes in version 2.0.0-M1 (2022-02-28)
 ----------------------------------------
 Aligns SBDG with Spring Boot 3.0.0-M1.
 
@@ -17,9 +17,15 @@ Aligns SBDG with Spring Boot 3.0.0-M1.
 * Rebases SBDG on Spring Session BOM 2022.0.0-M1.
 * Rebases SBDG on Spring Session for Apache Geode 3.0.0-M1.
 * Rebases SBDG on Spring Test for Apache Geode 1.0.0-M2.
+* Imports Spring Build Convention Gradle Plugins locally.
+* Downgrades to Eclipse Jetty 9.4.39.v20210325.
+* Removes the use of Apache Geode's WAR file containing the Management REST API.
+* Restructures SBDG to mirror Spring Boot's project structure; Resolves gh-60.
 * Upgrades to Apache Geode 1.14.3.
 * Upgrades to Gradle 7.4.
+* Upgrades to FreeFair Lombok Gradle Plugin 6.3.0.
 * Upgrades to VMware Tanzu GemFire for VMs (Pivotal Cloud Cache) 1.14.3.
+
 
 
 Changes in version 1.7.0-M2 (2022-02-28)
