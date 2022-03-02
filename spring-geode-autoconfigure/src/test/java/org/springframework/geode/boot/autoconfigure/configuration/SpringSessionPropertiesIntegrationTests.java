@@ -113,7 +113,7 @@ public class SpringSessionPropertiesIntegrationTests extends IntegrationTestsSup
 		PdxSerializer pdxSerializer = this.clientCache.getPdxSerializer();
 
 		assertThat(pdxSerializer).isInstanceOf(PdxSerializerSessionSerializerAdapter.class);
-		assertThat(((PdxSerializerSessionSerializerAdapter) pdxSerializer).getSessionSerializer())
+		assertThat(((PdxSerializerSessionSerializerAdapter<?>) pdxSerializer).getSessionSerializer())
 			.isEqualTo(mockSessionSerializer);
 	}
 

@@ -109,7 +109,7 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 	private Function<SpringApplicationBuilder, SpringApplicationBuilder> newSpringBootSessionPropertiesConfigurationFunction() {
 
 		return springApplicationBuilder ->
-			springApplicationBuilder.properties(singletonProperties("spring.session.timeout", "300"));
+			springApplicationBuilder.properties(singletonProperties("spring.session.timeout", "300s"));
 	}
 
 	private Function<ConfigurableApplicationContext, ConfigurableApplicationContext> newSpringSessionGemFirePropertiesConfigurationFunction() {
@@ -134,7 +134,7 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 	private Function<SpringApplicationBuilder, SpringApplicationBuilder> newWebServerSessionPropertiesConfigurationFunction() {
 
 		return springApplicationBuilder ->
-			springApplicationBuilder.properties(singletonProperties("server.servlet.session.timeout", "3600"));
+			springApplicationBuilder.properties(singletonProperties("server.servlet.session.timeout", "3600s"));
 	}
 
 	@Override
@@ -259,10 +259,10 @@ public class CustomConfiguredSessionCachingIntegrationTests extends SpringBootAp
 			.isEqualTo(3600);
 	}
 
+	//@SpringBootApplication
 	@SpringBootConfiguration
 	@EnableAutoConfiguration
 	@EnableGemFireMockObjects
-	//@SpringBootApplication
 	static class TestConfiguration {
 
 		@Bean("MockSessionSerializer")
