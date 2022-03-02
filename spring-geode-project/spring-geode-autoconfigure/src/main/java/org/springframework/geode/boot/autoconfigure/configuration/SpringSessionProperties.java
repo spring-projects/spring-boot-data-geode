@@ -15,11 +15,14 @@
  */
 package org.springframework.geode.boot.autoconfigure.configuration;
 
+import java.time.Duration;
+
 import org.apache.geode.cache.RegionShortcut;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration;
 
 /**
  * Spring Boot {@link ConfigurationProperties} used to configure Spring Session for Apache Geode (SSDG) in order to
@@ -189,6 +192,15 @@ public class SpringSessionProperties {
 
 		public void setMaxInactiveIntervalSeconds(int maxInactiveIntervalSeconds) {
 			this.maxInactiveIntervalSeconds = maxInactiveIntervalSeconds;
+		}
+
+		public void setMaxInactiveInterval(Duration duration) {
+
+			int maxInactiveIntervalInSeconds = duration != null
+				? Long.valueOf(duration.toSeconds()).intValue()
+				: GemFireHttpSessionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL_IN_SECONDS;
+
+			setMaxInactiveIntervalSeconds(maxInactiveIntervalInSeconds);
 		}
 	}
 

@@ -17,6 +17,7 @@ package org.springframework.geode.boot.autoconfigure;
 
 import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
 
+import java.time.Duration;
 import java.util.Properties;
 import java.util.Set;
 
@@ -40,6 +41,8 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.geode.boot.autoconfigure.support.EnableSubscriptionConfiguration;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.session.Session;
 import org.springframework.session.data.gemfire.config.annotation.web.http.EnableGemFireHttpSession;
 import org.springframework.session.data.gemfire.config.annotation.web.http.GemFireHttpSessionConfiguration;
@@ -108,11 +111,13 @@ public class SpringSessionAutoConfiguration {
 
 				if (isSet(environment, SPRING_SESSION_TIMEOUT_PROPERTY)) {
 					springSessionProperties.setProperty(SPRING_SESSION_DATA_GEMFIRE_SESSION_EXPIRATION_TIMEOUT,
-						environment.getProperty(SPRING_SESSION_TIMEOUT_PROPERTY));
+						toSecondsAsString(environment.getProperty(SPRING_SESSION_TIMEOUT_PROPERTY, Duration.class,
+							getDefaultSessionTimeout())));
 				}
 				else if (isSet(environment, SERVER_SERVLET_SESSION_TIMEOUT_PROPERTY)) {
 					springSessionProperties.setProperty(SPRING_SESSION_DATA_GEMFIRE_SESSION_EXPIRATION_TIMEOUT,
-						environment.getProperty(SERVER_SERVLET_SESSION_TIMEOUT_PROPERTY));
+						toSecondsAsString(environment.getProperty(SERVER_SERVLET_SESSION_TIMEOUT_PROPERTY,
+							Duration.class, getDefaultSessionTimeout())));
 				}
 
 				if (!springSessionProperties.isEmpty()) {
@@ -125,6 +130,20 @@ public class SpringSessionAutoConfiguration {
 		private PropertySource<?> newPropertySource(String name, Properties properties) {
 			return new PropertiesPropertySource(name, properties);
 		}
+	}
+
+	protected static @NonNull Duration getDefaultSessionTimeout() {
+		return Duration.ofSeconds(GemFireHttpSessionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL_IN_SECONDS);
+	}
+
+	protected static int toSeconds(@Nullable Duration duration) {
+
+		return duration != null ? Long.valueOf(duration.getSeconds()).intValue()
+			: GemFireHttpSessionConfiguration.DEFAULT_MAX_INACTIVE_INTERVAL_IN_SECONDS;
+	}
+
+	protected static @NonNull String toSecondsAsString(@Nullable Duration duration) {
+		return String.valueOf(toSeconds(duration));
 	}
 
 	protected static boolean isNotSet(ConfigurableEnvironment environment, String propertyName) {
