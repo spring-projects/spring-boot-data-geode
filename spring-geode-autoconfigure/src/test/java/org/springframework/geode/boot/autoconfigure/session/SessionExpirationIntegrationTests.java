@@ -17,6 +17,7 @@ package org.springframework.geode.boot.autoconfigure.session;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -62,9 +63,10 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
+	classes = SessionExpirationIntegrationTests.TestConfiguration.class,
 	properties = {
 		"spring.session.data.gemfire.cache.client.region.shortcut=LOCAL",
-		"spring.session.timeout=1",
+		"spring.session.timeout=1s",
 	},
 	webEnvironment = SpringBootTest.WebEnvironment.MOCK
 )
@@ -98,6 +100,7 @@ public class SessionExpirationIntegrationTests extends IntegrationTestsSupport {
 		assertThat(session).isNotNull();
 		assertThat(session.getId()).isNotBlank();
 		assertThat(session.isExpired()).isFalse();
+		assertThat(session.getMaxInactiveInterval()).isEqualTo(Duration.ofSeconds(1));
 
 		this.sessionRepository.save(session);
 
