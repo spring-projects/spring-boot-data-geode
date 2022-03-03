@@ -11,8 +11,8 @@ John Blum
 :source-highlighter: prettify
 :toc: left
 :toclevels: 1
-:java-version: 8
-:jdk-javadoc: https://docs.oracle.com/javase/{java-version}/docs/api
+:java-version: 17
+:jdk-javadoc: https://docs.oracle.com/en/java/javase/{java-version}/docs/api/
 :apache-geode-name: Apache Geode
 :apache-geode-version: {apache-geode-artifact-version}
 :apache-geode-doc-version: {apache-geode-doc-version}
