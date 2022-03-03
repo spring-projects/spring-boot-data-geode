@@ -447,6 +447,309 @@ repositories {
 ====
 endif::[]
 
+[[sbdg-dependency-versions]]
+== Primary Dependency Versions
+
+Spring Boot for {apache-geode-name} {revnumber} builds and depends on the following versions of the base projects
+listed below:
+
+.Dependencies & Versions
+|===
+| Name | Version
+
+| {apache-geode-name} | {apache-geode-version}
+
+| Spring Framework | {spring-version}
+
+| Spring Boot | {spring-boot-version}
+
+| Spring Data for {apache-geode-name} | {spring-data-geode-version}
+
+| Spring Session for {apache-geode-name} | {spring-session-data-geode-version}
+
+| Spring Test for {apache-geode-name} | {spring-test-data-geode-version}
+
+|===
+
+It is essential that the versions of all the dependencies listed in the table above align accordingly. If the dependency
+versions are misaligned, then functionality could be missing, or certain functions could behave unpredictably
+from its specified contract.
+
+Please follow dependency versions listed in the table above and use it as a guide when setting up
+your Spring Boot projects using {apache-geode-name}.
+
+Again, the best way to setup your Spring Boot projects is by first, declaring the `spring-boot-starter-parent` Maven POM
+as the parent POM in your project POM:
+
+.Spring Boot application Maven POM parent
+====
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>{spring-boot-version}</version>
+</parent>
+----
+====
+
+Or, when using Grade:
+
+.Spring Boot application Gradle build file Gradle Plugins required for dependency management
+====
+[source,groovy]
+[subs="verbatim,attributes"]
+----
+plugins {
+  id 'org.springframework.boot' version '{spring-boot-version}'
+  id 'io.spring.dependency-management' version '{spring-dependency-management-gradle-plugin-version}'
+  id 'java'
+}
+----
+====
+
+And then, use the Spring Boot for {apache-geode-name}, `spring-geode-bom`.  For example, with Maven:
+
+.Spring Boot application using the Spring Boot for {apache-geode-name}, `spring-geode-bom` BOM in Maven
+====
+[source,xml]
+[subs="verbatim,attributes"]
+----
+<properties>
+    <spring-geode.version>{spring-boot-data-geode-version}</spring-geode.version>
+</properties>
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.geode</groupId>
+            <artifactId>spring-geode-bom</artifactId>
+            <version>${spring-geode.version}</version>
+            <scope>import</scope>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.geode</groupId>
+        <artifactId>spring-geode-starter</artifactId>
+    </dependency>
+</dependencies>
+----
+====
+
+Or, with Gradle:
+
+.Spring Boot application using the Spring Boot for {apache-geode-name}, `spring-geode-bom` BOM in Gradle
+====
+[source,groovy]
+[subs="verbatim,attributes"]
+----
+ext {
+    set('springGeodeVersion', "{spring-boot-data-geode-version}")
+}
+
+dependencies {
+    implementation 'org.springframework.geode:spring-geode-starter'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.geode:spring-geode-bom:$\{springGeodeVersion\}"
+    }
+}
+----
+====
+
+All of this is made simple by going to https://start.spring.io[start.spring.io] and creating a Spring Boot
+`{spring-boot-version}` project using {apache-geode-name}.
+
+[[sbdg-dependency-version-overrides]]
+=== Overriding Dependency Versions
+
+While Spring Boot for {apache-geode-name} requires baseline versions of the <<sbdg-dependency-versions,primary dependencies>>
+outlined above, it is possible, using Spring Boot's dependency management functionality, to override the versions of
+3rd-party dependencies (Java libraries) managed by Spring Boot itself.
+
+When your Spring Boot application Maven POM inherits from the `org.springframework.boot:spring-boot-starter-parent`,
+or alternatively, applies the Spring Dependency Management Gradle Plugin (`io.spring.dependency-management`)
+in addition to the Spring Boot Gradle Plugin (`org.springframework.boot`) in your Spring Boot application Gradle
+build file, then you automatically enable the dependency management capabilities provided by Spring Boot for all
+3rd-party dependencies and Java libraries curated and managed by Spring Boot.
+
+Spring Boot's dependency management harmonizes all 3rd-party Java libraries and dependencies that you, the user,
+are likely to use in your Spring Boot applications. All of these curated dependencies have been tested and proven to
+work with the version of Spring Boot along with all other Spring dependencies (e.g. Spring Data, Spring Security)
+that you may also be using in your Spring Boot applications.
+
+Still, there may be times when you want, or even need to override the version of some 3rd-party Java libraries used by
+your Spring Boot applications, that are specifically managed by Spring Boot. In cases where you know that using a
+different version of a managed dependency is safe to do so, then you have a few options for how to override
+the dependency version:
+
+* <<sbdg-dependency-version-overrides-property>>
+* <<sbdg-dependency-version-overrides-dependencymanagement>>
+
+TIP: You should refer to Spring Boot's documentation on
+{spring-boot-docs-html}/using.html#using.build-systems.dependency-management[Dependency Management] for more details.
+
+[[sbdg-dependency-version-overrides-property]]
+==== Version Property Override
+
+Perhaps the easiest option to change the version of a Spring Boot managed dependency is to set the version property
+used by Spring Boot to control the dependency's version to the desired Java library version.
+
+For example, if you want to use a different version of **Log4j** than what is currently set and determined by
+Spring Boot, then you would do:
+
+.Maven dependency version property override
+[source.java]
+----
+<properties>
+  <log4j2.version>2.17.2</log4j2.version>
+</properties>
+----
+
+.Gradle dependency version property override
+----
+ext['log4j2.version'] = '2.17.2'
+----
+
+NOTE: The Log4j version number used in the Maven and Gradle examples shown above is arbitrary. You must set
+the `log4j2.version` property to a valid Log4j version that would be resolvable by Maven or Gradle,
+given the fully qualified artifact: `org.apache.logging.log4j:log4j:2.17.2`.
+
+The version property name must precisely match the version property declared in the `spring-boot-dependencies`
+Maven POM.
+
+ifeval::["{version-snapshot}" == "true"]
+See the https://repo.spring.io/snapshot/org/springframework/boot/spring-boot-dependencies/{spring-boot-version}/spring-boot-dependencies-{spring-boot-version}.pom[spring-boot-dependencies POM]
+containing version properties for all the dependencies managed by Spring Boot.
+endif::[]
+
+ifeval::["{version-milestone}" == "true"]
+See the https://repo.spring.io/milestone/org/springframework/boot/spring-boot-dependencies/{spring-boot-version}/spring-boot-dependencies-{spring-boot-version}.pom[spring-boot-dependencies POM]
+containing version properties for all the dependencies managed by Spring Boot.
+endif::[]
+
+ifeval::["{version-release}" == "true"]
+See the https://repo.spring.io/artifactory/milestone/org/springframework/boot/spring-boot-dependencies/{spring-boot-version}/spring-boot-dependencies-{spring-boot-version}.pom[spring-boot-dependencies POM]
+containing version properties for all the dependencies managed by Spring Boot.
+endif::[]
+
+More details can be found in the Spring Boot Maven Plugin
+https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/#using.parent-pom[documentation]
+as well as the Spring Boot Gradle Plugin
+https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#managing-dependencies[documentation].
+
+[[sbdg-dependency-version-overrides-dependencymanagement]]
+==== Override with Dependency Management
+
+This option is not specific to Spring in general, or Spring Boot in particular, but applies to Maven and Gradle,
+which both intrinsically have dependency management features and capabilities.
+
+This approach is useful not only to control the versions of the dependencies managed by Spring Boot directly, but also
+to control the versions of dependencies that may be transitively pulled in by the dependencies that are managed by
+Spring Boot. Additionally, this approach is also more universally transferrable since it is handled by Maven or Gradle
+itself.
+
+For example, when you declare the `org.springframework.boot:spring-boot-starter-test` dependency in your Spring Boot
+application Maven POM or Gradle build file for testing purposes, you will see a dependency tree similar to:
+
+.$gradlew dependencies OR $mvn dependency:tree
+[source,text]
+----
+...
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.6.4:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.6.0:test
+[INFO] |  |  +- net.minidev:json-smart:jar:2.4.8:test
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:2.4.8:test
+[INFO] |  |  |     \- org.ow2.asm:asm:jar:9.1:test
+[INFO] |  |  \- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  +- org.assertj:assertj-core:jar:3.21.0:compile
+[INFO] |  +- org.hamcrest:hamcrest:jar:2.2:compile
+[INFO] |  +- org.junit.jupiter:junit-jupiter:jar:5.8.2:test
+[INFO] |  |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  |  +- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  |  |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] |  |  +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  |     \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+...
+----
+
+If you wanted to override and control the version of the `opentest4j` transitive dependency, for whatever reason,
+perhapsbecause you are using the `opentest4j` API directly in your application tests, then you could add dependency
+management in either Maven or Gradle to control the `opentest4j` dependency version.
+
+Note that the `opentest4j` dependency is pulled in by JUnit and is not a dependency that Spring Boot specifically
+manages. Of course, Maven or Gradle's dependency management capabilities can be used to override dependencies that are
+managed by Spring Boot, too.
+
+Using the `opentest4j` dependency as an example, you can override the dependency version by doing the following:
+
+.Maven dependency version override
+[source,xml]
+----
+<project>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.opentest4j</groupId>
+                <artifactId>opentest4j</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
+----
+
+.Gradle dependency version override
+[source,grooy]
+[subs="verbatim,attributes"]
+----
+plugins {
+	id 'org.springframework.boot' version '{spring-boot-version}'
+}
+
+apply plugin:  'io.spring.dependency-management'
+
+dependencyManagement {
+  dependencies {
+    dependency 'org.opentest4j:openttest4j:1.0.0'
+  }
+}
+----
+
+After applying Maven or Gradle dependency management configuration, you will then see:
+
+.$gradlew dependencies OR $mvn dependency:tree
+[source,text]
+----
+...
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
+...
+[INFO] |  |  |  +- org.opentest4j:opentest4j:jar:1.0.0:test
+...
+----
+
+For more details on Maven dependency management, refer to
+the https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html[documentation].
+
+For more details on Gradle dependency management, please refer to
+the https://docs.gradle.org/current/userguide/core_dependency_management.html[documentation]
+
+
 include::{include-dir}/clientcache-applications.adoc[]
 include::{include-dir}/configuration-auto.adoc[]
 include::{include-dir}/configuration-declarative.adoc[]
