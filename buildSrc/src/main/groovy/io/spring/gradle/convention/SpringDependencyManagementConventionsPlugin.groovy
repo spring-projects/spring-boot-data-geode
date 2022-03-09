@@ -18,7 +18,6 @@ package io.spring.gradle.convention
 import io.spring.gradle.dependencymanagement.DependencyManagementPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.PluginManager
 
 /**
  * Applies and configures the Spring Gradle {@link DependencyManagementPlugin}.
@@ -32,24 +31,26 @@ import org.gradle.api.plugins.PluginManager
  * @see org.gradle.api.Project
  * @see org.gradle.api.plugins.PluginManager
  */
-class SpringDependencyManagementConventionPlugin implements Plugin<Project> {
+class SpringDependencyManagementConventionsPlugin implements Plugin<Project> {
 
     static final String DEPENDENCY_MANAGEMENT_RESOURCE = "gradle/dependency-management.gradle"
 
     @Override
     void apply(Project project) {
 
-        PluginManager pluginManager = project.getPluginManager()
+        applyAndConfigureDependencyManagementPlugin(project)
+        applyDependencyManagementResources(project)
+    }
 
-        pluginManager.apply(DependencyManagementPlugin)
+    private void applyAndConfigureDependencyManagementPlugin(Project project) {
+
+        project.getPluginManager().apply(DependencyManagementPlugin)
 
         project.dependencyManagement {
             resolutionStrategy {
                 cacheChangingModulesFor 0, "seconds"
             }
         }
-
-        applyDependencyManagementResources(project)
     }
 
     @SuppressWarnings("all")

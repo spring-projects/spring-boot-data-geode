@@ -31,8 +31,8 @@ class SpringSampleBootPlugin extends SpringSamplePlugin {
         project.getPluginManager().apply("org.springframework.boot");
 
         project.repositories {
-            maven { url 'https://repo.spring.io/snapshot' }
             maven { url 'https://repo.spring.io/milestone' }
+            maven { url 'https://repo.spring.io/snapshot' }
         }
     }
 }

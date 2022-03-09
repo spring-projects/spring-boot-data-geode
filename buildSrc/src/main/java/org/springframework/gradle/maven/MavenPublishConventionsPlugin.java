@@ -41,7 +41,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
  * @see org.gradle.api.publish.maven.MavenPublication
  * @see org.gradle.api.publish.maven.plugins.MavenPublishPlugin
  */
-public class MavenPublishingConventionsPlugin implements Plugin<Project> {
+public class MavenPublishConventionsPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {

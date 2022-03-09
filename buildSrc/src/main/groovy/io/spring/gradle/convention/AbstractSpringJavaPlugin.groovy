@@ -95,7 +95,7 @@ abstract class AbstractSpringJavaPlugin implements Plugin<Project> {
 		pluginManager.apply(PropDepsPlugin)
 		pluginManager.apply(PropDepsEclipsePlugin)
 		pluginManager.apply(PropDepsIdeaPlugin)
-		pluginManager.apply(SpringDependencyManagementConventionPlugin)
+		pluginManager.apply(SpringDependencyManagementConventionsPlugin)
 		pluginManager.apply(DependencySetPlugin)
 		pluginManager.apply(TestsConfigurationPlugin)
 		pluginManager.apply(IntegrationTestPlugin)
