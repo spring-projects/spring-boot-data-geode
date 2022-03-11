@@ -26,9 +26,9 @@ class SpringSampleBootPlugin extends SpringSamplePlugin {
     @Override
     void applyAdditionalPlugins(Project project) {
 
-        super.applyAdditionalPlugins(project);
-
         project.getPluginManager().apply("org.springframework.boot");
+
+        super.applyAdditionalPlugins(project);
 
         project.repositories {
             maven { url 'https://repo.spring.io/milestone' }
