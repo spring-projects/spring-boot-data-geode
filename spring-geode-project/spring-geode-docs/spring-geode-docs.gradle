@@ -40,6 +40,7 @@ asciidoctor {
 
 asciidoctorj {
 
+	def javaVersion = JavaVersion.current()
 	def apacheGeodeDocVersion = resolveApacheGeodeDocVersion("${apacheGeodeVersion}")
 	def githubBaseUrl = "https://github.com/spring-projects/spring-boot-data-geode"
 	def githubTag = snapshotBuild ? 'master' : project.version
@@ -54,6 +55,7 @@ asciidoctorj {
 		'github-samples-url': "${githubUrl}/spring-geode-samples",
 		'highlightjsdir@': "js/highlight",
 		'docinfodir@': ".",
+		'java-version' : "$javaVersion",
 		'apache-geode-artifact-version' : "${apacheGeodeVersion}",
 		'apache-geode-doc-version' : apacheGeodeDocVersion,
 		'apache-geode-src' : "https://github.com/apache/geode/blob/rel/v${apacheGeodeVersion}",
