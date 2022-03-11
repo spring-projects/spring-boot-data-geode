@@ -457,6 +457,8 @@ listed below:
 |===
 | Name | Version
 
+| Java (JRE) | {java-version}
+
 | {apache-geode-name} | {apache-geode-version}
 
 | Spring Framework | {spring-version}
