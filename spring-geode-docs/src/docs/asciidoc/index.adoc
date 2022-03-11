@@ -573,24 +573,32 @@ All of this is made simple by going to https://start.spring.io[start.spring.io] 
 === Overriding Dependency Versions
 
 While Spring Boot for {apache-geode-name} requires baseline versions of the <<sbdg-dependency-versions,primary dependencies>>
-outlined above, it is possible, using Spring Boot's dependency management functionality, to override the versions of
-3rd-party dependencies (Java libraries) managed by Spring Boot itself.
+listed above, it is possible, using Spring Boot's dependency management capabilities, to override the versions of
+3rd-party Java libraries and dependencies managed by Spring Boot itself.
 
 When your Spring Boot application Maven POM inherits from the `org.springframework.boot:spring-boot-starter-parent`,
-or alternatively, applies the Spring Dependency Management Gradle Plugin (`io.spring.dependency-management`)
-in addition to the Spring Boot Gradle Plugin (`org.springframework.boot`) in your Spring Boot application Gradle
-build file, then you automatically enable the dependency management capabilities provided by Spring Boot for all
-3rd-party dependencies and Java libraries curated and managed by Spring Boot.
+or alternatively, applies the Spring Dependency Management Gradle Plugin (`io.spring.dependency-management`) along with
+the Spring Boot Gradle Plugin (`org.springframework.boot`) in your Spring Boot application Gradle build file, then you
+automatically enable the dependency management capabilities provided by Spring Boot for all 3rd-party Java libraries
+and dependencies curated and managed by Spring Boot.
 
-Spring Boot's dependency management harmonizes all 3rd-party Java libraries and dependencies that you, the user,
-are likely to use in your Spring Boot applications. All of these curated dependencies have been tested and proven to
-work with the version of Spring Boot along with all other Spring dependencies (e.g. Spring Data, Spring Security)
-that you may also be using in your Spring Boot applications.
+Spring Boot's dependency management harmonizes all 3rd-party Java libraries and dependencies that you are likely to use
+in your Spring Boot applications. All these dependencies have been tested and proven to work with the version of Spring
+Boot and other Spring dependencies (e.g. Spring Data, Spring Security) you may be using in your Spring Boot applications.
 
 Still, there may be times when you want, or even need to override the version of some 3rd-party Java libraries used by
 your Spring Boot applications, that are specifically managed by Spring Boot. In cases where you know that using a
 different version of a managed dependency is safe to do so, then you have a few options for how to override
 the dependency version:
+
+WARNING: Use caution when overriding dependencies since they may not be compatible with other dependencies managed by
+Spring Boot for which you may have declared on your application classpath, for example, by adding a starter. It is
+common for multiple Java libraries to share the same transitive dependencies but use different versions of the Java
+library (e.g. logging). This will often lead to Exceptions thrown at runtime due to API differences. Keep in mind that
+Java resolves classes on the classpath from the first class definition that is found in the order that JARs or paths
+have been defined on the classpath. Finally, Spring does not support dependency versions that have been overridden
+and do not match the versions declared and managed by Spring Boot.
+See {spring-boot-docs-html}/#appendix.dependency-versions.coordinates[documentation].
 
 * <<sbdg-dependency-version-overrides-property>>
 * <<sbdg-dependency-version-overrides-dependencymanagement>>
@@ -621,28 +629,15 @@ ext['log4j2.version'] = '2.17.2'
 ----
 
 NOTE: The Log4j version number used in the Maven and Gradle examples shown above is arbitrary. You must set
-the `log4j2.version` property to a valid Log4j version that would be resolvable by Maven or Gradle,
-given the fully qualified artifact: `org.apache.logging.log4j:log4j:2.17.2`.
+the `log4j2.version` property to a valid Log4j version that would be resolvable by Maven or Gradle when given
+the fully qualified artifact: `org.apache.logging.log4j:log4j:2.17.2`.
 
 The version property name must precisely match the version property declared in the `spring-boot-dependencies`
 Maven POM.
 
-ifeval::["{version-snapshot}" == "true"]
-See the https://repo.spring.io/snapshot/org/springframework/boot/spring-boot-dependencies/{spring-boot-version}/spring-boot-dependencies-{spring-boot-version}.pom[spring-boot-dependencies POM]
-containing version properties for all the dependencies managed by Spring Boot.
-endif::[]
+See Spring Boot's documentation on {spring-boot-docs-html}/#appendix.dependency-versions.properties[version properties].
 
-ifeval::["{version-milestone}" == "true"]
-See the https://repo.spring.io/milestone/org/springframework/boot/spring-boot-dependencies/{spring-boot-version}/spring-boot-dependencies-{spring-boot-version}.pom[spring-boot-dependencies POM]
-containing version properties for all the dependencies managed by Spring Boot.
-endif::[]
-
-ifeval::["{version-release}" == "true"]
-See the https://repo.spring.io/artifactory/milestone/org/springframework/boot/spring-boot-dependencies/{spring-boot-version}/spring-boot-dependencies-{spring-boot-version}.pom[spring-boot-dependencies POM]
-containing version properties for all the dependencies managed by Spring Boot.
-endif::[]
-
-More details can be found in the Spring Boot Maven Plugin
+Additional details can be found in the Spring Boot Maven Plugin
 https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/#using.parent-pom[documentation]
 as well as the Spring Boot Gradle Plugin
 https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#managing-dependencies[documentation].
@@ -651,17 +646,16 @@ https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsing
 ==== Override with Dependency Management
 
 This option is not specific to Spring in general, or Spring Boot in particular, but applies to Maven and Gradle,
-which both intrinsically have dependency management features and capabilities.
+which both have intrinsic dependency management features and capabilities.
 
-This approach is useful not only to control the versions of the dependencies managed by Spring Boot directly, but also
-to control the versions of dependencies that may be transitively pulled in by the dependencies that are managed by
-Spring Boot. Additionally, this approach is also more universally transferrable since it is handled by Maven or Gradle
-itself.
+This approach is useful to not only control the versions of the dependencies managed by Spring Boot directly, but also
+control the versions of dependencies that may be transitively pulled in by the dependencies that are managed by
+Spring Boot. Additionally, this approach is more universal since it is handled by Maven or Gradle itself.
 
 For example, when you declare the `org.springframework.boot:spring-boot-starter-test` dependency in your Spring Boot
 application Maven POM or Gradle build file for testing purposes, you will see a dependency tree similar to:
 
-.$gradlew dependencies OR $mvn dependency:tree
+.`$gradlew dependencies` OR `$mvn dependency:tree`
 [source,xml]
 ----
 ...
@@ -689,12 +683,12 @@ application Maven POM or Gradle build file for testing purposes, you will see a 
 ----
 
 If you wanted to override and control the version of the `opentest4j` transitive dependency, for whatever reason,
-perhapsbecause you are using the `opentest4j` API directly in your application tests, then you could add dependency
+perhaps because you are using the `opentest4j` API directly in your application tests, then you could add dependency
 management in either Maven or Gradle to control the `opentest4j` dependency version.
 
-Note that the `opentest4j` dependency is pulled in by JUnit and is not a dependency that Spring Boot specifically
-manages. Of course, Maven or Gradle's dependency management capabilities can be used to override dependencies that are
-managed by Spring Boot, too.
+NOTE: The `opentest4j` dependency is pulled in by JUnit and is not a dependency that Spring Boot specifically manages.
+Of course, Maven or Gradle's dependency management capabilities can be used to override dependencies that are managed
+by Spring Boot as well.
 
 Using the `opentest4j` dependency as an example, you can override the dependency version by doing the following:
 
@@ -735,7 +729,7 @@ dependencyManagement {
 
 After applying Maven or Gradle dependency management configuration, you will then see:
 
-.$gradlew dependencies OR $mvn dependency:tree
+.`$gradlew dependencies` OR `$mvn dependency:tree`
 [source,xml]
 ----
 ...
