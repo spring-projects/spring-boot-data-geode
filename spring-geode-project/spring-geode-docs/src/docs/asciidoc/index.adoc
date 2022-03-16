@@ -658,7 +658,7 @@ For example, when you declare the `org.springframework.boot:spring-boot-starter-
 application Maven POM or Gradle build file for testing purposes, you will see a dependency tree similar to:
 
 .`$gradlew dependencies` OR `$mvn dependency:tree`
-[source,xml]
+[source,text]
 ----
 ...
 [INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
@@ -732,7 +732,7 @@ dependencyManagement {
 After applying Maven or Gradle dependency management configuration, you will then see:
 
 .`$gradlew dependencies` OR `$mvn dependency:tree`
-[source,xml]
+[source,text]
 ----
 ...
 [INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
