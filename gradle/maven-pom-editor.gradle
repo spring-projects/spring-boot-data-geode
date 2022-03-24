@@ -7,7 +7,7 @@ def customizePom(gradleProject, pom) {
 				developer {
 					id = 'jxblum'
 					name = "John Blum"
-					email = "jblum@pivotal.io"
+					email = "info@vmware.com"
 				}
 			}
 			scm {
