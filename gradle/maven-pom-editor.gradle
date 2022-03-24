@@ -8,7 +8,6 @@ def customizePom(gradleProject, pom) {
 					id = 'jxblum'
 					name = "John Blum"
 					email = "info@vmware.com"
-					role = "Spring for Apache Geode Lead Developer"
 				}
 			}
 			scm {
