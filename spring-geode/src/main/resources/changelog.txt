@@ -4,6 +4,26 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.7.0-M3 (2022-03-24)
+----------------------------------------
+Aligns SBDG with Spring Boot 2.7.0-M3.
+
+* Adds documentation on the Java version.
+* Adds documentation on dependency version overriding complimenting Spring Boot's documentation.
+* Fixes bug involving the spring.session.timeout Spring Boot property.
+Resolves GitHub Issue #113: https://github.com/spring-projects/spring-boot-data-geode/issues/113.
+* Upgrades to Apache Geode 1.14.4.
+* Upgrades to Awaitility 4.2.0.
+* Upgrades to VMware Tanzu (Pivotal) GemFire 9.10.15.
+* Upgrades to VMware Tanzu GemFire for VMs (Pivotal Cloud Cache) 1.14.4.
+* Upgrades to Spring Framework 5.3.17.
+* Upgrades to Spring Boot 2.7.0-M3.
+* Upgrades to Spring Data BOM 2021.2.0-M4 (RAJ-M4).
+* Upgrades to Spring Data for Apache Geode 2.7.0-M4.
+* Upgrades to Spring Session for Apache Geode 2.7.0-M2
+* Upgrades to Spring Test for Apache Geode 0.3.0-RAJ-M3.
+
+
 Changes in version 1.6.5 (2022-03-24)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.6.5.
