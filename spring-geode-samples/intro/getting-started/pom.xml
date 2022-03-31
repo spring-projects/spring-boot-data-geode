@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.springframework.geode</groupId>
 		<artifactId>spring-geode-samples-parent</artifactId>
-		<version>1.6.5-SNAPSHOT</version>
+		<version>1.6.6-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
