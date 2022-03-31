@@ -6,12 +6,13 @@ https://github.com/spring-projects/spring-boot-data-geode
 
 Changes in version 1.5.12 (2022-03-31)
 --------------------------------------
-Aligns SBDG with Spring Boot 2.5.11.
+Aligns SBDG with Spring Boot 2.5.12.
 
 * Emergency release in response to: https://spring.io/blog/2022/03/31/spring-framework-rce-early-announcement,
 and CVE: https://tanzu.vmware.com/security/cve-2022-22965.
 * Upgrades to Spring Framework 5.3.18.
 * Upgrades to Spring Boot 2.5.12.
+
 
 Changes in version 1.5.11 (2022-03-24)
 --------------------------------------
