@@ -9,6 +9,8 @@ dependencies {
 	api project(':spring-geode')
 	api project(':spring-geode-autoconfigure')
 
+	runtimeOnly project(':apache-geode-micrometer2')
+
 	runtimeOnly 'org.springframework.shell:spring-shell'
 
 }
