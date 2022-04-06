@@ -1,0 +1,9 @@
+apply plugin: 'io.spring.convention.spring-module'
+
+description = "Integration for Apache Geode and Micrometer 2"
+
+dependencies {
+
+	implementation "io.micrometer:micrometer-binders"
+
+}
