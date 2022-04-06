@@ -10,9 +10,9 @@ dependencies {
 
 	api project(":spring-geode")
 
-	implementation "jakarta.annotation:jakarta.annotation-api"
-
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+
+	implementation "jakarta.annotation:jakarta.annotation-api"
 
 	optional project(':apache-geode-extensions')
 
