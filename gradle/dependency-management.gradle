@@ -1,16 +1,19 @@
 ext['jetty.version'] = "$eclipseJettyVersion"
-ext['micrometer.version'] = "$micrometerVersion"
+//ext['micrometer.version'] = "$micrometerVersion"
 
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
+
 		// Declared and managed Micrometer (BOM) version based on Apache Geode 1.14.3's declared, required Micrometer
 		// version (1.6.3). Spring Boot 3.0 declares and depends on Micrometer 2.0.
-		mavenBom "io.micrometer:micrometer-bom:$micrometerVersion"
+		//mavenBom "io.micrometer:micrometer-bom:$micrometerVersion"
+
 		// Declared and managed Eclipse Jetty (BOM) version based on Apache Geode 1.14.3's declared, required Jetty
 		// version (9.x)! This Jetty version is incompatible with Jakarta EE 9 and Spring Boot 3. Spring Boot 3
 		// declares and uses Jetty 11.
 		mavenBom "org.eclipse.jetty:jetty-bom:$eclipseJettyVersion"
+
 		// Declared and managed Testcontainers libraries version.
 		mavenBom "org.testcontainers:testcontainers-bom:$testcontainersVersion"
 	}
