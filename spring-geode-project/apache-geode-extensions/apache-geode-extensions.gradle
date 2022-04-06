@@ -16,4 +16,6 @@ dependencies {
     testImplementation "org.apache.geode:geode-membership:$apacheGeodeVersion"
     testImplementation "org.apache.geode:geode-serialization:$apacheGeodeVersion"
 
+    testRuntimeOnly project(':apache-geode-micrometer2')
+
 }

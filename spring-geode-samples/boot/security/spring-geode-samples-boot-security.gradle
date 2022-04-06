@@ -11,10 +11,10 @@ dependencies {
 	implementation project(":spring-geode-starter")
 	implementation project(":spring-geode-starter-test")
 
-	implementation "org.springframework.boot:spring-boot-starter-web"
-
 	implementation "org.assertj:assertj-core"
 	implementation "org.projectlombok:lombok"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+
 }
 
 bootJar {

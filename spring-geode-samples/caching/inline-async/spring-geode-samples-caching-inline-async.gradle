@@ -8,9 +8,9 @@ description = "Spring Geode Sample demonstrating Spring's Cache Abstraction usin
 
 dependencies {
 
-	implementation project(":spring-geode-starter")
-
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+
+	implementation project(":spring-geode-starter")
 
 	implementation "org.projectlombok:lombok"
 	implementation "jakarta.persistence:jakarta.persistence-api"

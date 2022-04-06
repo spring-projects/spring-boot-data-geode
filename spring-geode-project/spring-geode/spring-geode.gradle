@@ -33,6 +33,7 @@ dependencies {
 	testImplementation "org.springframework.boot:spring-boot-starter-data-cassandra"
 	testImplementation "org.springframework.data:spring-data-geode-test"
 
+	testRuntimeOnly project(':apache-geode-micrometer2')
 	testRuntimeOnly "org.hsqldb:hsqldb"
 
 }
