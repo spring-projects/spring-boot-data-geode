@@ -33,8 +33,6 @@ dependencies {
 	testImplementation "org.springframework.data:spring-data-geode-test"
 	testImplementation "org.testcontainers:testcontainers"
 
-	testRuntimeOnly project(':apache-geode-micrometer2')
-
 	testRuntimeOnly "org.hsqldb:hsqldb"
 
 }

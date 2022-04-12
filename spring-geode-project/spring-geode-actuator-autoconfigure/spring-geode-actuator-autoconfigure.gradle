@@ -13,6 +13,4 @@ dependencies {
     // defined in the DependencySetPlugin.
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 
-    testRuntimeOnly project(':apache-geode-micrometer2')
-
 }
