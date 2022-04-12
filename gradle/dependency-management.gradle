@@ -11,6 +11,9 @@ dependencyManagement {
 		// Declared and managed Spring Data (BOM) version to override Spring Boot dependency management as needed.
 		//mavenBom "org.springframework.data:spring-data-bom:${springDataBomVersion}"
 
+		// Declared and managed Spring Session (BOM) version to override Spring Boot dependency management as needed.
+		//mavenBom "org.springframework.session:spring-session-bom:${springSessionBomVersion}"
+
 		// Declared and managed Micrometer (BOM) version based on Apache Geode 1.14.3's declared, required Micrometer
 		// version (1.6.3). Spring Boot 3.0 declares and depends on Micrometer 2.0.
 		//mavenBom "io.micrometer:micrometer-bom:$micrometerVersion"
