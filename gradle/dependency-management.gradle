@@ -5,8 +5,11 @@ dependencyManagement {
 	imports {
 		mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
 
-		// Declared and managed Spring Framework (BOM) version to override Spring Boot as needed.
+		// Declared and managed Spring Framework (BOM) version to override Spring Boot dependency management as needed.
 		//mavenBom 'org.springframework:spring-framework-bom:$springVersion'
+
+		// Declared and managed Spring Data (BOM) version to override Spring Boot dependency management as needed.
+		//mavenBom "org.springframework.data:spring-data-bom:${springDataBomVersion}"
 
 		// Declared and managed Micrometer (BOM) version based on Apache Geode 1.14.3's declared, required Micrometer
 		// version (1.6.3). Spring Boot 3.0 declares and depends on Micrometer 2.0.
