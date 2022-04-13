@@ -72,7 +72,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("unused")
 public class EnvironmentSourcedGemFirePropertiesAutoConfiguration {
 
-	private static final String GEMFIRE_PROPERTY_PREFIX = GemFireProperties.PROPERTY_NAME_PREFIX;
+	private static final String GEMFIRE_PROPERTY_PREFIX = GemFireProperties.GEMFIRE_PROPERTY_NAME_PREFIX;
 
 	private final Logger logger = LoggerFactory.getLogger(EnvironmentSourcedGemFirePropertiesAutoConfiguration.class);
 

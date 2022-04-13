@@ -38,7 +38,7 @@ import org.springframework.context.annotation.ScopeMetadataResolver;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.util.ArrayUtils;
-import org.springframework.data.gemfire.util.SpringUtils;
+import org.springframework.geode.core.util.SpringExtensions;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
@@ -314,7 +314,7 @@ public class RefreshableAnnotationConfigApplicationContext extends AbstractRefre
 	 */
 	@Override
 	protected void prepareRefresh() {
-		this.beanFactory = (DefaultListableBeanFactory) SpringUtils.safeGetValue(this::getBeanFactory);
+		this.beanFactory = (DefaultListableBeanFactory) SpringExtensions.safeGetValue(this::getBeanFactory);
 		super.prepareRefresh();
 	}
 

@@ -57,8 +57,8 @@ import org.springframework.data.gemfire.ResolvableRegionFactoryBean;
 import org.springframework.data.gemfire.config.xml.GemfireConstants;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.data.gemfire.util.CollectionUtils;
-import org.springframework.data.gemfire.util.SpringUtils;
 import org.springframework.geode.config.annotation.support.TypelessAnnotationConfigSupport;
+import org.springframework.geode.core.util.SpringExtensions;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
@@ -110,9 +110,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 
 		return beanFactory -> {
 
-			if (beanFactory instanceof BeanDefinitionRegistry) {
-
-				BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+			if (beanFactory instanceof BeanDefinitionRegistry registry) {
 
 				List<String> beanDefinitionNames =
 					Arrays.asList(ArrayUtils.nullSafeArray(registry.getBeanDefinitionNames(), String.class));
@@ -136,7 +134,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 							userRegionTemplateNames.add(beanName);
 						}
 						else if (isBeanWithGemfireTemplateDependency(beanFactory, beanDefinition)) {
-							SpringUtils.addDependsOn(beanDefinition, GemfireConstants.DEFAULT_GEMFIRE_CACHE_NAME);
+							SpringExtensions.addDependsOn(beanDefinition, GemfireConstants.DEFAULT_GEMFIRE_CACHE_NAME);
 						}
 					}
 				}
@@ -212,7 +210,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 
 		this.autoConfiguredRegionTemplateBeanNames.stream()
 			.map(registry::getBeanDefinition)
-			.forEach(beanDefinition -> SpringUtils.addDependsOn(beanDefinition, dependencyBeanNamesArray));
+			.forEach(beanDefinition -> SpringExtensions.addDependsOn(beanDefinition, dependencyBeanNamesArray));
 	}
 
 	// Required by @EnableClusterDefinedRegions & Native-Defined Regions (e.g. Regions defined in "cache.xml").
@@ -251,10 +249,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 			@Override
 			public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 
-				if (bean instanceof GemFireCache) {
-
-					GemFireCache cache = (GemFireCache) bean;
-
+				if (bean instanceof GemFireCache cache) {
 					registerRegionTemplatesForCacheRegions(applicationContext, cache);
 				}
 
@@ -278,10 +273,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 
 		ApplicationContext applicationContext = event.getApplicationContext();
 
-		if (applicationContext instanceof ConfigurableApplicationContext) {
-
-			ConfigurableApplicationContext configurableApplicationContext =
-				(ConfigurableApplicationContext) applicationContext;
+		if (applicationContext instanceof ConfigurableApplicationContext configurableApplicationContext) {
 
 			GemFireCache cache = configurableApplicationContext.getBean(GemFireCache.class);
 
