@@ -17,12 +17,22 @@
 
 	<logger name="org.apache.geode" level="${apache-geode.logback.log.level:-ERROR}"/>
 
+	<logger name="org.eclipse" level="${eclipse.logback.log.level:-ERROR}"/>
+
+	<logger name="org.eclipse.jetty" level="${eclipse-jetty.logback.log.level:-ERROR}"/>
+
 	<logger name="org.springframework" level="${spring.logback.log.level:-ERROR}"/>
 
 	<logger name="org.springframework.geode" level="${spring-geode.logback.log.level:-ERROR}"/>
 
+	<logger name="org.springframework.geode.cache.service"
+			level="${spring-geode.cache-services.logback.log.level:-ERROR}"/>
+
+	<logger name="org.springframework.geode.config"
+			level="${spring-geode.config.logback.log.level:-ERROR}"/>
+
 	<logger name="org.springframework.geode.config.annotation.ClusterAwareConfiguration"
-			level="${spring-geode.logback.log.level:-ERROR}"/>
+			level="${spring-geode.cluster-config.logback.log.level:-ERROR}"/>
 
 	<logger name="org.springframework.geode.boot.autoconfigure.ClientSecurityAutoConfiguration" level="WARN">
 		<appender-ref ref="testAppender"/>
