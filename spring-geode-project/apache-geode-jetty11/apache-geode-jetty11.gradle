@@ -1,0 +1,21 @@
+apply plugin: 'io.spring.convention.spring-module'
+
+description = "Apache Geode Integation with Eclipse Jetty declared and managed by Spring Boot"
+
+dependencies {
+
+	api project(':apache-geode-extensions')
+
+	api("org.springframework.boot:spring-boot-starter-jetty") {
+		exclude group: "org.eclipse.jetty.websocket", module: "websocket-jakarta-server"
+		exclude group: "org.eclipse.jetty.websocket", module: "websocket-jetty-server"
+	}
+
+	implementation "org.apache.commons:commons-lang3"
+	implementation "org.apache.tomcat:jakartaee-migration:1.0.0"
+	implementation "org.eclipse.jetty:jetty-server"
+	implementation "org.slf4j:slf4j-api"
+
+	runtimeOnly "org.eclipse.jetty:apache-jsp"
+
+}
