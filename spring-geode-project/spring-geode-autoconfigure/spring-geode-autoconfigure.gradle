@@ -28,8 +28,10 @@ dependencies {
 
 	testCompileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
+	testRuntimeOnly project(':apache-geode-jetty11')
+
 	testRuntimeOnly "javax.cache:cache-api"
-	testRuntimeOnly "org.apache.geode:geode-http-service:$apacheGeodeVersion"
+	//testRuntimeOnly "org.apache.geode:geode-http-service:$apacheGeodeVersion"
 	testRuntimeOnly "org.apache.geode:geode-web:$apacheGeodeVersion"
 	testRuntimeOnly "org.springframework.boot:spring-boot-starter-jetty"
 	testRuntimeOnly "org.springframework.boot:spring-boot-starter-json"
