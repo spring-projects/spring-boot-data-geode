@@ -26,32 +26,30 @@ pipeline {
 			}
 			steps {
 				script {
-					docker.withRegistry(p['docker.registry'], p['docker.credentials']) {
-						docker.image(p['docker.container.image.java.main']).inside(p['docker.container.inside.env.full']) {
+					docker.image(p['docker.container.image.java.main']).inside(p['docker.container.inside.env.full']) {
 
-							sh "echo 'Setup build environment...'"
-							sh "ci/setup.sh"
+						sh "echo 'Setup build environment...'"
+						sh "ci/setup.sh"
 
-							// Cleanup any prior build system resources
-							try {
-								sh "echo 'Clean up GemFire/Geode files & build artifacts...'"
-								sh "ci/cleanupGemFiles.sh"
-								sh "ci/cleanupArtifacts.sh"
-							}
-							catch (ignore) { }
+						// Cleanup any prior build system resources
+						try {
+							sh "echo 'Clean up GemFire/Geode files & build artifacts...'"
+							sh "ci/cleanupGemFiles.sh"
+							sh "ci/cleanupArtifacts.sh"
+						}
+						catch (ignore) { }
 
-							// Run the SBDG project Gradle build using JDK 8 inside Docker
-							try {
-								sh "echo 'Building SBDG...'"
-								sh "ci/check.sh"
-							}
-							catch (e) {
-								currentBuild.result = "FAILED: build"
-								throw e
-							}
-							finally {
-								junit '**/build/test-results/*/*.xml'
-							}
+						// Run the SBDG project Gradle build using JDK 8 inside Docker
+						try {
+							sh "echo 'Building SBDG...'"
+							sh "ci/check.sh"
+						}
+						catch (e) {
+							currentBuild.result = "FAILED: build"
+							throw e
+						}
+						finally {
+							junit '**/build/test-results/*/*.xml'
 						}
 					}
 				}
@@ -64,16 +62,14 @@ pipeline {
 			}
 			steps {
 				script {
-					docker.withRegistry(p['docker.registry'], p['docker.credentials']) {
-						docker.image(p['docker.container.image.java.main']).inside(p['docker.container.inside.env.basic']) {
-							withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
-								try {
-									sh "ci/deployDocs.sh"
-								}
-								catch (e) {
-									currentBuild.result = "FAILED: deploy docs"
-									throw e
-								}
+					docker.image(p['docker.container.image.java.main']).inside(p['docker.container.inside.env.basic']) {
+						withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
+							try {
+								sh "ci/deployDocs.sh"
+							}
+							catch (e) {
+								currentBuild.result = "FAILED: deploy docs"
+								throw e
 							}
 						}
 					}
@@ -87,19 +83,17 @@ pipeline {
 			}
 			steps {
 				script {
-					docker.withRegistry(p['docker.registry'], p['docker.credentials']) {
-						docker.image(p['docker.container.image.java.main']).inside(p['docker.container.inside.env.basic']) {
-							withCredentials([file(credentialsId: 'spring-signing-secring.gpg', variable: 'SIGNING_KEYRING_FILE')]) {
-								withCredentials([string(credentialsId: 'spring-gpg-passphrase', variable: 'SIGNING_PASSWORD')]) {
-									withCredentials([usernamePassword(credentialsId: 'oss-token', usernameVariable: 'OSSRH_USERNAME', passwordVariable: 'OSSRH_PASSWORD')]) {
-										withCredentials([usernamePassword(credentialsId: p['artifactory.credentials'], usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-											try {
-												sh "ci/deployArtifacts.sh"
-											}
-											catch (e) {
-												currentBuild.result = "FAILED: deploy artifacts"
-												throw e
-											}
+					docker.image(p['docker.container.image.java.main']).inside(p['docker.container.inside.env.basic']) {
+						withCredentials([file(credentialsId: 'spring-signing-secring.gpg', variable: 'SIGNING_KEYRING_FILE')]) {
+							withCredentials([string(credentialsId: 'spring-gpg-passphrase', variable: 'SIGNING_PASSWORD')]) {
+								withCredentials([usernamePassword(credentialsId: 'oss-token', usernameVariable: 'OSSRH_USERNAME', passwordVariable: 'OSSRH_PASSWORD')]) {
+									withCredentials([usernamePassword(credentialsId: p['artifactory.credentials'], usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+										try {
+											sh "ci/deployArtifacts.sh"
+										}
+										catch (e) {
+											currentBuild.result = "FAILED: deploy artifacts"
+											throw e
 										}
 									}
 								}
