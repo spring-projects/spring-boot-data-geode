@@ -38,7 +38,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport;
@@ -62,14 +62,14 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author John Blum
  * @see java.net.URI
- * @see javax.servlet.http.HttpSession
+ * @see jakarta.servlet.http.HttpSession
  * @see org.junit.Test
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.builder.SpringApplicationBuilder
  * @see org.springframework.boot.test.context.SpringBootTest
- * @see org.springframework.boot.web.server.LocalServerPort
+ * @see org.springframework.boot.test.web.server.LocalServerPort
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.tests.integration.ForkingClientServerIntegrationTestsSupport
