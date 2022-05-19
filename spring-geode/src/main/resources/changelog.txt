@@ -4,6 +4,15 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.5.14 (2022-05-19)
+--------------------------------------
+Aligns SBDG with Spring Boot 2.5.15.
+
+* Built with Java 8, JDK 1.8.0_331.
+* Upgrades to Spring Framework 5.3.20.
+* Upgrades to Spring Boot 2.5.14.
+
+
 Changes in version 1.7.0-RC1 (2022-04-21)
 -----------------------------------------
 Aligns SBDG with Spring Boot 2.7.0-RC1.
