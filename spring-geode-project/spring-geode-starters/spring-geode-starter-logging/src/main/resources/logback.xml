@@ -23,7 +23,6 @@
 
 	<include resource="org/springframework/geode/logging/slf4j/logback/appender-include.xml"/>
 	<include resource="org/springframework/geode/logging/slf4j/logback/logger-include.xml"/>
-	<include resource="org/springframework/geode/logging/slf4j/logback/logback-include.xml"/>
 
 	<root level="${logback.root.log.level:-INFO}">
 		<appender-ref ref="CONSOLE"/>

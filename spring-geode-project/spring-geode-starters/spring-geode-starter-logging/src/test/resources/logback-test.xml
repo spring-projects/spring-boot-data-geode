@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
 
-	<include resource="logback-include.xml"/>
+	<include resource="org/springframework/geode/logging/slf4j/logback/properties-include.xml"/>
+	<include resource="org/springframework/geode/logging/slf4j/logback/appender-include.xml"/>
+	<include resource="org/springframework/geode/logging/slf4j/logback/logger-include.xml"/>
 
 	<root level="${logback.root.log.level:-ERROR}">
 		<appender-ref ref="delegate"/>
