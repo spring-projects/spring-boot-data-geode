@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
 
+	<contextName>geodeLoggingContext</contextName>
+
 	<statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
-	<include resource="logback-include.xml"/>
+	<define name="bootPresent" class="ch.qos.logback.core.property.ResourceExistsPropertyDefiner">
+		<resource>org/springframework/boot/logging/logback/defaults.xml</resource>
+	</define>
+
+	<include resource="org/springframework/geode/logging/slf4j/logback/properties-include.xml"/>
+
+	<variable resource="spring-geode-logging.properties"/>
+
+	<if condition='property("bootPresent").equals("true")'>
+		<then>
+			<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+			<include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
+			<include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+		</then>
+	</if>
+
+	<include resource="org/springframework/geode/logging/slf4j/logback/appender-include.xml"/>
+	<include resource="org/springframework/geode/logging/slf4j/logback/logger-include.xml"/>
 
 	<root level="${logback.root.log.level:-INFO}">
-		<appender-ref ref="console"/>
+		<appender-ref ref="CONSOLE"/>
 		<appender-ref ref="delegate"/>
 	</root>
 
