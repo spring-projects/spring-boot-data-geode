@@ -1,10 +1,11 @@
 apply plugin: 'io.spring.convention.spring-module'
 
-description = "Spring Boot Logging Starter for Apache Geode with Logback as the default logging provider and adaptation of Log4j to SLF4J"
+description = "Spring Boot Logging Starter for Apache Geode with Logback as the default logging provider and adaptation of JUL and Log4j to SLF4J"
 
 dependencies {
 
     api "ch.qos.logback:logback-classic"
+    api "org.slf4j:jul-to-slf4j"
     api "org.apache.logging.log4j:log4j-to-slf4j"
     api "org.springframework.boot:spring-boot-starter-logging"
 
