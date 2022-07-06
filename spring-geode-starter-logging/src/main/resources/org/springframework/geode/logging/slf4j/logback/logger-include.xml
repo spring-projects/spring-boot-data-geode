@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+	<logger name="com.gemstone.gemfire" level="${spring.boot.data.gemfire.log.level:-INFO}" additivity="false">
+		<appender-ref ref="${spring.geode.logging.appender-ref:-CONSOLE}"/>
+		<appender-ref ref="delegate"/>
+	</logger>
+
+	<logger name="org.apache.geode" level="${spring.boot.data.gemfire.log.level:-INFO}" additivity="false">
+		<appender-ref ref="${spring.geode.logging.appender-ref:-CONSOLE}"/>
+		<appender-ref ref="delegate"/>
+	</logger>
+
+	<logger name="org.jgroups" level="${spring.boot.data.gemfire.jgroups.log.level:-WARN}" additivity="false">
+		<appender-ref ref="${spring.geode.logging.appender-ref:-CONSOLE}"/>
+		<appender-ref ref="delegate"/>
+	</logger>
+
+</included>
