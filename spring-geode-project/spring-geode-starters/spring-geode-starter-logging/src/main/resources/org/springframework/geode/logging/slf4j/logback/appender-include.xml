@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+	<if condition='property("bootPresent").equals("false")'>
+		<then>
+			<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+				<encoder>
+					<charset>${SPRING_BOOT_LOG_CHARSET}</charset>
+					<pattern>${SPRING_BOOT_LOG_PATTERN}</pattern>
+				</encoder>
+			</appender>
+		</then>
+	</if>
+
+	<appender name="delegate" class="org.springframework.geode.logging.slf4j.logback.DelegatingAppender"/>
+
+	<appender name="geode" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>${APACHE_GEODE_LOG_CHARSET}</charset>
+			<pattern>${APACHE_GEODE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+</included>
