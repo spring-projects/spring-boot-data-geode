@@ -18,6 +18,7 @@ _site/
 .classpath
 .project
 deps*
+LOG_FILE_IS_UNDEFINED
 
 /samples/hello-world/vf.gf.dmn-events.cfg
 /samples/hello-world/vf.gf.dmn-license.cfg
