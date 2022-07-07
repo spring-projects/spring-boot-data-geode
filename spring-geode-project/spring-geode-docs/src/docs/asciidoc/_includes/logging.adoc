@@ -75,7 +75,7 @@ So, how do you configure logging for {geode-name}?
 
 Three things are required to get {geode-name} to log output:
 
-. You must declare a logging provider (such as Logback) on your Spring Boot application classpath.
+. You must declare a logging provider (such as Logback, or Log4j) on your Spring Boot application classpath.
 . (optional) You can declare an adapter (a bridge JAR) between Log4j and your logging provider if your declared
 logging provider is not Apache Log4j.
 +
@@ -96,22 +96,27 @@ NOTE: {geode-name}'s `geode-log4j` module covers the required configuration for 
 (`org.apache.logging.log4j:log4j-core`) as the logging provider. The `geode-log4j` module even provides a default
 `log4j2.xml` configuration file to configure Loggers, Appenders, and log levels for {geode-name}.
 
-If you declare Spring Boot's own `org.springframework.boot:spring-boot-starter-logging` on your application classpath,
-it covers steps 1 and 2 above.
+If you declare Spring Boot's own `org.springframework.boot:spring-boot-starter-logging` on your application
+classpath, it covers steps 1 and 2 above.
 
 The `spring-boot-starter-logging` dependency declares Logback as the logging provider and automatically adapts (bridges)
 `java.util.logging` (JUL) and Apache Log4j to SLF4J. However, you still need to supply logging provider configuration
 (such as a `logback.xml` file for Logback) to configure logging not only for your Spring Boot application but for
 {geode-name} as well.
 
+NOTE: If no user-specified logging configuration is supplied, Logback will apply default configuration
+using the `BasicConfigurator`. See Logback https://logback.qos.ch/manual/configuration.html#auto_configuration[documentation]
+for complete details.
+
 SBDG has simplified the setup of {geode-name} logging. You need only declare the
 `org.springframework.geode:spring-geode-starter-logging` dependency on your Spring Boot application classpath.
 
-Unlike {geode-name}'s default Log4j XML configuration file (`log4j2.xml`), SBDG's provided `logback.xml` configuration
-file is properly parameterized, letting you adjust log levels as well as add Appenders.
+Unlike {geode-name}'s default Log4j XML configuration file (`log4j2.xml` from `geode-log4j`), SBDG's provided
+`logback.xml` configuration file is properly parameterized, letting you adjust log levels, add Appenders
+as well as adjust other logging settings.
 
 In addition, SBDG's provided Logback configuration uses templates so that you can compose your own logging configuration
-while still including snippets from SBDG's provided logging configuration metadata, such as Loggers and Appenders.
+while still including snippets from SBDG's provided logging configuration, such as Loggers and Appenders.
 
 [[geode-logging-configuration-log-levels]]
 ==== Configuring Log Levels
@@ -129,7 +134,7 @@ SBDG's Logback configuration defines three Loggers to control the log output fro
 <comfiguration>
   <logger name="com.gemstone.gemfire" level="${spring.boot.data.gemfire.log.level:-INFO}"/>
   <logger name="org.apache.geode" level="${spring.boot.data.gemfire.log.level:-INFO}"/>
-  <logger name="org.jgroups" level="${spring.boot.data.gemfire.jgroups.log.level:-ERROR}"/>
+  <logger name="org.jgroups" level="${spring.boot.data.gemfire.jgroups.log.level:-WARN}"/>
 </comfiguration>
 ----
 ====
@@ -142,7 +147,7 @@ during the runtime operation of {geode-name}. By default, it logs output at `INF
 
 The `org.jgroups` Logger is used to log output from {geode-name}'s message distribution and membership system.
 {geode-name} uses JGroups for membership and message distribution between peer members (nodes) in the cluster
-(distributed system). By default, JGroups logs output at `ERROR`.
+(distributed system). By default, JGroups logs output at `WARN`.
 
 You can configure the log level for the `com.gemstone.gemfire` and `org.apache.geode` Loggers by setting
 the `spring.boot.data.gemfire.log.level` property. You can independently configure the `org.jgroups` Logger by setting
@@ -195,29 +200,117 @@ or later.
 As mentioned earlier, SBDG lets you compose your own logging configuration from SBDG's default Logback configuration
 metadata.
 
-SBDG conveniently bundles the Loggers and Appenders from SBDG's logging starter into a template file that you can
-include into your own custom Logback XML configuration file.
+SBDG conveniently bundles the Properties, Loggers and Appenders from SBDG's logging starter into several template files
+that you can include into your own custom Logback XML configuration file.
 
-The Logback template file appears as follows:
+The Logback configuration template files are broken down into:
 
-.logback-include.xml
+* `org/springframework/geode/logging/slf4j/logback/properties-include.xml`
+* `org/springframework/geode/logging/slf4j/logback/loggers-include.xml`
+* `org/springframework/geode/logging/slf4j/logback/appenders-include.xml`
+
+WARNING: As of SBDG `3.0`, the `logback-include.xml` file was removed.
+
+The `properties-include.xml` defines Logback "_local_" scoped properties or variables common to SBDG's configuration
+of {geode-name} logging.
+
+.properties-include.xml
 ====
 [source,xml]
 ----
-include::{starter-logging-resources-dir}/logback-include.xml[]
+include::{starter-logging-resources-dir}/org/springframework/geode/logging/slf4j/logback/properties-include.xml[]
 ----
 ====
 
-Then you can include this Logback configuration snippet in an application-specific Logback XML configuration file,
-as follows:
+The `loggers-include.xml` file defines the `Loggers` used to log output from {geode-name} components.
 
-.logback.xml
+.loggers-include.xml
 ====
 [source,xml]
 ----
-include::{starter-logging-resources-dir}/logback.xml[]
+include::{starter-logging-resources-dir}/org/springframework/geode/logging/slf4j/logback/logger-include.xml[]
 ----
 ====
+
+The `appenders-include.xml` file defines Appenders to send the log output to. If Spring Boot is on the application
+classpath, then Spring Boot logging configuration will define the "CONSOLE" `Appender`, otherwise, SBDG will provide
+a default definition.
+
+The "geode" `Appender` defines the {geode-name} logging pattern as seen in {geode-name}'s Log4j configuration.
+
+.appenders-include.xml
+====
+[source,xml]
+----
+include::{starter-logging-resources-dir}/org/springframework/geode/logging/slf4j/logback/appender-include.xml[]
+----
+====
+
+Then you can include any of SBDG'S Logback configuration metadata files as needed in your application-specific
+Logback XML configuration file, as follows:
+
+.application-specific logback.xml
+====
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<include resource="org/springframework/geode/logging/slf4j/logback/properties-include.xml"/>
+	<include resource="org/springframework/geode/logging/slf4j/logback/appender-include.xml"/>
+
+	<logger name="org.apache.geode" level="INFO" additivity="false">
+		<appender-ref ref="geode"/>
+	</logger>
+
+	<root level="${logback.root.log.level:-INFO}">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="delegate"/>
+	</root>
+
+</configuration>
+----
+====
+
+[[geode-logging-configuration-customizing]]
+==== Customizing Logging Configuration
+
+It is now possible to customize the configuration of {geode-name} logging using properties defined in
+a `spring-geode-logging.properties` file included on the Spring Boot application classpath.
+
+Any of the properties defined in `org/springframework/geode/logging/slf4j/logback/properties-include.xml` (shown above),
+such as `APACHE_GEODE_LOG_PATTERN`, or the `spring.geode.logging.appender-ref` property, can be set.
+
+For instance, and by default, {geode-name} components log output using the Spring Boot log pattern. However, if you
+prefer the fine-grained details of Apache Geode's logging behavior, you can change the `Appender` used by
+the {geode-name} `Logger's` to use the pre-defined "geode" `Appender` instead. Simply set
+the `spring-geode.logging.appender-ref` property to "geode" in a `spring-geode-logging.properties` file
+on your Spring Boot application classpath, as follows:
+
+.spring-geode-logging.properties
+====
+[source,properties]
+----
+# spring-geode-logging.properties
+spring.geode.logging.appender-ref=geode
+----
+====
+
+Alternatively, if you want to configure the log output of your entire Spring Boot application, including log output
+from all {geode-name} components, then you can set the `SPRING_BOOT_LOG_PATTERN` property, or Spring Boot's
+`CONSOLE_LOG_PATTERN` property, in `spring-geode-logging.properties`, as follows:
+
+.spring-geode-logging.properties
+====
+[source,properties]
+----
+# spring-geode-logging.properties
+CONSOLE_LOG_PATTERN=TEST - %msg%n
+----
+====
+
+NOTE: The `spring-geode-logging.properties` file is only recognized when the `spring-geode-starter-logging` module
+is used.
 
 [[geode-logging-slf4j-logback-api-support]]
 === SLF4J and Logback API Support
