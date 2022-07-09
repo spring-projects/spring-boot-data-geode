@@ -2,3 +2,4 @@ CREATE KEYSPACE IF NOT EXISTS CustomerService WITH replication = { 'class':'Simp
 USE CustomerService;
 CREATE TABLE IF NOT EXISTS "Customers" (id BIGINT PRIMARY KEY, name TEXT);
 CREATE INDEX IF NOT EXISTS CustomerNameIdx ON "Customers"(name);
+INSERT INTO "Customers" (id, name) VALUES (16, 'Pie Doe');

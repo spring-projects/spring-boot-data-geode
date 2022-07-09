@@ -68,7 +68,7 @@ public class InlineCachingWithDatabaseIntegrationTests
 		extends AbstractInlineCachingWithExternalDataSourceIntegrationTests {
 
 	@SpringBootApplication(exclude = { CassandraAutoConfiguration.class, CassandraDataAutoConfiguration.class })
-	@ClientCacheApplication(logLevel = GEMFIRE_LOG_LEVEL)
+	@ClientCacheApplication
 	@EntityScan(basePackageClasses = Customer.class)
 	@EnableEntityDefinedRegions(basePackageClasses = Customer.class, clientRegionShortcut = ClientRegionShortcut.LOCAL)
 	@EnableJpaRepositories(basePackageClasses = CustomerRepository.class)

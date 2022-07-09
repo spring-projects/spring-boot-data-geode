@@ -18,7 +18,6 @@ package example.app.crm.model;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.Indexed;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.gemfire.mapping.annotation.Region;
@@ -32,8 +31,11 @@ import lombok.NoArgsConstructor;
  * The {@link Customer} class is an Abstract Data Type (ADT) modeling a customer.
  *
  * @author John Blum
- * @see lombok
- * @see org.springframework.data.annotation.Id
+ * @see javax.persistence.Entity
+ * @see javax.persistence.Table
+ * @see org.springframework.data.cassandra.core.mapping.Indexed
+ * @see org.springframework.data.cassandra.core.mapping.PrimaryKey
+ * @see org.springframework.data.cassandra.core.mapping.Table
  * @see org.springframework.data.gemfire.mapping.annotation.Region
  * @since 1.1.0
  */
@@ -46,9 +48,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(staticName = "newCustomer")
 public class Customer {
 
-	@Id
-	@javax.persistence.Id
 	@PrimaryKey
+	@javax.persistence.Id
 	private Long id;
 
 	@Indexed
