@@ -23,7 +23,6 @@ import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.cassandra.CassandraDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -69,8 +68,8 @@ import example.app.crm.repo.CustomerRepository;
 public class InlineCachingWithCassandraIntegrationTests
 		extends AbstractInlineCachingWithExternalDataSourceIntegrationTests {
 
-	@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, CassandraDataAutoConfiguration.class })
-	@ClientCacheApplication(logLevel = GEMFIRE_LOG_LEVEL)
+	@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+	@ClientCacheApplication
 	@EnableCassandraRepositories(basePackageClasses = CustomerRepository.class)
 	@EnableEntityDefinedRegions(basePackageClasses = Customer.class, clientRegionShortcut = ClientRegionShortcut.LOCAL)
 	@Import(TestcontainersCassandraConfiguration.class)

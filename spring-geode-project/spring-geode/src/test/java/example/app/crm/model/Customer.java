@@ -32,8 +32,10 @@ import lombok.NoArgsConstructor;
  * The {@link Customer} class is an Abstract Data Type (ADT) modeling a customer.
  *
  * @author John Blum
- * @see lombok
+ * @see jakarta.persistence.Entity
+ * @see jakarta.persistence.Table
  * @see org.springframework.data.annotation.Id
+ * @see org.springframework.data.cassandra.core.mapping.Table
  * @see org.springframework.data.gemfire.mapping.annotation.Region
  * @since 1.1.0
  */

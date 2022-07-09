@@ -15,30 +15,46 @@
  */
 package example.app.crm.config;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.net.InetSocketAddress;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.cassandra.CqlSessionBuilderCustomizer;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.lang.NonNull;
 
+import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.GenericContainer;
+
+import example.app.crm.model.Customer;
 
 /**
  * Spring {@link @Configuration} for Apache Cassandra using Testcontainers.
  *
  * @author John Blum
+ * @see com.datastax.oss.driver.api.core.CqlSession
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Profile
+ * @see org.testcontainers.containers.CassandraContainer
  * @see org.testcontainers.containers.GenericContainer
  * @since 1.1.0
  */
 @Configuration
 @Profile("inline-caching-cassandra")
+@EntityScan(basePackageClasses = Customer.class)
 @SuppressWarnings("unused")
 public class TestcontainersCassandraConfiguration extends TestCassandraConfiguration {
 
 	private static final String CASSANDRA_DOCKER_IMAGE_NAME = "cassandra:latest";
 
-	@Bean
+	@Bean("CassandraContainer")
 	@SuppressWarnings("rawtypes")
 	GenericContainer cassandraContainer() {
 
@@ -46,32 +62,89 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 
 		cassandraContainer.start();
 
+		return withCassandraServer(cassandraContainer);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private @NonNull GenericContainer newCassandraContainer() {
+		return new CassandraContainer(CASSANDRA_DOCKER_IMAGE_NAME)
+			.withInitScript(CASSANDRA_SCHEMA_CQL)
+			.withExposedPorts(CASSANDRA_DEFAULT_PORT)
+			.withReuse(true);
+	}
+
+	@SuppressWarnings("rawtypes")
+	private @NonNull GenericContainer newCustomCassandraContainer() {
+
+		return newCassandraContainer()
+			.withEnv("CASSANDRA_SNITCH", "GossipingPropertyFileSnitch")
+			.withEnv("HEAP_NEWSIZE", "128M")
+			.withEnv("MAX_HEAP_SIZE", "1024M")
+			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0");
+	}
+
+	private @NonNull CqlSession newCqlSession(@NonNull GenericContainer<?> cassandraContainer) {
+
+		return CqlSession.builder()
+			.addContactPoint(resolveContactPoint(cassandraContainer))
+			.withLocalDatacenter(LOCAL_DATA_CENTER)
+			.build();
+	}
+
+	private @NonNull GenericContainer<?> withCassandraServer(@NonNull GenericContainer<?> cassandraContainer) {
+
+		 cassandraContainer = initializeCassandraServer(cassandraContainer);
+		 //cassandraContainer = assertCassandraServerSetup(cassandraContainer);
+
 		return cassandraContainer;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private GenericContainer newCassandraContainer() {
-		return new GenericContainer(CASSANDRA_DOCKER_IMAGE_NAME)
-			.withExposedPorts(CASSANDRA_DEFAULT_PORT);
+	private GenericContainer<?> initializeCassandraServer(GenericContainer<?> cassandraContainer) {
+
+		try (CqlSession session = newCqlSession(cassandraContainer)) {
+			//loadCassandraCqlScripts().forEach(session::execute);
+			loadCassandraSchemaCqlScript().forEach(session::execute);
+		}
+
+		return cassandraContainer;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private GenericContainer newCustomCassandraContainer() {
+	private GenericContainer<?> assertCassandraServerSetup(GenericContainer<?> cassandraContainer) {
 
-		return newCassandraContainer()
-			.withEnv("HEAP_NEWSIZE", "128M")
-			.withEnv("MAX_HEAP_SIZE", "1024M")
-			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0")
-			.withEnv("CASSANDRA_SNITCH", "GossipingPropertyFileSnitch");
+		try (CqlSession session = newCqlSession(cassandraContainer)) {
+
+			session.getMetadata().getKeyspace(KEYSPACE_NAME)
+				.map(keyspaceMetadata -> {
+
+					assertThat(keyspaceMetadata.getName().toString()).isEqualToIgnoringCase(KEYSPACE_NAME);
+
+					keyspaceMetadata.getTable("Customers")
+						.map(tableMetadata -> {
+							assertThat(tableMetadata.getName().toString()).isEqualToIgnoringCase("Customers");
+							assertThat(tableMetadata.getKeyspace().toString()).isEqualToIgnoringCase(KEYSPACE_NAME);
+							return tableMetadata;
+						})
+						.orElseThrow(() -> new IllegalStateException("Table [Customers] not found"));
+
+					return keyspaceMetadata;
+				})
+				.orElseThrow(() -> new IllegalStateException(String.format("Keyspace [%s] not found", KEYSPACE_NAME)));
+		}
+
+		return cassandraContainer;
 	}
 
-	@Override
-	protected String getContactPoints() {
-		return cassandraContainer().getContainerIpAddress();
+	@Bean
+	CqlSessionBuilderCustomizer cqlSessionBuilderCustomizer(
+			@Qualifier("CassandraContainer") GenericContainer<?> cassandraContainer) {
+
+		return cqlSessionBuilder -> cqlSessionBuilder.addContactPoint(resolveContactPoint(cassandraContainer))
+			.withLocalDatacenter(LOCAL_DATA_CENTER)
+			.withKeyspace(KEYSPACE_NAME);
 	}
 
-	@Override
-	protected int getPort() {
-		return cassandraContainer().getFirstMappedPort();
+	private InetSocketAddress resolveContactPoint(GenericContainer<?> cassandraContainer) {
+		return new InetSocketAddress(cassandraContainer.getHost(),
+			cassandraContainer.getMappedPort(CASSANDRA_DEFAULT_PORT));
 	}
 }

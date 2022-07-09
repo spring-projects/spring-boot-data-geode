@@ -32,6 +32,7 @@ dependencies {
 	testImplementation "org.springframework.boot:spring-boot-starter-data-cassandra"
 	testImplementation "org.springframework.data:spring-data-geode-test"
 	testImplementation "org.testcontainers:testcontainers"
+	testImplementation "org.testcontainers:cassandra"
 
 	testRuntimeOnly "org.hsqldb:hsqldb"
 

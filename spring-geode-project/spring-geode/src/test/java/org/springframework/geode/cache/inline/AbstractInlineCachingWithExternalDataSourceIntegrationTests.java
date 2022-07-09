@@ -41,8 +41,6 @@ import example.app.crm.repo.CustomerRepository;
 @SuppressWarnings("unused")
 public abstract class AbstractInlineCachingWithExternalDataSourceIntegrationTests extends IntegrationTestsSupport {
 
-	public static final String GEMFIRE_LOG_LEVEL = "off";
-
 	@Autowired
 	private CustomerRepository customerRepository;
 
