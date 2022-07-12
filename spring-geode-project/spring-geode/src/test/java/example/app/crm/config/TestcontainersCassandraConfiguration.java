@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.lang.NonNull;
 
 import org.testcontainers.containers.CassandraContainer;
@@ -38,7 +39,10 @@ import example.app.crm.model.Customer;
  * Spring {@link @Configuration} for Apache Cassandra using Testcontainers.
  *
  * @author John Blum
+ * @see java.net.InetSocketAddress
  * @see com.datastax.oss.driver.api.core.CqlSession
+ * @see org.springframework.boot.autoconfigure.cassandra.CqlSessionBuilderCustomizer
+ * @see org.springframework.boot.autoconfigure.domain.EntityScan
  * @see org.springframework.context.annotation.Bean
  * @see org.springframework.context.annotation.Configuration
  * @see org.springframework.context.annotation.Profile
@@ -58,7 +62,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	@SuppressWarnings("rawtypes")
 	GenericContainer cassandraContainer() {
 
-		GenericContainer cassandraContainer = newCustomCassandraContainer();
+		GenericContainer cassandraContainer = newEnvironmentTunedCassandraContainer();
 
 		cassandraContainer.start();
 
@@ -69,18 +73,23 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	private @NonNull GenericContainer newCassandraContainer() {
 		return new CassandraContainer(CASSANDRA_DOCKER_IMAGE_NAME)
 			.withInitScript(CASSANDRA_SCHEMA_CQL)
+			//.withInitScript(CASSANDRA_INIT_CQL)
 			.withExposedPorts(CASSANDRA_DEFAULT_PORT)
 			.withReuse(true);
 	}
 
 	@SuppressWarnings("rawtypes")
-	private @NonNull GenericContainer newCustomCassandraContainer() {
+	private @NonNull GenericContainer newEnvironmentTunedCassandraContainer() {
 
 		return newCassandraContainer()
 			.withEnv("CASSANDRA_SNITCH", "GossipingPropertyFileSnitch")
 			.withEnv("HEAP_NEWSIZE", "128M")
 			.withEnv("MAX_HEAP_SIZE", "1024M")
 			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0");
+	}
+
+	private @NonNull CassandraTemplate newCassandraTemplate(@NonNull CqlSession session) {
+		return new CassandraTemplate(session);
 	}
 
 	private @NonNull CqlSession newCqlSession(@NonNull GenericContainer<?> cassandraContainer) {
@@ -93,8 +102,8 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 
 	private @NonNull GenericContainer<?> withCassandraServer(@NonNull GenericContainer<?> cassandraContainer) {
 
-		 cassandraContainer = initializeCassandraServer(cassandraContainer);
-		 //cassandraContainer = assertCassandraServerSetup(cassandraContainer);
+		 //cassandraContainer = initializeCassandraServer(cassandraContainer);
+		 cassandraContainer = assertCassandraServerSetup(cassandraContainer);
 
 		return cassandraContainer;
 	}
@@ -102,8 +111,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	private GenericContainer<?> initializeCassandraServer(GenericContainer<?> cassandraContainer) {
 
 		try (CqlSession session = newCqlSession(cassandraContainer)) {
-			//loadCassandraCqlScripts().forEach(session::execute);
-			loadCassandraSchemaCqlScript().forEach(session::execute);
+			newKeyspacePopulator(newCassandraSchemaCqlScriptResource()).populate(session);
 		}
 
 		return cassandraContainer;
@@ -120,8 +128,11 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 
 					keyspaceMetadata.getTable("Customers")
 						.map(tableMetadata -> {
+
 							assertThat(tableMetadata.getName().toString()).isEqualToIgnoringCase("Customers");
 							assertThat(tableMetadata.getKeyspace().toString()).isEqualToIgnoringCase(KEYSPACE_NAME);
+							//assertCustomersTableHasSizeOne(session);
+
 							return tableMetadata;
 						})
 						.orElseThrow(() -> new IllegalStateException("Table [Customers] not found"));
@@ -132,6 +143,15 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 		}
 
 		return cassandraContainer;
+	}
+
+	private void assertCustomersTableHasSizeOne(CqlSession session) {
+
+		CassandraTemplate template = newCassandraTemplate(session);
+
+		assertThat(template.getCqlOperations().execute(String.format("USE %s;", KEYSPACE_NAME))).isTrue();
+		assertThat(template.getCqlOperations().queryForObject("SELECT count(*) FROM Customers", Long.class)).isOne();
+		//assertThat(template.count(Customer.class)).isOne(); // Table Customers not found; needs to use the Keyspace
 	}
 
 	@Bean

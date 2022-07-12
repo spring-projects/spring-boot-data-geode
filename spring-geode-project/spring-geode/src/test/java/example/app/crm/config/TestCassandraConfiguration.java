@@ -16,24 +16,18 @@
 package example.app.crm.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newRuntimeException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.session.Session;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.cassandra.SessionFactory;
@@ -42,12 +36,11 @@ import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.core.cql.CqlTemplate;
 import org.springframework.data.cassandra.core.cql.RowMapper;
 import org.springframework.data.cassandra.core.cql.session.init.KeyspacePopulator;
+import org.springframework.data.cassandra.core.cql.session.init.ResourceKeyspacePopulator;
 import org.springframework.data.cassandra.core.cql.session.init.SessionFactoryInitializer;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
-import org.springframework.util.StringUtils;
 
 import example.app.crm.model.Customer;
+import example.app.crm.repo.CustomerRepository;
 
 /**
  * Base test configuration used to configure and bootstrap an Apache Cassandra database with a schema and data.
@@ -68,13 +61,16 @@ import example.app.crm.model.Customer;
 @SuppressWarnings("unused")
 public abstract class TestCassandraConfiguration {
 
+	private static final boolean CONTINUE_ON_ERROR = false;
+	private static final boolean IGNORE_FAILED_DROPS = true;
+
+	private static final String CQL_SCRIPT_ENCODING = null;
+
 	protected static final int CASSANDRA_DEFAULT_PORT = CqlSessionFactoryBean.DEFAULT_PORT;
 
 	protected static final String CASSANDRA_DATA_CQL = "cassandra-data.cql";
+	protected static final String CASSANDRA_INIT_CQL = "cassandra-init.cql";
 	protected static final String CASSANDRA_SCHEMA_CQL = "cassandra-schema.cql";
-
-	private static final String COMMENT_LINE_PREFIX = "--";
-
 	protected static final String LOCAL_DATA_CENTER = "datacenter1";
 	protected static final String KEYSPACE_NAME = "CustomerService";
 
@@ -83,9 +79,7 @@ public abstract class TestCassandraConfiguration {
 
 		SessionFactoryInitializer sessionFactoryInitializer = new SessionFactoryInitializer();
 
-		KeyspacePopulator keyspacePopulator =
-			// cqlSession -> loadCassandraCqlScripts().forEach(cqlSession::execute);
-			cqlSession -> loadCassandraDataCqlScript().forEach(cqlSession::execute);
+		KeyspacePopulator keyspacePopulator = newKeyspacePopulator(newCassandraDataCqlScriptResource());
 
 		sessionFactoryInitializer.setKeyspacePopulator(keyspacePopulator);
 		sessionFactoryInitializer.setSessionFactory(sessionFactory);
@@ -93,51 +87,21 @@ public abstract class TestCassandraConfiguration {
 		return sessionFactoryInitializer;
 	}
 
-	protected List<String> loadCassandraCqlScripts() {
-
-		List<String> cassandraCqlStatements = new ArrayList<>();
-
-		cassandraCqlStatements.addAll(loadCassandraSchemaCqlScript());
-		cassandraCqlStatements.addAll(loadCassandraDataCqlScript());
-
-		return cassandraCqlStatements;
+	protected Resource newCassandraDataCqlScriptResource() {
+		return new ClassPathResource(CASSANDRA_DATA_CQL);
 	}
 
-	protected List<String> loadCassandraDataCqlScript() {
-		return readLines(new ClassPathResource(CASSANDRA_DATA_CQL));
+	protected Resource newCassandraInitCqlScriptResource() {
+		return new ClassPathResource(CASSANDRA_INIT_CQL);
 	}
 
-	protected List<String> loadCassandraSchemaCqlScript() {
-		return readLines(new ClassPathResource(CASSANDRA_SCHEMA_CQL));
+	protected Resource newCassandraSchemaCqlScriptResource() {
+		return new ClassPathResource(CASSANDRA_SCHEMA_CQL);
 	}
 
-	private @NonNull List<String> readLines(@NonNull Resource resource) {
-
-		try (BufferedReader resourceReader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
-			return resourceReader.lines()
-				.filter(cqlPredicate())
-				.collect(Collectors.toList());
-		}
-		catch (IOException cause) {
-			throw newRuntimeException(cause, "Failed to read from Resource [%s]", resource);
-		}
-	}
-
-	private @NonNull Predicate<String> cqlPredicate() {
-
-		Predicate<String> cqlPredicate = StringUtils::hasText;
-
-		cqlPredicate.and(this::isNotCommentLine);
-
-		return cqlPredicate;
-	}
-
-	private boolean isCommentLine(@Nullable String line) {
-		return String.valueOf(line).trim().startsWith(COMMENT_LINE_PREFIX);
-	}
-
-	private boolean isNotCommentLine(@Nullable String line) {
-		return !isCommentLine(line);
+	protected KeyspacePopulator newKeyspacePopulator(Resource... cqlScripts) {
+		return new ResourceKeyspacePopulator(CONTINUE_ON_ERROR, IGNORE_FAILED_DROPS, CQL_SCRIPT_ENCODING, cqlScripts);
+		//return cqlScript -> {};
 	}
 
 	@Bean
@@ -145,16 +109,16 @@ public abstract class TestCassandraConfiguration {
 
 		return new BeanPostProcessor() {
 
-			@org.jetbrains.annotations.Nullable @Override
+			@Override
 			public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 
 				if (bean instanceof CassandraTemplate cassandraTemplate) {
 
-					Consumer<CassandraTemplate> cassandraTemplateConsumer = noopCassandraTemplateConsumer()
-						.andThen(entityObjectInsertingCassandraTemplateConsumer())
-						.andThen(entityObjectAssertingCassandraTemplateConsumer());
-						//.andThen(entityTableNameAssertingCassandraTemplateConsumer())
-						//.andThen(keyspaceNameAssertingCassandraTemplateConsumer());
+					Consumer<CassandraTemplate> cassandraTemplateConsumer = noopCassandraTemplateConsumer();
+						//.andThen(entityObjectInsertingCassandraTemplateConsumer())
+						//.andThen(entityObjectAssertingCassandraTemplateConsumer());
+						//.andThen(keyspaceNameAssertingCassandraTemplateConsumer())
+						//.andThen(tableNameAssertingCassandraTemplateConsumer());
 
 					cassandraTemplateConsumer.accept(cassandraTemplate);
 				}
@@ -164,11 +128,16 @@ public abstract class TestCassandraConfiguration {
 		};
 	}
 
+	private Consumer<CassandraTemplate> noopCassandraTemplateConsumer() {
+		return cassandraTemplate -> {};
+	}
+
 	private Consumer<CassandraTemplate> entityCountAssertingCassandraTemplateConsumer() {
 		return cassandraTemplate -> assertThat(cassandraTemplate.count(Customer.class)).isOne();
 	}
 
 	private Consumer<CassandraTemplate> entityObjectAssertingCassandraTemplateConsumer() {
+
 		return cassandraTemplate -> {
 
 			String cql = "SELECT id, name FROM Customers";
@@ -180,6 +149,9 @@ public abstract class TestCassandraConfiguration {
 			Customer expectedCustomer = Customer.newCustomer(16L, "Pie Doe");
 
 			assertThat(actualCustomer).isEqualTo(expectedCustomer);
+			//assertThat(cassandraTemplate.selectOneById(16L, Customer.class)).isEqualTo(expectedCustomer);
+			//assertThat(cassandraTemplate.query(Customer.class).stream().findFirst().orElse(null))
+			//	.isEqualTo(expectedCustomer);
 		};
 	}
 
@@ -188,18 +160,11 @@ public abstract class TestCassandraConfiguration {
 		return cassandraTemplate -> cassandraTemplate.insert(Customer.newCustomer(16L, "Pie Doe"));
 	}
 
-	private Consumer<CassandraTemplate> entityTableNameAssertingCassandraTemplateConsumer() {
-
-		return cassandraTemplate ->
-			assertThat(cassandraTemplate.getTableName(Customer.class).toString()).endsWithIgnoringCase("Customers");
-	}
-
 	private Consumer<CassandraTemplate> keyspaceNameAssertingCassandraTemplateConsumer() {
 
 		return cassandraTemplate -> {
 
-			String resolvedKeyspaceName = Optional.of(cassandraTemplate)
-				.map(CassandraTemplate::getCqlOperations)
+			String resolvedKeyspaceName = Optional.ofNullable(cassandraTemplate.getCqlOperations())
 				.filter(CqlTemplate.class::isInstance)
 				.map(CqlTemplate.class::cast)
 				.map(CqlTemplate::getSessionFactory)
@@ -212,7 +177,28 @@ public abstract class TestCassandraConfiguration {
 		};
 	}
 
-	private Consumer<CassandraTemplate> noopCassandraTemplateConsumer() {
-		return cassandraTemplate -> {};
+	private Consumer<CassandraTemplate> tableNameAssertingCassandraTemplateConsumer() {
+
+		return cassandraTemplate -> {
+
+			String entityTableName = cassandraTemplate.getTableName(Customer.class).toString();
+
+			assertThat(entityTableName).endsWithIgnoringCase("Customers");
+
+			Optional.ofNullable(cassandraTemplate.getCqlOperations())
+				.filter(CqlTemplate.class::isInstance)
+				.map(CqlTemplate.class::cast)
+				.map(CqlTemplate::getSessionFactory)
+				.map(SessionFactory::getSession)
+				.map(Session::getMetadata)
+				.flatMap(metadata -> metadata.getKeyspace(KEYSPACE_NAME))
+				.map(keyspaceMetadata -> keyspaceMetadata.getTable(entityTableName))
+				.orElseThrow(() -> new IllegalStateException(String.format("Table [%s] not found", entityTableName)));
+		};
+	}
+
+	@Bean
+	ApplicationListener<ContextRefreshedEvent> populateCassandraDatabaseUsingRepository(CustomerRepository customerRepository) {
+		return event -> customerRepository.save(Customer.newCustomer(16L, "Pie Doe"));
 	}
 }

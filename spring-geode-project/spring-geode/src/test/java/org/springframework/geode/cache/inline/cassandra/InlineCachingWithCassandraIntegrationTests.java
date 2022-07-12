@@ -59,6 +59,7 @@ import example.app.crm.repo.CustomerRepository;
  * @see org.springframework.geode.cache.inline.AbstractInlineCachingWithExternalDataSourceIntegrationTests
  * @see org.springframework.test.context.ActiveProfiles
  * @see org.springframework.test.context.junit4.SpringRunner
+ * @see example.app.crm.config.TestcontainersCassandraConfiguration
  * @since 1.1.0
  */
 @SpringBootTest
