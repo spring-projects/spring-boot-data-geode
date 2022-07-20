@@ -113,6 +113,12 @@ public class Jetty11HttpService implements HttpService {
 		return object;
 	}
 
+	private static <T> String[] toArray(String commaDelimitedString) {
+		return StringUtils.isNotBlank(commaDelimitedString)
+			? commaDelimitedString.split(",")
+			: new String[0];
+	}
+
 	private static <T> Supplier<T> toSupplier(Supplier<T> lambda) {
 		return lambda;
 	}
@@ -321,7 +327,7 @@ public class Jetty11HttpService implements HttpService {
 				.filter(this::isSslCiphersConfigured)
 				.ifPresent(ciphers -> {
 					serverSslContextFactory.setExcludeCipherSuites();
-					serverSslContextFactory.setIncludeCipherSuites(SSLUtil.readArray(ciphers));
+					serverSslContextFactory.setIncludeCipherSuites(toArray(ciphers));
 				});
 
 			serverSslContextFactory.setNeedClientAuth(sslConfiguration.isRequireAuth());
