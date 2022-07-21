@@ -4,6 +4,21 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.6.10 (2022-07-21)
+--------------------------------------
+Aligns SBDG with Spring Boot 2.6.10.
+
+* Built with Oracle Java 8, JDK 1.8.0_331.
+* Improves the spring-geode-starter-logging by providing better integration with Spring Boot logging along with
+modularizing the SLF4j, Logback configuration allowing users to customize per component, such as Apache Geode component
+logging independent of Spring Boot and Spring components, offering finer grain control.
+* Upgrades to Spring Framework 5.3.22.
+* Upgrades to Spring Boot 2.6.10.
+* Upgrades to Spring Data BOM 2021.1.6 (Q-SR6).
+* Upgrades to Spring Data for Apache Geode 2.6.6.
+* Upgrades to Testcontainers 1.17.3
+
+
 Changes in version 1.6.9 (2022-06-24)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.6.9.
