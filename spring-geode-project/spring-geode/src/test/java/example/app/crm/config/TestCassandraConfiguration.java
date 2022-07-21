@@ -27,6 +27,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -38,6 +39,7 @@ import org.springframework.data.cassandra.core.cql.RowMapper;
 import org.springframework.data.cassandra.core.cql.session.init.KeyspacePopulator;
 import org.springframework.data.cassandra.core.cql.session.init.ResourceKeyspacePopulator;
 import org.springframework.data.cassandra.core.cql.session.init.SessionFactoryInitializer;
+import org.springframework.lang.NonNull;
 
 import example.app.crm.model.Customer;
 import example.app.crm.repo.CustomerRepository;
@@ -64,6 +66,8 @@ public abstract class TestCassandraConfiguration {
 	private static final boolean CONTINUE_ON_ERROR = false;
 	private static final boolean IGNORE_FAILED_DROPS = true;
 
+	private static final Customer pieDoe = Customer.newCustomer(16L, "Pie Doe");
+
 	private static final String CQL_SCRIPT_ENCODING = null;
 
 	protected static final int CASSANDRA_DEFAULT_PORT = CqlSessionFactoryBean.DEFAULT_PORT;
@@ -71,8 +75,21 @@ public abstract class TestCassandraConfiguration {
 	protected static final String CASSANDRA_DATA_CQL = "cassandra-data.cql";
 	protected static final String CASSANDRA_INIT_CQL = "cassandra-init.cql";
 	protected static final String CASSANDRA_SCHEMA_CQL = "cassandra-schema.cql";
-	protected static final String LOCAL_DATA_CENTER = "datacenter1";
+	protected static final String DEBUGGING_PROFILE = "debugging";
 	protected static final String KEYSPACE_NAME = "CustomerService";
+	protected static final String TABLE_NAME = "Customers";
+
+	protected @NonNull Resource newCassandraDataCqlScriptResource() {
+		return new ClassPathResource(CASSANDRA_DATA_CQL);
+	}
+
+	protected @NonNull Resource newCassandraInitCqlScriptResource() {
+		return new ClassPathResource(CASSANDRA_INIT_CQL);
+	}
+
+	protected @NonNull Resource newCassandraSchemaCqlScriptResource() {
+		return new ClassPathResource(CASSANDRA_SCHEMA_CQL);
+	}
 
 	@Bean
 	SessionFactoryInitializer sessionFactoryInitializer(SessionFactory sessionFactory) {
@@ -87,24 +104,12 @@ public abstract class TestCassandraConfiguration {
 		return sessionFactoryInitializer;
 	}
 
-	protected Resource newCassandraDataCqlScriptResource() {
-		return new ClassPathResource(CASSANDRA_DATA_CQL);
-	}
-
-	protected Resource newCassandraInitCqlScriptResource() {
-		return new ClassPathResource(CASSANDRA_INIT_CQL);
-	}
-
-	protected Resource newCassandraSchemaCqlScriptResource() {
-		return new ClassPathResource(CASSANDRA_SCHEMA_CQL);
-	}
-
-	protected KeyspacePopulator newKeyspacePopulator(Resource... cqlScripts) {
+	protected @NonNull KeyspacePopulator newKeyspacePopulator(Resource... cqlScripts) {
 		return new ResourceKeyspacePopulator(CONTINUE_ON_ERROR, IGNORE_FAILED_DROPS, CQL_SCRIPT_ENCODING, cqlScripts);
-		//return cqlScript -> {};
 	}
 
 	@Bean
+	@Profile(DEBUGGING_PROFILE)
 	BeanPostProcessor cassandraTemplatePostProcessor() {
 
 		return new BeanPostProcessor() {
@@ -114,11 +119,12 @@ public abstract class TestCassandraConfiguration {
 
 				if (bean instanceof CassandraTemplate cassandraTemplate) {
 
-					Consumer<CassandraTemplate> cassandraTemplateConsumer = noopCassandraTemplateConsumer();
-						//.andThen(entityObjectInsertingCassandraTemplateConsumer())
-						//.andThen(entityObjectAssertingCassandraTemplateConsumer());
-						//.andThen(keyspaceNameAssertingCassandraTemplateConsumer())
-						//.andThen(tableNameAssertingCassandraTemplateConsumer());
+					Consumer<CassandraTemplate> cassandraTemplateConsumer = noopCassandraTemplateConsumer()
+						.andThen(insertEntityObjectCassandraTemplateConsumer())
+						.andThen(assertEntityCountCassandraTemplateConsumer())
+						.andThen(assertEntityObjectCassandraTemplateConsumer())
+						.andThen(assertKeyspaceNameCassandraTemplateConsumer())
+						.andThen(assertTableNameCassandraTemplateConsumer());
 
 					cassandraTemplateConsumer.accept(cassandraTemplate);
 				}
@@ -132,35 +138,32 @@ public abstract class TestCassandraConfiguration {
 		return cassandraTemplate -> {};
 	}
 
-	private Consumer<CassandraTemplate> entityCountAssertingCassandraTemplateConsumer() {
+	private Consumer<CassandraTemplate> assertEntityCountCassandraTemplateConsumer() {
 		return cassandraTemplate -> assertThat(cassandraTemplate.count(Customer.class)).isOne();
 	}
 
-	private Consumer<CassandraTemplate> entityObjectAssertingCassandraTemplateConsumer() {
+	private Consumer<CassandraTemplate> assertEntityObjectCassandraTemplateConsumer() {
 
 		return cassandraTemplate -> {
 
-			String cql = "SELECT id, name FROM Customers";
+			String cql = "SELECT id, name FROM \"Customers\"";
 
 			RowMapper<Customer> customerRowMapper = (row, rowNumber) ->
 				Customer.newCustomer(row.getLong("id"), row.getString("name"));
 
 			Customer actualCustomer = cassandraTemplate.getCqlOperations().queryForObject(cql, customerRowMapper);
-			Customer expectedCustomer = Customer.newCustomer(16L, "Pie Doe");
 
-			assertThat(actualCustomer).isEqualTo(expectedCustomer);
-			//assertThat(cassandraTemplate.selectOneById(16L, Customer.class)).isEqualTo(expectedCustomer);
-			//assertThat(cassandraTemplate.query(Customer.class).stream().findFirst().orElse(null))
-			//	.isEqualTo(expectedCustomer);
+			assertThat(actualCustomer).isEqualTo(pieDoe);
+			assertThat(cassandraTemplate.selectOneById(16L, Customer.class)).isEqualTo(pieDoe);
+			assertThat(cassandraTemplate.query(Customer.class).stream().findFirst().orElse(null)).isEqualTo(pieDoe);
 		};
 	}
 
-	// TODO: Why does this work and the CQL data script not work!
-	private Consumer<CassandraTemplate> entityObjectInsertingCassandraTemplateConsumer() {
-		return cassandraTemplate -> cassandraTemplate.insert(Customer.newCustomer(16L, "Pie Doe"));
+	private Consumer<CassandraTemplate> insertEntityObjectCassandraTemplateConsumer() {
+		return cassandraTemplate -> cassandraTemplate.insert(pieDoe);
 	}
 
-	private Consumer<CassandraTemplate> keyspaceNameAssertingCassandraTemplateConsumer() {
+	private Consumer<CassandraTemplate> assertKeyspaceNameCassandraTemplateConsumer() {
 
 		return cassandraTemplate -> {
 
@@ -177,7 +180,7 @@ public abstract class TestCassandraConfiguration {
 		};
 	}
 
-	private Consumer<CassandraTemplate> tableNameAssertingCassandraTemplateConsumer() {
+	private Consumer<CassandraTemplate> assertTableNameCassandraTemplateConsumer() {
 
 		return cassandraTemplate -> {
 
@@ -198,7 +201,10 @@ public abstract class TestCassandraConfiguration {
 	}
 
 	@Bean
-	ApplicationListener<ContextRefreshedEvent> populateCassandraDatabaseUsingRepository(CustomerRepository customerRepository) {
-		return event -> customerRepository.save(Customer.newCustomer(16L, "Pie Doe"));
+	@Profile(DEBUGGING_PROFILE)
+	ApplicationListener<ContextRefreshedEvent> populateCassandraDatabaseUsingRepository(
+			CustomerRepository customerRepository) {
+
+		return event -> customerRepository.save(pieDoe);
 	}
 }

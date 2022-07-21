@@ -18,7 +18,6 @@ package example.app.crm.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.Indexed;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.gemfire.mapping.annotation.Region;
@@ -34,7 +33,8 @@ import lombok.NoArgsConstructor;
  * @author John Blum
  * @see jakarta.persistence.Entity
  * @see jakarta.persistence.Table
- * @see org.springframework.data.annotation.Id
+ * @see org.springframework.data.cassandra.core.mapping.Indexed
+ * @see org.springframework.data.cassandra.core.mapping.PrimaryKey
  * @see org.springframework.data.cassandra.core.mapping.Table
  * @see org.springframework.data.gemfire.mapping.annotation.Region
  * @since 1.1.0
@@ -48,9 +48,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(staticName = "newCustomer")
 public class Customer {
 
-	@Id
-	@jakarta.persistence.Id
 	@PrimaryKey
+	@jakarta.persistence.Id
 	private Long id;
 
 	@Indexed
