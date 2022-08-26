@@ -4,6 +4,15 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.6.11 (2022-08-26)
+--------------------------------------
+Aligns SBDG with Spring Boot 2.6.11.
+
+* Built with Oracle Java 8, JDK 1.8.0_331.
+* Upgrades to Spring Boot 2.6.11.
+* Upgrades to VMware Tanzu GemFire for VMs (Pivotal Cloud Cache) 1.14.5.
+
+
 Changes in version 1.6.10 (2022-07-21)
 --------------------------------------
 Aligns SBDG with Spring Boot 2.6.10.
