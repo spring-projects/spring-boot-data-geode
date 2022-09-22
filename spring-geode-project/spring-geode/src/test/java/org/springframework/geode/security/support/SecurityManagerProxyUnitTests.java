@@ -13,7 +13,6 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 package org.springframework.geode.security.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,11 +26,12 @@ import static org.mockito.Mockito.when;
 import java.security.Principal;
 import java.util.Properties;
 
-import org.apache.geode.security.ResourcePermission;
 import org.junit.Test;
 
+import org.apache.geode.security.ResourcePermission;
+
 /**
- * Unit tests for {@link SecurityManagerProxy}
+ * Unit Tests for {@link SecurityManagerProxy}
  *
  * @author John Blum
  * @see java.security.Principal

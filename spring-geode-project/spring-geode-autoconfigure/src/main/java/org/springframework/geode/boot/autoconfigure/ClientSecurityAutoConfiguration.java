@@ -41,7 +41,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
-import org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer;
 import org.springframework.geode.core.env.VcapPropertySource;
 import org.springframework.geode.core.env.support.CloudCacheService;
 import org.springframework.geode.core.env.support.User;
@@ -112,11 +111,8 @@ public class ClientSecurityAutoConfiguration {
 
 	private static final String POOL_LOCATORS_PROPERTY = "spring.data.gemfire.pool.locators";
 
-	private static final String SECURITY_USERNAME_PROPERTY =
-		AutoConfiguredAuthenticationInitializer.SDG_SECURITY_USERNAME_PROPERTY;
-
-	private static final String SECURITY_PASSWORD_PROPERTY =
-		AutoConfiguredAuthenticationInitializer.SDG_SECURITY_PASSWORD_PROPERTY;
+	private static final String SECURITY_USERNAME_PROPERTY = "spring.data.gemfire.security.username";
+	private static final String SECURITY_PASSWORD_PROPERTY = "spring.data.gemfire.security.password";
 
 	private static final String SSL_USE_DEFAULT_CONTEXT_PROPERTY =
 		"spring.data.gemfire.security.ssl.use-default-context";
