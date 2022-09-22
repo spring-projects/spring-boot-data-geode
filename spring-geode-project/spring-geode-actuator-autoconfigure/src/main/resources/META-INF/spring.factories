@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.springframework.geode.boot.actuate.autoconfigure.GeodeHealthIndicatorAutoConfiguration
+# Spring Boot Auto-configuration
+# See /META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
