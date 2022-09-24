@@ -172,6 +172,11 @@ public class SecurityManagerProxy extends LazyWiringDeclarableSupport
 	}
 
 	@Override
+	public void init(Properties props) {
+		super.init(props);
+	}
+
+	@Override
 	protected BeanFactory locateBeanFactory() {
 		return this.beanFactory != null ? this.beanFactory : super.locateBeanFactory();
 	}

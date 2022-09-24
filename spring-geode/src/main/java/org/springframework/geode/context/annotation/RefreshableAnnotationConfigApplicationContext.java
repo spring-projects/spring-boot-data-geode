@@ -22,6 +22,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -38,14 +40,11 @@ import org.springframework.context.annotation.ScopeMetadataResolver;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.util.ArrayUtils;
-import org.springframework.data.gemfire.util.SpringUtils;
+import org.springframework.geode.core.util.SpringExtensions;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@literal refreshable} {@link ApplicationContext} capable of loading {@link Class component classes} used for
@@ -314,7 +313,7 @@ public class RefreshableAnnotationConfigApplicationContext extends AbstractRefre
 	 */
 	@Override
 	protected void prepareRefresh() {
-		this.beanFactory = (DefaultListableBeanFactory) SpringUtils.safeGetValue(this::getBeanFactory);
+		this.beanFactory = (DefaultListableBeanFactory) SpringExtensions.safeGetValue(this::getBeanFactory);
 		super.prepareRefresh();
 	}
 

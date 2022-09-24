@@ -34,10 +34,11 @@ import org.springframework.util.StringUtils;
  * @see org.springframework.beans.factory.config.BeanDefinition
  * @see org.springframework.beans.factory.support.BeanDefinitionRegistry
  * @see org.springframework.context.ApplicationContext
+ * @see org.springframework.data.gemfire.util.SpringExtensions
  * @since 1.6.0
  */
 @SuppressWarnings("unused")
-public abstract class SpringExtensions {
+public abstract class SpringExtensions extends org.springframework.data.gemfire.util.SpringExtensions {
 
 	public static final String BEAN_DEFINITION_METADATA_JSON = "{\n"
 		+ "\t'beanName': '%1$s',%n"

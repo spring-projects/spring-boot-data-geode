@@ -23,6 +23,8 @@ import java.util.Properties;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -36,21 +38,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
-import org.springframework.data.gemfire.config.annotation.support.AutoConfiguredAuthenticationInitializer;
 import org.springframework.geode.core.env.VcapPropertySource;
 import org.springframework.geode.core.env.support.CloudCacheService;
 import org.springframework.geode.core.env.support.User;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Spring Boot {@link EnableAutoConfiguration auto-configuration} enabling Apache Geode's Security functionality,
@@ -113,11 +110,8 @@ public class ClientSecurityAutoConfiguration {
 
 	private static final String POOL_LOCATORS_PROPERTY = "spring.data.gemfire.pool.locators";
 
-	private static final String SECURITY_USERNAME_PROPERTY =
-		AutoConfiguredAuthenticationInitializer.SDG_SECURITY_USERNAME_PROPERTY;
-
-	private static final String SECURITY_PASSWORD_PROPERTY =
-		AutoConfiguredAuthenticationInitializer.SDG_SECURITY_PASSWORD_PROPERTY;
+	private static final String SECURITY_USERNAME_PROPERTY = "spring.data.gemfire.security.username";
+	private static final String SECURITY_PASSWORD_PROPERTY = "spring.data.gemfire.security.password";
 
 	private static final String SSL_USE_DEFAULT_CONTEXT_PROPERTY =
 		"spring.data.gemfire.security.ssl.use-default-context";
