@@ -4,6 +4,27 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 2.0.0-M5 (2022-09-26)
+----------------------------------------
+Aligns SBDG with Spring Boot 3.0.0-M5
+
+* Adapts API and framework changes in Spring Boot Auto-configuration removing auto-configuration class declaration
+from META-INF/spring.factories and declaring the auto-configuration classes in
+META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports.
+* Edits reference documentation to include a section on declaring (transitive) dependency exclusions
+using Gradle or Maven.
+* Upgrades to Spring Framework 6.0.0-M6.
+* Upgrades to Spring Boot 3.0.0-M5.
+* Upgrades to Spring Data BOM 2022.0.0-M6 (Turing-M6).
+* Upgrades to Spring Data for Apache Geode 3.0.0-M6.
+* Upgrades to Spring Session BOM 2022.0.0-M3.
+* Upgrades to Spring Session for Apache Geode 3.0.0-M5.
+* Upgrades to Spring Test for Apache Geode 1.0.0-M7.
+* Upgrades to VMware Tanzu (Pivotal) GemFire 9.15.2.
+* Upgrades to VMware Tanzu GemFire for VMs (Pivotal Cloud Cache) 1.14.5.
+* Upgrades to Gradle 7.5.1.
+
+
 Changes in version 1.7.4 (2022-09-23)
 -------------------------------------
 Aligns SBDG with Spring Boot 2.7.4
