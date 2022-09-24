@@ -17,6 +17,8 @@ package org.springframework.geode.config.annotation;
 
 import java.util.Properties;
 
+import org.apache.geode.cache.Cache;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -46,9 +48,11 @@ public class SecurityManagerProxyConfiguration implements ApplicationListener<Co
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 
+		ApplicationContext applicationContext = event.getApplicationContext();
+
 		SecurityManagerProxy securityManagerProxy = SecurityManagerProxy.getInstance();
 
-		securityManagerProxy.setBeanFactory(event.getApplicationContext().getAutowireCapableBeanFactory());
-		securityManagerProxy.init(new Properties());
+		securityManagerProxy.setBeanFactory(applicationContext.getAutowireCapableBeanFactory());
+		securityManagerProxy.initialize(applicationContext.getBean(Cache.class), new Properties());
 	}
 }

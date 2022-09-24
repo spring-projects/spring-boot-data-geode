@@ -26,7 +26,6 @@ import java.util.function.Predicate;
 
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanFactory;
@@ -47,7 +46,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.type.StandardMethodMetadata;
@@ -58,8 +56,8 @@ import org.springframework.data.gemfire.ResolvableRegionFactoryBean;
 import org.springframework.data.gemfire.config.xml.GemfireConstants;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.data.gemfire.util.CollectionUtils;
-import org.springframework.data.gemfire.util.SpringUtils;
 import org.springframework.geode.config.annotation.support.TypelessAnnotationConfigSupport;
+import org.springframework.geode.core.util.SpringExtensions;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
@@ -137,7 +135,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 							userRegionTemplateNames.add(beanName);
 						}
 						else if (isBeanWithGemfireTemplateDependency(beanFactory, beanDefinition)) {
-							SpringUtils.addDependsOn(beanDefinition, GemfireConstants.DEFAULT_GEMFIRE_CACHE_NAME);
+							SpringExtensions.addDependsOn(beanDefinition, GemfireConstants.DEFAULT_GEMFIRE_CACHE_NAME);
 						}
 					}
 				}
@@ -213,7 +211,7 @@ public class RegionTemplateAutoConfiguration extends TypelessAnnotationConfigSup
 
 		this.autoConfiguredRegionTemplateBeanNames.stream()
 			.map(registry::getBeanDefinition)
-			.forEach(beanDefinition -> SpringUtils.addDependsOn(beanDefinition, dependencyBeanNamesArray));
+			.forEach(beanDefinition -> SpringExtensions.addDependsOn(beanDefinition, dependencyBeanNamesArray));
 	}
 
 	// Required by @EnableClusterDefinedRegions & Native-Defined Regions (e.g. Regions defined in "cache.xml").
