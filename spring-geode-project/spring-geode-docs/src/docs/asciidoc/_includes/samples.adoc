@@ -2,6 +2,7 @@
 == Samples
 :geode-name: {apache-geode-name}
 
+> NOTE: You are viewing Samples for Spring Boot for Apache Geode (SBDG) version {version}.
 
 This section contains working examples that show how to use Spring Boot for {geode-name} (SBDG) effectively.
 
