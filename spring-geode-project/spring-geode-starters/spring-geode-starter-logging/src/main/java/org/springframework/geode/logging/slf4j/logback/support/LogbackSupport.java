@@ -20,10 +20,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.springframework.util.ClassUtils;
+
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.impl.StaticLoggerBinder;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -42,6 +43,11 @@ import ch.qos.logback.core.Appender;
  */
 @SuppressWarnings("unused")
 public abstract class LogbackSupport {
+
+	private static final String STATIC_LOGGER_BINDER_CLASSNAME = "org.slf4j.impl.StaticLoggerBinder";
+
+	private static final boolean STATIC_LOGGER_BINDER_CLASS_PRESENT =
+		ClassUtils.isPresent(STATIC_LOGGER_BINDER_CLASSNAME, ClassUtils.getDefaultClassLoader());
 
 	protected static final Function<Logger, Optional<ch.qos.logback.classic.Logger>> slf4jLoggerToLogbackLoggerConverter =
 		logger -> Optional.ofNullable(logger)
@@ -102,10 +108,16 @@ public abstract class LogbackSupport {
 
 	private static void resetStaticLoggerBinder() throws Exception {
 
-		Method staticLoggerBinderReset = StaticLoggerBinder.class.getDeclaredMethod("reset");
+		if (STATIC_LOGGER_BINDER_CLASS_PRESENT) {
 
-		staticLoggerBinderReset.setAccessible(true);
-		staticLoggerBinderReset.invoke(null);
+			Class<?> staticLoggerBinderClass =
+				ClassUtils.forName(STATIC_LOGGER_BINDER_CLASSNAME, ClassUtils.getDefaultClassLoader());
+
+			Method staticLoggerBinderReset = staticLoggerBinderClass.getDeclaredMethod("reset");
+
+			staticLoggerBinderReset.setAccessible(true);
+			staticLoggerBinderReset.invoke(null);
+		}
 	}
 
 	/**

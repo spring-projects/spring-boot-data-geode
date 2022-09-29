@@ -9,6 +9,7 @@ dependencies {
     api "org.apache.logging.log4j:log4j-to-slf4j"
     api "org.springframework.boot:spring-boot-starter-logging"
 
+    implementation "org.springframework:spring-core"
     implementation "org.codehaus.janino:janino"
 
     testImplementation project(":spring-geode-starter-test")
