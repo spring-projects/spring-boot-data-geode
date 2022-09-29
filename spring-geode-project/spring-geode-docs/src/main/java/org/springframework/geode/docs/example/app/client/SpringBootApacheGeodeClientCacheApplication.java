@@ -19,8 +19,6 @@ import java.util.Arrays;
 
 import org.apache.geode.cache.client.ClientCache;
 
-import org.apache.shiro.util.Assert;
-
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.data.gemfire.util.ArrayUtils;
 import org.springframework.geode.config.annotation.UseMemberName;
+import org.springframework.util.Assert;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
