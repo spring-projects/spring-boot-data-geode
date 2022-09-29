@@ -6,6 +6,10 @@ apply plugin: 'io.spring.convention.spring-module'
 
 description = "Spring Boot Auto-Configuration for Apache Geode"
 
+configurations.implementation {
+	exclude group: "org.apache.httpcomponents", module: "httpclient"
+}
+
 dependencies {
 
 	api project(":spring-geode")
@@ -23,6 +27,7 @@ dependencies {
 	// See additional testImplementation dependencies declared in the testDependencies project extension
 	// defined in the DependencySetPlugin.
 	testImplementation "jakarta.servlet:jakarta.servlet-api"
+	testImplementation "org.apache.httpcomponents.client5:httpclient5"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 	testImplementation "org.springframework.boot:spring-boot-starter-web"
 
