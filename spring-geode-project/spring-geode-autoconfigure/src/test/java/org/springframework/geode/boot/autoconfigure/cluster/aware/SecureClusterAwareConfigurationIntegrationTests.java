@@ -34,12 +34,15 @@ import org.apache.geode.cache.DataPolicy;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustAllStrategy;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
+import org.apache.hc.client5.http.ssl.TrustAllStrategy;
+import org.apache.hc.core5.ssl.SSLContexts;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -192,8 +195,18 @@ public class SecureClusterAwareConfigurationIntegrationTests extends ForkingClie
 							.loadTrustMaterial(keyStore, TrustAllStrategy.INSTANCE)
 							.build();
 
+						SSLConnectionSocketFactory sslSocketFactory =
+							SSLConnectionSocketFactoryBuilder.create()
+								.setHostnameVerifier(new NoopHostnameVerifier())
+								.setSslContext(sslContext)
+								.build();
+
+						HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+							.setSSLSocketFactory(sslSocketFactory)
+							.build();
+
 						HttpClient httpClient = HttpClients.custom()
-							.setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier()))
+							.setConnectionManager(connectionManager)
 							.build();
 
 						restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
