@@ -76,6 +76,16 @@ public abstract class LogbackSupport {
 	}
 
 	/**
+	 * Properly stops Logback classic.
+	 *
+	 * @see <a href="https://logback.qos.ch/manual/configuration.html#stopContext">Stopping logback-classic</a>
+	 */
+	public static void stopLogback() {
+		resolveLoggerContext()
+			.ifPresent(LoggerContext::stop);
+	}
+
+	/**
 	 * Resets the state of the SLF4J Logback logging provider and system.
 	 */
 	public static void resetLogback() {
