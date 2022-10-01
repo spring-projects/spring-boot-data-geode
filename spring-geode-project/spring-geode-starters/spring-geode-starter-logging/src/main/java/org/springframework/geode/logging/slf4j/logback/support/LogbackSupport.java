@@ -44,6 +44,8 @@ import ch.qos.logback.core.Appender;
 @SuppressWarnings("unused")
 public abstract class LogbackSupport {
 
+	private static final Class<ch.qos.logback.classic.Logger> LOGBACK_LOGGER_TYPE = ch.qos.logback.classic.Logger.class;
+
 	private static final String STATIC_LOGGER_BINDER_CLASSNAME = "org.slf4j.impl.StaticLoggerBinder";
 
 	private static final boolean STATIC_LOGGER_BINDER_CLASS_PRESENT =
@@ -185,8 +187,8 @@ public abstract class LogbackSupport {
 	public static ch.qos.logback.classic.Logger requireLogbackRootLogger() {
 
 		return resolveRootLogger()
-			.filter(ch.qos.logback.classic.Logger.class::isInstance)
-			.map(ch.qos.logback.classic.Logger.class::cast)
+			.filter(LOGBACK_LOGGER_TYPE::isInstance)
+			.map(LOGBACK_LOGGER_TYPE::cast)
 			.orElseThrow(() -> new IllegalStateException(String.format(ILLEGAL_LOGGER_TYPE_EXCEPTION_MESSAGE,
 				ROOT_LOGGER_NAME, nullSafeTypeName(resolveRootLogger().orElse(null)))));
 	}

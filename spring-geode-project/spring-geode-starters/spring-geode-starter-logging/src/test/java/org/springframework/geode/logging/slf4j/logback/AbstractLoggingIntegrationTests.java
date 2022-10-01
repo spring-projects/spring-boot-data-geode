@@ -18,15 +18,27 @@ package org.springframework.geode.logging.slf4j.logback;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
-import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.logging.slf4j.logback.TestAppender;
+import org.springframework.data.gemfire.util.ArrayUtils;
+import org.springframework.data.gemfire.util.CollectionUtils;
+import org.springframework.geode.logging.slf4j.logback.support.LogbackSupport;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
-import org.slf4j.ILoggerFactory;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,118 +46,287 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.status.Status;
+import ch.qos.logback.core.status.StatusListener;
 
 /**
- * Abstract base class for testing the spring-geode-starter-logging and spring-gemfire-starter modules.
+ * Abstract base class for testing the spring-geode-starter-logging and spring-geode-starter modules.
  *
  * @author John Blum
  * @see org.slf4j.Logger
  * @see org.slf4j.LoggerFactory
- * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.logging.slf4j.logback.TestAppender
- * @see ch.qos.logback.classic.Level
+ * @see ch.qos.logback.classic.Logger
  * @see ch.qos.logback.classic.LoggerContext
  * @see ch.qos.logback.classic.util.ContextInitializer
- * @see ch.qos.logback.core.Appender
  * @since 1.3.0
  */
-public abstract class AbstractLoggingIntegrationTests extends IntegrationTestsSupport {
+@SuppressWarnings("unused")
+public abstract class AbstractLoggingIntegrationTests {
+
+	private static final boolean STATUS_DEBUG_ENABLED = false;
+
+	private static final Class<ch.qos.logback.classic.Logger> LOGBACK_LOGGER_TYPE =
+		ch.qos.logback.classic.Logger.class;
+
+	private static final Function<? super ch.qos.logback.classic.Logger, Level> LOGBACK_LOGGER_LEVEL =
+		ch.qos.logback.classic.Logger::getLevel;
 
 	protected static final String APACHE_GEODE_LOGGER_NAME = "org.apache.geode";
+	protected static final String CONSOLE_APPENDER_NAME = "CONSOLE";
+	protected static final String DELEGATE_APPENDER_NAME = "delegate";
 	protected static final String SPRING_BOOT_DATA_GEMFIRE_LOG_LEVEL_PROPERTY = "spring.boot.data.gemfire.log.level";
 
-	private Logger apacheGeodeLogger = LoggerFactory.getLogger(APACHE_GEODE_LOGGER_NAME);
+	private static TestAppender testAppender;
 
-	private TestAppender testAppender;
+	private static ch.qos.logback.classic.Logger assertLogbackLogger(org.slf4j.Logger slf4jLogger,
+			String loggerName, Level logLevel) {
 
-	protected TestAppender getTestAppender() {
+		assertThat(slf4jLogger).isInstanceOf(LOGBACK_LOGGER_TYPE);
+		assertThat(slf4jLogger.getName()).isEqualTo(loggerName);
+		assertThat(slf4jLogger)
+			.asInstanceOf(InstanceOfAssertFactories.type(LOGBACK_LOGGER_TYPE))
+			.extracting(LOGBACK_LOGGER_LEVEL)
+			.isEqualTo(logLevel);
 
-		assertThat(this.testAppender).describedAs("TestAppender could not be resolved").isNotNull();
-
-		return this.testAppender;
+		return LOGBACK_LOGGER_TYPE.cast(slf4jLogger);
 	}
 
-	protected Level getTestLogLevel() {
-		return Level.INFO;
+	private static LoggerContext assertLogbackLoggerConfiguration(LoggerContext loggerContext,
+			String... loggerNames) {
+
+		List<String> configuredLoggerNames = CollectionUtils.nullSafeList(loggerContext.getLoggerList()).stream()
+			.filter(Objects::nonNull)
+			.map(Logger::getName)
+			.filter(StringUtils::hasText)
+			.toList();
+
+		assertThat(configuredLoggerNames).contains(loggerNames);
+
+		return loggerContext;
 	}
 
-	public void assertApacheGeodeLoggerLogLevel(Level logLevel) {
+	private static ch.qos.logback.classic.Logger assertLogbackLoggerAppenderConfiguration(
+		ch.qos.logback.classic.Logger logbackLogger, String... appenderNames) {
 
-		Optional.ofNullable(this.apacheGeodeLogger)
-			.filter(ch.qos.logback.classic.Logger.class::isInstance)
-			.map(ch.qos.logback.classic.Logger.class::cast)
-			.map(logger -> {
-				assertThat(logger.getLevel()).isEqualTo(logLevel);
-				return logger;
-			})
-			.orElseThrow(() -> newIllegalStateException("'org.apache.geode' Logger not found"));
+		Spliterator<Appender<?>> configuredTestLoggerAppenders =
+			Spliterators.spliteratorUnknownSize(logbackLogger.iteratorForAppenders(), Spliterator.NONNULL);
+
+		List<String> configuredTestLoggerAppenderNames =
+			StreamSupport.stream(configuredTestLoggerAppenders, false)
+				.filter(Objects::nonNull)
+				.map(Appender::getName)
+				.filter(StringUtils::hasText)
+				.toList();
+
+		assertThat(configuredTestLoggerAppenderNames).contains(appenderNames);
+
+		return logbackLogger;
 	}
 
-	@Before
-	public void setup() {
+	private static void log(String message, Object... args) {
+		System.err.printf(message, args);
+		System.err.flush();
+	}
 
-		configureLogging();
+	private static ch.qos.logback.classic.Logger logConfiguredAppenders(ch.qos.logback.classic.Logger logger) {
+
+		log("Configured Appenders: ");
+
+		Spliterator<Appender<?>> appenders =
+			Spliterators.spliteratorUnknownSize(logger.iteratorForAppenders(), Spliterator.NONNULL);
+
+		log("%s%n", Arrays.toString(StreamSupport.stream(appenders, false)
+			.filter(Objects::nonNull)
+			.map(Appender::getName)
+			.filter(StringUtils::hasText)
+			.toArray(String[]::new)));
+
+		return logger;
+	}
+
+	private static LoggerContext logConfiguredLoggers(LoggerContext loggerContext) {
+
+		log("Configured Loggers: ");
+
+		log("%s%n", Arrays.toString(loggerContext.getLoggerList().stream()
+			.filter(Objects::nonNull)
+			.map(Logger::getName)
+			.filter(StringUtils::hasText)
+			.toArray(String[]::new)));
+
+		return loggerContext;
+	}
+
+	protected static void setupLogback(Level testLogLevel) {
+
+		configureLogging(testLogLevel);
 		configureRootLoggerDelegatingAppender();
-		logMessages();
 	}
 
-	private void configureLogging() {
-
-		System.setProperty(SPRING_BOOT_DATA_GEMFIRE_LOG_LEVEL_PROPERTY, getTestLogLevel().toString());
-
-		ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
-
-		assertThat(loggerFactory).isInstanceOf(LoggerContext.class);
-
-		LoggerContext loggerContext = (LoggerContext) loggerFactory;
+	@SuppressWarnings("all")
+	private static void configureLogging(Level testLogLevel) {
 
 		try {
-			new ContextInitializer(loggerContext).autoConfig();
+
+			System.setProperty(SPRING_BOOT_DATA_GEMFIRE_LOG_LEVEL_PROPERTY, testLogLevel.toString());
+
+			LogbackSupport.resetLogback();
+
+			LoggerContext loggerContext = LogbackSupport.requireLoggerContext();
+
+			initializeLogback(loggerContext)
+				.getStatusManager().add(LoggingStatusListener.create().debug(STATUS_DEBUG_ENABLED));
+
+			logConfiguredLoggers(loggerContext);
+			assertLogbackLoggerConfiguration(loggerContext,
+				Logger.ROOT_LOGGER_NAME, APACHE_GEODE_LOGGER_NAME, "com.gemstone.gemfire", "org.jgroups");
+
+			ch.qos.logback.classic.Logger logbackOrgApacheGeodeLogger = assertLogbackLogger(loggerContext
+					.getLogger(APACHE_GEODE_LOGGER_NAME), APACHE_GEODE_LOGGER_NAME, testLogLevel);
+
+			logConfiguredAppenders(logbackOrgApacheGeodeLogger);
+			assertLogbackLoggerAppenderConfiguration(logbackOrgApacheGeodeLogger,
+				CONSOLE_APPENDER_NAME, DELEGATE_APPENDER_NAME);
 		}
 		catch (Exception cause) {
-			throw newIllegalStateException("Failed to configure and initialize SLF4J/Logback logging context", cause);
+			throw newIllegalStateException("Failed to configure and initialize SLF4J/Logback", cause);
 		}
+	}
+
+	private static LoggerContext initializeLogback(LoggerContext loggerContext) throws JoranException {
+
+		new ContextInitializer(loggerContext)
+			.autoConfig(ClassUtils.getDefaultClassLoader());
+
+		return loggerContext;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void configureRootLoggerDelegatingAppender() {
+	private static void configureRootLoggerDelegatingAppender() {
 
-		Logger rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		ch.qos.logback.classic.Logger logbackRootLogger =
+			assertLogbackLogger(LogbackSupport.requireLogbackRootLogger(), Logger.ROOT_LOGGER_NAME, Level.ERROR);
 
-		assertThat(rootLogger).isInstanceOf(ch.qos.logback.classic.Logger.class);
+		assertThat(logbackRootLogger.getAppender(CONSOLE_APPENDER_NAME)).isNull();
 
-		ch.qos.logback.classic.Logger logbackRootLogger = (ch.qos.logback.classic.Logger) rootLogger;
-
-		Appender<?> delegateAppender = logbackRootLogger.getAppender("delegate");
+		Appender<?> delegateAppender = logbackRootLogger.getAppender(DELEGATE_APPENDER_NAME);
 
 		assertThat(delegateAppender).isNotNull();
-		assertThat(delegateAppender.getName()).isEqualTo("delegate");
+		assertThat(delegateAppender.getName()).isEqualTo(DELEGATE_APPENDER_NAME);
 
-		this.testAppender = new TestAppender();
-		this.testAppender.start();
+		TestAppender testAppender = initializeTestAppender();
 
-		((DelegatingAppender) delegateAppender).setAppender(this.testAppender);
+		((DelegatingAppender) delegateAppender).setAppender(testAppender);
 
-		assertThat(((DelegatingAppender) delegateAppender).getAppender()).isSameAs(this.testAppender);
+		assertThat(delegateAppender)
+			.asInstanceOf(InstanceOfAssertFactories.type(DelegatingAppender.class))
+			.extracting(DelegatingAppender::getAppender)
+			.isSameAs(testAppender);
 	}
 
-	public void logMessages() {
+	private static TestAppender initializeTestAppender() {
+
+		testAppender = new TestAppender();
+		testAppender.start();
+
+		return testAppender;
+	}
+
+	@AfterClass
+	public static void cleanupTestContext() {
+
+		System.clearProperty(SPRING_BOOT_DATA_GEMFIRE_LOG_LEVEL_PROPERTY);
+		Optional.ofNullable(testAppender).ifPresent(TestAppender::clear);
+	}
+
+	private Logger apacheGeodeLogger;
+
+	@Before
+	public void initializeApacheGeodeLoggerReference() {
+		this.apacheGeodeLogger = LoggerFactory.getLogger(APACHE_GEODE_LOGGER_NAME);
+	}
+
+	protected TestAppender getTestAppender() {
+
+		assertThat(testAppender)
+			.describedAs("TestAppender could not be resolved")
+			.isNotNull();
+
+		return testAppender;
+	}
+
+	protected void assertApacheGeodeLoggerLogLevel(Level logLevel) {
+
+		Optional.ofNullable(this.apacheGeodeLogger)
+			.filter(LOGBACK_LOGGER_TYPE::isInstance)
+			.map(LOGBACK_LOGGER_TYPE::cast)
+			.map(logger -> {
+
+				assertThat(logger.getName()).isEqualTo(APACHE_GEODE_LOGGER_NAME);
+				assertThat(logger.getLevel()).isEqualTo(logLevel);
+
+				return logger;
+			})
+			.orElseThrow(() -> newIllegalStateException("'%s' Logger not found", APACHE_GEODE_LOGGER_NAME));
+	}
+
+	protected void assertLogMessages(String... logMessages) {
+
+		logMessages();
+
+		Arrays.stream(ArrayUtils.nullSafeArray(logMessages, String.class)).forEach(logMessage ->
+			assertThat(getTestAppender().lastLogMessage()).isEqualTo(logMessage));
+
+		assertThat(getTestAppender().lastLogMessage()).isNull();
+	}
+
+	protected void logMessages() {
 
 		assertThat(this.apacheGeodeLogger).isNotNull();
 
+		this.apacheGeodeLogger.trace("TRACE TEST");
 		this.apacheGeodeLogger.debug("DEBUG TEST");
 		this.apacheGeodeLogger.info("INFO TEST");
+		this.apacheGeodeLogger.warn("WARN TEST");
 		this.apacheGeodeLogger.error("ERROR TEST");
 	}
 
-	@After
-	public void tearDown() {
+	protected static class LoggingStatusListener implements StatusListener {
 
-		Optional.ofNullable(this.testAppender).ifPresent(it -> {
-			it.clear();
-			it.stop();
-		});
+		protected static LoggingStatusListener create() {
+			return new LoggingStatusListener();
+		}
 
-		System.clearProperty(SPRING_BOOT_DATA_GEMFIRE_LOG_LEVEL_PROPERTY);
+		private volatile boolean debug = false;
+
+		protected boolean isDebugging() {
+			return this.debug;
+		}
+
+		@Override
+		public void addStatusEvent(Status status) {
+
+			if (isDebugging()) {
+				logStatus(status);
+			}
+		}
+
+		protected LoggingStatusListener debug(boolean debug) {
+			this.debug = debug;
+			return this;
+		}
+
+		private void logStatus(Status status) {
+
+			log("[STATUS] %s: %s%n", status.getOrigin(), status.getMessage());
+
+			if (status.hasChildren()) {
+				for (Status child : CollectionUtils.iterable(status.iterator())) {
+					logStatus(child);
+				}
+			}
+		}
 	}
 }

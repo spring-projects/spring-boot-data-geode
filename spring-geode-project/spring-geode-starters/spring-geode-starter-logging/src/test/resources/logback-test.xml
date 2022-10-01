@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
 
+	<variable name="bootPresent" value="false"/>
+
 	<include resource="org/springframework/geode/logging/slf4j/logback/properties-include.xml"/>
 	<include resource="org/springframework/geode/logging/slf4j/logback/appender-include.xml"/>
 	<include resource="org/springframework/geode/logging/slf4j/logback/logger-include.xml"/>
