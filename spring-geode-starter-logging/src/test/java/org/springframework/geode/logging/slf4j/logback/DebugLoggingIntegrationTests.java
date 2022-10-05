@@ -15,11 +15,8 @@
  */
 package org.springframework.geode.logging.slf4j.logback;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.springframework.data.gemfire.tests.logging.slf4j.logback.TestAppender;
 
 import ch.qos.logback.classic.Level;
 
@@ -40,24 +37,20 @@ import ch.qos.logback.classic.Level;
  */
 public class DebugLoggingIntegrationTests extends AbstractLoggingIntegrationTests {
 
-	@Override
-	protected Level getTestLogLevel() {
-		return Level.DEBUG;
+	private static final Level TEST_LOG_LEVEL = Level.DEBUG;
+
+	@BeforeClass
+	public static void setupLogback() {
+		setupLogback(TEST_LOG_LEVEL);
 	}
 
 	@Test
 	public void logLevelIsSetToDebug() {
-		assertApacheGeodeLoggerLogLevel(Level.DEBUG);
+		assertApacheGeodeLoggerLogLevel(TEST_LOG_LEVEL);
 	}
 
 	@Test
 	public void logMessagesAtDebug() {
-
-		TestAppender testAppender = getTestAppender();
-
-		assertThat(testAppender.lastLogMessage()).isEqualTo("ERROR TEST");
-		assertThat(testAppender.lastLogMessage()).isEqualTo("INFO TEST");
-		assertThat(testAppender.lastLogMessage()).isEqualTo("DEBUG TEST");
-		assertThat(testAppender.lastLogMessage()).isNull();
+		assertLogMessages("ERROR TEST", "WARN TEST", "INFO TEST", "DEBUG TEST");
 	}
 }

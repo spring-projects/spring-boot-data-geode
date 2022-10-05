@@ -9,6 +9,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-logging"
 
     implementation "org.codehaus.janino:janino"
+    implementation "org.springframework:spring-core"
 
     testImplementation project(":spring-geode-starter-test")
 

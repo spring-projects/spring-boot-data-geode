@@ -20,10 +20,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.springframework.util.ClassUtils;
+
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.impl.StaticLoggerBinder;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -42,6 +43,13 @@ import ch.qos.logback.core.Appender;
  */
 @SuppressWarnings("unused")
 public abstract class LogbackSupport {
+
+	private static final Class<ch.qos.logback.classic.Logger> LOGBACK_LOGGER_TYPE = ch.qos.logback.classic.Logger.class;
+
+	private static final String STATIC_LOGGER_BINDER_CLASSNAME = "org.slf4j.impl.StaticLoggerBinder";
+
+	private static final boolean STATIC_LOGGER_BINDER_CLASS_PRESENT =
+		ClassUtils.isPresent(STATIC_LOGGER_BINDER_CLASSNAME, ClassUtils.getDefaultClassLoader());
 
 	protected static final Function<Logger, Optional<ch.qos.logback.classic.Logger>> slf4jLoggerToLogbackLoggerConverter =
 		logger -> Optional.ofNullable(logger)
@@ -70,24 +78,57 @@ public abstract class LogbackSupport {
 	}
 
 	/**
+	 * Properly stops Logback classic.
+	 *
+	 * @see <a href="https://logback.qos.ch/manual/configuration.html#stopContext">Stopping logback-classic</a>
+	 */
+	public static void stopLogback() {
+		resolveLoggerContext()
+			.ifPresent(LoggerContext::stop);
+	}
+
+	/**
 	 * Resets the state of the SLF4J Logback logging provider and system.
 	 */
 	public static void resetLogback() {
 
 		try {
-
-			Method loggerFactoryReset = LoggerFactory.class.getDeclaredMethod("reset");
-
-			loggerFactoryReset.setAccessible(true);
-			loggerFactoryReset.invoke(null);
-
-			Method staticLoggerBinderReset = StaticLoggerBinder.class.getDeclaredMethod("reset");
-
-			staticLoggerBinderReset.setAccessible(true);
-			staticLoggerBinderReset.invoke(null);
+			resetLoggerContext();
+			resetLoggerFactory();
+			resetStaticLoggerBinder();
 		}
 		catch (Throwable cause) {
 			throw new IllegalStateException("Failed to reset Logback", cause);
+		}
+	}
+
+	private static void resetLoggerContext() {
+
+		resolveLoggerContext().ifPresent(loggerContext -> {
+			loggerContext.reset();
+			loggerContext.getStatusManager().clear();
+		});
+	}
+
+	private static void resetLoggerFactory() throws Exception {
+
+		Method loggerFactoryReset = LoggerFactory.class.getDeclaredMethod("reset");
+
+		loggerFactoryReset.setAccessible(true);
+		loggerFactoryReset.invoke(null);
+	}
+
+	private static void resetStaticLoggerBinder() throws Exception {
+
+		if (STATIC_LOGGER_BINDER_CLASS_PRESENT) {
+
+			Class<?> staticLoggerBinderClass =
+				ClassUtils.forName(STATIC_LOGGER_BINDER_CLASSNAME, ClassUtils.getDefaultClassLoader());
+
+			Method staticLoggerBinderReset = staticLoggerBinderClass.getDeclaredMethod("reset");
+
+			staticLoggerBinderReset.setAccessible(true);
+			staticLoggerBinderReset.invoke(null);
 		}
 	}
 
@@ -146,10 +187,10 @@ public abstract class LogbackSupport {
 	public static ch.qos.logback.classic.Logger requireLogbackRootLogger() {
 
 		return resolveRootLogger()
-			.filter(ch.qos.logback.classic.Logger.class::isInstance)
-			.map(ch.qos.logback.classic.Logger.class::cast)
+			.filter(LOGBACK_LOGGER_TYPE::isInstance)
+			.map(LOGBACK_LOGGER_TYPE::cast)
 			.orElseThrow(() -> new IllegalStateException(String.format(ILLEGAL_LOGGER_TYPE_EXCEPTION_MESSAGE,
-				ROOT_LOGGER_NAME, nullSafeTypeName(resolveRootLogger()))));
+				ROOT_LOGGER_NAME, nullSafeTypeName(resolveRootLogger().orElse(null)))));
 	}
 
 	/**
@@ -166,7 +207,7 @@ public abstract class LogbackSupport {
 	 * @see org.slf4j.Logger
 	 */
 	public static <E, T extends Appender<E>> Optional<T> resolveAppender(ch.qos.logback.classic.Logger logger,
-			String appenderName, Class<T> appenderType) {
+		String appenderName, Class<T> appenderType) {
 
 		appenderType = nullSafeAppenderType(appenderType);
 
@@ -192,7 +233,7 @@ public abstract class LogbackSupport {
 	 * @see ch.qos.logback.core.Appender
 	 */
 	public static <E, T extends Appender<E>> T requireAppender(ch.qos.logback.classic.Logger logger,
-			String appenderName, Class<T> appenderType) {
+		String appenderName, Class<T> appenderType) {
 
 		return resolveAppender(logger, appenderName, appenderType)
 			.orElseThrow(() -> new IllegalStateException(String.format(UNRESOLVABLE_APPENDER_EXCEPTION_MESSAGE,
