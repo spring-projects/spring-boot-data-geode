@@ -59,6 +59,7 @@ import ch.qos.logback.core.status.StatusListener;
  * @see ch.qos.logback.classic.Logger
  * @see ch.qos.logback.classic.LoggerContext
  * @see ch.qos.logback.classic.util.ContextInitializer
+ * @see ch.qos.logback.core.Appender
  * @since 1.3.0
  */
 @SuppressWarnings("unused")
@@ -73,8 +74,10 @@ public abstract class AbstractLoggingIntegrationTests {
 		ch.qos.logback.classic.Logger::getLevel;
 
 	protected static final String APACHE_GEODE_LOGGER_NAME = "org.apache.geode";
-	protected static final String CONSOLE_APPENDER_NAME = "CONSOLE";
+	protected static final String CONSOLE_APPENDER_NAME = "console";
 	protected static final String DELEGATE_APPENDER_NAME = "delegate";
+	protected static final String GEMSTONE_GEMFIRE_LOGGER_NAME = "com.gemstone.gemfire";
+	protected static final String JGROUPS_LOGGER_NAME = "org.jgroups";
 	protected static final String SPRING_BOOT_DATA_GEMFIRE_LOG_LEVEL_PROPERTY = "spring.boot.data.gemfire.log.level";
 
 	private static TestAppender testAppender;
@@ -179,15 +182,17 @@ public abstract class AbstractLoggingIntegrationTests {
 				.getStatusManager().add(LoggingStatusListener.create().debug(STATUS_DEBUG_ENABLED));
 
 			logConfiguredLoggers(loggerContext);
-			assertLogbackLoggerConfiguration(loggerContext,
-				Logger.ROOT_LOGGER_NAME, APACHE_GEODE_LOGGER_NAME, "com.gemstone.gemfire", "org.jgroups");
+			assertLogbackLoggerConfiguration(loggerContext,Logger.ROOT_LOGGER_NAME,
+				APACHE_GEODE_LOGGER_NAME, GEMSTONE_GEMFIRE_LOGGER_NAME, JGROUPS_LOGGER_NAME);
+
+			ch.qos.logback.classic.Logger logbackRootLogger = assertLogbackLogger(loggerContext
+					.getLogger(Logger.ROOT_LOGGER_NAME), Logger.ROOT_LOGGER_NAME, Level.ERROR);
 
 			ch.qos.logback.classic.Logger logbackOrgApacheGeodeLogger = assertLogbackLogger(loggerContext
 				.getLogger(APACHE_GEODE_LOGGER_NAME), APACHE_GEODE_LOGGER_NAME, testLogLevel);
 
-			logConfiguredAppenders(logbackOrgApacheGeodeLogger);
-			assertLogbackLoggerAppenderConfiguration(logbackOrgApacheGeodeLogger,
-				CONSOLE_APPENDER_NAME, DELEGATE_APPENDER_NAME);
+			logConfiguredAppenders(logbackRootLogger);
+			assertLogbackLoggerAppenderConfiguration(logbackRootLogger, DELEGATE_APPENDER_NAME);
 		}
 		catch (Exception cause) {
 			throw newIllegalStateException("Failed to configure and initialize SLF4J/Logback", cause);
