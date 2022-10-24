@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
@@ -91,6 +92,16 @@ public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 	}
 
 	/**
+	 * Constructs a new instance of Jackson's {@link JsonMapper.Builder}.
+	 *
+	 * @return a new instance of Jackson's {@link JsonMapper.Builder}; never {@literal null}.
+	 * @see com.fasterxml.jackson.databind.json.JsonMapper.Builder
+	 */
+	@NonNull JsonMapper.Builder newJsonMapperBuilder() {
+		return JsonMapper.builder();
+	}
+
+	/**
 	 * Constructs a new instance of the Jackson {@link ObjectMapper} class.
 	 *
 	 * @return a new instance of the Jackson {@link ObjectMapper} class.
@@ -100,22 +111,13 @@ public class JacksonObjectToJsonConverter implements ObjectToJsonConverter {
 
 		Assert.notNull(target, "Target object must not be null");
 
-		return newObjectMapper()
+		return newJsonMapperBuilder()
 			.addMixIn(target.getClass(), ObjectTypeMetadataMixin.class)
 			.configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
 			.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
 			.configure(SerializationFeature.INDENT_OUTPUT, true)
+			.build()
 			.findAndRegisterModules();
-	}
-
-	/**
-	 * Constructs a new instance of Jackson's {@link ObjectMapper}.
-	 *
-	 * @return a new instance of Jackson's {@link ObjectMapper}; never {@literal null}.
-	 * @see com.fasterxml.jackson.databind.ObjectMapper
-	 */
-	@NonNull ObjectMapper newObjectMapper() {
-		return new ObjectMapper();
 	}
 
 	@JsonTypeInfo(
