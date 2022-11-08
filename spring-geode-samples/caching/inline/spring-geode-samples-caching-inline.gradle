@@ -8,7 +8,9 @@ description = "Spring Geode Sample demonstrating Spring's Cache Abstraction usin
 
 dependencies {
 
-	implementation project(":spring-geode-starter")
+	implementation(project(":spring-geode-starter")) {
+		exclude group: "com.sun.xml.bind", module: "jaxb-impl"
+	}
 
 	implementation "org.projectlombok:lombok"
 	implementation "org.springframework.boot:spring-boot-starter-data-jpa"

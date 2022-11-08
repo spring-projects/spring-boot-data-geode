@@ -8,7 +8,9 @@ description = "Smoke Tests to assert that a multi-store Spring Data project usin
 
 dependencies {
 
-	implementation project(':spring-geode-starter')
+	implementation(project(":spring-geode-starter")) {
+		exclude group: "com.sun.xml.bind", module: "jaxb-impl"
+	}
 
 	implementation "org.assertj:assertj-core"
 	implementation "org.projectlombok:lombok"

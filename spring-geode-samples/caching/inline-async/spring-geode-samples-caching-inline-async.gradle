@@ -10,7 +10,9 @@ dependencies {
 
 	compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
-	implementation project(":spring-geode-starter")
+	implementation(project(":spring-geode-starter")) {
+		exclude group: "com.sun.xml.bind", module: "jaxb-impl"
+	}
 
 	implementation "org.projectlombok:lombok"
 	implementation "jakarta.persistence:jakarta.persistence-api"
