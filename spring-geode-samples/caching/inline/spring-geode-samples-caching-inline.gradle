@@ -29,5 +29,5 @@ bootJar {
 }
 
 bootRun {
-	main = 'example.app.caching.inline.BootGeodeInlineCachingApplication'
+	mainClass = 'example.app.caching.inline.BootGeodeInlineCachingApplication'
 }

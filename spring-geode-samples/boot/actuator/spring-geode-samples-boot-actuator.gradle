@@ -26,6 +26,6 @@ bootJar {
 }
 
 bootRun {
-	main = 'example.app.temp.geode.client.BootGeodeClientApplication'
+	mainClass = 'example.app.temp.geode.client.BootGeodeClientApplication'
 	args "--spring.profiles.active=client"
 }

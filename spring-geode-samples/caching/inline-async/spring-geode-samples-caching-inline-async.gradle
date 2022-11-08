@@ -33,6 +33,6 @@ bootJar {
 }
 
 bootRun {
-	main = 'example.app.caching.inline.async.client.BootGeodeAsyncInlineCachingClientApplication'
+	mainClass = 'example.app.caching.inline.async.client.BootGeodeAsyncInlineCachingClientApplication'
 	args "--spring.profiles.active=peer-cache,queue-batch-size,server"
 }

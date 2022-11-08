@@ -19,5 +19,5 @@ bootJar {
 }
 
 bootRun {
-	main = 'example.app.caching.lookaside.BootGeodeLookAsideCachingApplication'
+	mainClass = 'example.app.caching.lookaside.BootGeodeLookAsideCachingApplication'
 }
