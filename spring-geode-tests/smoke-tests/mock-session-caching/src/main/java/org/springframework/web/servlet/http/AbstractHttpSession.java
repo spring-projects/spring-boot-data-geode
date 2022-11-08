@@ -15,60 +15,46 @@
  */
 package org.springframework.web.servlet.http;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Objects;
+import java.time.Duration;
+import java.time.Instant;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.HttpSessionContext;
 
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+import org.springframework.util.StringUtils;
 
 /**
  * Abstract base class supporting implementations of the {@link HttpSession} interface.
  *
  * @author John Blum
- * @see javax.servlet.http.HttpSession
+ * @see java.time.Duration
+ * @see java.time.Instant
+ * @see jakarta.servlet.http.HttpSession
  * @since 1.4.0
  */
-@SuppressWarnings("deprecation")
 public abstract class AbstractHttpSession implements HttpSession {
 
+	private Duration maxInactiveInterval = Duration.ofMinutes(30);
+
+	private final Instant creationTime = Instant.now();
+
 	@Override
-	public HttpSessionContext getSessionContext() {
-		throw new UnsupportedOperationException("Not Implemented");
+	public long getCreationTime() {
+		return this.creationTime.toEpochMilli();
 	}
 
 	@Override
-	public @Nullable Object getValue(String name) {
-		return getAttribute(name);
+	public int getMaxInactiveInterval() {
+		return Long.valueOf(this.maxInactiveInterval.toSeconds()).intValue();
 	}
 
 	@Override
-	public @NonNull String[] getValueNames() {
-
-		List<String> valueNames = new ArrayList<>();
-
-		Enumeration<String> attributeNames = getAttributeNames();
-
-		if (Objects.nonNull(attributeNames)) {
-			while (attributeNames.hasMoreElements()) {
-				valueNames.add(attributeNames.nextElement());
-			}
-		}
-
-		return valueNames.toArray(new String[0]);
+	public void setMaxInactiveInterval(int interval) {
+		int resolvedInterval = interval > 0 ? interval : Integer.MAX_VALUE;
+		this.maxInactiveInterval = Duration.ofSeconds(resolvedInterval);
 	}
 
 	@Override
-	public void putValue(String name, Object value) {
-		setAttribute(name, value);
-	}
-
-	@Override
-	public void removeValue(String name) {
-		removeAttribute(name);
+	public boolean isNew() {
+		return !StringUtils.hasText(getId());
 	}
 }

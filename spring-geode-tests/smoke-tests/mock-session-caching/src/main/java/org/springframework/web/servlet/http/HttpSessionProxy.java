@@ -19,7 +19,6 @@ import java.util.Enumeration;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.HttpSessionContext;
 
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -29,8 +28,8 @@ import org.springframework.util.Assert;
  * {@link HttpSession} implementation wrapping and proxying for an existing {@link HttpSession} instance.
  *
  * @author John Blum
- * @see javax.servlet.ServletContext
- * @see javax.servlet.http.HttpSession
+ * @see jakarta.servlet.ServletContext
+ * @see jakarta.servlet.http.HttpSession
  * @see org.springframework.web.servlet.http.AbstractHttpSession
  * @since 1.4.0
  */
@@ -81,12 +80,6 @@ public class HttpSessionProxy extends AbstractHttpSession {
 	@Override
 	public @NonNull ServletContext getServletContext() {
 		return getSession().getServletContext();
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public HttpSessionContext getSessionContext() {
-		return getSession().getSessionContext();
 	}
 
 	@Override

@@ -59,7 +59,7 @@ import lombok.ToString;
  * with Spring Session auto-configured with Spring Boot.
  *
  * @author John Blum
- * @see javax.servlet.http.HttpSession
+ * @see jakarta.servlet.http.HttpSession
  * @see org.junit.Test
  * @see org.springframework.boot.autoconfigure.SpringBootApplication
  * @see org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc

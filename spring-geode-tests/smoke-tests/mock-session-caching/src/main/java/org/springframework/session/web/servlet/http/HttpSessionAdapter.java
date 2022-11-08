@@ -21,7 +21,6 @@ import java.util.Enumeration;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.HttpSessionContext;
 
 import org.springframework.lang.NonNull;
 import org.springframework.session.Session;
@@ -34,8 +33,8 @@ import org.springframework.web.servlet.http.AbstractHttpSession;
  *
  * @author John Blum
  * @see java.time.Duration
- * @see javax.servlet.ServletContext
- * @see javax.servlet.http.HttpSession
+ * @see jakarta.servlet.ServletContext
+ * @see jakarta.servlet.http.HttpSession
  * @see org.springframework.session.Session
  * @see org.springframework.web.servlet.http.AbstractHttpSession
  * @since 1.4.0
@@ -88,12 +87,6 @@ public class HttpSessionAdapter extends AbstractHttpSession {
 	@Override
 	public @NonNull ServletContext getServletContext() {
 		return this.servletContext;
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public HttpSessionContext getSessionContext() {
-		throw new UnsupportedOperationException("Not Implemented");
 	}
 
 	@Override
