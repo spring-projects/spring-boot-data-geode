@@ -4,6 +4,21 @@ https://github.com/spring-projects/spring-boot-data-geode
 =========================================================
 
 
+Changes in version 1.6.14 (2022-12-05)
+--------------------------------------
+Aligns SBDG with Spring Boot 2.6.14.
+
+* Built with Oracle Java 8, JDK 1.8.0_351.
+* Upgrades to VMware GemFire 9.10.17.
+* Upgrades to Spring Framework 5.3.24.
+* Upgrades to Spring Boot 2.6.14.
+* Upgrades to Spring Data BOM 2021.1.10 (Q-SR10).
+* Upgrades to Spring Data for Apache Geode 2.6.10.
+* Upgrades to Spring Session for Apache Geode 2.6.3.
+* Upgrades to Spring Test for Apache Geode 0.2.4-Q.
+* Upgrades to Testcontainers 1.17.6.
+
+
 Changes in version 1.6.13 (2022-10-24)
 --------------------------------------
 Aligns SBDG with Spring Boot 2.6.13.
