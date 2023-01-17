@@ -21,6 +21,36 @@ https://spring.io/projects/spring-data-geode[_Spring Data for {geode-name}_] (SD
 https://spring.io/projects/spring-session-data-geode[_Spring Session for {geode-name}_] (SSDG)
 and https://github.com/spring-projects/spring-test-data-geode[_Spring Test for {geode-name}_] (STDG).
 
+[[notice]]
+== NOTICE
+
+[[notice-2023-january]]
+*2023-January-17*:
+
+At the end of 2022, VMware https://tanzu.vmware.com/content/blog/spring-for-vmware-gemfire-is-now-available[announced]
+the general availability of the Spring for VMware GemFire portfolio of projects.
+
+While these Spring based projects for VMware GemFire are open source and a succession to the Spring for Apache Geode
+projects, they are not a replacement. VMware GemFire forked from the Apache Geode project and is not open source.
+Additionally, newer Apache Geode and VMware GemFire clients are not backwards compatible with older Apache Geode
+and VMware GemFire servers. You can begin the transition by starting https://docs.vmware.com/en/Spring-Boot-for-VMware-GemFire/index.html[here].
+
+Alternatively, the Spring portfolio provides first-class https://docs.spring.io/spring-boot/docs/current/reference/html/io.html#io.caching.provider[integration]
+with other comparable caching providers. Also, see https://docs.spring.io/spring-framework/docs/current/reference/html/integration.html#cache-store-configuration[here]
+and https://docs.spring.io/spring-framework/docs/current/reference/html/integration.html#cache-plug[here].
+
+Finally, keep in mind, the Spring for Apache Geode projects will still be maintained until OSS and commercial support
+ends. Maintenance will only include CVE and critical fixes. No new features or major enhancements will be made.
+The Spring Boot for Apache Geode support timelines can be viewed https://spring.io/projects/spring-boot#support[here].
+Also see the https://github.com/spring-projects/spring-boot-data-geode/wiki/Spring-Boot-for-Apache-Geode-and-VMware-Tanzu-GemFire-Version-Compatibility-Matrix[Version Compatibility Matrix]
+for up-to-date dependency and version details.
+
+[[notice-2022-october]]
+*2022-October-24*:
+
+See the October 24th https://github.com/spring-projects/spring-data-geode#notice[NOTICE]
+on the _Spring Data for Apache Geode_ GitHub project page for complete details.
+
 [[project-features]]
 === Project Features
 
