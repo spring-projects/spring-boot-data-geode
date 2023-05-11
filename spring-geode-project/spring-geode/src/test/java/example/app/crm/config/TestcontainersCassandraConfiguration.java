@@ -59,7 +59,8 @@ import example.app.crm.model.Customer;
 @SuppressWarnings("unused")
 public class TestcontainersCassandraConfiguration extends TestCassandraConfiguration {
 
-	private static final String CASSANDRA_DOCKER_IMAGE_NAME = "cassandra:latest";
+	//private static final String CASSANDRA_DOCKER_IMAGE_NAME = "cassandra:latest";
+	private static final String CASSANDRA_DOCKER_IMAGE_NAME = "cassandra:3.11.15";
 	private static final String LOCAL_DATACENTER_NAME = "datacenter1";
 
 	@Bean("CassandraContainer")
