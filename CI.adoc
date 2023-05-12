@@ -1,0 +1,18 @@
+= Running the Spring Boot for Apache Geode (SBDG) build in Docker container locally
+
+[source,txt]
+----
+docker run -it --mount type=bind,source="$(pwd)",target=/spring-boot-data-geode-github \
+  -v /var/run/docker.sock:/var/run/docker.sock -v /usr/local/bin/docker:/usr/local/bin/docker \
+  eclipse-temurin:17.0.6_10-jdk-focal /bin/bash
+----
+
+== VMware Harbor Proxy URLs
+
+* https://harbor-repo.vmware.com/dockerhub-proxy-cache/
+* https://harbor-mirror.spring.vmware.com/dockerhub-proxy-cache/
+* https://harbor-repo.vmware.com/dockerhub-proxy-cache/library/eclipse-temurin:17.0.6_10-jdk-focal
+
+=== Other useful information
+
+* https://confluence.eng.vmware.com/pages/viewpage.action?spaceKey=AO&title=How+to+access+Corporate+Harbor+UI
