@@ -65,7 +65,8 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 
 	private static final String LOCAL_DATACENTER_NAME = "datacenter1";
 	private static final String TESTCONTAINERS_HTTPS_PROXY = "https://harbor-repo.vmware.com/dockerhub-proxy-cache";
-	private static final String TESTCONTAINERS_RYUK_DISABLED = "false";
+	private static final String TESTCONTAINERS_RYUK_DISABLED = "true";
+	private static final String TESTCONTAINERS_RYUK_ENABLED = "false";
 
 	@Bean("CassandraContainer")
 	GenericContainer<?> cassandraContainer(Environment environment) {
@@ -89,13 +90,11 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	// Information (feedback) received from Sergei Egorov.
 	private @NonNull GenericContainer<?> newEnvironmentOptimizedCassandraContainer() {
 
-		return newCassandraContainer()
+		return withCassandraEnvironmentConfiguration(newCassandraContainer()
 			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0")
-			.withEnv("TESTCONTAINERS_RYUK_DISABLED", TESTCONTAINERS_RYUK_DISABLED)
-			.withEnv("HTTPS_PROXY", TESTCONTAINERS_HTTPS_PROXY)
 			.withEnv("CASSANDRA_SNITCH", "SimpleSnitch")
 			.withEnv("HEAP_NEWSIZE", "128M")
-			.withEnv("MAX_HEAP_SIZE", "1024M");
+			.withEnv("MAX_HEAP_SIZE", "1024M"));
 	}
 
 	private @NonNull CassandraTemplate newCassandraTemplate(@NonNull CqlSession session) {
@@ -108,6 +107,18 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 			.addContactPoint(resolveContactPoint(cassandraContainer))
 			.withLocalDatacenter(LOCAL_DATACENTER_NAME)
 			.build();
+	}
+
+	private boolean isJenkinsEnvironment() {
+		return Boolean.TRUE.equals(Boolean.getBoolean("jenkins"));
+	}
+
+	private @NonNull GenericContainer<?> withCassandraEnvironmentConfiguration(
+			@NonNull GenericContainer<?> cassandraContainer) {
+
+		return isJenkinsEnvironment()
+			? cassandraContainer.withEnv("HTTPS_PROXY", TESTCONTAINERS_HTTPS_PROXY)
+			: cassandraContainer.withEnv("TESTCONTAINERS_RYUK_DISABLED", TESTCONTAINERS_RYUK_DISABLED);
 	}
 
 	private @NonNull GenericContainer<?> withCassandraServer(@NonNull GenericContainer<?> cassandraContainer,
