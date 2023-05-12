@@ -42,7 +42,7 @@ pipeline {
 						// Run the SBDG project Gradle build using JDK 8 inside Docker
 						try {
 							sh "echo 'Building SBDG...'"
-							sh "ci/check.sh"
+							sh "ci/build.sh"
 						}
 						catch (e) {
 							currentBuild.result = "FAILED: build"
