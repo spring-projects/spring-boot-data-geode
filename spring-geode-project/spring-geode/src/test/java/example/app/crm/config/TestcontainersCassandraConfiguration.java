@@ -20,8 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
 import org.springframework.boot.autoconfigure.cassandra.CqlSessionBuilderCustomizer;
@@ -33,8 +31,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.lang.NonNull;
 
+import com.datastax.oss.driver.api.core.CqlSession;
+
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import example.app.crm.model.Customer;
 
@@ -59,8 +60,9 @@ import example.app.crm.model.Customer;
 @SuppressWarnings("unused")
 public class TestcontainersCassandraConfiguration extends TestCassandraConfiguration {
 
-	//private static final String CASSANDRA_DOCKER_IMAGE_NAME = "cassandra:latest";
-	private static final String CASSANDRA_DOCKER_IMAGE_NAME = "cassandra:3.11.15";
+	//private static final DockerImageName CASSANDRA_DOCKER_IMAGE_NAME = DockerImageName.parse("cassandra:latest");
+	private static final DockerImageName CASSANDRA_DOCKER_IMAGE_NAME = DockerImageName.parse("cassandra:3.11.15");
+
 	private static final String LOCAL_DATACENTER_NAME = "datacenter1";
 
 	@Bean("CassandraContainer")
@@ -86,7 +88,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	private @NonNull GenericContainer<?> newEnvironmentOptimizedCassandraContainer() {
 
 		return newCassandraContainer()
-			.withEnv("CASSANDRA_SNITCH", "GossipingPropertyFileSnitch")
+			.withEnv("CASSANDRA_SNITCH", "SimpleSnitch")
 			.withEnv("HEAP_NEWSIZE", "128M")
 			.withEnv("MAX_HEAP_SIZE", "1024M")
 			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0");

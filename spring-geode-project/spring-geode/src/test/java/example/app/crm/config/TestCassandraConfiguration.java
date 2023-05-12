@@ -20,9 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import com.datastax.oss.driver.api.core.CqlIdentifier;
-import com.datastax.oss.driver.api.core.session.Session;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationListener;
@@ -40,6 +37,9 @@ import org.springframework.data.cassandra.core.cql.session.init.KeyspacePopulato
 import org.springframework.data.cassandra.core.cql.session.init.ResourceKeyspacePopulator;
 import org.springframework.data.cassandra.core.cql.session.init.SessionFactoryInitializer;
 import org.springframework.lang.NonNull;
+
+import com.datastax.oss.driver.api.core.CqlIdentifier;
+import com.datastax.oss.driver.api.core.session.Session;
 
 import example.app.crm.model.Customer;
 import example.app.crm.repo.CustomerRepository;
