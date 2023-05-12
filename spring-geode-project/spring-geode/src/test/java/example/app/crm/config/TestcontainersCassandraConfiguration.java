@@ -92,15 +92,23 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 		Logger logger = getLogger();
 
 		if (logger.isInfoEnabled()) {
-			logger.info(message, arguments);
+			logger.info(String.format(message, arguments), arguments);
 		}
+	}
+
+	protected void logToSystemOut(String message, Object... arguments) {
+		System.out.printf("%s%n", arguments);
+		System.out.flush();
 	}
 
 	private @NonNull GenericContainer<?> logContainerConfiguration(@NonNull GenericContainer<?> cassandraContainer) {
 
 		logInfo("Cassandra Testcontainer Environment Configuration:");
 
-		cassandraContainer.getEnvMap().forEach((key, value) -> logInfo("{} = [{}]", key, value));
+		cassandraContainer.getEnvMap().forEach((key, value) -> {
+			logInfo("{} = [{}]", key, value);
+			logToSystemOut("%s = %s", key, value);
+		});
 
 		return cassandraContainer;
 	}
