@@ -9,15 +9,28 @@
 		</encoder>
 	</appender>
 
+	<appender name="testFile" class="ch.qos.logback.core.FileAppender">
+		<file>testFile.log</file>
+		<append>true</append>
+		<immediateFlush>true</immediateFlush>
+		<encoder>
+			<pattern>%-4relative [%thread] %-5level %logger{35} -%kvp- %msg%n</pattern>
+		</encoder>
+	</appender>
+
 	<appender name="testAppender" class="org.springframework.data.gemfire.tests.logging.slf4j.logback.TestAppender"/>
 
 	<logger name="ch.qos.logback" level="${logback.log.level:-ERROR}"/>
 
+	<logger name="example.app.crm.config.TestcontainersCassandraConfiguration"
+			level="${logback.log.level:-DEBUG}"
+			additive="false">
+		<appender-ref ref="testFile"/>
+	</logger>
+
 	<logger name="org.apache" level="${logback.log.level:-ERROR}"/>
 
 	<logger name="org.springframework" level="${logback.log.level:-ERROR}"/>
-
-	<logger name="example.app.crm.config.TestcontainersCassandraConfiguration" level="${logback.log.level:-INFO}"/>
 
 	<root level="${logback.log.level:-ERROR}">
 		<appender-ref ref="console"/>
