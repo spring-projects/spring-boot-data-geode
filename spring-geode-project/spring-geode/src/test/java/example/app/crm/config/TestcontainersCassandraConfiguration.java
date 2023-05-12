@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
@@ -33,6 +34,8 @@ import org.springframework.lang.NonNull;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -68,6 +71,8 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	private static final String TESTCONTAINERS_RYUK_DISABLED = "true";
 	private static final String TESTCONTAINERS_RYUK_ENABLED = "false";
 
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
 	@Bean("CassandraContainer")
 	GenericContainer<?> cassandraContainer(Environment environment) {
 
@@ -75,7 +80,29 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 
 		cassandraContainer.start();
 
-		return withCassandraServer(cassandraContainer, environment);
+		return logContainerConfiguration(withCassandraServer(cassandraContainer, environment));
+	}
+
+	protected @NonNull Logger getLogger() {
+		return this.logger;
+	}
+
+	protected void logInfo(String message, Object... arguments) {
+
+		Logger logger = getLogger();
+
+		if (logger.isInfoEnabled()) {
+			logger.info(message, arguments);
+		}
+	}
+
+	private @NonNull GenericContainer<?> logContainerConfiguration(@NonNull GenericContainer<?> cassandraContainer) {
+
+		logInfo("Cassandra Testcontainer Environment Configuration:");
+
+		cassandraContainer.getEnvMap().forEach((key, value) -> logInfo("{} = [{}]", key, value));
+
+		return cassandraContainer;
 	}
 
 	private @NonNull GenericContainer<?> newCassandraContainer() {

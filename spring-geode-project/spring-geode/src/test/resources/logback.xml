@@ -17,6 +17,8 @@
 
 	<logger name="org.springframework" level="${logback.log.level:-ERROR}"/>
 
+	<logger name="example.app.crm.config.TestcontainersCassandraConfiguration" level="${logback.log.level:-INFO}"/>
+
 	<root level="${logback.log.level:-ERROR}">
 		<appender-ref ref="console"/>
 	</root>
