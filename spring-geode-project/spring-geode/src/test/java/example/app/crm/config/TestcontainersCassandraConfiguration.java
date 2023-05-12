@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
@@ -67,7 +66,8 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	private static final DockerImageName CASSANDRA_DOCKER_IMAGE_NAME = DockerImageName.parse("cassandra:3.11.15");
 
 	private static final String LOCAL_DATACENTER_NAME = "datacenter1";
-	private static final String TESTCONTAINERS_HTTPS_PROXY = "https://harbor-repo.vmware.com/dockerhub-proxy-cache";
+	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "harbor-repo.vmware.com/dockerhub-proxy-cache/";
+	private static final String TESTCONTAINERS_HTTPS_PROXY = String.format("https://%s", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX);
 	private static final String TESTCONTAINERS_RYUK_DISABLED = "true";
 	private static final String TESTCONTAINERS_RYUK_ENABLED = "false";
 
@@ -144,7 +144,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 			@NonNull GenericContainer<?> cassandraContainer) {
 
 		return isJenkinsEnvironment()
-			? cassandraContainer.withEnv("HTTPS_PROXY", TESTCONTAINERS_HTTPS_PROXY)
+			? cassandraContainer.withEnv("TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX)
 			: cassandraContainer.withEnv("TESTCONTAINERS_RYUK_DISABLED", TESTCONTAINERS_RYUK_DISABLED);
 	}
 
