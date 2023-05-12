@@ -67,6 +67,7 @@ import example.app.crm.model.Customer;
 public class TestcontainersCassandraConfiguration extends TestCassandraConfiguration {
 
 	// Apache Cassandra Constants
+	private static final String CASSANDRA_VERSION = "3.11.15";
 	private static final String LOCAL_DATACENTER_NAME = "datacenter1";
 
 	// Testcontainers Constants
@@ -77,7 +78,9 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 
 	//private static final DockerImageName CASSANDRA_DOCKER_IMAGE_NAME = DockerImageName.parse("cassandra:latest");
 	private static final DockerImageName CASSANDRA_DOCKER_IMAGE_NAME =
-		DockerImageName.parse(String.format("%scassandra:3.11.15", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX));
+		DockerImageName.parse(String.format("cassandra:%s", CASSANDRA_VERSION));
+	//private static final DockerImageName CASSANDRA_DOCKER_IMAGE_NAME =
+	//	DockerImageName.parse(String.format("%scassandra:3.11.15", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX));
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -166,8 +169,8 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 
 		return isNotJenkinsEnvironment()
 			? cassandraContainer.withEnv("TESTCONTAINERS_RYUK_DISABLED", TESTCONTAINERS_RYUK_DISABLED)
-			//: cassandraContainer.withEnv("TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX)
-			: cassandraContainer;
+			: cassandraContainer.withEnv("TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX);
+			//: cassandraContainer;
 	}
 
 	private @NonNull GenericContainer<?> withCassandraServer(@NonNull GenericContainer<?> cassandraContainer,
