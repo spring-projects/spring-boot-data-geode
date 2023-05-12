@@ -67,8 +67,8 @@ import example.app.crm.model.Customer;
 public class TestcontainersCassandraConfiguration extends TestCassandraConfiguration {
 
 	// Apache Cassandra Constants
-	private static final String CASSANDRA_VERSION = "3.11.15";
-	private static final String LOCAL_DATACENTER_NAME = "datacenter1";
+	private static final String CASSANDRA_VERSION = System.getProperty("cassandra.version", "3.11.15");
+	private static final String LOCAL_DATACENTER_NAME = System.getProperty("cassandra.datacenter.name", "datacenter1");
 
 	// Testcontainers Constants
 	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "harbor-repo.vmware.com/dockerhub-proxy-cache/";
