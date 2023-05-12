@@ -49,7 +49,7 @@ subprojects {
 }
 
 nohttp {
-	source.excludes = [ "**/.gradle/**", "**/.m2/**", "**/build/**", "**/target/**" ]
+	source.excludes = [ "**/.gradle/**", "**/.m2/**", "**/build/**", "**/target/**", "**/tmp/**" ]
 }
 
 description = 'Spring Boot for Apache Geode'
