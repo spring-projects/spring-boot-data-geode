@@ -64,6 +64,8 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	private static final DockerImageName CASSANDRA_DOCKER_IMAGE_NAME = DockerImageName.parse("cassandra:3.11.15");
 
 	private static final String LOCAL_DATACENTER_NAME = "datacenter1";
+	private static final String TESTCONTAINERS_HTTPS_PROXY = "https://harbor-repo.vmware.com/dockerhub-proxy-cache";
+	private static final String TESTCONTAINERS_RYUK_DISABLED = "false";
 
 	@Bean("CassandraContainer")
 	GenericContainer<?> cassandraContainer(Environment environment) {
@@ -88,10 +90,12 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	private @NonNull GenericContainer<?> newEnvironmentOptimizedCassandraContainer() {
 
 		return newCassandraContainer()
+			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0")
+			.withEnv("TESTCONTAINERS_RYUK_DISABLED", TESTCONTAINERS_RYUK_DISABLED)
+			.withEnv("HTTPS_PROXY", TESTCONTAINERS_HTTPS_PROXY)
 			.withEnv("CASSANDRA_SNITCH", "SimpleSnitch")
 			.withEnv("HEAP_NEWSIZE", "128M")
-			.withEnv("MAX_HEAP_SIZE", "1024M")
-			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0");
+			.withEnv("MAX_HEAP_SIZE", "1024M");
 	}
 
 	private @NonNull CassandraTemplate newCassandraTemplate(@NonNull CqlSession session) {
