@@ -74,6 +74,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	// Testcontainers Constants
 	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "harbor-repo.vmware.com/dockerhub-proxy-cache/";
 	private static final String TESTCONTAINERS_HTTPS_PROXY = String.format("https://%s", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX);
+	private static final String TESTCONTAINERS_PULL_PAUSE_TIMEOUT = "5"; // 5 seconds
 	private static final String TESTCONTAINERS_RYUK_DISABLED = "true";
 	private static final String TESTCONTAINERS_RYUK_ENABLED = "false";
 
@@ -100,21 +101,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 		return this.logger;
 	}
 
-	protected void logInfo(String message, Object... arguments) {
-
-		Logger logger = getLogger();
-
-		if (logger.isInfoEnabled()) {
-			logger.info(String.format(message, arguments), arguments);
-		}
-	}
-
-	protected void logToSystemOut(String message, Object... arguments) {
-		System.out.printf(message, arguments);
-		System.out.flush();
-	}
-
-	private @NonNull GenericContainer<?> logContainerConfiguration(@NonNull GenericContainer<?> cassandraContainer) {
+	protected @NonNull GenericContainer<?> logContainerConfiguration(@NonNull GenericContainer<?> cassandraContainer) {
 
 		logInfo("Is Jenkins Environment [{}]", isJenkinsEnvironment());
 		logToSystemOut("Is Jenkins Environment [%s]", isNotJenkinsEnvironment());
@@ -129,6 +116,20 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 		return cassandraContainer;
 	}
 
+	protected void logInfo(String message, Object... arguments) {
+
+		Logger logger = getLogger();
+
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format(message, arguments), arguments);
+		}
+	}
+
+	protected void logToSystemOut(String message, Object... arguments) {
+		System.out.printf(message, arguments);
+		System.out.flush();
+	}
+
 	private @NonNull GenericContainer<?> newCassandraContainer(@NonNull Environment environment) {
 
 		return new CassandraContainer<>(CASSANDRA_DOCKER_IMAGE_NAME)
@@ -138,14 +139,8 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 			.withReuse(true);
 	}
 
-	// Information (feedback) received from Sergei Egorov.
 	private @NonNull GenericContainer<?> newEnvironmentOptimizedCassandraContainer(@NonNull Environment environment) {
-
-		return withCassandraEnvironmentConfiguration(newCassandraContainer(environment)
-			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0")
-			.withEnv("CASSANDRA_SNITCH", "SimpleSnitch")
-			.withEnv("HEAP_NEWSIZE", "128M")
-			.withEnv("MAX_HEAP_SIZE", "1024M"), environment);
+		return withCassandraEnvironmentConfiguration(newCassandraContainer(environment), environment);
 	}
 
 	private @NonNull CassandraTemplate newCassandraTemplate(@NonNull CqlSession session) {
@@ -173,8 +168,10 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 
 		return isNotJenkinsEnvironment()
 			? cassandraContainer.withEnv("TESTCONTAINERS_RYUK_DISABLED", TESTCONTAINERS_RYUK_DISABLED)
-			: cassandraContainer.withEnv("TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX);
-			//: cassandraContainer;
+				.withEnv("TESTCONTAINERS_PULL_PAUSE_TIMEOUT", TESTCONTAINERS_PULL_PAUSE_TIMEOUT)
+			: cassandraContainer.withEnv("TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX)
+				.withEnv("TESTCONTAINERS_PULL_PAUSE_TIMEOUT", TESTCONTAINERS_PULL_PAUSE_TIMEOUT);
+		//: cassandraContainer;
 	}
 
 	private @NonNull GenericContainer<?> withCassandraServer(@NonNull GenericContainer<?> cassandraContainer,

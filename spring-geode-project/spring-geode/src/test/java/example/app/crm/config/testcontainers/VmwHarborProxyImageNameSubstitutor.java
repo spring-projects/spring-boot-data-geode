@@ -44,10 +44,24 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 	@Override
 	public DockerImageName apply(DockerImageName original) {
 
+		logInfo("Is Jenkins Environment [{}]", isJenkinsEnvironment());
+
 		String originalDockerImageName = original.asCanonicalNameString();
-		String resolvedDockerImageName = originalDockerImageName;
+		String resolvedDockerImageName = resolveDockerImageName(originalDockerImageName);;
 
 		logInfo("Original Docker Image Name [%s]", originalDockerImageName);
+		logInfo("Resolved Docker Image Name [{}]", resolvedDockerImageName);
+
+		return DockerImageName.parse(resolvedDockerImageName);
+	}
+
+	private boolean isJenkinsEnvironment() {
+		return Boolean.TRUE.equals(Boolean.getBoolean("jenkins"));
+	}
+
+	private String resolveDockerImageName(String originalDockerImageName) {
+
+		String resolvedDockerImageName = originalDockerImageName;
 
 		if (originalDockerImageName.contains(VMWARE_HARBOR_PROXY_URL)) {
 			originalDockerImageName = originalDockerImageName.substring(TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.length() - 1);
@@ -57,13 +71,7 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 			resolvedDockerImageName = String.format(TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE, originalDockerImageName);
 		}
 
-		logInfo("Resolved Docker Image Name [{}]", resolvedDockerImageName);
-
-		return DockerImageName.parse(resolvedDockerImageName);
-	}
-
-	private boolean isJenkinsEnvironment() {
-		return Boolean.TRUE.equals(Boolean.getBoolean("jenkins"));
+		return resolvedDockerImageName;
 	}
 
 	@Override
