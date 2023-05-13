@@ -115,7 +115,9 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	private @NonNull GenericContainer<?> logContainerConfiguration(@NonNull GenericContainer<?> cassandraContainer) {
 
 		logInfo("Is Jenkins Environment [{}]", isJenkinsEnvironment());
+		logToSystemOut("Is Jenkins Environment [%s]", isNotJenkinsEnvironment());
 		logInfo("Cassandra Testcontainer Environment Configuration:");
+		logToSystemOut("Cassandra Testcontainer Environment Configuration:");
 
 		cassandraContainer.getEnvMap().forEach((key, value) -> {
 			logInfo("{} = [{}]", key, value);
