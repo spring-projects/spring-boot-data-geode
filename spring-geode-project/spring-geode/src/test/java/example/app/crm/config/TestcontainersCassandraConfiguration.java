@@ -110,7 +110,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	}
 
 	protected void logToSystemOut(String message, Object... arguments) {
-		System.out.printf("%s%n", arguments);
+		System.out.printf(message, arguments);
 		System.out.flush();
 	}
 
