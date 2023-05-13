@@ -68,11 +68,15 @@ import example.app.crm.model.Customer;
 public class TestcontainersCassandraConfiguration extends TestCassandraConfiguration {
 
 	// Apache Cassandra Constants
-	private static final String CASSANDRA_VERSION = System.getProperty("cassandra.version", "3.11.15");
+	private static final String CASSANDRA_VERSION = System.getProperty("cassandra.version", "3.11.14");
 	private static final String LOCAL_DATACENTER_NAME = System.getProperty("cassandra.datacenter.name", "datacenter1");
+
+	// Java (JVM/JRE) Constants
+	private static final String SPRING_JAVA_VERSION = System.getProperty("spring.java.version", "17.0.6_10-jdk-focal");
 
 	// Testcontainers Constants
 	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "harbor-repo.vmware.com/dockerhub-proxy-cache/";
+	private static final String TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX = TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.concat("springci/");
 	private static final String TESTCONTAINERS_HTTPS_PROXY = String.format("https://%s", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX);
 	private static final String TESTCONTAINERS_PULL_PAUSE_TIMEOUT = "5"; // 5 seconds
 	private static final String TESTCONTAINERS_RYUK_DISABLED = "true";
@@ -82,14 +86,16 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	private static final DockerImageName CASSANDRA_DOCKER_IMAGE_NAME =
 		DockerImageName.parse(String.format("cassandra:%s", CASSANDRA_VERSION));
 	//private static final DockerImageName CASSANDRA_DOCKER_IMAGE_NAME =
-	//	DockerImageName.parse(String.format("%scassandra:3.11.15", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX));
+	//	DockerImageName.parse(String.format("%1$sspring-data-with-cassandra-3.11:%2$s",
+	//		TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX, SPRING_JAVA_VERSION))
+	//		.asCompatibleSubstituteFor("cassandra");
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Bean("CassandraContainer")
 	GenericContainer<?> cassandraContainer(Environment environment) {
 
-		GenericContainer<?> cassandraContainer = newEnvironmentOptimizedCassandraContainer(environment);
+		GenericContainer<?> cassandraContainer = newEnvironmentCustomizedCassandraContainer(environment);
 
 		cassandraContainer.start();
 		cassandraContainer.followOutput(new Slf4jLogConsumer(getLogger()));
@@ -139,7 +145,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 			.withReuse(true);
 	}
 
-	private @NonNull GenericContainer<?> newEnvironmentOptimizedCassandraContainer(@NonNull Environment environment) {
+	private @NonNull GenericContainer<?> newEnvironmentCustomizedCassandraContainer(@NonNull Environment environment) {
 		return withCassandraEnvironmentConfiguration(newCassandraContainer(environment), environment);
 	}
 
@@ -156,7 +162,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	}
 
 	private boolean isJenkinsEnvironment() {
-		return Boolean.TRUE.equals(Boolean.getBoolean("jenkins"));
+		return Boolean.getBoolean("jenkins");
 	}
 
 	private boolean isNotJenkinsEnvironment() {
@@ -169,7 +175,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 		return isNotJenkinsEnvironment()
 			? cassandraContainer.withEnv("TESTCONTAINERS_RYUK_DISABLED", TESTCONTAINERS_RYUK_DISABLED)
 				.withEnv("TESTCONTAINERS_PULL_PAUSE_TIMEOUT", TESTCONTAINERS_PULL_PAUSE_TIMEOUT)
-			: cassandraContainer.withEnv("TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX)
+			: cassandraContainer.withEnv("TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX", TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX)
 				.withEnv("TESTCONTAINERS_PULL_PAUSE_TIMEOUT", TESTCONTAINERS_PULL_PAUSE_TIMEOUT);
 		//: cassandraContainer;
 	}
