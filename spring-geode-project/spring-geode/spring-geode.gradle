@@ -37,3 +37,7 @@ dependencies {
 	testRuntimeOnly "org.hsqldb:hsqldb"
 
 }
+
+test {
+	systemProperties['jenkins'] = "$jenkins"
+}
