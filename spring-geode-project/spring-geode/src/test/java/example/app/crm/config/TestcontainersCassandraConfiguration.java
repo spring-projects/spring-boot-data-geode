@@ -88,7 +88,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	@Bean("CassandraContainer")
 	GenericContainer<?> cassandraContainer(Environment environment) {
 
-		GenericContainer<?> cassandraContainer = newEnvironmentOptimizedCassandraContainer();
+		GenericContainer<?> cassandraContainer = newEnvironmentOptimizedCassandraContainer(environment);
 
 		cassandraContainer.start();
 		cassandraContainer.followOutput(new Slf4jLogConsumer(getLogger()));
@@ -129,7 +129,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 		return cassandraContainer;
 	}
 
-	private @NonNull GenericContainer<?> newCassandraContainer() {
+	private @NonNull GenericContainer<?> newCassandraContainer(@NonNull Environment environment) {
 
 		return new CassandraContainer<>(CASSANDRA_DOCKER_IMAGE_NAME)
 			.withInitScript(CASSANDRA_SCHEMA_CQL)
@@ -139,13 +139,13 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	}
 
 	// Information (feedback) received from Sergei Egorov.
-	private @NonNull GenericContainer<?> newEnvironmentOptimizedCassandraContainer() {
+	private @NonNull GenericContainer<?> newEnvironmentOptimizedCassandraContainer(@NonNull Environment environment) {
 
-		return withCassandraEnvironmentConfiguration(newCassandraContainer()
+		return withCassandraEnvironmentConfiguration(newCassandraContainer(environment)
 			.withEnv("JVM_OPTS", "-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0")
 			.withEnv("CASSANDRA_SNITCH", "SimpleSnitch")
 			.withEnv("HEAP_NEWSIZE", "128M")
-			.withEnv("MAX_HEAP_SIZE", "1024M"));
+			.withEnv("MAX_HEAP_SIZE", "1024M"), environment);
 	}
 
 	private @NonNull CassandraTemplate newCassandraTemplate(@NonNull CqlSession session) {
@@ -169,7 +169,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 	}
 
 	private @NonNull GenericContainer<?> withCassandraEnvironmentConfiguration(
-			@NonNull GenericContainer<?> cassandraContainer) {
+			@NonNull GenericContainer<?> cassandraContainer, @NonNull Environment environment) {
 
 		return isNotJenkinsEnvironment()
 			? cassandraContainer.withEnv("TESTCONTAINERS_RYUK_DISABLED", TESTCONTAINERS_RYUK_DISABLED)
