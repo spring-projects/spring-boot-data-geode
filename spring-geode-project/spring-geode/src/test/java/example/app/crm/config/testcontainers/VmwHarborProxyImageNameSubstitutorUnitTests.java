@@ -19,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
+import org.testcontainers.utility.DockerImageName;
+
 /**
  * Unit Tests for {@link VmwHarborProxyImageNameSubstitutor}.
  *
@@ -30,23 +32,53 @@ import org.junit.jupiter.api.Test;
 public class VmwHarborProxyImageNameSubstitutorUnitTests {
 
 	@Test
-	public void toUnqualifiedDockerImageNameFromQualifiedName() {
+	public void doResolveDockerImageNameForSpringManagedDockerImage() {
+
+		DockerImageName cassandraDockerImage = DockerImageName.parse("cassandra:3.11.14");
 
 		VmwHarborProxyImageNameSubstitutor imageNameSubstitutor = new VmwHarborProxyImageNameSubstitutor();
 
-		String qualifiedDockerImageName = String.format(VmwHarborProxyImageNameSubstitutor
-			.TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE, "testcontainers/ryuk:0.4.0");
+		assertThat(imageNameSubstitutor.doResolveDockerImageName(cassandraDockerImage)
+			.asCanonicalNameString())
+			.isEqualTo(String.format(VmwHarborProxyImageNameSubstitutor.TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_TEMPLATE,
+				VmwHarborProxyImageNameSubstitutor.SPRING_DATA_CASSANDRA_DOCKER_IMAGE_NAME));
+	}
 
-		assertThat(imageNameSubstitutor.toUnqualifiedDockerImageName(qualifiedDockerImageName))
+	@Test
+	public void doResolveDockerImageNameForNonSpringManagedDockerImage() {
+
+		DockerImageName cassandraDockerImage = DockerImageName.parse("testcontainers/ryuk:0.4.0");
+
+		VmwHarborProxyImageNameSubstitutor imageNameSubstitutor = new VmwHarborProxyImageNameSubstitutor();
+
+		assertThat(imageNameSubstitutor.doResolveDockerImageName(cassandraDockerImage)
+			.asCanonicalNameString())
+			.isEqualTo(String.format(VmwHarborProxyImageNameSubstitutor.TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE,
+				"testcontainers/ryuk:0.4.0"));
+	}
+
+	@Test
+	public void toUnqualifiedDockerImageNameFromQualifiedName() {
+
+		DockerImageName qualifiedDockerImageName = DockerImageName.parse(String.format(
+			VmwHarborProxyImageNameSubstitutor.TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE, "testcontainers/ryuk:0.4.0"));
+
+		VmwHarborProxyImageNameSubstitutor imageNameSubstitutor = new VmwHarborProxyImageNameSubstitutor();
+
+		assertThat(imageNameSubstitutor.toUnqualifiedDockerImageName(qualifiedDockerImageName)
+			.asCanonicalNameString())
 			.isEqualTo("testcontainers/ryuk:0.4.0");
 	}
 
 	@Test
 	public void toUnqualifiedDockerImageNameFromUnqualifiedName() {
 
+		DockerImageName unqualifiedDockerImageName = DockerImageName.parse("testcontainers/ryuk:0.4.0");
+
 		VmwHarborProxyImageNameSubstitutor imageNameSubstitutor = new VmwHarborProxyImageNameSubstitutor();
 
-		assertThat(imageNameSubstitutor.toUnqualifiedDockerImageName("testcontainers/ryuk:0.4.0"))
+		assertThat(imageNameSubstitutor.toUnqualifiedDockerImageName(unqualifiedDockerImageName)
+			.asCanonicalNameString())
 			.isEqualTo("testcontainers/ryuk:0.4.0");
 	}
 }
