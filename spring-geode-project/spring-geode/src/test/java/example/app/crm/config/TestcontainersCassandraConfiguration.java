@@ -103,6 +103,16 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 		return logContainerConfiguration(withCassandraServer(cassandraContainer, environment));
 	}
 
+	@Bean
+	CqlSessionBuilderCustomizer cqlSessionBuilderCustomizer(CassandraProperties properties,
+			@Qualifier("CassandraContainer") GenericContainer<?> cassandraContainer) {
+
+		return cqlSessionBuilder -> cqlSessionBuilder
+			.addContactPoint(resolveContactPoint(cassandraContainer))
+			.withLocalDatacenter(properties.getLocalDatacenter())
+			.withKeyspace(properties.getKeyspaceName());
+	}
+
 	protected @NonNull Logger getLogger() {
 		return this.logger;
 	}
@@ -177,7 +187,6 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 				.withEnv("TESTCONTAINERS_PULL_PAUSE_TIMEOUT", TESTCONTAINERS_PULL_PAUSE_TIMEOUT)
 			: cassandraContainer.withEnv("TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX", TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX)
 				.withEnv("TESTCONTAINERS_PULL_PAUSE_TIMEOUT", TESTCONTAINERS_PULL_PAUSE_TIMEOUT);
-		//: cassandraContainer;
 	}
 
 	private @NonNull GenericContainer<?> withCassandraServer(@NonNull GenericContainer<?> cassandraContainer,
@@ -235,16 +244,6 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 		assertThat(template.getCqlOperations().execute(String.format("USE %s;", KEYSPACE_NAME))).isTrue();
 		assertThat(template.getCqlOperations().queryForObject("SELECT count(*) FROM \"Customers\"", Long.class)).isOne();
 		//assertThat(template.count(Customer.class)).isOne(); // Table Customers not found; needs to use the Keyspace
-	}
-
-	@Bean
-	CqlSessionBuilderCustomizer cqlSessionBuilderCustomizer(CassandraProperties properties,
-			@Qualifier("CassandraContainer") GenericContainer<?> cassandraContainer) {
-
-		return cqlSessionBuilder -> cqlSessionBuilder
-			.addContactPoint(resolveContactPoint(cassandraContainer))
-			.withLocalDatacenter(properties.getLocalDatacenter())
-			.withKeyspace(properties.getKeyspaceName());
 	}
 
 	private @NonNull InetSocketAddress resolveContactPoint(@NonNull GenericContainer<?> cassandraContainer) {

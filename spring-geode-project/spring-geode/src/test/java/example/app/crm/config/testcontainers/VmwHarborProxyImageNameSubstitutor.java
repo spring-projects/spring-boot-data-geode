@@ -34,10 +34,15 @@ import org.testcontainers.utility.ImageNameSubstitutor;
 @SuppressWarnings("unused")
 public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 
+	private static final String CASSANDRA_KEYWORD = "cassandra";
+	private static final String JENKINS_KEYWORD = "jenkins";
 	private static final String VMWARE_HARBOR_PROXY_URL = "harbor-repo.vmware.com";
 
 	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX =
 		VMWARE_HARBOR_PROXY_URL.concat("/dockerhub-proxy-cache/");
+
+	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE =
+		TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.concat("%s");
 
 	private static final String TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX =
 		TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.concat("springci/");
@@ -56,8 +61,6 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 	@Override
 	public @NonNull DockerImageName apply(@NonNull DockerImageName original) {
 
-		logInfo("Is Jenkins Environment [{}]", isJenkinsEnvironment());
-
 		String originalDockerImageName = original.asCanonicalNameString();
 		String resolvedDockerImageName = resolveDockerImageName(originalDockerImageName);;
 
@@ -66,32 +69,43 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 
 		DockerImageName dockerImageName = DockerImageName.parse(resolvedDockerImageName);
 
-		return dockerImageName.asCanonicalNameString().contains("cassandra")
-			? dockerImageName.asCompatibleSubstituteFor("cassandra")
+		return dockerImageName.asCanonicalNameString().contains(CASSANDRA_KEYWORD)
+			? dockerImageName.asCompatibleSubstituteFor(CASSANDRA_KEYWORD)
 			: dockerImageName;
 	}
 
 	private boolean isJenkinsEnvironment() {
-		return Boolean.TRUE.equals(Boolean.getBoolean("jenkins"));
+		return Boolean.TRUE.equals(Boolean.getBoolean(JENKINS_KEYWORD));
+	}
+
+	private boolean isSpringDockerImageName(String dockerImageName) {
+		return dockerImageName.contains("spring");
+	}
+
+	private boolean isVMwareHarborProxyAvailable(String dockerImageName) {
+		return dockerImageName.contains(VMWARE_HARBOR_PROXY_URL) || isJenkinsEnvironment();
 	}
 
 	private String resolveDockerImageName(String originalDockerImageName) {
 
+		logInfo("Is Jenkins Environment [{}]", isJenkinsEnvironment());
+
 		String resolvedDockerImageName = originalDockerImageName;
 
-		if (originalDockerImageName.contains(VMWARE_HARBOR_PROXY_URL)) {
-			logInfo("VMware Harbor Proxy URL detected");
-			originalDockerImageName = originalDockerImageName.substring(originalDockerImageName.lastIndexOf("/") + 1);
-			resolvedDockerImageName = String.format(TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_TEMPLATE,
-				substituteCassandraDockerImageName(originalDockerImageName));
-		}
-		else if (isJenkinsEnvironment()) {
-			logInfo("VMware Jenkins CI environment detected");
-			resolvedDockerImageName = String.format(TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_TEMPLATE,
-				substituteCassandraDockerImageName(originalDockerImageName));
+		if (isVMwareHarborProxyAvailable(originalDockerImageName)) {
+			logInfo("VMware Harbor Proxy detected [{}]", originalDockerImageName);
+			originalDockerImageName = toUnqualifiedDockerImageName(originalDockerImageName);
+			resolvedDockerImageName = doResolveDockerImageName(originalDockerImageName);
 		}
 
 		return resolvedDockerImageName;
+	}
+
+	private String doResolveDockerImageName(String originalDockerImageName) {
+
+		return isSpringDockerImageName(originalDockerImageName)
+			? String.format(TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_TEMPLATE, substituteCassandraDockerImageName(originalDockerImageName))
+			: String.format(TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE, originalDockerImageName);
 	}
 
 	private String substituteCassandraDockerImageName(String originalDockerImageName) {
@@ -101,12 +115,16 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 			: originalDockerImageName;
 	}
 
+	private String toUnqualifiedDockerImageName(String dockerImageName) {
+		return dockerImageName.substring(dockerImageName.lastIndexOf("/") + 1);
+	}
+
 	@Override
 	protected String getDescription() {
 		return "VMware Harbor Proxy Image Name Substitutor";
 	}
 
-	protected Logger getLogger() {
+	protected @NonNull Logger getLogger() {
 		return this.logger;
 	}
 
