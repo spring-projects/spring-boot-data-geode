@@ -14,7 +14,7 @@
 		<append>true</append>
 		<immediateFlush>true</immediateFlush>
 		<encoder>
-			<pattern>%-4relative [%thread] %-5level %logger{35} -%kvp- %msg%n</pattern>
+			<pattern>%d [%thread] %logger{35} %-5level -- %msg%n</pattern>
 		</encoder>
 	</appender>
 
@@ -22,9 +22,7 @@
 
 	<logger name="ch.qos.logback" level="${logback.log.level:-ERROR}"/>
 
-	<logger name="example.app.crm.config.TestcontainersCassandraConfiguration"
-			level="${logback.log.level:-DEBUG}"
-			additive="false">
+	<logger name="example.app.crm.config.TestcontainersCassandraConfiguration" level="${logback.log.level:-DEBUG}">
 		<appender-ref ref="testFile"/>
 	</logger>
 
