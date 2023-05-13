@@ -38,6 +38,10 @@ dependencies {
 
 }
 
+def isJenkins = project.hasProperty('jenkins')
+	? project.getProperty('jenkins')
+	: 'false';
+
 test {
-	systemProperties['jenkins'] = System.getProperty('jenkins', 'false')
+	systemProperties['jenkins'] = "$isJenkins"
 }
