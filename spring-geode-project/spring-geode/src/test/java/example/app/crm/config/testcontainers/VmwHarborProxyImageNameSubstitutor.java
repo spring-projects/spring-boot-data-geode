@@ -53,10 +53,17 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 			originalDockerImageName = originalDockerImageName.substring(TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.length() - 1);
 			resolvedDockerImageName = String.format(TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE, originalDockerImageName);
 		}
+		else if (isJenkinsEnvironment()) {
+			resolvedDockerImageName = String.format(TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE, originalDockerImageName);
+		}
 
 		logInfo("Resolved Docker Image Name [{}]", resolvedDockerImageName);
 
 		return DockerImageName.parse(resolvedDockerImageName);
+	}
+
+	private boolean isJenkinsEnvironment() {
+		return Boolean.TRUE.equals(Boolean.getBoolean("jenkins"));
 	}
 
 	@Override
