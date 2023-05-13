@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.utility.DockerImageName;
 
 import example.app.crm.model.Customer;
@@ -90,6 +91,7 @@ public class TestcontainersCassandraConfiguration extends TestCassandraConfigura
 		GenericContainer<?> cassandraContainer = newEnvironmentOptimizedCassandraContainer();
 
 		cassandraContainer.start();
+		cassandraContainer.followOutput(new Slf4jLogConsumer(getLogger()));
 
 		return logContainerConfiguration(withCassandraServer(cassandraContainer, environment));
 	}
