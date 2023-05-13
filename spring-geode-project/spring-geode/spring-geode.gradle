@@ -39,5 +39,5 @@ dependencies {
 }
 
 test {
-	systemProperties['jenkins'] = "$jenkins"
+	systemProperties['jenkins'] = System.getProperty('jenkins', 'false')
 }
