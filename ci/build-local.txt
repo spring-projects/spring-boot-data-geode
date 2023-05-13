@@ -6,7 +6,11 @@ $ cd ~/pivdev/spring-boot-data-geode
 
 1. Run...
 
-$ docker run -it -v $HOME:/root -v $HOME/Library/Containers/com.docker.docker/Data/docker.sock:/var/run/docker.sock --mount type=bind,source="$(pwd)",target=/spring-boot-data-geode-github adoptopenjdk/openjdk8:latest /bin/sh
+One of...
+$ docker run -it -v $HOME:/root -v $HOME/Library/Containers/com.docker.docker/Data/docker.raw.sock:/var/run/docker.sock --mount type=bind,source="$(pwd)",target=/spring-boot-data-geode-github eclipse-temurin:17.0.6_10-jdk-focal /bin/bash
+$ docker run -it -v $HOME:/root -v $HOME/Library/Containers/com.docker.docker/Data/docker.sock:/var/run/docker.sock --mount type=bind,source="$(pwd)",target=/spring-boot-data-geode-github eclipse-temurin:17.0.6_10-jdk-focal /bin/bash
+$ docker run -it -v $HOME:/root -v /var/usr/docker.sock:/var/run/docker.sock --mount type=bind,source="$(pwd)",target=/spring-boot-data-geode-github eclipse-temurin:17.0.6_10-jdk-focal /bin/bash
+
 $ export GRADLE_OPTS="-Duser.name=root -Duser.home=/root"
 $ cd /spring-boot-data-geode-github
 (optional)
@@ -22,5 +26,5 @@ $ cd spring-boot-data-geode-github
 
 3. Run the build...
 
-$ ./gradlew --no-daemon clean build install
-$ ./gradlew clean build install
+$ ./gradlew --no-daemon clean build
+$ ./gradlew clean build
