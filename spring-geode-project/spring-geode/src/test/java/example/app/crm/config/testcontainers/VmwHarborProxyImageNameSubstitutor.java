@@ -41,13 +41,13 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX =
 		VMWARE_HARBOR_PROXY_URL.concat("/dockerhub-proxy-cache/");
 
-	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE =
+	protected static final String TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE =
 		TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.concat("%s");
 
 	private static final String TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX =
 		TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.concat("springci/");
 
-	private static final String TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_TEMPLATE =
+	protected static final String TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_TEMPLATE =
 		TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX.concat("%s");
 
 	private static final String SPRING_JAVA_VERSION =
@@ -115,8 +115,8 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 			: originalDockerImageName;
 	}
 
-	private String toUnqualifiedDockerImageName(String dockerImageName) {
-		return dockerImageName.substring(dockerImageName.lastIndexOf("/") + 1);
+	String toUnqualifiedDockerImageName(String dockerImageName) {
+		return dockerImageName.replace(TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX, "");
 	}
 
 	@Override
