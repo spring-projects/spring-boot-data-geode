@@ -16,6 +16,8 @@
 package example.app.crm.config.testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +28,7 @@ import org.testcontainers.utility.DockerImageName;
  *
  * @author John Blum
  * @see org.junit.Test
+ * @see org.mockito.Mockito
  * @see example.app.crm.config.testcontainers.VmwHarborProxyImageNameSubstitutor
  * @since 1.7.6
  */
@@ -36,7 +39,10 @@ public class VmwHarborProxyImageNameSubstitutorUnitTests {
 
 		DockerImageName cassandraDockerImage = DockerImageName.parse("cassandra:3.11.14");
 
-		VmwHarborProxyImageNameSubstitutor imageNameSubstitutor = new VmwHarborProxyImageNameSubstitutor();
+		VmwHarborProxyImageNameSubstitutor imageNameSubstitutor = spy(new VmwHarborProxyImageNameSubstitutor());
+
+		doReturn(true).when(imageNameSubstitutor).isJenkinsEnvironment();
+		doReturn(true).when(imageNameSubstitutor).isUseSpringManagedDockerImages();
 
 		assertThat(imageNameSubstitutor.doResolveDockerImageName(cassandraDockerImage)
 			.asCanonicalNameString())
@@ -45,16 +51,35 @@ public class VmwHarborProxyImageNameSubstitutorUnitTests {
 	}
 
 	@Test
-	public void doResolveDockerImageNameForNonSpringManagedDockerImage() {
+	public void doResolveDockerImageNameForNonSpringManagedNonOfficialDockerImage() {
 
 		DockerImageName cassandraDockerImage = DockerImageName.parse("testcontainers/ryuk:0.4.0");
 
-		VmwHarborProxyImageNameSubstitutor imageNameSubstitutor = new VmwHarborProxyImageNameSubstitutor();
+		VmwHarborProxyImageNameSubstitutor imageNameSubstitutor = spy(new VmwHarborProxyImageNameSubstitutor());
+
+		doReturn(true).when(imageNameSubstitutor).isJenkinsEnvironment();
+		doReturn(true).when(imageNameSubstitutor).isUseSpringManagedDockerImages();
 
 		assertThat(imageNameSubstitutor.doResolveDockerImageName(cassandraDockerImage)
 			.asCanonicalNameString())
 			.isEqualTo(String.format(VmwHarborProxyImageNameSubstitutor.TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE,
 				"testcontainers/ryuk:0.4.0"));
+	}
+
+	@Test
+	public void doResolveDockerImageNameForNonSpringManagedOfficialDockerImage() {
+
+		DockerImageName cassandraDockerImage = DockerImageName.parse(VmwHarborProxyImageNameSubstitutor.TEST_DOCKER_IMAGE);
+
+		VmwHarborProxyImageNameSubstitutor imageNameSubstitutor = spy(new VmwHarborProxyImageNameSubstitutor());
+
+		doReturn(true).when(imageNameSubstitutor).isJenkinsEnvironment();
+		doReturn(true).when(imageNameSubstitutor).isUseSpringManagedDockerImages();
+
+		assertThat(imageNameSubstitutor.doResolveDockerImageName(cassandraDockerImage)
+			.asCanonicalNameString())
+			.isEqualTo(String.format(VmwHarborProxyImageNameSubstitutor.TESTCONTAINERS_OFFICIAL_HUB_IMAGE_NAME_TEMPLATE,
+				VmwHarborProxyImageNameSubstitutor.TEST_DOCKER_IMAGE.concat(":latest")));
 	}
 
 	@Test

@@ -40,8 +40,9 @@ import org.testcontainers.utility.ImageNameSubstitutor;
 @SuppressWarnings("unused")
 public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 
-	private static final String CASSANDRA_KEYWORD = "cassandra";
-	private static final String JENKINS_KEYWORD = "jenkins";
+	static final String CASSANDRA_KEYWORD = "cassandra";
+	static final String JENKINS_KEYWORD = "jenkins";
+	static final String TEST_DOCKER_IMAGE = "test_docker_image";
 
 	// VMware Harbor Proxy (DockerHub Proxy Cache) Configuration
 	private static final String VMWARE_HARBOR_PROXY_URL = "harbor-repo.vmware.com";
@@ -52,10 +53,16 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 	private static final String TESTCONTAINERS_NAMESPACE = "library/";
 
 	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX =
-		TESTCONTAINERS_REGISTRY.concat(TESTCONTAINERS_REPOSITORY).concat(TESTCONTAINERS_NAMESPACE);
+		TESTCONTAINERS_REGISTRY.concat(TESTCONTAINERS_REPOSITORY);
 
 	protected static final String TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE =
 		TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.concat("%s");
+
+	private static final String TESTCONTAINERS_OFFICIAL_HUB_IMAGE_NAME_PREFIX =
+		TESTCONTAINERS_REGISTRY.concat(TESTCONTAINERS_REPOSITORY).concat(TESTCONTAINERS_NAMESPACE);
+
+	protected static final String TESTCONTAINERS_OFFICIAL_HUB_IMAGE_NAME_TEMPLATE =
+		TESTCONTAINERS_OFFICIAL_HUB_IMAGE_NAME_PREFIX.concat("%s");
 
 	private static final String TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX =
 		TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.concat("springci/");
@@ -74,10 +81,15 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 	protected static final String DOCKER_IMAGE_NAME_WITH_VERSION_TEMPLATE = "%1$s:%2$s";
 
 	private static final Map<String, String> springManagedDockerImages = new ConcurrentHashMap<>();
+	private static final Map<String, String> vmwHarborProxyOfficialDockerImages = new ConcurrentHashMap<>();
 
 	static {
 		springManagedDockerImages.put(CASSANDRA_KEYWORD, SPRING_DATA_CASSANDRA_DOCKER_IMAGE_NAME);
+		vmwHarborProxyOfficialDockerImages.put(CASSANDRA_KEYWORD, TESTCONTAINERS_OFFICIAL_HUB_IMAGE_NAME_TEMPLATE);
+		vmwHarborProxyOfficialDockerImages.put(TEST_DOCKER_IMAGE, TESTCONTAINERS_OFFICIAL_HUB_IMAGE_NAME_TEMPLATE);
 	}
+
+	private static final boolean IS_JENKINS_ENVIRONMENT = Boolean.getBoolean(JENKINS_KEYWORD);
 
 	private static final boolean USE_SPRING_MANAGED_DOCKER_IMAGES =
 		Boolean.getBoolean("use-spring-managed-docker-images");
@@ -96,17 +108,31 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 	}
 
 	protected boolean isJenkinsEnvironment() {
-		return Boolean.getBoolean(JENKINS_KEYWORD);
+		return IS_JENKINS_ENVIRONMENT;
 	}
 
 	protected boolean isSpringManagedDockerImage(DockerImageName dockerImageName) {
 
-		return USE_SPRING_MANAGED_DOCKER_IMAGES
+		return isUseSpringManagedDockerImages()
 			&& (isJenkinsEnvironment() && springManagedDockerImages.containsKey(dockerImageName.getUnversionedPart()));
 	}
 
-	protected boolean isVMwareHarborProxyAvailable(DockerImageName dockerImageName) {
-		return isJenkinsEnvironment() || dockerImageName.getRegistry().contains(VMWARE_HARBOR_PROXY_URL);
+	protected boolean isUseSpringManagedDockerImages() {
+		return USE_SPRING_MANAGED_DOCKER_IMAGES;
+	}
+
+	protected boolean isVMwareHarborProxyAvailable() {
+		return isJenkinsEnvironment();
+	}
+
+	protected boolean isVMwareHarborProxyManagedDockerImage(DockerImageName dockerImageName) {
+		return isVMwareHarborProxyAvailable() || dockerImageName.getRegistry().contains(VMWARE_HARBOR_PROXY_URL);
+	}
+
+	protected boolean isVmwareHarborProxyOfficialDockerImage(DockerImageName dockerImageName) {
+
+		return isVMwareHarborProxyAvailable() && vmwHarborProxyOfficialDockerImages
+			.containsKey(toUnqualifiedDockerImageName(dockerImageName).getUnversionedPart());
 	}
 
 	protected DockerImageName resolveCompatibleSubstituteFor(DockerImageName dockerImageName) {
@@ -122,7 +148,7 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 
 		DockerImageName resolvedDockerImageName = originalDockerImageName;
 
-		if (isVMwareHarborProxyAvailable(originalDockerImageName)) {
+		if (isVMwareHarborProxyManagedDockerImage(originalDockerImageName)) {
 			logInfo("VMware Harbor Proxy detected [{}]", originalDockerImageName);
 			originalDockerImageName = toUnqualifiedDockerImageName(originalDockerImageName);
 			resolvedDockerImageName = doResolveDockerImageName(originalDockerImageName);
@@ -134,11 +160,19 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 	DockerImageName doResolveDockerImageName(DockerImageName originalDockerImageName) {
 
 		return Optional.ofNullable(originalDockerImageName)
+			.filter(dockerImageName -> isUseSpringManagedDockerImages())
 			.filter(dockerImageName -> springManagedDockerImages.containsKey(dockerImageName.getUnversionedPart()))
 			.map(dockerImageName -> springManagedDockerImages.get(dockerImageName.getUnversionedPart()))
 			.map(springManagedDockerImageName -> String.format(TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_TEMPLATE, springManagedDockerImageName))
 			.map(DockerImageName::parse)
-			.orElseGet(() -> DockerImageName.parse(String.format(TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE, originalDockerImageName)));
+			.orElseGet(() -> {
+
+				DockerImageName unqualifiedDockerImageName = toUnqualifiedDockerImageName(originalDockerImageName);
+
+				return isVmwareHarborProxyOfficialDockerImage(unqualifiedDockerImageName)
+					? DockerImageName.parse(String.format(TESTCONTAINERS_OFFICIAL_HUB_IMAGE_NAME_TEMPLATE, originalDockerImageName))
+					: DockerImageName.parse(String.format(TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE, originalDockerImageName));
+			});
 	}
 
 	DockerImageName toUnqualifiedDockerImageName(DockerImageName dockerImageName) {
