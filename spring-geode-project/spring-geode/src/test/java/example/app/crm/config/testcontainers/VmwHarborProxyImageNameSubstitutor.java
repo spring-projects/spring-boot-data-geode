@@ -18,6 +18,7 @@ package example.app.crm.config.testcontainers;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import org.springframework.lang.NonNull;
 
@@ -41,10 +42,17 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 
 	private static final String CASSANDRA_KEYWORD = "cassandra";
 	private static final String JENKINS_KEYWORD = "jenkins";
+
+	// VMware Harbor Proxy (DockerHub Proxy Cache) Configuration
 	private static final String VMWARE_HARBOR_PROXY_URL = "harbor-repo.vmware.com";
 
+	// Testcontainers Configuration
+	private static final String TESTCONTAINERS_REGISTRY = VMWARE_HARBOR_PROXY_URL.concat("/");
+	private static final String TESTCONTAINERS_REPOSITORY = "dockerhub-proxy-cache/";
+	private static final String TESTCONTAINERS_NAMESPACE = "library/";
+
 	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX =
-		VMWARE_HARBOR_PROXY_URL.concat("/dockerhub-proxy-cache/");
+		TESTCONTAINERS_REGISTRY.concat(TESTCONTAINERS_REPOSITORY).concat(TESTCONTAINERS_NAMESPACE);
 
 	protected static final String TESTCONTAINERS_HUB_IMAGE_NAME_TEMPLATE =
 		TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.concat("%s");
@@ -55,19 +63,24 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 	protected static final String TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_TEMPLATE =
 		TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX.concat("%s");
 
+	// Spring Configuration
 	protected static final String SPRING_JAVA_VERSION =
 		System.getProperty("spring.java.version", "17.0.6_10-jdk-focal");
 
 	protected static final String SPRING_DATA_CASSANDRA_DOCKER_IMAGE_NAME =
 		String.format("spring-data-with-cassandra-3.11:%s", SPRING_JAVA_VERSION);
 
+	// Docker Configuration
 	protected static final String DOCKER_IMAGE_NAME_WITH_VERSION_TEMPLATE = "%1$s:%2$s";
 
 	private static final Map<String, String> springManagedDockerImages = new ConcurrentHashMap<>();
 
 	static {
-		springManagedDockerImages.put("cassandra", SPRING_DATA_CASSANDRA_DOCKER_IMAGE_NAME);
+		springManagedDockerImages.put(CASSANDRA_KEYWORD, SPRING_DATA_CASSANDRA_DOCKER_IMAGE_NAME);
 	}
+
+	private static final boolean USE_SPRING_MANAGED_DOCKER_IMAGES =
+		Boolean.getBoolean("use-spring-managed-docker-images");
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -76,30 +89,36 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 
 		DockerImageName resolvedDockerImageName = resolveDockerImageName(originalDockerImageName);
 
-		logInfo("Original Docker Image Name [{}]", originalDockerImageName.asCanonicalNameString());
-		logInfo("Resolved Docker Image Name [{}]", resolvedDockerImageName.asCanonicalNameString());
+		logInfo("Original Docker Image Name [{}]", () -> asArray(originalDockerImageName.asCanonicalNameString()));
+		logInfo("Resolved Docker Image Name [{}]", () -> asArray(resolvedDockerImageName.asCanonicalNameString()));
 
 		return resolveCompatibleSubstituteFor(resolvedDockerImageName);
 	}
 
 	protected boolean isJenkinsEnvironment() {
-		return Boolean.TRUE.equals(Boolean.getBoolean(JENKINS_KEYWORD));
+		return Boolean.getBoolean(JENKINS_KEYWORD);
+	}
+
+	protected boolean isSpringManagedDockerImage(DockerImageName dockerImageName) {
+
+		return USE_SPRING_MANAGED_DOCKER_IMAGES
+			&& (isJenkinsEnvironment() && springManagedDockerImages.containsKey(dockerImageName.getUnversionedPart()));
 	}
 
 	protected boolean isVMwareHarborProxyAvailable(DockerImageName dockerImageName) {
-		return dockerImageName.getRegistry().contains(VMWARE_HARBOR_PROXY_URL) || isJenkinsEnvironment();
+		return isJenkinsEnvironment() || dockerImageName.getRegistry().contains(VMWARE_HARBOR_PROXY_URL);
 	}
 
 	protected DockerImageName resolveCompatibleSubstituteFor(DockerImageName dockerImageName) {
 
-		return springManagedDockerImages.containsKey(dockerImageName.getUnversionedPart())
+		return isSpringManagedDockerImage(dockerImageName)
 			? dockerImageName.asCompatibleSubstituteFor(CASSANDRA_KEYWORD)
 			: dockerImageName;
 	}
 
 	protected DockerImageName resolveDockerImageName(DockerImageName originalDockerImageName) {
 
-		logInfo("Is Jenkins Environment [{}]", isJenkinsEnvironment());
+		logInfo("Is Jenkins Environment [{}]", () -> asArray(isJenkinsEnvironment()));
 
 		DockerImageName resolvedDockerImageName = originalDockerImageName;
 
@@ -149,11 +168,20 @@ public class VmwHarborProxyImageNameSubstitutor extends ImageNameSubstitutor {
 	}
 
 	protected void logInfo(String message, Object... arguments) {
+		logInfo(message, () -> arguments);
+	}
+
+	protected void logInfo(String message, Supplier<Object[]> argumentsSupplier) {
 
 		Logger logger = getLogger();
 
 		if (logger.isInfoEnabled()) {
+			Object[] arguments = argumentsSupplier.get();
 			logger.info(String.format(message, arguments), arguments);
 		}
+	}
+
+	private Object[] asArray(Object... array) {
+		return array;
 	}
 }

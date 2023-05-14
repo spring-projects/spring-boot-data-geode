@@ -3,4 +3,4 @@
 set -eou pipefail
 
 GRADLE_OPTS="-Duser.name=jenkins -Duser.home=/opt/jenkins -Djava.io.tmpdir=/tmp" \
- ./gradlew -Pjenkins=true clean check --no-daemon --refresh-dependencies --stacktrace
+ ./gradlew -Pjenkins=true --no-daemon --refresh-dependencies --stacktrace clean check

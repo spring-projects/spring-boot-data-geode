@@ -68,14 +68,16 @@ import example.app.crm.model.Customer;
 public class TestcontainersCassandraConfiguration extends TestCassandraConfiguration {
 
 	// Apache Cassandra Constants
-	private static final String CASSANDRA_VERSION = System.getProperty("cassandra.version", "3.11.14");
+	private static final String CASSANDRA_VERSION = System.getProperty("cassandra.version", "3.11.15");
 	private static final String LOCAL_DATACENTER_NAME = System.getProperty("cassandra.datacenter.name", "datacenter1");
 
-	// Java (JVM/JRE) Constants
+	// Java (JRE/JVM) Constants
 	private static final String SPRING_JAVA_VERSION = System.getProperty("spring.java.version", "17.0.6_10-jdk-focal");
 
 	// Testcontainers Constants
-	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "harbor-repo.vmware.com/dockerhub-proxy-cache/";
+	private static final String TESTCONTAINERS_REGISTRY = "harbor-repo.vmware.com/";
+	private static final String TESTCONTAINERS_REPOSITORY = "dockerhub-proxy-cache/";
+	private static final String TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = TESTCONTAINERS_REGISTRY.concat(TESTCONTAINERS_REPOSITORY);
 	private static final String TESTCONTAINERS_SPRINGCI_HUB_IMAGE_NAME_PREFIX = TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX.concat("springci/");
 	private static final String TESTCONTAINERS_HTTPS_PROXY = String.format("https://%s", TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX);
 	private static final String TESTCONTAINERS_PULL_PAUSE_TIMEOUT = "5"; // 5 seconds
