@@ -126,7 +126,7 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 						passwordCredentials.setUsername(resolveArtifactoryUsername(project));
 						passwordCredentials.setPassword(resolveArtifactoryPassword(project));
 					});
-					repo.setUrl(URI.create("https://repo.spring.io/release"));
+					repo.setUrl(URI.create("https://repo.spring.io/libs-milestone"));
 				});
 			}
 		});
