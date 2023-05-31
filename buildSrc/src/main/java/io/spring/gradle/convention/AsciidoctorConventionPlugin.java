@@ -121,9 +121,39 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 
 			if (repositories.isEmpty()) {
 				repositories.mavenCentral();
-				repositories.maven(repo -> repo.setUrl(URI.create("https://repo.spring.io/release")));
+				repositories.maven(repo -> {
+					repo.credentials(passwordCredentials -> {
+						passwordCredentials.setUsername(resolveArtifactoryUsername(project));
+						passwordCredentials.setPassword(resolveArtifactoryPassword(project));
+					});
+					repo.setUrl(URI.create("https://repo.spring.io/release"));
+				});
 			}
 		});
+	}
+
+	private boolean isCredentialSet(Object target) {
+		return target != null && !String.valueOf(target).trim().isEmpty();
+	}
+
+	private String resolveArtifactoryPassword(Project project) {
+
+		Object artifactoryPassword = project.getProperties().get("artifactoryPassword");
+
+		artifactoryPassword = isCredentialSet(artifactoryPassword) ? artifactoryPassword
+			: System.getenv().get("ARTIFACTORY_PASSWORD");
+
+		return String.valueOf(artifactoryPassword);
+	}
+
+	private String resolveArtifactoryUsername(Project project) {
+
+		Object artifactoryUsername = project.getProperties().get("artifactoryUsername");
+
+		artifactoryUsername = isCredentialSet(artifactoryUsername) ? artifactoryUsername
+			: System.getenv().get("ARTIFACTORY_USERNAME");
+
+		return String.valueOf(artifactoryUsername);
 	}
 
 	/**

@@ -64,12 +64,14 @@ pipeline {
 				script {
 					docker.image(p['docker.container.image.java.main']).inside(p['docker.container.inside.env.basic']) {
 						withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
-							try {
-								sh "ci/deployDocs.sh"
-							}
-							catch (e) {
-								currentBuild.result = "FAILED: deploy docs"
-								throw e
+							withCredentials([usernamePassword(credentialsId: p['artifactory.credentials'], usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+								try {
+									sh "ci/deployDocs.sh"
+								}
+								catch (e) {
+									currentBuild.result = "FAILED: deploy docs"
+									throw e
+								}
 							}
 						}
 					}
