@@ -21,6 +21,9 @@ pipeline {
 	stages {
 
 		stage('Build') {
+			environment {
+				ARTIFACTORY = credentials("${p['artifactory.credentials']}")
+			}
 			options {
 				timeout(time: 30, unit: "MINUTES")
 			}
@@ -57,6 +60,9 @@ pipeline {
 		}
 
 		stage ('Deploy Docs') {
+			environment {
+				ARTIFACTORY = credentials("${p['artifactory.credentials']}")
+			}
 			options {
 				timeout(time: 15, unit: "MINUTES")
 			}
@@ -80,6 +86,9 @@ pipeline {
 		}
 
 		stage ('Deploy Artifacts') {
+			environment {
+				ARTIFACTORY = credentials("${p['artifactory.credentials']}")
+			}
 			options {
 				timeout(time: 15, unit: "MINUTES")
 			}
