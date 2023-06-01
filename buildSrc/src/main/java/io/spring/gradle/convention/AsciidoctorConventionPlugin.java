@@ -67,7 +67,7 @@ import org.gradle.api.tasks.Sync;
 public class AsciidoctorConventionPlugin implements Plugin<Project> {
 
 	private static final String SPRING_ASCIIDOCTOR_BACKENDS_VERSION = "0.0.5";
-	private static final String SPRING_ASCIIDOCTOR_EXTENSIONS_BLOCK_SWITCH_VERSION = "0.4.2.RELEASE";
+	private static final String SPRING_ASCIIDOCTOR_EXTENSIONS_BLOCK_SWITCH_VERSION = "0.6.1";
 	private static final String SPRING_DOC_RESOURCES_VERSION = "0.2.5";
 
 	private static final String SPRING_ASCIIDOCTOR_BACKENDS_DEPENDENCY =
