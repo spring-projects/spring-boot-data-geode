@@ -16,7 +16,6 @@
 package io.spring.gradle.convention;
 
 import java.io.File;
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +38,7 @@ import org.gradle.api.tasks.Sync;
 
 /**
  * Conventions that are applied in the presence of the {@link AsciidoctorJPlugin}.
- *
+ * <p/>
  * When the plugin is applied:
  *
  * <ul>
@@ -63,16 +62,23 @@ import org.gradle.api.tasks.Sync;
  *
  * @author Andy Wilkinson
  * @author Rob Winch
+ * @author John Blum
  */
 public class AsciidoctorConventionPlugin implements Plugin<Project> {
 
+	private static final String SPRING_ASCIIDOCTOR_BACKENDS_VERSION = "0.0.5";
 	private static final String SPRING_ASCIIDOCTOR_EXTENSIONS_BLOCK_SWITCH_VERSION = "0.4.2.RELEASE";
 	private static final String SPRING_DOC_RESOURCES_VERSION = "0.2.5";
+
+	private static final String SPRING_ASCIIDOCTOR_BACKENDS_DEPENDENCY =
+		String.format("io.spring.asciidoctor.backends:spring-asciidoctor-backends:%s",
+			SPRING_ASCIIDOCTOR_BACKENDS_VERSION);
 
 	private static final String SPRING_ASCIIDOCTOR_EXTENSION_BLOCK_SWITCH_DEPENDENCY =
 		String.format("io.spring.asciidoctor:spring-asciidoctor-extensions-block-switch:%s",
 			SPRING_ASCIIDOCTOR_EXTENSIONS_BLOCK_SWITCH_VERSION);
 
+	@SuppressWarnings("unused")
 	private static final String SPRING_DOC_RESOURCES_DEPENDENCY =
 		String.format("io.spring.docresources:spring-doc-resources:%s", SPRING_DOC_RESOURCES_VERSION);
 
@@ -119,41 +125,8 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 
 			RepositoryHandler repositories = it.getRepositories();
 
-			if (repositories.isEmpty()) {
-				repositories.mavenCentral();
-				repositories.maven(repo -> {
-					repo.credentials(passwordCredentials -> {
-						passwordCredentials.setUsername(resolveArtifactoryUsername(project));
-						passwordCredentials.setPassword(resolveArtifactoryPassword(project));
-					});
-					repo.setUrl(URI.create("https://repo.spring.io/libs-milestone"));
-				});
-			}
+			repositories.mavenCentral();
 		});
-	}
-
-	private boolean isCredentialSet(Object target) {
-		return target != null && !String.valueOf(target).trim().isEmpty();
-	}
-
-	private String resolveArtifactoryPassword(Project project) {
-
-		Object artifactoryPassword = project.getProperties().get("artifactoryPassword");
-
-		artifactoryPassword = isCredentialSet(artifactoryPassword) ? artifactoryPassword
-			: System.getenv().get("ARTIFACTORY_PASSWORD");
-
-		return String.valueOf(artifactoryPassword);
-	}
-
-	private String resolveArtifactoryUsername(Project project) {
-
-		Object artifactoryUsername = project.getProperties().get("artifactoryUsername");
-
-		artifactoryUsername = isCredentialSet(artifactoryUsername) ? artifactoryUsername
-			: System.getenv().get("ARTIFACTORY_USERNAME");
-
-		return String.valueOf(artifactoryUsername);
 	}
 
 	/**
@@ -173,7 +146,7 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		Configuration documentationResources = project.getConfigurations().maybeCreate("documentationResources");
 
 		documentationResources.getDependencies()
-			.add(project.getDependencies().create(SPRING_DOC_RESOURCES_DEPENDENCY));
+			.add(project.getDependencies().create(SPRING_ASCIIDOCTOR_BACKENDS_DEPENDENCY));
 
 		Sync unzipResources = project.getTasks().create("unzipDocumentationResources", Sync.class, sync -> {
 
