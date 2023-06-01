@@ -43,7 +43,7 @@ asciidoctorj {
 	def javaVersion = JavaVersion.current()
 	def apacheGeodeDocVersion = resolveApacheGeodeDocVersion("${apacheGeodeVersion}")
 	def githubBaseUrl = "https://github.com/spring-projects/spring-boot-data-geode"
-	def githubTag = snapshotBuild ? 'master' : project.version
+	def githubTag = snapshotBuild ? 'main' : project.version
 	def githubUrl = "$githubBaseUrl/tree/$githubTag"
 
 	attributes 'version' : project.version,
