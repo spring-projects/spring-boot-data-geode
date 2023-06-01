@@ -28,10 +28,10 @@ import org.asciidoctor.gradle.jvm.AbstractAsciidoctorTask;
 import org.asciidoctor.gradle.jvm.AsciidoctorJExtension;
 import org.asciidoctor.gradle.jvm.AsciidoctorJPlugin;
 import org.asciidoctor.gradle.jvm.AsciidoctorTask;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.dsl.RepositoryHandler;
 import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.tasks.Sync;
@@ -87,16 +87,17 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 
 		project.getPlugins().withType(AsciidoctorJPlugin.class, asciidoctorPlugin -> {
 
-			createDefaultAsciidoctorRepository(project);
+			configureMavenCentralRepositoryForAsciidoctor(project);
 			makeAllWarningsFatal(project);
 
-			Sync unzipResources = createUnzipDocumentationResourcesTask(project);
+			Sync unzipResources = createSyncDocumentationResourcesTask(project);
 
 			project.getTasks().withType(AbstractAsciidoctorTask.class, asciidoctorTask -> {
 
 				asciidoctorTask.dependsOn(unzipResources);
 				configureAttributes(project, asciidoctorTask);
 				configureExtensions(project, asciidoctorTask);
+				configureForkOptions(asciidoctorTask);
 				configureOptions(asciidoctorTask);
 				asciidoctorTask.baseDirFollowsSourceDir();
 				asciidoctorTask.useIntermediateWorkDir();
@@ -119,14 +120,8 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		});
 	}
 
-	private void createDefaultAsciidoctorRepository(Project project) {
-
-		project.getGradle().afterProject(it -> {
-
-			RepositoryHandler repositories = it.getRepositories();
-
-			repositories.mavenCentral();
-		});
+	private void configureMavenCentralRepositoryForAsciidoctor(Project project) {
+		project.getGradle().afterProject(it -> it.getRepositories().mavenCentral());
 	}
 
 	/**
@@ -141,7 +136,7 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 	 * @see org.gradle.api.Project
 	 */
 	@SuppressWarnings("all")
-	private Sync createUnzipDocumentationResourcesTask(Project project) {
+	private Sync createSyncDocumentationResourcesTask(Project project) {
 
 		Configuration documentationResources = project.getConfigurations().maybeCreate("documentationResources");
 
@@ -175,10 +170,10 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		Map<String, Object> attributes = new HashMap<>();
 
 		attributes.put("attribute-missing", "warn");
+		attributes.put("docinfo", "shared");
 		attributes.put("icons", "font");
 		attributes.put("idprefix", "");
 		attributes.put("idseparator", "-");
-		attributes.put("docinfo", "shared");
 		attributes.put("sectanchors", "");
 		attributes.put("sectnums", "");
 		attributes.put("today-year", LocalDate.now().getYear());
@@ -196,6 +191,15 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		asciidoctorTask.configurations(extensionsConfiguration);
 	}
 
+	private void configureForkOptions(AbstractAsciidoctorTask asciidoctorTask) {
+		if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_16)) {
+			asciidoctorTask.forkOptions(options -> options.jvmArgs(
+				"--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+				"--add-opens", "java.base/java.io=ALL-UNNAMED")
+			);
+		}
+	}
+
 	private void configureHtmlOnlyAttributes(Project project, AbstractAsciidoctorTask asciidoctorTask) {
 
 		Map<String, Object> attributes = new HashMap<>();
@@ -205,7 +209,6 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		attributes.put("highlightjs-theme", "github");
 		attributes.put("linkcss", true);
 		attributes.put("icons", "font");
-		attributes.put("stylesheet", "css/spring.css");
 
 		asciidoctorTask.getAttributeProviders().add(() -> {
 
