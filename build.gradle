@@ -1,6 +1,11 @@
 import io.spring.gradle.convention.Utils
 
 buildscript {
+	ext {
+		snapshotBuild = Utils.isSnapshot(project)
+		milestoneBuild = Utils.isMilestone(project)
+		releaseBuild = Utils.isRelease(project)
+	}
 	repositories {
 		mavenCentral()
 		gradlePluginPortal()
@@ -16,9 +21,6 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath('io.spring.gradle:spring-build-conventions:0.0.38') {
-			exclude group: "io.spring.gradle", module: "docbook-reference-plugin"
-		}
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 	}
 }
@@ -56,9 +58,5 @@ description = 'Spring Boot for Apache Geode'
 //ext['spring-framework.version'] = "$springVersion"
 //ext['spring-data-bom.version'] = "$springDataBomVersion"
 //ext['spring-session-bom.version'] = "$springSessionBomVersion"
-
-ext.snapshotBuild = Utils.isSnapshot(project)
-ext.milestoneBuild = Utils.isMilestone(project)
-ext.releaseBuild = Utils.isRelease(project)
 
 ext.MAVEN_POM_EDITOR_GRADLE = "$rootDir/gradle/maven-pom-editor.gradle"
