@@ -66,17 +66,13 @@ import org.gradle.api.tasks.Sync;
  */
 public class AsciidoctorConventionPlugin implements Plugin<Project> {
 
+	private static final String ASCIIDOCTORJ_VERSION = "2.4.3";
 	private static final String SPRING_ASCIIDOCTOR_BACKENDS_VERSION = "0.0.5";
-	private static final String SPRING_ASCIIDOCTOR_EXTENSIONS_BLOCK_SWITCH_VERSION = "0.6.1";
 	private static final String SPRING_DOC_RESOURCES_VERSION = "0.2.5";
 
 	private static final String SPRING_ASCIIDOCTOR_BACKENDS_DEPENDENCY =
 		String.format("io.spring.asciidoctor.backends:spring-asciidoctor-backends:%s",
 			SPRING_ASCIIDOCTOR_BACKENDS_VERSION);
-
-	private static final String SPRING_ASCIIDOCTOR_EXTENSION_BLOCK_SWITCH_DEPENDENCY =
-		String.format("io.spring.asciidoctor:spring-asciidoctor-extensions-block-switch:%s",
-			SPRING_ASCIIDOCTOR_EXTENSIONS_BLOCK_SWITCH_VERSION);
 
 	@SuppressWarnings("unused")
 	private static final String SPRING_DOC_RESOURCES_DEPENDENCY =
@@ -87,20 +83,16 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 
 		project.getPlugins().withType(AsciidoctorJPlugin.class, asciidoctorPlugin -> {
 
-			configureMavenCentralRepositoryForAsciidoctor(project);
+			setAsciidoctorJVersion(project);
 			makeAllWarningsFatal(project);
+			createAsciidoctorExtensionsConfiguration(project);
 
-			Sync unzipResources = createSyncDocumentationResourcesTask(project);
+			Sync unzipResources = createUnzipDocumentationResourcesTask(project);
 
 			project.getTasks().withType(AbstractAsciidoctorTask.class, asciidoctorTask -> {
 
 				asciidoctorTask.dependsOn(unzipResources);
-				configureAttributes(project, asciidoctorTask);
-				configureExtensions(project, asciidoctorTask);
-				configureForkOptions(asciidoctorTask);
-				configureOptions(asciidoctorTask);
-				asciidoctorTask.baseDirFollowsSourceDir();
-				asciidoctorTask.useIntermediateWorkDir();
+				configureAsciidoctorTask(project, asciidoctorTask);
 
 				asciidoctorTask.resources(resourcesSpec -> {
 					resourcesSpec.setDuplicatesStrategy(DuplicatesStrategy.INCLUDE);
@@ -112,33 +104,49 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 						// resourcesSrcDirSpec.include("images/**");
 					});
 				});
-
-				if (asciidoctorTask instanceof AsciidoctorTask) {
-					configureHtmlOnlyAttributes(project, asciidoctorTask);
-				}
 			});
 		});
 	}
 
-	private void configureMavenCentralRepositoryForAsciidoctor(Project project) {
-		project.getGradle().afterProject(it -> it.getRepositories().mavenCentral());
+	private void setAsciidoctorJVersion(Project project) {
+		project.getExtensions().getByType(AsciidoctorJExtension.class).setVersion(ASCIIDOCTORJ_VERSION);
+	}
+
+	private void makeAllWarningsFatal(Project project) {
+		project.getExtensions().getByType(AsciidoctorJExtension.class).fatalWarnings(".*");
+	}
+
+	private void createAsciidoctorExtensionsConfiguration(Project project) {
+
+		project.getConfigurations().create("asciidoctorExtensions", configuration -> {
+
+			project.getConfigurations()
+				.matching(it -> "dependencyManagement".equals(it.getName()))
+				.all(configuration::extendsFrom);
+
+			configuration.getDependencies()
+				.add(project.getDependencies().create(SPRING_ASCIIDOCTOR_BACKENDS_DEPENDENCY));
+
+			// TODO: Why is the asiidoctorj-pdf dependency needed?
+			configuration.getDependencies()
+				.add(project.getDependencies().create("org.asciidoctor:asciidoctorj-pdf:1.5.3"));
+		});
 	}
 
 	/**
-	 * Requests the base Spring Documentation Resources from {@literal https://repo.spring.io/release} and uses it
-	 * to format and render documentation.
+	 * Requests the base Spring Documentation Resources from {@literal Maven Central} and uses it to format
+	 * and render documentation.
 	 *
 	 * @param project {@literal this} Gradle {@link Project}.
-	 * @return a {@link Sync} task used to copy the Spring Documentation Resources to a build directory
+	 * @return a {@link Sync} task that copies Spring Documentation Resources to the build directory
 	 * used to generate documentation.
-	 * @see <a href="https://repo.spring.io/ui/native/release/io/spring/docresources/spring-doc-resources">spring-doc-resources</a>
 	 * @see org.gradle.api.tasks.Sync
 	 * @see org.gradle.api.Project
 	 */
 	@SuppressWarnings("all")
-	private Sync createSyncDocumentationResourcesTask(Project project) {
+	private Sync createUnzipDocumentationResourcesTask(Project project) {
 
-		Configuration documentationResources = project.getConfigurations().maybeCreate("documentationResources");
+		Configuration documentationResources = project.getConfigurations().create("documentationResources");
 
 		documentationResources.getDependencies()
 			.add(project.getDependencies().create(SPRING_ASCIIDOCTOR_BACKENDS_DEPENDENCY));
@@ -164,31 +172,43 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		return unzipResources;
 	}
 
-	@SuppressWarnings("unused")
+	private void configureAsciidoctorTask(Project project, AbstractAsciidoctorTask asciidoctorTask) {
+
+		asciidoctorTask.baseDirFollowsSourceDir();
+		asciidoctorTask.configurations("asciidoctorExtensions");
+		//asciidoctorTask.useIntermediateWorkDir();
+
+		configureAttributes(project, asciidoctorTask);
+		configureForkOptions(asciidoctorTask);
+		configureOptions(asciidoctorTask);
+
+		if (asciidoctorTask instanceof AsciidoctorTask) {
+			boolean pdf = asciidoctorTask.getName().toLowerCase().contains("pdf");
+			String backend = pdf ? "spring-pdf" : "spring-html";
+			((AsciidoctorTask) asciidoctorTask).outputOptions((outputOptions) -> outputOptions.backends(backend));
+			configureHtmlOnlyAttributes(asciidoctorTask);
+		}
+	}
+
 	private void configureAttributes(Project project, AbstractAsciidoctorTask asciidoctorTask) {
 
 		Map<String, Object> attributes = new HashMap<>();
 
 		attributes.put("attribute-missing", "warn");
 		attributes.put("docinfo", "shared");
-		attributes.put("icons", "font");
 		attributes.put("idprefix", "");
 		attributes.put("idseparator", "-");
 		attributes.put("sectanchors", "");
 		attributes.put("sectnums", "");
 		attributes.put("today-year", LocalDate.now().getYear());
 
+		Object version = project.getVersion();
+
+		if (version != null && !Project.DEFAULT_VERSION.equals(version)) {
+			attributes.put("revnumber", version);
+		}
+
 		asciidoctorTask.attributes(attributes);
-	}
-
-	private void configureExtensions(Project project, AbstractAsciidoctorTask asciidoctorTask) {
-
-		Configuration extensionsConfiguration = project.getConfigurations().maybeCreate("asciidoctorExtensions");
-
-		extensionsConfiguration.defaultDependencies(dependencies -> dependencies.add(project.getDependencies()
-			.create(SPRING_ASCIIDOCTOR_EXTENSION_BLOCK_SWITCH_DEPENDENCY)));
-
-		asciidoctorTask.configurations(extensionsConfiguration);
 	}
 
 	private void configureForkOptions(AbstractAsciidoctorTask asciidoctorTask) {
@@ -200,37 +220,23 @@ public class AsciidoctorConventionPlugin implements Plugin<Project> {
 		}
 	}
 
-	private void configureHtmlOnlyAttributes(Project project, AbstractAsciidoctorTask asciidoctorTask) {
+	private void configureHtmlOnlyAttributes(AbstractAsciidoctorTask asciidoctorTask) {
 
 		Map<String, Object> attributes = new HashMap<>();
 
-		attributes.put("source-highlighter", "highlight.js");
 		attributes.put("highlightjsdir", "js/highlight");
 		attributes.put("highlightjs-theme", "github");
-		attributes.put("linkcss", true);
+		attributes.put("source-highlighter", "highlight.js");
 		attributes.put("icons", "font");
-
-		asciidoctorTask.getAttributeProviders().add(() -> {
-
-			Object version = project.getVersion();
-
-			Map<String, Object> localAttributes = new HashMap<>();
-
-			if (version != null && !Project.DEFAULT_VERSION.equals(version)) {
-				localAttributes.put("revnumber", version);
-			}
-
-			return localAttributes;
-		});
+		attributes.put("imagesdir", "./images");
+		attributes.put("linkcss", true);
+		attributes.put("stylesdir", "css/");
+		//attributes.put("stylesheet", "spring.css");
 
 		asciidoctorTask.attributes(attributes);
 	}
 
 	private void configureOptions(AbstractAsciidoctorTask asciidoctorTask) {
 		asciidoctorTask.options(Collections.singletonMap("doctype", "book"));
-	}
-
-	private void makeAllWarningsFatal(Project project) {
-		project.getExtensions().getByType(AsciidoctorJExtension.class).fatalWarnings(".*");
 	}
 }
