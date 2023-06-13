@@ -13,47 +13,52 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+package io.spring.gradle.convention
 
-package io.spring.gradle.convention;
-
-import io.spring.gradle.propdeps.PropDepsMavenPlugin;
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-import org.gradle.api.plugins.GroovyPlugin;
-import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.MavenPlugin;
-import org.gradle.api.plugins.PluginManager;
-import org.gradle.internal.impldep.org.apache.maven.Maven;
-import org.gradle.plugins.ide.eclipse.EclipseWtpPlugin;
-import org.gradle.plugins.ide.idea.IdeaPlugin;
-import io.spring.gradle.propdeps.PropDepsEclipsePlugin;
-import io.spring.gradle.propdeps.PropDepsIdeaPlugin;
-import io.spring.gradle.propdeps.PropDepsPlugin;
+import io.spring.gradle.propdeps.PropDepsEclipsePlugin
+import io.spring.gradle.propdeps.PropDepsIdeaPlugin
+import io.spring.gradle.propdeps.PropDepsMavenPlugin
+import io.spring.gradle.propdeps.PropDepsPlugin
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.plugins.GroovyPlugin
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.MavenPlugin
+import org.gradle.api.plugins.PluginManager
+import org.gradle.plugins.ide.eclipse.EclipseWtpPlugin
+import org.gradle.plugins.ide.idea.IdeaPlugin
 
 /**
  * @author Rob Winch
  */
-public abstract class AbstractSpringJavaPlugin implements Plugin<Project> {
+abstract class AbstractSpringJavaPlugin implements Plugin<Project> {
 
 	@Override
-	public final void apply(Project project) {
+	final void apply(Project project) {
+
 		PluginManager pluginManager = project.getPluginManager();
+
 		pluginManager.apply(JavaPlugin.class);
 		pluginManager.apply(ManagementConfigurationPlugin.class);
+
 		if (project.file("src/main/groovy").exists()
 				|| project.file("src/test/groovy").exists()
 				|| project.file("src/integration-test/groovy").exists()) {
 			pluginManager.apply(GroovyPlugin.class);
 		}
+
 		pluginManager.apply("io.spring.convention.repository");
+
 		pluginManager.apply(EclipseWtpPlugin);
 		pluginManager.apply(IdeaPlugin);
 		pluginManager.apply(PropDepsPlugin);
 		pluginManager.apply(PropDepsEclipsePlugin);
 		pluginManager.apply(PropDepsIdeaPlugin);
+
 		project.getPlugins().withType(MavenPlugin) {
 			pluginManager.apply(PropDepsMavenPlugin);
 		}
+
 		pluginManager.apply("io.spring.convention.tests-configuration");
 		pluginManager.apply("io.spring.convention.integration-test");
 		pluginManager.apply("io.spring.convention.springdependencymangement");
@@ -68,21 +73,25 @@ public abstract class AbstractSpringJavaPlugin implements Plugin<Project> {
 
 		project.jar {
 			manifest.attributes["Created-By"] =
-					"${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
+				"${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
 			manifest.attributes["Implementation-Title"] = project.name
 			manifest.attributes["Implementation-Version"] = project.version
 			manifest.attributes["Automatic-Module-Name"] = project.name.replace('-', '.')
 		}
+
 		additionalPlugins(project);
 	}
 
 	private void copyPropertyFromRootProjectTo(String propertyName, Project project) {
+
 		Project rootProject = project.getRootProject();
 		Object property = rootProject.findProperty(propertyName);
-		if(property != null) {
+
+		if (property != null) {
 			project.setProperty(propertyName, property);
 		}
 	}
 
 	protected abstract void additionalPlugins(Project project);
+
 }

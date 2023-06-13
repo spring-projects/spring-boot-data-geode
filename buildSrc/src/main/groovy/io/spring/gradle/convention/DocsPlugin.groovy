@@ -1,25 +1,22 @@
 package io.spring.gradle.convention
 
 import org.asciidoctor.gradle.jvm.AbstractAsciidoctorTask
-import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.plugins.PluginManager
-import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.Zip
 
 /**
  * Aggregates asciidoc, javadoc, and deploying of the docs into a single plugin
  */
-public class DocsPlugin implements Plugin<Project> {
+class DocsPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
 
 		PluginManager pluginManager = project.getPluginManager();
+
 		pluginManager.apply("org.asciidoctor.jvm.convert");
 		pluginManager.apply("org.asciidoctor.jvm.pdf");
 		pluginManager.apply(AsciidoctorConventionPlugin);
@@ -38,7 +35,6 @@ public class DocsPlugin implements Plugin<Project> {
 			}
 		}
 
-
 		Task docsZip = project.tasks.create('docsZip', Zip) {
 			dependsOn 'api', 'asciidoctor'
 			group = 'Distribution'
@@ -51,15 +47,19 @@ public class DocsPlugin implements Plugin<Project> {
 				into 'reference/html5'
 				include '**'
 			}
+
 			from(project.tasks.asciidoctorPdf.outputs) {
 				into 'reference/pdf'
 				include '**'
 				rename "index.pdf", pdfFilename
 			}
+
 			from(project.tasks.api.outputs) {
 				into 'api'
 			}
+
 			into 'docs'
+
 			duplicatesStrategy 'exclude'
 		}
 
@@ -68,6 +68,7 @@ public class DocsPlugin implements Plugin<Project> {
 			description 'An aggregator task to generate all the documentation'
 			dependsOn docsZip
 		}
+
 		project.tasks.assemble.dependsOn docs
 	}
 }

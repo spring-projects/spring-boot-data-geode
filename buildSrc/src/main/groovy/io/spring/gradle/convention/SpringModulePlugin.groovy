@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package io.spring.gradle.convention;
 
 import org.gradle.api.Project
@@ -28,17 +27,22 @@ class SpringModulePlugin extends AbstractSpringJavaPlugin {
 
 	@Override
 	void additionalPlugins(Project project) {
+
 		PluginManager pluginManager = project.getPluginManager();
+
 		pluginManager.apply(JavaLibraryPlugin.class)
 		pluginManager.apply(MavenPlugin.class);
+
 		pluginManager.apply("io.spring.convention.maven");
 		pluginManager.apply("io.spring.convention.artifactory");
 		pluginManager.apply("io.spring.convention.jacoco");
 		pluginManager.apply("io.spring.convention.merge");
 
 		def deployArtifacts = project.task("deployArtifacts")
+
 		deployArtifacts.group = 'Deploy tasks'
 		deployArtifacts.description = "Deploys the artifacts to either Artifactory or Maven Central"
+
 		if (Utils.isRelease(project)) {
 			deployArtifacts.dependsOn project.tasks.uploadArchives
 		}
@@ -46,5 +50,4 @@ class SpringModulePlugin extends AbstractSpringJavaPlugin {
 			deployArtifacts.dependsOn project.tasks.artifactoryPublish
 		}
 	}
-
 }

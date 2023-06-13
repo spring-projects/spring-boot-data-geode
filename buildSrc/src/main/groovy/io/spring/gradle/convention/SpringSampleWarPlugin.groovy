@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package io.spring.gradle.convention
 
 import org.gradle.api.Project
@@ -24,10 +23,11 @@ import org.gradle.api.tasks.testing.Test
 /**
  * @author Rob Winch
  */
-public class SpringSampleWarPlugin extends SpringSamplePlugin {
+class SpringSampleWarPlugin extends SpringSamplePlugin {
 
 	@Override
-	public void additionalPlugins(Project project) {
+	void additionalPlugins(Project project) {
+
 		super.additionalPlugins(project);
 
 		PluginManager pluginManager = project.getPluginManager();
@@ -51,6 +51,7 @@ public class SpringSampleWarPlugin extends SpringSamplePlugin {
 				}
 			}
 		}
+
 		project.tasks.withType(org.akhikhl.gretty.AppBeforeIntegrationTestTask).all { task ->
 			task.dependsOn prepareAppServerForIntegrationTests
 		}
@@ -63,6 +64,7 @@ public class SpringSampleWarPlugin extends SpringSamplePlugin {
 	}
 
 	def applyForIntegrationTest(Project project, Task integrationTest) {
+
 		project.gretty.integrationTestTask = integrationTest.name
 
 		integrationTest.doFirst {
@@ -89,9 +91,9 @@ public class SpringSampleWarPlugin extends SpringSamplePlugin {
 	}
 
 	def getRandomPort() {
-		ServerSocket ss = new ServerSocket(0)
-		int port = ss.localPort
-		ss.close()
+		ServerSocket serverSocket = new ServerSocket(0)
+		int port = serverSocket.localPort
+		serverSocket.close()
 		return port
 	}
 }
