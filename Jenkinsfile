@@ -37,7 +37,6 @@ pipeline {
 
 								// Cleanup any prior build system resources
 								try {
-									sh "echo 'Clean up GemFire/Geode files & build artifacts...'"
 									sh "ci/cleanupArtifacts.sh"
 									sh "ci/cleanupGemFiles.sh"
 								}

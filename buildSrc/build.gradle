@@ -1,7 +1,7 @@
 plugins {
 	id "java-gradle-plugin"
 	id "com.jfrog.artifactory" version '4.9.10'
-	id 'com.github.ben-manes.versions' version '0.25.0'
+	id 'com.github.ben-manes.versions' version '0.47.0'
 }
 
 apply plugin: 'java'
@@ -55,7 +55,7 @@ dependencies {
 
 	runtimeOnly 'org.springframework.boot:spring-boot-loader-tools:2.7.12'
 
-	implementation 'com.github.ben-manes:gradle-versions-plugin:0.25.0'
+	implementation 'com.github.ben-manes:gradle-versions-plugin:0.47.0'
 	implementation 'gradle.plugin.org.gretty:gretty:3.0.1'
 	implementation 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.1'
 	implementation 'io.spring.gradle:dependency-management-plugin:1.0.15.RELEASE'
