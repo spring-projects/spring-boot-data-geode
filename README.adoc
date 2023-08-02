@@ -8,6 +8,7 @@
 :gemfire-name: VMware Tanzu GemFire
 
 image:https://jenkins.spring.io/buildStatus/icon?job=spring-boot-data-geode%2F2.0.x&subject=Build[link=https://jenkins.spring.io/view/SpringData/job/spring-boot-data-geode/]
+image:https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A["Revved up by Gradle Enterprise", link="https://ge.spring.io/scans?&search.rootProjectNames=spring-boot-data-geode-build"]
 
 [[about]]
 == Spring Boot for {geode-name}
