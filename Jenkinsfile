@@ -70,7 +70,7 @@ pipeline {
 			}
 			steps {
 				script {
-					docker.image('adoptopenjdk/openjdk8:latest').inside("--name ${env.HOSTNAME}Two -u root -v /tmp:/tmp") {
+					docker.image(p['docker.container.image.java.main']).inside(p['docker.container.inside.env.full']) {
 						withCredentials([file(credentialsId: 'docs.spring.io-jenkins_private_ssh_key', variable: 'DEPLOY_SSH_KEY')]) {
 							withCredentials([usernamePassword(credentialsId: p['artifactory.credentials'], usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
 								try {
@@ -93,7 +93,7 @@ pipeline {
 			}
 			steps {
 				script {
-					docker.image('adoptopenjdk/openjdk8:latest').inside("--name ${env.HOSTNAME}One -u root -v /tmp:/tmp") {
+					docker.image(p['docker.container.image.java.main']).inside(p['docker.container.inside.env.full']) {
 						withCredentials([file(credentialsId: 'spring-signing-secring.gpg', variable: 'SIGNING_KEYRING_FILE')]) {
 							withCredentials([string(credentialsId: 'spring-gpg-passphrase', variable: 'SIGNING_PASSWORD')]) {
 								withCredentials([usernamePassword(credentialsId: 'oss-token', passwordVariable: 'OSSRH_PASSWORD', usernameVariable: 'OSSRH_USERNAME')]) {
