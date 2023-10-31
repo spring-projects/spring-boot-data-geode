@@ -1,5 +1,6 @@
 //ext['jetty.version'] = "$eclipseJettyVersion"
 //ext['micrometer.version'] = "$micrometerVersion"
+//ext['tomcat.version'] = "$tomcatVersion"
 
 dependencyManagement {
 	imports {
