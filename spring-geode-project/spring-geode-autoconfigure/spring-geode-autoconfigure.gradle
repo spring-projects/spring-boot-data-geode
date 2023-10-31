@@ -10,6 +10,10 @@ configurations.implementation {
 	exclude group: "org.apache.httpcomponents", module: "httpclient"
 }
 
+configurations.testRuntimeOnly {
+	exclude group: "org.eclipse.jetty", module: "apache-jsp"
+}
+
 dependencies {
 
 	api project(":spring-geode")
@@ -36,9 +40,7 @@ dependencies {
 	testRuntimeOnly project(':apache-geode-jetty11')
 
 	testRuntimeOnly "javax.cache:cache-api"
-	//testRuntimeOnly "org.apache.geode:geode-http-service:$apacheGeodeVersion"
 	testRuntimeOnly "org.apache.geode:geode-web:$apacheGeodeVersion"
-	testRuntimeOnly "org.springframework.boot:spring-boot-starter-jetty"
 	testRuntimeOnly "org.springframework.boot:spring-boot-starter-json"
 	testRuntimeOnly "org.springframework.shell:spring-shell:$springShellVersion"
 
